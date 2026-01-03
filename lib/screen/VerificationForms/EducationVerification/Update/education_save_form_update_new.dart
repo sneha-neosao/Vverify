@@ -333,7 +333,14 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                             height: 45,
                             onTap: () {
                               FocusManager.instance.primaryFocus?.unfocus();
-                              educationSaveData();
+                              if (_formKey.currentState?.validate() ?? false) {
+                                educationSaveData();
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                        Text("Please fill all fields")));
+                              }
                             },
                             text: "Update",
                             gradientColors: [

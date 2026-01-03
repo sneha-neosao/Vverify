@@ -79,16 +79,39 @@ class _EducationListState extends State<EducationList> {
             const SizedBox(
               height: 16,
             ),
-            CustomButton(
-              onTap: () {
-                // context.pushReplacement("/EducationSaveForm");
-                context.pushReplacement("/EducationSaveFormNew");
+            BlocBuilder<EducationListCubit, EducationListState>(
+              builder: (context, educationList) {
+
+                // LOADING
+                if (educationList is EducationListLoadingState) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                // SUCCESS
+                if (educationList is EducationListSuccessState) {
+                  final data = educationList.educationListModel;
+
+                  return Column(
+                    children: [
+
+                      // 👇 SHOW ONLY IF NO DATA
+                      if (data.data == null || data.data!.isEmpty)
+                        CustomButton(
+                          onTap: () {
+                            context.pushReplacement("/EducationSaveFormNew");
+                          },
+                          text: "Add Education",
+                          gradientColors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).primaryColorDark,
+                          ],
+                        ),
+                    ],
+                  );
+                }
+
+                return const SizedBox();
               },
-              text: "Add Education",
-              gradientColors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).primaryColorDark,
-              ],
             ),
             const SizedBox(
               height: 16,
@@ -138,26 +161,24 @@ class _EducationListState extends State<EducationList> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text('${data.data![index].verification_remark}',
+                                          Text(
+                                              data.data![index].verification_remark!.toLowerCase() == ""
+                                                  ? "Verification Pending"
+                                                  : data.data![index].verification_remark!.toLowerCase() == "clear"
+                                                  ? "Clear" : "discrepancy",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall!
                                                   .copyWith(
-                                                      fontSize: 14,
-                                                      color: data.data![index]
-                                                                      .created_at ==
-                                                                  "failed" ||
-                                                              data.data![index]
-                                                                      .created_at ==
-                                                                  "rejected"
-                                                          ? Colors.red
-                                                          : data.data![index]
-                                                                      .created_at ==
-                                                                  "verified"
-                                                              ? Colors.green
-                                                              : Theme.of(
-                                                                      context)
-                                                                  .primaryColorDark)),
+                                                  fontSize: 14,
+                                                  color: data.data![index].verification_remark!.toLowerCase() == ""
+                                                      ? Colors.orange
+                                                      : data.data![index].verification_remark!.toLowerCase() == "clear"
+                                                      ? Colors.green
+                                                      : Colors.red
+                                              )
+
+                                          ),
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -178,8 +199,9 @@ class _EducationListState extends State<EducationList> {
                                                             color: Colors.grey),
                                                   ),
                                                   Text(
-                                                    data.data![index]
-                                                        .university_name!,
+                                                    data.data![index].university_name?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].university_name!,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -202,8 +224,9 @@ class _EducationListState extends State<EducationList> {
                                                             color: Colors.grey),
                                                   ),
                                                   Text(
-                                                    data.data![index]
-                                                        .institution_name!,
+                                                    data.data![index].institution_name?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].institution_name!,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -226,8 +249,59 @@ class _EducationListState extends State<EducationList> {
                                                             color: Colors.grey),
                                                   ),
                                                   Text(
-                                                    data.data![index]
-                                                        .degree_qualification_name!,
+                                                    data.data![index].degree_qualification_name?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].degree_qualification_name!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 8,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Year Of Passing",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                        color: Colors.grey),
+                                                  ),
+                                                  Text(
+                                                    data.data![index].year_of_passing?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].year_of_passing!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 8,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Grades Type",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                        color: Colors.grey),
+                                                  ),
+                                                  Text(
+                                                    data.data![index].grades_type?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].grades_type!,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -250,8 +324,9 @@ class _EducationListState extends State<EducationList> {
                                                             color: Colors.grey),
                                                   ),
                                                   Text(
-                                                    data.data![index]
-                                                        .grades_type!,
+                                                    data.data![index].grades_obtained?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].grades_obtained!,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -297,25 +372,24 @@ class _EducationListState extends State<EducationList> {
                               : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('${data.data![index].created_at}',
+                                    Text(
+                                        data.data![index].verification_remark!.toLowerCase() == ""
+                                            ? "Verification Pending"
+                                            : data.data![index].verification_remark!.toLowerCase() == "clear"
+                                            ? "Clear" : "discrepancy",
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodySmall!
                                             .copyWith(
-                                                fontSize: 14,
-                                                color: data.data![index]
-                                                                .created_at ==
-                                                            "failed" ||
-                                                        data.data![index]
-                                                                .created_at ==
-                                                            "rejected"
-                                                    ? Colors.red
-                                                    : data.data![index]
-                                                                .created_at ==
-                                                            "verified"
-                                                        ? Colors.green
-                                                        : Theme.of(context)
-                                                            .primaryColorDark)),
+                                            fontSize: 14,
+                                            color: data.data![index].verification_remark!.toLowerCase() == ""
+                                                ? Colors.orange
+                                                : data.data![index].verification_remark!.toLowerCase() == "clear"
+                                                ? Colors.green
+                                                : Colors.red
+                                        )
+
+                                    ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: CustomPaint(
@@ -339,7 +413,7 @@ class _EducationListState extends State<EducationList> {
                                                           const EdgeInsets.all(
                                                               8.0),
                                                       child: data.data![index]
-                                                              .verification_remark!
+                                                              .document!
                                                               .contains("pdf")
                                                           ? Column(
                                                               children: [
@@ -365,7 +439,7 @@ class _EducationListState extends State<EducationList> {
                                                             )
                                                           : Image.network(data
                                                               .data![index]
-                                                              .verification_remark!),
+                                                              .document!),
                                                     ),
                                                   )
                                                 : Center(
@@ -383,15 +457,15 @@ class _EducationListState extends State<EducationList> {
                                     Center(
                                       child: TextButton(
                                           onPressed: () {
-                                            if (data.data![index].created_at ==
-                                                "pending") {
+                                            if (data.data![index].verification_remark ==
+                                                "") {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                       content: Text(
                                                           "Please wait your application under process")));
                                             } else if (data
                                                     .data![index].created_at ==
-                                                "verified") {
+                                                "clear") {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                       content: Text(

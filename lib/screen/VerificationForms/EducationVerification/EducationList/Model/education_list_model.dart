@@ -52,6 +52,7 @@ class Datum {
   String? degree_name_v_status;
   String? verification_remark;
   String? data_preference;
+  String? document;
   String? created_at;
   String? updated_at;
 
@@ -75,6 +76,7 @@ class Datum {
     this.degree_name_v_status,
     this.verification_remark,
     this.data_preference,
+    this.document,
     this.created_at,
     this.updated_at,
   });
@@ -99,6 +101,7 @@ class Datum {
     degree_name_v_status: json["degree_name_v_status"],
     verification_remark: json["verification_remark"],
     data_preference: json["data_preference"],
+    document: json["document"],
     created_at: json["created_at"],
     updated_at: json["updated_at"],
   );
@@ -123,6 +126,7 @@ class Datum {
     "degree_name_v_status": degree_name_v_status,
     "verification_remark": verification_remark,
     "data_preference": data_preference,
+    "document": document,
     "created_at": created_at,
     "updated_at": updated_at,
   };
