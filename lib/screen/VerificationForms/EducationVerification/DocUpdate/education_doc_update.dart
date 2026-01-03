@@ -96,7 +96,7 @@ class _EducationDocUpdateState extends State<EducationDocUpdate> {
                     height: 4,
                   ),
                   Text(
-                    data.data!.reason!,
+                    data.data!.verificationRemark ?? "",
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall!
@@ -121,7 +121,9 @@ class _EducationDocUpdateState extends State<EducationDocUpdate> {
                             .pickImageFromCamera();
                       },
                       image: uploadDoc,
-                      uploadImage: "$imageUrl${data.data!.document!}",
+                      uploadImage: data.data!.document!.startsWith("http")
+                          ? data.data!.document!
+                          : "$imageUrl${data.data!.document!}",
                     );
                   }),
                   const SizedBox(

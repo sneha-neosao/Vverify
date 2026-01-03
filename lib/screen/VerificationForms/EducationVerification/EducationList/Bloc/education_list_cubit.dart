@@ -25,9 +25,10 @@ class EducationListCubit extends Cubit<EducationListState> {
         EducationDocListModel.fromJson(response.data);
         if (response.data["status"] == 200) {
           emit(EducationListSuccessState(educationListModel));
+        } else if (response.data["status"] == 300) {
+          emit(EducationListEmptyState()); // 👈 new state
         } else if (response.data["status"] == 500) {
-          final errorMessage =
-              response.data['message'] ?? 'Unknown error occurred.';
+          final errorMessage = response.data['message'] ?? 'Unknown error occurred.';
           emit(EducationListErrorState(errorMessage));
         } else {
           emit(EducationListErrorState('${response.data["message"]}'));

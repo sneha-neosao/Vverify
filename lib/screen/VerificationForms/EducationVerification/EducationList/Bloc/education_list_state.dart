@@ -12,6 +12,8 @@ class EducationListInitialState extends EducationListState {}
 
 class EducationListLoadingState extends EducationListState {}
 
+class EducationListEmptyState extends EducationListState {}
+
 class EducationListSuccessState extends EducationListState {
   final EducationDocListModel educationListModel;
 

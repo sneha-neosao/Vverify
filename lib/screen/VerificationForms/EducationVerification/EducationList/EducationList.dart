@@ -80,36 +80,32 @@ class _EducationListState extends State<EducationList> {
               height: 16,
             ),
             BlocBuilder<EducationListCubit, EducationListState>(
-              builder: (context, educationList) {
-
-                // LOADING
-                if (educationList is EducationListLoadingState) {
+              builder: (context, state) {
+                if (state is EducationListLoadingState) {
                   return const Center(child: CircularProgressIndicator());
-                }
-
-                // SUCCESS
-                if (educationList is EducationListSuccessState) {
-                  final data = educationList.educationListModel;
-
-                  return Column(
-                    children: [
-
-                      // 👇 SHOW ONLY IF NO DATA
-                      if (data.data == null || data.data!.isEmpty)
-                        CustomButton(
-                          onTap: () {
-                            context.pushReplacement("/EducationSaveFormNew");
-                          },
-                          text: "Add Education",
-                          gradientColors: [
-                            Theme.of(context).primaryColor,
-                            Theme.of(context).primaryColorDark,
-                          ],
-                        ),
+                } else if (state is EducationListEmptyState) {
+                  return CustomButton(
+                    onTap: () => context.pushReplacement("/EducationSaveFormNew"),
+                    text: "Add Education",
+                    gradientColors: [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).primaryColorDark,
                     ],
                   );
+                } else if (state is EducationListSuccessState) {
+                  final data = state.educationListModel;
+                  if (data.data == null || data.data!.isEmpty) {
+                    return CustomButton(
+                      onTap: () => context.pushReplacement("/EducationSaveFormNew"),
+                      text: "Add Education",
+                      gradientColors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColorDark,
+                      ],
+                    );
+                  }
+                  // render list
                 }
-
                 return const SizedBox();
               },
             ),
@@ -457,15 +453,12 @@ class _EducationListState extends State<EducationList> {
                                     Center(
                                       child: TextButton(
                                           onPressed: () {
-                                            if (data.data![index].verification_remark ==
-                                                "") {
+                                            if (data.data![index].v_status == "pending") {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                       content: Text(
                                                           "Please wait your application under process")));
-                                            } else if (data
-                                                    .data![index].created_at ==
-                                                "clear") {
+                                            } else if (data.data![index].v_status == "clear") {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                       content: Text(
@@ -492,9 +485,7 @@ class _EducationListState extends State<EducationList> {
                       }),
                 );
               }
-              return const Center(
-                child: Text("Error..."),
-              );
+              return const SizedBox.shrink();
             }),
           ],
         ),

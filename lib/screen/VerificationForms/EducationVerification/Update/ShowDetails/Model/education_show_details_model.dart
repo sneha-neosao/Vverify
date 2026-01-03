@@ -60,6 +60,7 @@ class Data {
   DateTime? createdAt;
   DateTime? updatedAt;
   String? dataPreference;
+  String? document;
 
   Data({
     this.id,
@@ -89,6 +90,7 @@ class Data {
     this.createdAt,
     this.updatedAt,
     this.dataPreference,
+    this.document,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -123,6 +125,7 @@ class Data {
         ? null
         : DateTime.parse(json["updated_at"]),
     dataPreference: json["data_preference"],
+    document: json["document"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -153,6 +156,7 @@ class Data {
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
     "data_preference": dataPreference,
+    "document": document
   };
 }
 
