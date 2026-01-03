@@ -34,136 +34,112 @@ class EmployListDataModel {
 
 class Datum {
   String? uid;
-  int? requestId;
-  int? serviceRequestId;
-  String? fullName;
-  String? companyName;
-  String? companyAddress;
-  String? companyCity;
-  String? companyState;
-  String? companyCountry;
-  String? companyPostalCode;
-  String? industry;
-  String? employmentType;
-  String? jobTitle;
+  String? case_id;
+  int? request_id;
+  int? service_request_id;
+  int? employment_id;
+  String? employer_name;          // employer_name
+  String? employed_from;          // employed_from
+  String? employed_to;             // employed_to
+  String? designation;             // designation
   String? department;
-  String? employeeCodeId;
-  String? joiningDate;
-  String? exitDate;
-  int? experienceYears;
-  dynamic experienceMonths;
-  String? employmentStatus;
-  String? salary;
-  String? currency;
-  String? payFrequency;
-  String? hrContactName;
-  dynamic hrContactEmail;
-  dynamic hrContactPhone;
-  String? employmentCertificateNumber;
-  String? employmentLetterDoc;
-  String? employmentSupportingDoc;
-  String? status;
-  String? dataPreference;
+  String? remunaration;               // remunaration
+  String? reporting_manager;        // reporting_manager
+  String? reason_for_leaving;
+  String? eligible_for_rehire;
+  String? mentioned_issues;
+  String? reason_for_leaving_status;
+  String? v_status;               // v_status
+  String? verification_remark;
+  String? data_preference;
+  String? artefact_img;
+  String? artefact_link;
+  String? employment_supporting_doc;
+  int? show_on_report;
+  String? created_at;
+  String? updated_at;
 
   Datum({
     this.uid,
-    this.requestId,
-    this.serviceRequestId,
-    this.fullName,
-    this.companyName,
-    this.companyAddress,
-    this.companyCity,
-    this.companyState,
-    this.companyCountry,
-    this.companyPostalCode,
-    this.industry,
-    this.employmentType,
-    this.jobTitle,
+    this.case_id,
+    this.request_id,
+    this.service_request_id,
+    this.employment_id,
+    this.employer_name,
+    this.employed_from,
+    this.employed_to,
+    this.designation,
     this.department,
-    this.employeeCodeId,
-    this.joiningDate,
-    this.exitDate,
-    this.experienceYears,
-    this.experienceMonths,
-    this.employmentStatus,
-    this.salary,
-    this.currency,
-    this.payFrequency,
-    this.hrContactName,
-    this.hrContactEmail,
-    this.hrContactPhone,
-    this.employmentCertificateNumber,
-    this.employmentLetterDoc,
-    this.employmentSupportingDoc,
-    this.status,
-    this.dataPreference,
+    this.remunaration,
+    this.reporting_manager,
+    this.reason_for_leaving,
+    this.eligible_for_rehire,
+    this.mentioned_issues,
+    this.reason_for_leaving_status,
+    this.v_status,
+    this.verification_remark,
+    this.data_preference,
+    this.artefact_img,
+    this.artefact_link,
+    this.employment_supporting_doc,
+    this.show_on_report,
+    this.created_at,
+    this.updated_at,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     uid: json["uid"],
-    requestId: json["request_id"],
-    serviceRequestId: json["service_request_id"],
-    fullName: json["full_name"],
-    companyName: json["company_name"],
-    companyAddress: json["company_address"],
-    companyCity: json["company_city"],
-    companyState: json["company_state"],
-    companyCountry: json["company_country"],
-    companyPostalCode: json["company_postal_code"],
-    industry: json["industry"],
-    employmentType: json["employment_type"],
-    jobTitle: json["job_title"],
+    case_id: json["case_id"],
+    request_id: json["request_id"],
+    service_request_id: json["service_request_id"],
+    employment_id: json["employment_id"],
+    employer_name: json["employer_name"],
+    employed_from: json["employed_from"],
+    employed_to: json["employed_to"],
+    designation: json["department"],
     department: json["department"],
-    employeeCodeId: json["employee_code_id"],
-    joiningDate: (json["joining_date"]),
-    exitDate: (json["exit_date"]),
-    experienceYears: json["experience_years"],
-    experienceMonths: json["experience_months"],
-    employmentStatus: json["employment_status"],
-    salary: json["salary"],
-    currency: json["currency"],
-    payFrequency: json["pay_frequency"],
-    hrContactName: json["hr_contact_name"],
-    hrContactEmail: json["hr_contact_email"],
-    hrContactPhone: json["hr_contact_phone"],
-    employmentCertificateNumber: json["employment_certificate_number"],
-    employmentLetterDoc: json["employment_letter_doc"],
-    employmentSupportingDoc: json["employment_supporting_doc"],
-    status: json["status"],
-    dataPreference: json["data_preference"],
+    remunaration: json["remunaration"],
+    reporting_manager: json["reporting_manager"],
+    reason_for_leaving: json["reason_for_leaving"],
+    eligible_for_rehire: json["eligible_for_rehire"],
+    mentioned_issues: json["mentioned_issues"],
+    reason_for_leaving_status: json["reason_for_leaving_status"],
+    v_status: json["v_status"],
+    verification_remark: json["verification_remark"],
+    data_preference: json["data_preference"],
+    artefact_img: json["artefact_img"],
+    artefact_link: json["artefact_link"],
+    employment_supporting_doc: json["employment_supporting_doc"],
+    show_on_report: json["show_on_report"],
+    created_at: json["created_at"],
+    updated_at: json["updated_at"],
   );
 
   Map<String, dynamic> toJson() => {
     "uid": uid,
-    "request_id": requestId,
-    "service_request_id": serviceRequestId,
-    "full_name": fullName,
-    "company_name": companyName,
-    "company_address": companyAddress,
-    "company_city": companyCity,
-    "company_state": companyState,
-    "company_country": companyCountry,
-    "company_postal_code": companyPostalCode,
-    "industry": industry,
-    "employment_type": employmentType,
-    "job_title": jobTitle,
+    "case_id": case_id,
+    "request_id": request_id,
+    "service_request_id": service_request_id,
+    "employment_id": employment_id,
+    "employer_name": employer_name,
+    "employed_from": employed_from,
+    "employed_to": employed_to,
+    "designation": designation,
     "department": department,
-    "employee_code_id": employeeCodeId,
-    "joining_date": joiningDate,
-    "exit_date": exitDate,
-    "experience_years": experienceYears,
-    "experience_months": experienceMonths,
-    "employment_status": employmentStatus,
-    "salary": salary,
-    "currency": currency,
-    "pay_frequency": payFrequency,
-    "hr_contact_name": hrContactName,
-    "hr_contact_email": hrContactEmail,
-    "hr_contact_phone": hrContactPhone,
-    "employment_certificate_number": employmentCertificateNumber,
-    "employment_letter_doc": employmentLetterDoc,
-    "employment_supporting_doc": employmentSupportingDoc,
-    "status": status,
-    "data_preference": dataPreference,
+    "remunaration": remunaration,
+    "reporting_manager": reporting_manager,
+    "reason_for_leaving": reason_for_leaving,
+    "eligible_for_rehire": eligible_for_rehire,
+    "mentioned_issues": mentioned_issues,
+    "reason_for_leaving_status": reason_for_leaving_status,
+    "v_status": v_status,
+    "verification_remark": verification_remark,
+    "data_preference": data_preference,
+    "artefact_img": artefact_img,
+    "artefact_link": artefact_link,
+    "employment_supporting_doc": employment_supporting_doc,
+    "show_on_report": show_on_report,
+    "created_at": created_at,
+    "updated_at": updated_at,
   };
 }

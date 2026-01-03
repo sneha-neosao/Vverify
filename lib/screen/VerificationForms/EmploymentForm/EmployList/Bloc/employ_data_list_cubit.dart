@@ -23,7 +23,9 @@ class EmployDataListCubit extends Cubit<EmployDataListState> {
         EmployListDataModel employListDataModel = EmployListDataModel.fromJson(response.data);
         if (response.data["status"] == 200) {
           emit(EmployDataListSuccessState(employListDataModel));
-        } else if (response.data["status"] == 500) {
+        }else if (response.data["status"] == 300) {
+          emit(EmployDataListEmptyState());
+        }else if (response.data["status"] == 500) {
           final errorMessage =
               response.data['message'] ?? 'Unknown error occurred.';
           emit(EmployDataListErrorState(errorMessage));

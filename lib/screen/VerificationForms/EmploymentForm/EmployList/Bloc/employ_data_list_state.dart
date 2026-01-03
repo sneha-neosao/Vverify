@@ -11,6 +11,8 @@ class EmployDataListInitialState extends EmployDataListState {}
 
 class EmployDataListLoadingState extends EmployDataListState {}
 
+class EmployDataListEmptyState extends EmployDataListState {}
+
 class EmployDataListSuccessState extends EmployDataListState {
   final EmployListDataModel employListDataModel;
 

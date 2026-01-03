@@ -86,7 +86,7 @@ class _EducationListState extends State<EducationList> {
                 } else if (state is EducationListEmptyState) {
                   return CustomButton(
                     onTap: () => context.pushReplacement("/EducationSaveFormNew"),
-                    text: "Add Education",
+                    text: "Add Education Details",
                     gradientColors: [
                       Theme.of(context).primaryColor,
                       Theme.of(context).primaryColorDark,
@@ -97,7 +97,7 @@ class _EducationListState extends State<EducationList> {
                   if (data.data == null || data.data!.isEmpty) {
                     return CustomButton(
                       onTap: () => context.pushReplacement("/EducationSaveFormNew"),
-                      text: "Add Education",
+                      text: "Add Education Details",
                       gradientColors: [
                         Theme.of(context).primaryColor,
                         Theme.of(context).primaryColorDark,

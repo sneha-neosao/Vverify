@@ -98,7 +98,7 @@ class _EmployUpdateDocState extends State<EmployUpdateDoc> {
                     height: 4,
                   ),
                   Text(
-                    data.data!.reason!,
+                    data.data!.verification_remark!,
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall!
@@ -130,8 +130,9 @@ class _EmployUpdateDocState extends State<EmployUpdateDoc> {
                         });
                       },
                       image: uploadDoc,
-                      uploadImage:
-                          "$imageUrl${data.data!.employmentLetterDoc!}",
+                      uploadImage: data.data!.employment_supporting_doc!.startsWith("http")
+                          ? data.data!.employment_supporting_doc!
+                          : "$imageUrl${data.data!.employment_supporting_doc!}",
                     );
                   }),
                   const SizedBox(

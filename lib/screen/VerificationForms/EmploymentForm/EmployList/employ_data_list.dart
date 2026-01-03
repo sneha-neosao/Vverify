@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
+import 'package:v_verify/commonComponent/dottedBorder.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 
 import '../../../Bottom/bottomNavbar.dart';
@@ -18,11 +22,32 @@ class EmployDataList extends StatefulWidget {
 }
 
 class _EmployDataListState extends State<EmployDataList> {
+String? _fileName;
+File? filePath;
+
   @override
   void initState() {
-    // employmentListDataLoad();
+    employmentListDataLoad();
     super.initState();
   }
+
+Future<void> pickFile() async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+  if (result != null) {
+    File file = File(result.files.single.path!);
+
+    // You can access the file path and name like this
+    setState(() {
+      _fileName = result.files.single.name;
+      filePath = file;
+      print("pdfFile${result.files.single.name}");
+      print("pdfFile${result.files.single.path!}");
+    });
+  } else {
+    //User canceled the picker
+  }
+}
 
   void employmentListDataLoad() {
     String token = context.read<TokenCubit>().state;
@@ -55,15 +80,39 @@ class _EmployDataListState extends State<EmployDataList> {
             const SizedBox(
               height: 16,
             ),
-            CustomButton(
-              onTap: () {
-                context.pushReplacement("/EmploymentSaveFormNew");
+            BlocBuilder<EmployDataListCubit, EmployDataListState>(
+              builder: (context, state) {
+                if (state is EmployDataListLoadingState) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is EmployDataListEmptyState) {
+                  return CustomButton(
+                    onTap: () {
+                      context.pushReplacement("/EmploymentSaveFormNew");
+                    },
+                    text: "Add Employment Details",
+                    gradientColors: [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).primaryColorDark,
+                    ],
+                  );
+                } else if (state is EmployDataListSuccessState) {
+                  final data = state.employListDataModel;
+                  if (data.data == null || data.data!.isEmpty) {
+                    return CustomButton(
+                      onTap: () {
+                        context.pushReplacement("/EmploymentSaveFormNew");
+                      },
+                      text: "Add Employment Details",
+                      gradientColors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColorDark,
+                      ],
+                    );
+                  }
+                  // render list
+                }
+                return const SizedBox();
               },
-              text: "Add Employment Details",
-              gradientColors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).primaryColorDark,
-              ],
             ),
             const SizedBox(
               height: 16,
@@ -89,10 +138,12 @@ class _EmployDataListState extends State<EmployDataList> {
                   child: CircularProgressIndicator(),
                 );
               } else if (employList is EmployDataListErrorState) {
+                print("employment list error");
                 return Center(
                   child: Text(employList.message),
                 );
               } else if (employList is EmployDataListSuccessState) {
+                print("employment list success");
                 EmployListDataModel data = employList.employListDataModel;
                 return Expanded(
                   child: ListView.builder(
@@ -101,7 +152,7 @@ class _EmployDataListState extends State<EmployDataList> {
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: data.data![index].dataPreference == "form"
+                          child: data.data![index].data_preference == "form"
                               ? Column(
                                   children: [
                                     ListTile(
@@ -121,32 +172,23 @@ class _EmployDataListState extends State<EmployDataList> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  '${data.data![index].status}',
+                                                  data.data![index].v_status!.toLowerCase() == ""
+                                                      ? "Verification Pending"
+                                                      : data.data![index].v_status!.toLowerCase() == "clear"
+                                                      ? "Clear" : "discrepancy",
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodySmall!
                                                       .copyWith(
-                                                          fontSize: 14,
-                                                          color: data
-                                                                          .data![
-                                                                              index]
-                                                                          .status ==
-                                                                      "failed" ||
-                                                                  data
-                                                                          .data![
-                                                                              index]
-                                                                          .status ==
-                                                                      "rejected"
-                                                              ? Colors.red
-                                                              : data
-                                                                          .data![
-                                                                              index]
-                                                                          .status ==
-                                                                      "verified"
-                                                                  ? Colors.green
-                                                                  : Theme.of(
-                                                                          context)
-                                                                      .primaryColorDark)),
+                                                      fontSize: 14,
+                                                      color: data.data![index].v_status!.toLowerCase() == ""
+                                                          ? Colors.orange
+                                                          : data.data![index].v_status!.toLowerCase() == "clear"
+                                                          ? Colors.green
+                                                          : Colors.red
+                                                  )
+
+                                              ),
                                               const SizedBox(
                                                 height: 8,
                                               ),
@@ -155,7 +197,7 @@ class _EmployDataListState extends State<EmployDataList> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    "Person Name",
+                                                    "Employer Name",
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall!
@@ -163,7 +205,9 @@ class _EmployDataListState extends State<EmployDataList> {
                                                             color: Colors.grey),
                                                   ),
                                                   Text(
-                                                    data.data![index].fullName!,
+                                                    data.data![index].employer_name?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].employed_from!,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -178,7 +222,7 @@ class _EmployDataListState extends State<EmployDataList> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    "Company Name",
+                                                    "From Date (Joining)",
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall!
@@ -186,8 +230,9 @@ class _EmployDataListState extends State<EmployDataList> {
                                                             color: Colors.grey),
                                                   ),
                                                   Text(
-                                                    data.data![index]
-                                                        .companyName!,
+                                                    data.data![index].employed_from?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].employed_from!,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -202,7 +247,7 @@ class _EmployDataListState extends State<EmployDataList> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    "Job Title",
+                                                    "To Date (Leaving)",
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall!
@@ -210,7 +255,9 @@ class _EmployDataListState extends State<EmployDataList> {
                                                             color: Colors.grey),
                                                   ),
                                                   Text(
-                                                    data.data![index].jobTitle!,
+                                                    data.data![index].employed_to?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].employed_to!,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -223,6 +270,31 @@ class _EmployDataListState extends State<EmployDataList> {
                                               Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Designation",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                            color: Colors.grey),
+                                                  ),
+                                                  Text(
+                                                    data.data![index].designation?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].designation!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 8,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     "Department",
@@ -230,15 +302,37 @@ class _EmployDataListState extends State<EmployDataList> {
                                                         .textTheme
                                                         .bodySmall!
                                                         .copyWith(
-                                                            color: Colors.grey),
+                                                        color: Colors.grey),
                                                   ),
                                                   Text(
-                                                    data.data![index]
-                                                                .department ==
-                                                            null
-                                                        ? ""
-                                                        : data.data![index]
-                                                            .department!,
+                                                    data.data![index].department?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].department!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 8,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Renumeration",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                        color: Colors.grey),
+                                                  ),
+                                                  Text(
+                                                    data.data![index].remunaration?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].remunaration!,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -255,13 +349,13 @@ class _EmployDataListState extends State<EmployDataList> {
                                     ),
                                     TextButton(
                                         onPressed: () {
-                                          if (data.data![index].status ==
+                                          if (data.data![index].v_status ==
                                               "pending") {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(const SnackBar(
                                                     content: Text(
                                                         "Please wait your application under process")));
-                                          } else if (data.data![index].status ==
+                                          } else if (data.data![index].v_status ==
                                               "verified") {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(const SnackBar(
@@ -269,7 +363,7 @@ class _EmployDataListState extends State<EmployDataList> {
                                                         "Your application already verified")));
                                           } else {
                                             context.pushNamed(
-                                                "EmploymentUpdateForm1",
+                                                "EmploymentUpdateFormNew",
                                                 pathParameters: {
                                                   'uid': data.data![index].uid
                                                       .toString()
@@ -283,126 +377,128 @@ class _EmployDataListState extends State<EmployDataList> {
                                               .bodySmall,
                                         ))
                                   ],
-                                )
-                              : Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('${data.data![index].status}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall!
-                                                    .copyWith(
-                                                        fontSize: 14,
-                                                        color: data.data![index]
-                                                                        .status ==
-                                                                    "failed" ||
-                                                                data
-                                                                        .data![
-                                                                            index]
-                                                                        .status ==
-                                                                    "rejected"
-                                                            ? Colors.red
-                                                            : data.data![index]
-                                                                        .status ==
-                                                                    "verified"
-                                                                ? Colors.green
-                                                                : Theme.of(
-                                                                        context)
-                                                                    .primaryColorDark)),
-                                            const SizedBox(
-                                              height: 8,
-                                            ),
-                                            Row(
-                                              children: [
-                                                data.data![index]
-                                                        .employmentSupportingDoc!
-                                                        .contains("pdf")
-                                                    ? Expanded(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Image.asset(
-                                                              "assets/images/pdf_logo.png",
-                                                              width: 80,
-                                                              height: 80,
-                                                            ),
-                                                            Text(
-                                                                maxLines: 2,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                data
-                                                                    .data![
-                                                                        index]
-                                                                    .employmentSupportingDoc!)
-                                                          ],
-                                                        ),
-                                                      )
-                                                    : Expanded(
-                                                        child: Image.network(data
-                                                            .data![index]
-                                                            .employmentSupportingDoc!)),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                ):
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  data.data![index].v_status!.toLowerCase() == ""
+                                      ? "Verification Pending"
+                                      : data.data![index].v_status!.toLowerCase() == "clear"
+                                      ? "Clear" : "discrepancy",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(
+                                      fontSize: 14,
+                                      color: data.data![index].v_status!.toLowerCase() == ""
+                                          ? Colors.orange
+                                          : data.data![index].v_status!.toLowerCase() == "clear"
+                                          ? Colors.green
+                                          : Colors.red
+                                  )
+
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: CustomPaint(
+                                    painter: DottedBorderPainter(
+                                        context: context),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .primaryColorDark
+                                            .withOpacity(0.2),
+                                        borderRadius:
+                                        BorderRadius.circular(8),
+                                        // border: Border.all(color: Colors.black)
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 16,
-                                    ),
-                                    TextButton(
-                                        onPressed: () {
-                                          if (data.data![index].status ==
-                                              "pending") {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(const SnackBar(
-                                                    content: Text(
-                                                        "Please wait your application under process")));
-                                          } else if (data.data![index].status ==
-                                              "verified") {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(const SnackBar(
-                                                    content: Text(
-                                                        "Your application already verified")));
-                                          } else {
-                                            context.pushNamed("EmployUpdateDoc",
-                                                pathParameters: {
-                                                  'uid': data.data![index].uid
-                                                      .toString()
-                                                });
-                                          }
-                                        },
-                                        child: Text(
-                                          "Update",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        ))
-                                  ],
-                                ),
+                                      width: double.infinity,
+                                      height: 150,
+                                      child: _fileName == null
+                                          ? Center(
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets.all(
+                                              8.0),
+                                          child: data.data![index]
+                                              .employment_supporting_doc!
+                                              .contains("pdf")
+                                              ? Column(
+                                            children: [
+                                              Image.asset(
+                                                "assets/images/pdf_logo.png",
+                                                width: 80,
+                                                height: 80,
+                                              ),
+                                              Text(
+                                                maxLines: 2,
+                                                overflow:
+                                                TextOverflow
+                                                    .ellipsis,
+                                                textAlign:
+                                                TextAlign
+                                                    .center,
+                                                data
+                                                    .data![
+                                                index]
+                                                    .v_status!,
+                                              ),
+                                            ],
+                                          )
+                                              : Image.network(data
+                                              .data![index]
+                                              .employment_supporting_doc!),
+                                        ),
+                                      )
+                                          : Center(
+                                          child: Padding(
+                                            padding:
+                                            const EdgeInsets.all(
+                                                8.0),
+                                            child: Text(
+                                                textAlign:
+                                                TextAlign.center,
+                                                _fileName!),
+                                          )),
+                                    )),
+                              ),
+                              Center(
+                                child: TextButton(
+                                    onPressed: () {
+                                      if (data.data![index].v_status == "pending") {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                            content: Text(
+                                                "Please wait your application under process")));
+                                      } else if (data.data![index].v_status == "clear") {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                            content: Text(
+                                                "Your application already verified")));
+                                      } else {
+                                        context.pushReplacementNamed(
+                                            "EducationDocUpdate",
+                                            pathParameters: {
+                                              'uid': data.data![index].uid
+                                                  .toString()
+                                            });
+                                      }
+                                    },
+                                    child: Text(
+                                      "Update",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    )),
+                              )
+                            ],
+                          ),
                         );
                       }),
                 );
               }
-              return const Center(
-                child: Text("Error..."),
-              );
+              return const SizedBox.shrink();
             }),
           ],
         ),

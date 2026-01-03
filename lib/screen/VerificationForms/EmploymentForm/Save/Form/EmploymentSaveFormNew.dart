@@ -4,13 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentForm/Save/Form/EmploymentSaveForm2.dart';
+import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentForm/TextController/EmploymentSaveFormControllerNew.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
-import 'package:v_verify/screen/VerificationForms/common/validator.dart';
-
 import '../../../../../commonComponent/custom_button.dart';
-import '../../TextController/EmploymentSaveFormController.dart';
+import '../../../common/id.dart';
 import '../Bloc/EmploymentSaveForm.dart';
+import '../Bloc/EmploymentSaveFormState.dart';
+import '../Model/employmentSaveForm_model.dart';
 
 class EmploymentSaveFormNew extends StatefulWidget {
   const EmploymentSaveFormNew({super.key});
@@ -28,7 +29,7 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
 
   @override
   void initState() {
-    employmentControllerRecreate();
+    employmentControllerRecreateNew();
     super.initState();
   }
 
@@ -82,9 +83,30 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
     }
   }
 
+  void employmentSaveForm() {
+    String token = context.read<TokenCubit>().state;
+    String customerId = context.read<IdCubit>().state;
+    context.read<EmploymentSaveFormCubit>().employmentSaveForm(
+        customer_id: customerId,
+        token: token,
+        employmentSaveFormModel: EmploymentSaveFormModel(
+            request_id: requestId!,
+            service_request_id: serviceRequestId!,
+            customer_id: customerId,
+            employer_name: employmentTextControllerNew.employmentEmployerNameController.text,
+            employed_from: joinDateController.text,
+            employed_to: leaveDateController.text,
+            designation: employmentTextControllerNew.employmentDesignationController.text,
+            remunaration: employmentTextControllerNew.employmentRemunerationController.text,
+            reporting_manager: employmentTextControllerNew.employmentReportingManagerController.text,
+            reason_for_leaving: employmentTextControllerNew.employmentReasonForLeavingController.text,
+            employment_supporting_doc: ""
+        ));
+  }
+
   @override
   void dispose() {
-    employmentTextControllerDispose();
+    clearEmploymentControllerNew();
     super.dispose();
   }
 
@@ -172,7 +194,7 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
                       maskFormatter: [
                         FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
                       ],
-                      controller: employmentTextController.employmentNameController,
+                      controller: employmentTextControllerNew.employmentEmployerNameController,
                       titleText: "Employer Name",
                       hintText: "Enter Employer Name",
                       textInputType: TextInputType.text),
@@ -217,11 +239,6 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
                       ),
                     ),
                   ),
-                  // form_widget(
-                  //     controller: employmentTextController.employmentCompanyNameController,
-                  //     titleText: "From Date (Joining)",
-                  //     hintText: "Select From Date",
-                  //     textInputType: TextInputType.text),
                   const SizedBox(
                     height: 16,
                   ),
@@ -238,12 +255,6 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
                   ),
                   TextFormField(
                     readOnly: true,
-                    // validator: (value) {
-                    //   if (value == null || value.isEmpty) {
-                    //     return 'Please enter birth date';
-                    //   }
-                    //   return null;
-                    // },
                     style: Theme.of(context).textTheme.bodySmall,
                     keyboardType: TextInputType.number,
                     inputFormatters: [maskFormatter],
@@ -257,108 +268,78 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
                       ),
                     ),
                   ),
-                  // FormFieldNotRequired(
-                  //     validator: addressValidatorNotRequired,
-                  //     controller: employmentTextController.employmentCompanyAddressController,
-                  //     titleText: "To Date (Leaving)",
-                  //     hintText: "Enter Company Address",
-                  //     textInputType: TextInputType.text),
                   FormFieldNotRequired(
-                      controller: employmentTextController.employmentCompanyCountryController,
+                      controller: employmentTextControllerNew.employmentDesignationController,
                       titleText: "Designation",
                       hintText: "Enter Designation",
                       textInputType: TextInputType.text),
                   FormFieldNotRequired(
-                      controller: employmentTextController.employmentCompanyStateController,
+                      controller: employmentTextControllerNew.employmentDepartmentController,
                       titleText: "Department",
                       hintText: "Enter Department",
                       textInputType: TextInputType.text),
                   FormFieldNotRequired(
-                      controller: employmentTextController.employmentCompanyCityController,
+                      controller: employmentTextControllerNew.employmentRemunerationController,
                       titleText: "Remuneration",
                       hintText: "Enter Remuneration",
                       textInputType: TextInputType.text),
                   FormFieldNotRequired(
-                      controller: employmentTextController.employmentCompanyPinCodeController,
+                      controller: employmentTextControllerNew.employmentReportingManagerController,
                       titleText: "Reporting Manager",
                       hintText: "Enter Reporting Manager",
                       textInputType: TextInputType.text),
                   form_widget(
-                      controller: employmentTextController.employmentJobTitleController,
+                      controller: employmentTextControllerNew.employmentReasonForLeavingController,
                       titleText: "Reason For Leaving",
                       hintText: "Enter Reason For Leaving",
                       textInputType: TextInputType.text),
                   const SizedBox(
                     height: 24,
                   ),
-                  CustomButton(
-                      height: 45,
-                      onTap: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        if (_formKey.currentState?.validate() ?? false) {
-                          //context.pushNamed("EmploymentSaveForm2");
-                          // context.push("/EmploymentSaveForm2");
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) =>
-                          //         const EmploymentSaveForm2()));
-                        } else {
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  BlocConsumer<EmploymentSaveFormCubit,
+                      EmploymentSaveFormState>(
+                      listener: (context, employSave) {
+                        if (employSave is EmploymentSaveFormSuccessState) {
+                          if (employSave.data["status"] == 200) {
+                            context.pushReplacementNamed("EmployDataList");
+
+                            context.read<EmploymentLetterImage>().clearImage();
+                            context
+                                .read<EmploymentSupportDocumentImage>()
+                                .clearImage();
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(employSave.data["message"])));
+                        } else if (employSave is EmploymentSaveFormErrorState) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Please fill all fields")));
+                              SnackBar(content: Text(employSave.message)));
                         }
-                      },
-                      text: "Submit",
-                      gradientColors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColorDark,
-                      ]),
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: CustomButton(
-                  //         height: 45,
-                  //         onTap: () {
-                  //           FocusManager.instance.primaryFocus?.unfocus();
-                  //         },
-                  //         text: "PREV",
-                  //         gradientColors: [
-                  //           Theme.of(context).primaryColor.withOpacity(0.5),
-                  //           Theme.of(context).primaryColorDark.withOpacity(0.5),
-                  //         ],
-                  //       ),c
-                  //     ),
-                  //     const SizedBox(
-                  //       width: 8,
-                  //     ),
-                  //     Expanded(
-                  //       child: CustomButton(
-                  //           height: 45,
-                  //           onTap: () {
-                  //             FocusManager.instance.primaryFocus?.unfocus();
-                  //             if (_formKey.currentState?.validate() ?? false) {
-                  //               //context.pushNamed("EmploymentSaveForm2");
-                  //               // context.push("/EmploymentSaveForm2");
-                  //               Navigator.push(
-                  //                   context,
-                  //                   MaterialPageRoute(
-                  //                       builder: (context) =>
-                  //                       const EmploymentSaveForm2()));
-                  //             } else {
-                  //               ScaffoldMessenger.of(context).showSnackBar(
-                  //                   const SnackBar(
-                  //                       content: Text("Please fill all fields")));
-                  //             }
-                  //           },
-                  //           text: "Submit",
-                  //           gradientColors: [
-                  //             Theme.of(context).primaryColor,
-                  //             Theme.of(context).primaryColorDark,
-                  //           ]),
-                  //     )
-                  //   ],
-                  // ),
+                      }, builder: (context, employSave) {
+                    return CustomButton(
+                        isLoading:
+                        employSave is EmploymentSaveFormLoadingState,
+                        height: 45,
+                        onTap: () {
+                          context.pushReplacementNamed("EmployDataList");
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          if (_formKey.currentState?.validate() ?? false) {
+                            employmentSaveForm();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Please fill fields")));
+                          }
+                        },
+                        text: "SUBMIT",
+                        gradientColors: [
+                          Theme.of(context).primaryColor,
+                          Theme.of(context).primaryColorDark,
+                        ]);
+                  }),
                 ],
               ),
             ),

@@ -37,6 +37,7 @@ import '../screen/VerificationForms/EmploymentForm/Save/Form/EmploymentSaveForm.
 import '../screen/VerificationForms/EmploymentForm/Save/Form/EmploymentSaveForm2.dart';
 import '../screen/VerificationForms/EmploymentForm/Save/Form/employmentSaveForm3.dart';
 import '../screen/VerificationForms/EmploymentForm/Update/employmentUpdateForm1.dart';
+import '../screen/VerificationForms/EmploymentForm/Update/employment_update_form_new.dart';
 import '../screen/VerificationForms/EmploymentForm/UploadDoc/employment_upload_document.dart';
 import '../screen/VerificationForms/EmploymentForm/employUpdateDoc/employ_update_doc.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Documents/update/gst_pan_cin_doc_update.dart';
@@ -273,27 +274,27 @@ class AppRouter {
           return const EmploymentSaveFormNew();
         },
       ),
-      GoRoute(
-        path: '/EmploymentSaveForm',
-        name: "EmploymentSaveForm",
-        builder: (context, state) {
-          return const EmploymentSaveForm();
-        },
-      ),
-      GoRoute(
-        path: '/EmploymentSaveForm2',
-        name: "EmploymentSaveForm2",
-        builder: (context, state) {
-          return const EmploymentSaveForm2();
-        },
-      ),
-      GoRoute(
-        path: '/EmploymentSaveForm3',
-        name: "EmploymentSaveForm3",
-        builder: (context, state) {
-          return const EmploymentSaveForm3();
-        },
-      ),
+      // GoRoute(
+      //   path: '/EmploymentSaveForm',
+      //   name: "EmploymentSaveForm",
+      //   builder: (context, state) {
+      //     return const EmploymentSaveForm();
+      //   },
+      // ),
+      // GoRoute(
+      //   path: '/EmploymentSaveForm2',
+      //   name: "EmploymentSaveForm2",
+      //   builder: (context, state) {
+      //     return const EmploymentSaveForm2();
+      //   },
+      // ),
+      // GoRoute(
+      //   path: '/EmploymentSaveForm3',
+      //   name: "EmploymentSaveForm3",
+      //   builder: (context, state) {
+      //     return const EmploymentSaveForm3();
+      //   },
+      // ),
       GoRoute(
         path: '/PendingDoc',
         name: "PendingDoc",
@@ -379,12 +380,22 @@ class AppRouter {
           );
         },
       ),
+      // GoRoute(
+      //   path: '/EmploymentUpdateForm1/:uid',
+      //   name: 'EmploymentUpdateForm1',
+      //   builder: (context, state) {
+      //     final uid = state.pathParameters['uid']!;
+      //     return EmploymentUpdateForm1(
+      //       uid: uid,
+      //     );
+      //   },
+      // ),
       GoRoute(
-        path: '/EmploymentUpdateForm1/:uid',
-        name: 'EmploymentUpdateForm1',
+        path: '/EmploymentUpdateFormNew/:uid',
+        name: 'EmploymentUpdateFormNew',
         builder: (context, state) {
           final uid = state.pathParameters['uid']!;
-          return EmploymentUpdateForm1(
+          return EmploymentUpdateFormNew(
             uid: uid,
           );
         },

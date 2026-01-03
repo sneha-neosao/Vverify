@@ -978,54 +978,15 @@ class ApiService {
         "request_id": employmentSaveFormModel.request_id,
         "customer_id": customer_id,
         "service_request_id": employmentSaveFormModel.service_request_id,
-        "full_name": employmentSaveFormModel.full_name,
-        "company_name": employmentSaveFormModel.company_name,
-        "company_address": employmentSaveFormModel.company_address,
-        "company_city": employmentSaveFormModel.company_city,
-        "company_state": employmentSaveFormModel.company_state,
-        "company_country": employmentSaveFormModel.company_country,
-        "company_postal_code": employmentSaveFormModel.company_postal_code,
-        "industry": employmentSaveFormModel.industry,
-        "job_title": employmentSaveFormModel.job_title,
-        "department": employmentSaveFormModel.department,
-        "employee_code_id": employmentSaveFormModel.employee_code_id,
-        "joining_date_format": employmentSaveFormModel.joining_date_format,
-        "joining_date": employmentSaveFormModel.joining_date,
-        "leaving_date_format": employmentSaveFormModel.leaving_date_format,
-        "exit_date": employmentSaveFormModel.exit_date,
-        "experience_years": employmentSaveFormModel.experience_years,
-        "experience_months": employmentSaveFormModel.experience_months,
+        "employer_name": employmentSaveFormModel.employer_name,
+        "employed_from": employmentSaveFormModel.employed_from,
+        "employed_to": employmentSaveFormModel.employed_to,
+        "designation": employmentSaveFormModel.designation,
+        "remunaration": employmentSaveFormModel.remunaration,
+        "reporting_manager": employmentSaveFormModel.reporting_manager,
         "reason_for_leaving": employmentSaveFormModel.reason_for_leaving,
-        "amount": employmentSaveFormModel.salary,
-        "currency": employmentSaveFormModel.currency,
-        "salary_drawn": employmentSaveFormModel.salaryDrawn,
-        "hr_contact_name": employmentSaveFormModel.hr_contact_name,
-        "hr_contact_email": employmentSaveFormModel.hr_contact_email,
-        "hr_contact_phone": employmentSaveFormModel.hr_contact_phone,
-        "employment_certificate_number":
-            employmentSaveFormModel.employment_certificate_number,
-        // "employment_letter_doc":
-        //     employmentSaveFormModel.employment_letter_doc.path.isEmpty
-        //         ? null
-        //         : await MultipartFile.fromFile(
-        //             employmentSaveFormModel.employment_letter_doc.path,
-        //             filename: employmentSaveFormModel.employment_letter_doc.path
-        //                 .split('/')
-        //                 .last, // Use the file name
-        //           ),
-        "employment_supporting_doc": employmentSaveFormModel
-                .employment_supporting_doc.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                employmentSaveFormModel.employment_supporting_doc.path,
-                filename: employmentSaveFormModel.employment_supporting_doc.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "show_on_report": employmentSaveFormModel.show_on_report,
-        "other_reason_for_leaving":
-            employmentSaveFormModel.other_reason_for_leaving
-      });
+        "employment_supporting_doc": employmentSaveFormModel.employment_supporting_doc,
+        });
 
       print("employSave ${formData.fields}");
 
@@ -1439,47 +1400,17 @@ class ApiService {
       required EmploymentUpdateFormModel employmentUpdateFormModel}) async {
     try {
       FormData formData = FormData.fromMap({
-        "uid": employmentUpdateFormModel.uid,
-        "customer_id": customer_id,
         "request_id": employmentUpdateFormModel.request_id,
+        "customer_id": customer_id,
         "service_request_id": employmentUpdateFormModel.service_request_id,
-        "full_name": employmentUpdateFormModel.full_name,
-        "company_name": employmentUpdateFormModel.company_name,
-        "company_address": employmentUpdateFormModel.company_address,
-        "company_city": employmentUpdateFormModel.company_city,
-        "company_state": employmentUpdateFormModel.company_state,
-        "company_country": employmentUpdateFormModel.company_country,
-        "company_postal_code": employmentUpdateFormModel.company_postal_code,
-        "industry": employmentUpdateFormModel.industry,
-        "job_title": employmentUpdateFormModel.job_title,
-        "department": employmentUpdateFormModel.department,
-        "employee_code_id": employmentUpdateFormModel.employee_code_id,
-        "joining_date": employmentUpdateFormModel.joining_date,
-        "exit_date": employmentUpdateFormModel.exit_date,
-        "experience_years": employmentUpdateFormModel.experience_years,
-        "experience_months": employmentUpdateFormModel.experience_months,
+        "employer_name": employmentUpdateFormModel.employer_name,
+        "employed_from": employmentUpdateFormModel.employed_from,
+        "employed_to": employmentUpdateFormModel.employed_to,
+        "designation": employmentUpdateFormModel.designation,
+        "remunaration": employmentUpdateFormModel.remunaration,
+        "reporting_manager": employmentUpdateFormModel.reporting_manager,
         "reason_for_leaving": employmentUpdateFormModel.reason_for_leaving,
-        "amount": employmentUpdateFormModel.salary,
-        "currency": employmentUpdateFormModel.currency,
-        "hr_contact_name": employmentUpdateFormModel.hr_contact_name,
-        "hr_contact_email": employmentUpdateFormModel.hr_contact_email,
-        "hr_contact_phone": employmentUpdateFormModel.hr_contact_phone,
-        "employment_certificate_number":
-            employmentUpdateFormModel.employment_certificate_number,
-        "employment_supporting_doc":
-            employmentUpdateFormModel.employment_supporting_doc.path.isEmpty
-                ? null
-                : await MultipartFile.fromFile(
-                    employmentUpdateFormModel.employment_supporting_doc.path,
-                    filename: employmentUpdateFormModel
-                        .employment_supporting_doc.path
-                        .split('/')
-                        .last, // Use the file name
-                  ),
-        "show_on_report": employmentUpdateFormModel.show_on_report,
-        "joining_date_format": employmentUpdateFormModel.joining_date_format,
-        "leaving_date_format": employmentUpdateFormModel.leaving_date_format,
-        "salary_drawn": employmentUpdateFormModel.salaryDrawn,
+        "employment_supporting_doc": employmentUpdateFormModel.employment_supporting_doc,
       });
 
       print("employSave ${formData.fields}");
