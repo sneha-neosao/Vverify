@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "106211637862",
+    "project_id": "vverify-c6478",
+    "storage_bucket": "vverify-c6478.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106211637862:android:80aabf67305588813a4ba7",
+        "android_client_info": {
+          "package_name": "com.vverify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV2dJD8dXM0iUQ78Fj58f0F5aO53W8Ui4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
