@@ -1,6 +1,7 @@
 import 'dart:io';
 
 class EmploymentUpdateFormModel {
+  final String uid;
   final String request_id;
   final String service_request_id;
   final String customer_id;
@@ -14,6 +15,7 @@ class EmploymentUpdateFormModel {
   final String employment_supporting_doc;
 
   EmploymentUpdateFormModel({
+    required this.uid,
     required this.request_id,
     required this.service_request_id,
     required this.customer_id,

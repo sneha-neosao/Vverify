@@ -36,7 +36,15 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
   @override
   void initState() {
     employmentControllerRecreateNew();
+    employmentDetailsDataLoad();
     super.initState();
+  }
+
+  void employmentDetailsDataLoad() {
+    String token = context.read<TokenCubit>().state;
+    context
+        .read<EmployShowDataCubit>()
+        .employShowData(token: token, uid: widget.uid);
   }
 
   DateTime _selectedDate = DateTime.now();
@@ -96,6 +104,7 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
         customer_id: customerId,
         token: token,
         employmentUpdateFormModel: EmploymentUpdateFormModel(
+            uid: widget.uid,
             request_id: requestId!,
             service_request_id: serviceRequestId!,
             customer_id: customerId,

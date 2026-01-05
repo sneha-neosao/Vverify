@@ -1335,35 +1335,6 @@ class ApiService {
     }
   }
 
-  Future<Response> EducationFormUpdate(
-      {required String customer_id,
-      required String token,
-      required EducationUpdateFormModel educationUpdateFormModel}) async {
-    try {
-      FormData formData = FormData.fromMap({
-        "uid": educationUpdateFormModel.uid,
-        "customer_id": customer_id,
-        "request_id": educationUpdateFormModel.request_id,
-        "service_request_id": educationUpdateFormModel.service_request_id,
-        "university_name": educationUpdateFormModel.university_name,
-        "institution_name": educationUpdateFormModel.instituition_name,
-        "year_of_passing": educationUpdateFormModel.year_of_passing,
-        "degree_qualification_name": educationUpdateFormModel.degree_qualification_name,
-        "grades_type": educationUpdateFormModel.grades_type,
-        "grades_obtained": educationUpdateFormModel.grades_obtained,
-      });
-
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/education/form/update', data: formData);
-      log('EducationFormUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in EducationFormUpdate: $e');
-      throw Exception('Failed to fetch EducationFormUpdate: $e');
-    }
-  }
-
   Future<Response> educationShowDataDetails({
     required String token,
     required String uid,
@@ -1394,12 +1365,42 @@ class ApiService {
     }
   }
 
+  Future<Response> EducationFormUpdate(
+      {required String customer_id,
+        required String token,
+        required EducationUpdateFormModel educationUpdateFormModel}) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "uid": educationUpdateFormModel.uid,
+        "customer_id": customer_id,
+        "request_id": educationUpdateFormModel.request_id,
+        "service_request_id": educationUpdateFormModel.service_request_id,
+        "university_name": educationUpdateFormModel.university_name,
+        "institution_name": educationUpdateFormModel.instituition_name,
+        "year_of_passing": educationUpdateFormModel.year_of_passing,
+        "degree_qualification_name": educationUpdateFormModel.degree_qualification_name,
+        "grades_type": educationUpdateFormModel.grades_type,
+        "grades_obtained": educationUpdateFormModel.grades_obtained,
+      });
+
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/education/form/update', data: formData);
+      log('EducationFormUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in EducationFormUpdate: $e');
+      throw Exception('Failed to fetch EducationFormUpdate: $e');
+    }
+  }
+
   Future<Response> employmentUpdateForm(
       {required String token,
       required String customer_id,
       required EmploymentUpdateFormModel employmentUpdateFormModel}) async {
     try {
       FormData formData = FormData.fromMap({
+        "uid": employmentUpdateFormModel.uid,
         "request_id": employmentUpdateFormModel.request_id,
         "customer_id": customer_id,
         "service_request_id": employmentUpdateFormModel.service_request_id,
