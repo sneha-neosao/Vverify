@@ -170,7 +170,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         break;
       case "name-address-verifcation":
         data[index].services![servicesIndex].dataPreference == "form"
-            ? context.pushNamed("NameAddressVerificationUpdate",
+            ? context.pushNamed("NameAddressVerificationUpdateNew",
                 pathParameters: {
                     'uid': data[index].services![servicesIndex].uid.toString()
                   })

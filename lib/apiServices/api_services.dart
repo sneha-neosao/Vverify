@@ -719,35 +719,21 @@ class ApiService {
   Future<Response> NameAddressStore(
       {required String token,
       required String customer_id,
-      required NameAddressVerificationModel
-          nameAddressVerificationModel}) async {
+      required NameAddressVerificationModel nameAddressVerificationModel}) async {
     FormData formData = FormData.fromMap({
       "customer_id": customer_id,
       "request_id": nameAddressVerificationModel.request_id,
       "service_request_id": nameAddressVerificationModel.service_request_id,
-      "person_name": nameAddressVerificationModel.person_name,
-      "address_line_1": nameAddressVerificationModel.address_line_1,
-      "address_line_2": nameAddressVerificationModel.address_line_2,
-      "city": nameAddressVerificationModel.city_id,
-      "pincode": nameAddressVerificationModel.pinCode,
-      "aadhaar_front_side":
-          nameAddressVerificationModel.aadhaar_front_side.path.isEmpty
-              ? null
-              : await MultipartFile.fromFile(
-                  nameAddressVerificationModel.aadhaar_front_side.path,
-                  filename: nameAddressVerificationModel.aadhaar_front_side.path
-                      .split('/')
-                      .last, // Use the file name
-                ),
-      "aadhaar_back_side":
-          nameAddressVerificationModel.aadhaar_back_side.path.isEmpty
-              ? null
-              : await MultipartFile.fromFile(
-                  nameAddressVerificationModel.aadhaar_back_side.path,
-                  filename: nameAddressVerificationModel.aadhaar_back_side.path
-                      .split('/')
-                      .last, // Use the file name
-                )
+      "current_address_line_1": nameAddressVerificationModel.current_address_line_1,
+      "current_address_line_2": nameAddressVerificationModel.current_address_line_2,
+      "current_city": nameAddressVerificationModel.current_city_id,
+      "current_state": nameAddressVerificationModel.current_state,
+      "current_postal_code": nameAddressVerificationModel.current_pinCode,
+      "permanent_address_line_1": nameAddressVerificationModel.permanent_address_line_1,
+      "permanent_address_line_2": nameAddressVerificationModel.permanent_address_line_2,
+      "permanent_city": nameAddressVerificationModel.permanent_city_id,
+      "permanent_state": nameAddressVerificationModel.permanent_state,
+      "permanent_postal_code": nameAddressVerificationModel.permanent_pinCode,
     });
 
     try {
@@ -770,33 +756,17 @@ class ApiService {
     FormData formData = FormData.fromMap({
       "customer_id": customer_id,
       "request_id": nameAddressVerificationUpdateModel.request_id,
-      "service_request_id":
-          nameAddressVerificationUpdateModel.service_request_id,
-      "person_name": nameAddressVerificationUpdateModel.person_name,
-      "address_line_1": nameAddressVerificationUpdateModel.address_line_1,
-      "address_line_2": nameAddressVerificationUpdateModel.address_line_2,
-      "city": nameAddressVerificationUpdateModel.city_id,
-      "pincode": nameAddressVerificationUpdateModel.pincode,
-      "aadhaar_front_side":
-          nameAddressVerificationUpdateModel.aadhaar_front_side.path.isEmpty
-              ? null
-              : await MultipartFile.fromFile(
-                  nameAddressVerificationUpdateModel.aadhaar_front_side.path,
-                  filename: nameAddressVerificationUpdateModel
-                      .aadhaar_front_side.path
-                      .split('/')
-                      .last, // Use the file name
-                ),
-      "aadhaar_back_side":
-          nameAddressVerificationUpdateModel.aadhaar_back_side.path.isEmpty
-              ? null
-              : await MultipartFile.fromFile(
-                  nameAddressVerificationUpdateModel.aadhaar_back_side.path,
-                  filename: nameAddressVerificationUpdateModel
-                      .aadhaar_back_side.path
-                      .split('/')
-                      .last, // Use the file name
-                )
+      "service_request_id": nameAddressVerificationUpdateModel.service_request_id,
+      "current_address_line_1": nameAddressVerificationUpdateModel.current_address_line_1,
+      "current_address_line_2": nameAddressVerificationUpdateModel.current_address_line_2,
+      "current_city": nameAddressVerificationUpdateModel.current_city_id,
+      "current_state": nameAddressVerificationUpdateModel.current_state,
+      "current_postal_code": nameAddressVerificationUpdateModel.current_pinCode,
+      "permanent_address_line_1": nameAddressVerificationUpdateModel.permanent_address_line_1,
+      "permanent_address_line_2": nameAddressVerificationUpdateModel.permanent_address_line_2,
+      "permanent_city": nameAddressVerificationUpdateModel.permanent_city_id,
+      "permanent_state": nameAddressVerificationUpdateModel.permanent_state,
+      "permanent_postal_code": nameAddressVerificationUpdateModel.permanent_pinCode,
     });
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';

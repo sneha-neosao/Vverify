@@ -93,7 +93,7 @@ void secondCheckCase(
       break;
     case "Fullname and address verification":
       data.data![index].services![servicesIndex].dataPreference == "form"
-          ? context.pushNamed("NameAddressVerificationUpdate", pathParameters: {
+          ? context.pushNamed("NameAddressVerificationUpdateNew", pathParameters: {
               'uid': data.data![index].services![servicesIndex].uid.toString()
             })
           : context.pushNamed("NameAddressDocUpdate", pathParameters: {

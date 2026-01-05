@@ -24,15 +24,20 @@ class NameAddressVerificationFormNew extends StatefulWidget {
       _NameAddressVerificationFormNewState();
 }
 
-class _NameAddressVerificationFormNewState
-    extends State<NameAddressVerificationFormNew> {
-  TextEditingController line1AddressController = TextEditingController();
-  TextEditingController line2AddressController = TextEditingController();
-  TextEditingController cityAddressController = TextEditingController();
-  TextEditingController stateAddressController = TextEditingController();
-  TextEditingController pinCodeController = TextEditingController();
-  TextEditingController residingFromAddressController = TextEditingController();
-  TextEditingController residingToAddressController = TextEditingController();
+class _NameAddressVerificationFormNewState extends State<NameAddressVerificationFormNew> {
+
+  bool isSameAddress = false;
+
+  TextEditingController currentLine1AddressController = TextEditingController();
+  TextEditingController currentLine2AddressController = TextEditingController();
+  TextEditingController currentCityAddressController = TextEditingController();
+  TextEditingController currentStateAddressController = TextEditingController();
+  TextEditingController currentPinCodeController = TextEditingController();
+  TextEditingController permanentLine1AddressController = TextEditingController();
+  TextEditingController permanentLine2AddressController = TextEditingController();
+  TextEditingController permanentCityAddressController = TextEditingController();
+  TextEditingController permanentStateAddressController = TextEditingController();
+  TextEditingController permanentPinCodeController = TextEditingController();
 
   @override
   void initState() {
@@ -41,13 +46,16 @@ class _NameAddressVerificationFormNewState
 
   @override
   void dispose() {
-    line1AddressController.dispose();
-    line2AddressController.dispose();
-    cityAddressController.dispose();
-    stateAddressController.dispose();
-    residingFromAddressController.dispose();
-    residingToAddressController.dispose();
-
+    currentCityAddressController.dispose();
+    currentLine2AddressController.dispose();
+    currentCityAddressController.dispose();
+    currentStateAddressController.dispose();
+    currentPinCodeController.dispose();
+    permanentLine1AddressController.dispose();
+    permanentLine2AddressController.dispose();
+    permanentCityAddressController.dispose();
+    permanentStateAddressController.dispose();
+    permanentPinCodeController.dispose();
     super.dispose();
   }
 
@@ -62,25 +70,18 @@ class _NameAddressVerificationFormNewState
         nameAddressVerificationModel: NameAddressVerificationModel(
             request_id: requestId!,
             service_request_id: serviceRequestId!,
-            person_name: personNameController.text,
-            aadhaar_front_side: context
-                .read<NameAddressAadhaarFrontSideCubit>()
-                .state
-                .path
-                .isEmpty
-                ? File("")
-                : context.read<NameAddressAadhaarFrontSideCubit>().state,
-            aadhaar_back_side: context
-                .read<NameAddressAadhaarBackSideCubit>()
-                .state
-                .path
-                .isEmpty
-                ? File("")
-                : context.read<NameAddressAadhaarBackSideCubit>().state,
-            address_line_1: line1AddressController.text,
-            address_line_2: line2AddressController.text,
-            city_id: cityAddressController.text,
-            pinCode: pinCodeController.text));
+            current_address_line_1: currentLine1AddressController.text,
+            current_address_line_2: currentLine2AddressController.text,
+            current_city_id: currentCityAddressController.text,
+            current_state: currentStateAddressController.text,
+            current_pinCode: currentPinCodeController.text,
+            permanent_address_line_1: isSameAddress ? currentLine1AddressController.text : permanentLine1AddressController.text,
+            permanent_address_line_2: isSameAddress ? currentLine2AddressController.text : permanentLine2AddressController.text,
+            permanent_city_id: isSameAddress ? currentCityAddressController.text : permanentCityAddressController.text,
+            permanent_state: isSameAddress ? currentStateAddressController.text : permanentStateAddressController.text,
+            permanent_pinCode: isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text
+        )
+    );
   }
 
   void pickImageClear() {
@@ -138,11 +139,11 @@ class _NameAddressVerificationFormNewState
                                 onTap: () {
                                   context
                                       .pushReplacementNamed("NameAddressDocUpload");
-          
+
                                   context
                                       .read<FormUploadNameAddressCubit>()
                                       .formUploadYesNo(yesNo: false);
-          
+
                                   context
                                       .read<FormUploadNameAddressCubit>()
                                       .formUploadYesNo(yesNo: true);
@@ -165,7 +166,7 @@ class _NameAddressVerificationFormNewState
                     height: 16,
                   ),
                   Text(
-                    "Person's Details",
+                    "Person's Current Address",
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: Theme.of(context).primaryColorDark, fontSize: 16),
                   ),
@@ -173,101 +174,87 @@ class _NameAddressVerificationFormNewState
                     height: 16,
                   ),
                   FormFieldNotRequired(
-                      controller: line1AddressController,
+                      controller: currentLine1AddressController,
                       titleText: "Address Line 1",
                       hintText: "Enter Line 1 Address",
                       textInputType: TextInputType.text),
                   FormFieldNotRequired(
-                      controller: line2AddressController,
+                      controller: currentLine2AddressController,
                       titleText: "Address Line 2",
                       hintText: "Enter Line 2 Address",
                       textInputType: TextInputType.text),
                   FormFieldNotRequired(
-                      controller: cityAddressController,
+                      controller: currentCityAddressController,
                       titleText: "City",
                       hintText: "Enter City",
                       textInputType: TextInputType.text),
                   FormFieldNotRequired(
-                      controller: stateAddressController,
+                      controller: currentStateAddressController,
                       titleText: "State",
                       hintText: "Enter State",
                       textInputType: TextInputType.text),
                   FormFieldNotRequired(
                       maskFormatter: [pinMask],
-                      controller: pinCodeController,
+                      controller: currentPinCodeController,
                       titleText: 'Postal Code',
                       hintText: "Enter Postal Code",
                       textInputType: TextInputType.number),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Text(
+                    "Person's Permanent Address",
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Theme.of(context).primaryColorDark, fontSize: 16),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: isSameAddress,
+                        onChanged: (value) {
+                          setState(() {
+                            isSameAddress = value!;
+                          });
+                        },
+                        side: const BorderSide(
+                          color: Colors.orange,
+                          width: 2,
+                        ),
+                        activeColor: Colors.orange,
+                        checkColor: Colors.white,
+                      ),
+                      const Text("Same as Current Address"),
+                    ],
+                  ),
                   FormFieldNotRequired(
-                      controller: residingFromAddressController,
-                      titleText: 'Residing From',
-                      hintText: "Enter Residing From",
+                      controller: isSameAddress ? currentLine1AddressController : permanentLine1AddressController,
+                      titleText: "Address Line 1",
+                      hintText: "Enter Line 1 Address",
                       textInputType: TextInputType.text),
                   FormFieldNotRequired(
-                      controller: residingToAddressController,
-                      titleText: 'Residing To',
-                      hintText: "Enter Residing To",
+                      controller: isSameAddress ? currentLine2AddressController : permanentLine2AddressController,
+                      titleText: "Address Line 2",
+                      hintText: "Enter Line 2 Address",
                       textInputType: TextInputType.text),
-                  // const SizedBox(
-                  //   height: 16,
-                  // ),
-                  // BlocBuilder<NameAddressAadhaarFrontSideCubit, File>(
-                  //     builder: (context, aadhaarFront) {
-                  //       //  return SizedBox();
-                  //       return PickPhoto(
-                  //         starRemove: "remove",
-                  //         mainTitle: "Upload Document Proof Front Side",
-                  //         widthSize: double.infinity,
-                  //         onPressedPickImage: () {
-                  //           context
-                  //               .read<NameAddressAadhaarFrontSideCubit>()
-                  //               .pickFile()
-                  //               .then((_) {
-                  //             context.pop();
-                  //           });
-                  //         },
-                  //         onPressedTakePhoto: () {
-                  //           context
-                  //               .read<NameAddressAadhaarFrontSideCubit>()
-                  //               .pickImageFromCamera()
-                  //               .then((_) {
-                  //             context.pop();
-                  //           });
-                  //         },
-                  //         title: 'Document Front Side',
-                  //         image: aadhaarFront,
-                  //       );
-                  //     }),
-                  // const SizedBox(
-                  //   height: 16,
-                  // ),
-                  // BlocBuilder<NameAddressAadhaarBackSideCubit, File>(
-                  //     builder: (context, aadhaarBack) {
-                  //       //return SizedBox();
-                  //       return PickPhoto(
-                  //         starRemove: "remove",
-                  //         mainTitle: "Upload Document Proof Back Side",
-                  //         widthSize: double.infinity,
-                  //         onPressedPickImage: () {
-                  //           context
-                  //               .read<NameAddressAadhaarBackSideCubit>()
-                  //               .pickFile()
-                  //               .then((_) {
-                  //             context.pop();
-                  //           });
-                  //         },
-                  //         onPressedTakePhoto: () {
-                  //           context
-                  //               .read<NameAddressAadhaarBackSideCubit>()
-                  //               .pickImageFromCamera()
-                  //               .then((_) {
-                  //             context.pop();
-                  //           });
-                  //         },
-                  //         title: 'Document Back Side',
-                  //         image: aadhaarBack,
-                  //       );
-                  //     }),
+                  FormFieldNotRequired(
+                      controller: isSameAddress ? currentCityAddressController : permanentCityAddressController,
+                      titleText: "City",
+                      hintText: "Enter City",
+                      textInputType: TextInputType.text),
+                  FormFieldNotRequired(
+                      controller: isSameAddress ? currentStateAddressController : permanentStateAddressController,
+                      titleText: "State",
+                      hintText: "Enter State",
+                      textInputType: TextInputType.text),
+                  FormFieldNotRequired(
+                      maskFormatter: [pinMask],
+                      controller: isSameAddress ? currentPinCodeController : permanentPinCodeController,
+                      titleText: 'Postal Code',
+                      hintText: "Enter Postal Code",
+                      textInputType: TextInputType.number),
                   const SizedBox(height: 24),
                   BlocConsumer<NameAddressVerificationFormCubit,
                       NameAddressVerificationState>(

@@ -3,24 +3,29 @@ import 'dart:io';
 class NameAddressVerificationUpdateModel {
   final String request_id;
   final String service_request_id;
-  final String person_name;
-  final String address_line_1;
-  final String address_line_2;
-  final String city_id;
-  final String pincode;
-  final File aadhaar_front_side;
-  final File aadhaar_back_side;
+  final String current_address_line_1;
+  final String current_address_line_2;
+  final String current_city_id;
+  final String current_state;
+  final String current_pinCode;
+  final String permanent_address_line_1;
+  final String permanent_address_line_2;
+  final String permanent_city_id;
+  final String permanent_state;
+  final String permanent_pinCode;
 
   NameAddressVerificationUpdateModel(
       {required this.request_id,
       required this.service_request_id,
-      required this.person_name,
-      required this.address_line_1,
-      required this.address_line_2,
-      required this.city_id,
-      required this.pincode,
-      required this.aadhaar_front_side,
-      required this.aadhaar_back_side});
-
-
+        required this.current_address_line_1,
+        required this.current_address_line_2,
+        required this.current_city_id,
+        required this.current_state,
+        required this.current_pinCode,
+        required this.permanent_address_line_1,
+        required this.permanent_address_line_2,
+        required this.permanent_city_id,
+        required this.permanent_state,
+        required this.permanent_pinCode
+      });
 }

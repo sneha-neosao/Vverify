@@ -12,6 +12,7 @@ import 'package:v_verify/screen/VerificationForms/EducationVerification/SaveForm
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Update/education_save_form_update_new.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentForm/Save/Form/EmploymentSaveFormNew.dart';
 import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Save/address_varification_form_new.dart';
+import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Update/name_address_verification_update_new.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/verify_request_update_new.dart';
 
 import '../screen/Add Signature/add_signature.dart';
@@ -440,12 +441,22 @@ class AppRouter {
           );
         },
       ),
+      // GoRoute(
+      //   path: '/NameAddressVerificationUpdate/:uid',
+      //   name: 'NameAddressVerificationUpdate',
+      //   builder: (context, state) {
+      //     final uid = state.pathParameters['uid']!;
+      //     return NameAddressVerificationUpdate(
+      //       uid: uid,
+      //     );
+      //   },
+      // ),
       GoRoute(
-        path: '/NameAddressVerificationUpdate/:uid',
-        name: 'NameAddressVerificationUpdate',
+        path: '/NameAddressVerificationUpdateNew/:uid',
+        name: 'NameAddressVerificationUpdateNew',
         builder: (context, state) {
           final uid = state.pathParameters['uid']!;
-          return NameAddressVerificationUpdate(
+          return NameAddressVerificationUpdateNew(
             uid: uid,
           );
         },

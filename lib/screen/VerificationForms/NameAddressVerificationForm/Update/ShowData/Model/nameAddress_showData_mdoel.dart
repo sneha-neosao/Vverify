@@ -37,15 +37,16 @@ class Data {
   String? uid;
   int? serviceRequestId;
   int? requestId;
-  String? personName;
-  String? personPermanentAddress;
-  String? addressLine1;
-  String? addressLine2;
-  String? city;
-  String? pincode;
-  dynamic aadhaarFrontSide;
-  dynamic aadhaarBackSide;
-  String? status;
+  final String? current_address_line_1;
+  final String? current_address_line_2;
+  final String? current_city_id;
+  final String? current_state;
+  final String? current_pinCode;
+  final String? permanent_address_line_1;
+  final String? permanent_address_line_2;
+  final String? permanent_city_id;
+  final String? permanent_state;
+  final String? permanent_pinCode;
   String? dataPreference;
   String? reason;
 
@@ -54,15 +55,16 @@ class Data {
     this.uid,
     this.serviceRequestId,
     this.requestId,
-    this.personName,
-    this.personPermanentAddress,
-    this.addressLine1,
-    this.addressLine2,
-    this.city,
-    this.pincode,
-    this.aadhaarFrontSide,
-    this.aadhaarBackSide,
-    this.status,
+    required this.current_address_line_1,
+    required this.current_address_line_2,
+    required this.current_city_id,
+    required this.current_state,
+    required this.current_pinCode,
+    required this.permanent_address_line_1,
+    required this.permanent_address_line_2,
+    required this.permanent_city_id,
+    required this.permanent_state,
+    required this.permanent_pinCode,
     this.dataPreference,
     this.reason,
   });
@@ -72,15 +74,16 @@ class Data {
     uid: json["uid"],
     serviceRequestId: json["service_request_id"],
     requestId: json["request_id"],
-    personName: json["person_name"],
-    personPermanentAddress: json["person_permanent_address"],
-    addressLine1: json["address_line_1"],
-    addressLine2: json["address_line_2"],
-    city: json["city"],
-    pincode: json["pincode"],
-    aadhaarFrontSide: json["aadhaar_front_side"],
-    aadhaarBackSide: json["aadhaar_back_side"],
-    status: json["status"],
+    current_address_line_1: json["current_address_line_1"],
+    current_address_line_2: json["current_address_line_2"],
+    current_city_id: json["current_city_id"],
+    current_state: json["current_state"],
+    current_pinCode: json["current_pinCode"],
+    permanent_address_line_1: json["permanent_address_line_1"],
+    permanent_address_line_2: json["permanent_address_line_2"],
+    permanent_city_id: json["permanent_city_id"],
+    permanent_state: json["permanent_state"],
+    permanent_pinCode: json["permanent_pinCode"],
     dataPreference: json["data_preference"],
     reason: json["reason"],
   );
@@ -90,15 +93,16 @@ class Data {
     "uid": uid,
     "service_request_id": serviceRequestId,
     "request_id": requestId,
-    "person_name": personName,
-    "person_permanent_address": personPermanentAddress,
-    "address_line_1": addressLine1,
-    "address_line_2": addressLine2,
-    "city": city,
-    "pincode": pincode,
-    "aadhaar_front_side": aadhaarFrontSide,
-    "aadhaar_back_side": aadhaarBackSide,
-    "status": status,
+    "current_address_line_1": current_address_line_1,
+    "current_address_line_2": current_address_line_2,
+    "current_city_id": current_city_id,
+    "current_state": current_state,
+    "current_pinCode": current_pinCode,
+    "permanent_address_line_1": permanent_address_line_1,
+    "permanent_address_line_2": permanent_address_line_2,
+    "permanent_city_id": permanent_city_id,
+    "permanent_state": permanent_state,
+    "permanent_pinCode": permanent_pinCode,
     "data_preference": dataPreference,
     "reason": reason,
   };
