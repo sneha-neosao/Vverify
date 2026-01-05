@@ -982,6 +982,7 @@ class ApiService {
         "employed_from": employmentSaveFormModel.employed_from,
         "employed_to": employmentSaveFormModel.employed_to,
         "designation": employmentSaveFormModel.designation,
+        "department": employmentSaveFormModel.department,
         "remunaration": employmentSaveFormModel.remunaration,
         "reporting_manager": employmentSaveFormModel.reporting_manager,
         "reason_for_leaving": employmentSaveFormModel.reason_for_leaving,
@@ -1408,6 +1409,7 @@ class ApiService {
         "employed_from": employmentUpdateFormModel.employed_from,
         "employed_to": employmentUpdateFormModel.employed_to,
         "designation": employmentUpdateFormModel.designation,
+        "department": employmentUpdateFormModel.department,
         "remunaration": employmentUpdateFormModel.remunaration,
         "reporting_manager": employmentUpdateFormModel.reporting_manager,
         "reason_for_leaving": employmentUpdateFormModel.reason_for_leaving,
@@ -1682,7 +1684,6 @@ class ApiService {
       required String uid,
       required String request_id,
       required String service_request_id,
-      required File employment_letter_doc,
       required File employment_supporting_doc}) async {
     try {
       FormData formData = FormData.fromMap({
@@ -1690,23 +1691,28 @@ class ApiService {
         "customer_id": customer_id,
         "request_id": request_id,
         "service_request_id": service_request_id,
-        "employment_letter_doc": employment_letter_doc.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                employment_letter_doc.path,
-                filename: employment_letter_doc.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
         "employment_supporting_doc": employment_supporting_doc.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-                employment_supporting_doc.path,
-                filename: employment_supporting_doc.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
+          employment_supporting_doc.path,
+          filename: employment_supporting_doc.path
+              .split('/')
+              .last, // Use the file name
+        ),
       });
+      log("---- EMPLOYMENT UPDATE DOC REQUEST ----");
+
+      for (var field in formData.fields) {
+        log("FIELD ➜ ${field.key} : ${field.value}");
+      }
+
+      for (var file in formData.files) {
+        log("FILE ➜ ${file.key}");
+        log("    filename : ${file.value.filename}");
+        log("    contentType : ${file.value.contentType}");
+      }
+
+      log("--------------------------------------");
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/employment/document/update', data: formData);

@@ -207,7 +207,7 @@ Future<void> pickFile() async {
                                                   Text(
                                                     data.data![index].employer_name?.trim().isEmpty ?? true
                                                         ? "NA"
-                                                        : data.data![index].employed_from!,
+                                                        : data.data![index].employer_name!,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -322,7 +322,7 @@ Future<void> pickFile() async {
                                                 CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    "Renumeration",
+                                                    "Remuneration",
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall!
@@ -333,6 +333,56 @@ Future<void> pickFile() async {
                                                     data.data![index].remunaration?.trim().isEmpty ?? true
                                                         ? "NA"
                                                         : data.data![index].remunaration!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 8,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Reporting Manager",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                        color: Colors.grey),
+                                                  ),
+                                                  Text(
+                                                    data.data![index].reporting_manager?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].reporting_manager!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 8,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Reason For Leaving",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                        color: Colors.grey),
+                                                  ),
+                                                  Text(
+                                                    data.data![index].reason_for_leaving?.trim().isEmpty ?? true
+                                                        ? "NA"
+                                                        : data.data![index].reason_for_leaving!,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -478,7 +528,7 @@ Future<void> pickFile() async {
                                                 "Your application already verified")));
                                       } else {
                                         context.pushReplacementNamed(
-                                            "EducationDocUpdate",
+                                            "EmployUpdateDoc",
                                             pathParameters: {
                                               'uid': data.data![index].uid
                                                   .toString()

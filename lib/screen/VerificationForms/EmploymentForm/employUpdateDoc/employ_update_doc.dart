@@ -35,21 +35,22 @@ class _EmployUpdateDocState extends State<EmployUpdateDoc> {
         uid: widget.uid,
         request_id: requestId!,
         service_request_id: serviceRequestId!,
-        employment_letter_doc: context.read<EmploymentSupportDocument>().state,
-        employment_supporting_doc:
-            context.read<EmploymentMarkSheetDocument>().state);
+        // employment_letter_doc: context.read<EmploymentSupportDocument>().state,
+        employment_supporting_doc: context.read<EmploymentSupportDocument>().state);
   }
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
+    print("Uid : ${widget.uid}");
     employShowData();
     super.initState();
   }
 
   void employShowData() {
     String token = context.read<TokenCubit>().state;
+    print("Uid : ${widget.uid}");
     context
         .read<EmployShowDataCubit>()
         .employShowData(token: token, uid: widget.uid);
@@ -98,7 +99,7 @@ class _EmployUpdateDocState extends State<EmployUpdateDoc> {
                     height: 4,
                   ),
                   Text(
-                    data.data!.verification_remark!,
+                    data.data!.verification_remark ?? "",
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall!
@@ -149,9 +150,9 @@ class _EmployUpdateDocState extends State<EmployUpdateDoc> {
                       if (employDoc.data["status"] == 200) {
                         context.pushReplacementNamed("EmployDataList");
                         context.read<EmploymentSupportDocument>().clearImage();
-                        context
-                            .read<EmploymentMarkSheetDocument>()
-                            .clearImage();
+                        // context
+                        //     .read<EmploymentMarkSheetDocument>()
+                        //     .clearImage();
                       }
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(employDoc.data["message"])));

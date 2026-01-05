@@ -97,6 +97,7 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
             employed_from: joinDateController.text,
             employed_to: leaveDateController.text,
             designation: employmentTextControllerNew.employmentDesignationController.text,
+            department: employmentTextControllerNew.employmentDepartmentController.text,
             remunaration: employmentTextControllerNew.employmentRemunerationController.text,
             reporting_manager: employmentTextControllerNew.employmentReportingManagerController.text,
             reason_for_leaving: employmentTextControllerNew.employmentReasonForLeavingController.text,

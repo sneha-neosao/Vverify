@@ -14,7 +14,6 @@ class EmployDocUpdateCubit extends Cubit<EmployDocUpdateState> {
     required String customer_id,
     required String uid,
     required String service_request_id,
-    required File employment_letter_doc,
     required File employment_supporting_doc,
 
   }) async {
@@ -26,7 +25,6 @@ class EmployDocUpdateCubit extends Cubit<EmployDocUpdateState> {
           uid: uid,
           request_id: request_id,
           service_request_id: service_request_id,
-          employment_letter_doc: employment_letter_doc,
           employment_supporting_doc: employment_supporting_doc);
       if (response.data != null && response.data.containsKey("status")) {
         if (response.data["status"] == 200) {

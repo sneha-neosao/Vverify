@@ -99,7 +99,7 @@ class Data {
     employer_name: json["employer_name"],
     employed_from: json["employed_from"],
     employed_to: json["employed_to"],
-    designation: json["department"],
+    designation: json["designation"],
     department: json["department"],
     remunaration: json["remunaration"],
     reporting_manager: json["reporting_manager"],

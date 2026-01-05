@@ -80,42 +80,42 @@ class EmploymentSupportDocument extends Cubit<File> {
   }
 }
 
-class EmploymentMarkSheetDocument extends Cubit<File> {
-  EmploymentMarkSheetDocument() : super(File(""));
-
-  Future<void> pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
-    );
-
-    if (result != null) {
-      File file = File(result.files.single.path!);
-
-      emit(file);
-      print("pdfFile${result.files.single.name}");
-      print("pdfFile${result.files.single.path!}");
-    } else {
-      // User canceled the picker
-    }
-  }
-
-  final ImagePicker _picker = ImagePicker();
-
-  // Pick an image using the camera
-  Future<void> pickImageFromCamera() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-    if (image != null) {
-      emit(File(image.path));
-      // _image = File(image.path);
-      
-    }
-  }
-
-  void clearImage() {
-    emit(File(""));
-  }
-}
+// class EmploymentMarkSheetDocument extends Cubit<File> {
+//   EmploymentMarkSheetDocument() : super(File(""));
+//
+//   Future<void> pickFile() async {
+//     FilePickerResult? result = await FilePicker.platform.pickFiles(
+//       type: FileType.custom,
+//       allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
+//     );
+//
+//     if (result != null) {
+//       File file = File(result.files.single.path!);
+//
+//       emit(file);
+//       print("pdfFile${result.files.single.name}");
+//       print("pdfFile${result.files.single.path!}");
+//     } else {
+//       // User canceled the picker
+//     }
+//   }
+//
+//   final ImagePicker _picker = ImagePicker();
+//
+//   // Pick an image using the camera
+//   Future<void> pickImageFromCamera() async {
+//     final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+//     if (image != null) {
+//       emit(File(image.path));
+//       // _image = File(image.path);
+//
+//     }
+//   }
+//
+//   void clearImage() {
+//     emit(File(""));
+//   }
+// }
 
 class EmploymentSupportDocumentImage extends Cubit<File> {
   EmploymentSupportDocumentImage() : super(File(""));

@@ -260,8 +260,8 @@ class MyApp extends StatelessWidget {
             create: (_) => NameAddressShowDataCubit(ApiService())),
         BlocProvider<EmploymentSupportDocument>(
             create: (_) => EmploymentSupportDocument()),
-        BlocProvider<EmploymentMarkSheetDocument>(
-            create: (_) => EmploymentMarkSheetDocument()),
+        // BlocProvider<EmploymentMarkSheetDocument>(
+        //     create: (_) => EmploymentMarkSheetDocument()),
         BlocProvider<EducationDocFileCubit>(
             create: (_) => EducationDocFileCubit()),
         BlocProvider<DrivingLicenceBloc>(

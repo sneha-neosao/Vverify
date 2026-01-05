@@ -9,6 +9,7 @@ class EmploymentUpdateFormModel {
   final String employed_from;
   final String employed_to;
   final String designation;
+  final String department;
   final String remunaration;
   final String reporting_manager;
   final String reason_for_leaving;
@@ -23,6 +24,7 @@ class EmploymentUpdateFormModel {
     required this.employed_from,
     required this.employed_to,
     required this.designation,
+    required this.department,
     required this.remunaration,
     required this.reporting_manager,
     required this.reason_for_leaving,

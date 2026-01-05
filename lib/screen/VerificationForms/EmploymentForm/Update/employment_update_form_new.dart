@@ -112,6 +112,7 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
             employed_from: joinDateController.text,
             employed_to: leaveDateController.text,
             designation: employmentTextControllerNew.employmentDesignationController.text,
+            department: employmentTextControllerNew.employmentDepartmentController.text,
             remunaration: employmentTextControllerNew.employmentRemunerationController.text,
             reporting_manager: employmentTextControllerNew.employmentReportingManagerController.text,
             reason_for_leaving: employmentTextControllerNew.employmentReasonForLeavingController.text,
@@ -143,18 +144,11 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
                   employmentTextControllerNew.employmentEmployerNameController.text = data.data!.employer_name ?? "";
                   joinDateController.text = data.data!.employed_from ?? "";
                   leaveDateController.text = data.data!.employed_to ?? "";
-                  employmentTextControllerNew.employmentDesignationController.text = data.data!.designation.toString() ?? "";
+                  employmentTextControllerNew.employmentDesignationController.text = data.data!.designation ?? "";
+                  employmentTextControllerNew.employmentDepartmentController.text = data.data!.department ?? "";
                   employmentTextControllerNew.employmentRemunerationController.text = data.data!.remunaration ?? "";
                   employmentTextControllerNew.employmentReportingManagerController.text = data.data!.reporting_manager ?? "";
                   employmentTextControllerNew.employmentReasonForLeavingController.text = data.data!.reason_for_leaving ?? "";
-
-                  // // Set the dropdown initially if API provides value
-                  // setState(() {
-                  //   selectedGrade = gradeValues.contains(data.data!.gradesType)
-                  //       ? data.data!.gradesType
-                  //       : null; // null means hint will show
-                  // });
-
                 }
               }, builder: (context, educationData) {
                 if (educationData is EmployShowDataLoadingState) {
