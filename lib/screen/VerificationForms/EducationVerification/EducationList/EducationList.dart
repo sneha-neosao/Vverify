@@ -113,6 +113,17 @@ class _EducationListState extends State<EducationList> {
               height: 16,
             ),
             CustomButton(
+              onTap: () => context.pushReplacement("/EducationSaveFormNew"),
+              text: "Add Documents",
+              gradientColors: [
+                Theme.of(context).primaryColor,
+                Theme.of(context).primaryColorDark,
+              ],
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            CustomButton(
               onTap: () {
                 selectedIndex = 0;
                 context.go("/bottomNav");

@@ -117,370 +117,429 @@ class _CompleteProfileState extends State<CompleteProfile> {
         TextEditingController(text: widget.mobileNum);
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 70, left: 16, right: 16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                    child: Text("Complete Profile",
-                        style: Theme.of(context).textTheme.titleMedium)),
-                const SizedBox(height: 16),
-                Text(
-                  textAlign: TextAlign.center,
-                  "Please complete your profile so we can learn more about you.",
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(
-                  height: 32,
-                ),
-                Center(
-                  child: Text(
-                    "Add Profile Image",
-                    style: Theme.of(context).textTheme.bodyLarge,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                      child: Text("Complete Profile",
+                          style: Theme.of(context).textTheme.titleMedium)),
+                  const SizedBox(height: 16),
+                  Text(
+                    textAlign: TextAlign.center,
+                    "Please complete your profile so we can learn more about you.",
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Center(
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(50),
-                    radius: 50,
-                    onTap: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      showDialog<String>(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          backgroundColor: Theme.of(context).primaryColorLight,
-                          title: Text(
-                            'Select Profile Image',
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  Center(
+                    child: Text(
+                      "Add Profile Image",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Center(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(50),
+                      radius: 50,
+                      onTap: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            backgroundColor: Theme.of(context).primaryColorLight,
+                            title: Text(
+                              'Select Profile Image',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(color: Colors.white),
+                            ),
+                            content: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SizedBox(
+                                  height: 100,
+                                  child: Column(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            _pickImageFromGallery().then((_) {
+                                              context.pop();
+                                            });
+                                          },
+                                          icon: const Icon(
+                                            Icons.photo,
+                                            size: 40,
+                                            color: Colors.white,
+                                          )),
+                                      Text("Pick image",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .copyWith(color: Colors.white))
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 100,
+                                  child: Column(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            _pickImageFromCamera().then((_) {
+                                              context.pop();
+                                            });
+                                          },
+                                          icon: const Icon(
+                                            Icons.camera_alt_outlined,
+                                            size: 40,
+                                            color: Colors.white,
+                                          )),
+                                      Text("Take Photo",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .copyWith(color: Colors.white))
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundColor: Theme.of(context).primaryColorLight,
+                        backgroundImage:
+                            _image != null ? FileImage(_image!) : null,
+                        child: _image == null
+                            ? const Center(
+                                child: Icon(
+                                Icons.add,
+                                size: 35,
+                              ))
+                            : null,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                          text: "Select your user type",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontWeight: FontWeight.w700),
+                        children: [
+                          TextSpan(
+                            text: " * ",
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyLarge!
-                                .copyWith(color: Colors.white),
+                                .bodySmall!
+                                .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
                           ),
-                          content: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              SizedBox(
-                                height: 100,
-                                child: Column(
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          _pickImageFromGallery().then((_) {
-                                            context.pop();
-                                          });
-                                        },
-                                        icon: const Icon(
-                                          Icons.photo,
-                                          size: 40,
-                                          color: Colors.white,
-                                        )),
-                                    Text("Pick image",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(color: Colors.white))
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 100,
-                                child: Column(
-                                  children: [
-                                    IconButton(
-                                        onPressed: () {
-                                          _pickImageFromCamera().then((_) {
-                                            context.pop();
-                                          });
-                                        },
-                                        icon: const Icon(
-                                          Icons.camera_alt_outlined,
-                                          size: 40,
-                                          color: Colors.white,
-                                        )),
-                                    Text("Take Photo",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(color: Colors.white))
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                    child: CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Theme.of(context).primaryColorLight,
-                      backgroundImage:
-                          _image != null ? FileImage(_image!) : null,
-                      child: _image == null
-                          ? const Center(
-                              child: Icon(
-                              Icons.add,
-                              size: 35,
-                            ))
-                          : null,
-                    ),
+                        ]
+                      )
                   ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Text("Select your user type",
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      TextButton.icon(
+                        icon: Icon(
+                          Icons.person,
+                          color: individual
+                              ? Theme.of(context).primaryColorDark
+                              : Colors.grey,
+                        ),
+                        style: ButtonStyle(
+                            padding: WidgetStateProperty.all<EdgeInsets>(
+                                const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 8)),
+                            foregroundColor:
+                                WidgetStateProperty.all<Color>(Colors.grey),
+                            shape:
+                                WidgetStateProperty.all<RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        side: BorderSide(
+                                            color: individual
+                                                ? Theme.of(context)
+                                                    .primaryColorDark
+                                                : Colors.grey)))),
+                        onPressed: () {
+                          setState(() {
+                            broker = false;
+                            individual = true;
+                          });
+                        },
+                        label: Text(
+                          "Individual",
+                          style: TextStyle(
+                              color: individual
+                                  ? Theme.of(context).primaryColorDark
+                                  : Colors.grey),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                      TextButton.icon(
+                        icon: Icon(
+                          Icons.person,
+                          color: broker
+                              ? Theme.of(context).primaryColorDark
+                              : Colors.grey,
+                        ),
+                        style: ButtonStyle(
+                            padding: WidgetStateProperty.all<EdgeInsets>(
+                                const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 8)),
+                            //backgroundColor:WidgetStateProperty.all<Color>(Colors.grey) ,
+                            foregroundColor:
+                                WidgetStateProperty.all<Color>(Colors.grey),
+                            shape:
+                                WidgetStateProperty.all<RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        side: BorderSide(
+                                            color: broker
+                                                ? Theme.of(context)
+                                                    .primaryColorDark
+                                                : Colors.grey)))),
+                        onPressed: () {
+                          setState(() {
+                            individual = false;
+                            broker = true;
+                          });
+                        },
+                        label: Text(
+                          "Company",
+                          style: TextStyle(
+                              color: broker
+                                  ? Theme.of(context).primaryColorDark
+                                  : Colors.grey),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 28,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                          text: "First Name",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontWeight: FontWeight.w700),
+                          children: [
+                            TextSpan(
+                              text: " * ",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+                            ),
+                          ]
+                      )
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  CustomTextField(
+                    controller: firstNameController,
+                    keyboardType: TextInputType.text,
+                    hintText: "Enter First Name",
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                          text: "Last Name",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontWeight: FontWeight.w700),
+                          children: [
+                            TextSpan(
+                              text: " * ",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+                            ),
+                          ]
+                      )
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  CustomTextField(
+                    controller: lastNameController,
+                    keyboardType: TextInputType.text,
+                    hintText: "Enter Last Name",
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                          text: "Mobile Number",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontWeight: FontWeight.w700),
+                          children: [
+                            TextSpan(
+                              text: " * ",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+                            ),
+                          ]
+                      )
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  TextFormField(
+                    readOnly: true,
+                    validator: validateMobile,
+                    controller: mobileController,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).canvasColor, width: 1.0),
+                      ),
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide:
+                            const BorderSide(color: Colors.grey, width: 1.0),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).canvasColor, width: 1.0),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18.0,
+                        vertical: 14.0,
+                      ),
+                      filled: true,
+                      // fillColor: Colors.white,
+                    ),
                     style: Theme.of(context)
                         .textTheme
-                        .bodySmall!
-                        .copyWith(fontWeight: FontWeight.w700)),
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    TextButton.icon(
-                      icon: Icon(
-                        Icons.person,
-                        color: individual
-                            ? Theme.of(context).primaryColorDark
-                            : Colors.grey,
-                      ),
-                      style: ButtonStyle(
-                          padding: WidgetStateProperty.all<EdgeInsets>(
-                              const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 8)),
-                          foregroundColor:
-                              WidgetStateProperty.all<Color>(Colors.grey),
-                          shape:
-                              WidgetStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      side: BorderSide(
-                                          color: individual
-                                              ? Theme.of(context)
-                                                  .primaryColorDark
-                                              : Colors.grey)))),
-                      onPressed: () {
-                        setState(() {
-                          broker = false;
-                          individual = true;
-                        });
-                      },
-                      label: Text(
-                        "Individual",
-                        style: TextStyle(
-                            color: individual
-                                ? Theme.of(context).primaryColorDark
-                                : Colors.grey),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    TextButton.icon(
-                      icon: Icon(
-                        Icons.person,
-                        color: broker
-                            ? Theme.of(context).primaryColorDark
-                            : Colors.grey,
-                      ),
-                      style: ButtonStyle(
-                          padding: WidgetStateProperty.all<EdgeInsets>(
-                              const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 8)),
-                          //backgroundColor:WidgetStateProperty.all<Color>(Colors.grey) ,
-                          foregroundColor:
-                              WidgetStateProperty.all<Color>(Colors.grey),
-                          shape:
-                              WidgetStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      side: BorderSide(
-                                          color: broker
-                                              ? Theme.of(context)
-                                                  .primaryColorDark
-                                              : Colors.grey)))),
-                      onPressed: () {
-                        setState(() {
-                          individual = false;
-                          broker = true;
-                        });
-                      },
-                      label: Text(
-                        "Company",
-                        style: TextStyle(
-                            color: broker
-                                ? Theme.of(context).primaryColorDark
-                                : Colors.grey),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 28,
-                ),
-                Text(
-                  "First Name",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                CustomTextField(
-                  controller: firstNameController,
-                  keyboardType: TextInputType.text,
-                  hintText: "Enter First Name",
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Text(
-                  "Last Name",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                CustomTextField(
-                  controller: lastNameController,
-                  keyboardType: TextInputType.text,
-                  hintText: "Enter Last Name",
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Text(
-                  "Mobile Number",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                TextFormField(
-                  readOnly: true,
-                  validator: validateMobile,
-                  controller: mobileController,
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                          color: Theme.of(context).canvasColor, width: 1.0),
-                    ),
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide:
-                          const BorderSide(color: Colors.grey, width: 1.0),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                          color: Theme.of(context).canvasColor, width: 1.0),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 18.0,
-                      vertical: 14.0,
-                    ),
-                    filled: true,
-                    // fillColor: Colors.white,
+                        .bodyMedium!
+                        .copyWith(color: Colors.grey),
                   ),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: Colors.grey),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Text(
-                  "Email Address",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                CustomTextField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter an email address';
-                    }
-                    // Regular expression for basic email validation
-                    final emailRegExp = RegExp(
-                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                    if (!emailRegExp.hasMatch(value)) {
-                      return 'Please enter a valid email address';
-                    }
-                    return null;
-                  },
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  hintText: "Enter Email Address",
-                ),
-                const SizedBox(
-                  height: 32,
-                ),
-                BlocConsumer<RegisterCubit, RegisterState>(
-                    listener: (context, register) {
-                  if (register is RegisterSuccess) {
-                    RegisterModel data = register.registerModel;
-                    saveUserData(
-                        id: data.result!.id.toString(),
-                        token: data.token.toString());
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(data.message.toString())));
-                  } else if (register is RegisterError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(register.errorMessage)));
-                  }
-                }, builder: (context, register) {
-                  return CustomButton(
-                    isLoading: register is RegisterLoading,
-                    onTap: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        CompleteProfile(
-                            firstName: firstNameController.text,
-                            lastName: lastNameController.text,
-                            email: emailController.text,
-                            userType: individual == true ? "1" : "2",
-                            profilePhoto: _image);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Please fill all fields')));
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                          text: "Email Address",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontWeight: FontWeight.w700),
+                          children: [
+                            TextSpan(
+                              text: " * ",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+                            ),
+                          ]
+                      )
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  CustomTextField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an email address';
                       }
+                      // Regular expression for basic email validation
+                      final emailRegExp = RegExp(
+                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                      if (!emailRegExp.hasMatch(value)) {
+                        return 'Please enter a valid email address';
+                      }
+                      return null;
                     },
-                    text: "SAVE",
-                    gradientColors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColorLight
-                    ],
-                  );
-                }),
-                const SizedBox(
-                  height: 16,
-                ),
-              ],
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    hintText: "Enter Email Address",
+                  ),
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  BlocConsumer<RegisterCubit, RegisterState>(
+                      listener: (context, register) {
+                    if (register is RegisterSuccess) {
+                      RegisterModel data = register.registerModel;
+                      saveUserData(
+                          id: data.result!.id.toString(),
+                          token: data.token.toString());
+        
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(data.message.toString())));
+                    } else if (register is RegisterError) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(register.errorMessage)));
+                    }
+                  }, builder: (context, register) {
+                    return CustomButton(
+                      isLoading: register is RegisterLoading,
+                      onTap: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          CompleteProfile(
+                              firstName: firstNameController.text,
+                              lastName: lastNameController.text,
+                              email: emailController.text,
+                              userType: individual == true ? "1" : "2",
+                              profilePhoto: _image);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Please fill all fields')));
+                        }
+                      },
+                      text: "SAVE",
+                      gradientColors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColorLight
+                      ],
+                    );
+                  }),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

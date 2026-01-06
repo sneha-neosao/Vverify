@@ -59,8 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             content: const Text(
-              textAlign: TextAlign.center,
-              "By using our verification services, you acknowledge that we retrieve data from official sources and are not responsible for any inaccuracies. This includes Aadhaar, GST, CIN, PAN, TAN, police verification, full name &amp; address validation, reference checks, and driving license verification. Please ensure all details are correct before proceeding.",
+              textAlign: TextAlign.justify,
+              "By using our verification services, you acknowledge that we retrieve data from official sources and are not responsible for any inaccuracies. This includes Aadhaar, GST, CIN, PAN, police verification, full name & address validation, reference checks, and driving license verification. Please ensure all details are correct before proceeding.",
             ),
             actions: <Widget>[
               BlocProvider(
