@@ -189,6 +189,44 @@ class _EducationUploadDocumentNewState extends State<EducationUploadDocumentNew>
                             }
                           }
 
+                          String fileNameFromUrl(String url) {
+                            try {
+                              final uri = Uri.parse(url);
+
+                              // Get the value of `path` query parameter
+                              final pathParam = uri.queryParameters['path'];
+
+                              if (pathParam == null || pathParam.isEmpty) {
+                                return 'Document';
+                              }
+
+                              // Extract filename from that path
+                              return pathParam.split('/').last;
+                            } catch (e) {
+                              return 'Document';
+                            }
+                          }
+                          // String fileNameFromUrl(String url) {
+                          //   try {
+                          //     final uri = Uri.parse(url);
+                          //     final pathParam = uri.queryParameters['path'];
+                          //
+                          //     if (pathParam == null || pathParam.isEmpty) {
+                          //       return 'Document';
+                          //     }
+                          //
+                          //     final fullName = pathParam.split('/').last;
+                          //
+                          //     // Extract only date-time + extension
+                          //     final match = RegExp(r'\d{8}-\d{6}\.\w+$').firstMatch(fullName);
+                          //
+                          //     return match?.group(0) ?? fullName;
+                          //   } catch (_) {
+                          //     return 'Document';
+                          //   }
+                          // }
+
+
                           return ListTile(
                             leading: Container(
                               width: 60,
@@ -212,13 +250,30 @@ class _EducationUploadDocumentNewState extends State<EducationUploadDocumentNew>
                               )
                                   : const Icon(Icons.picture_as_pdf, color: Colors.red),
                             ),
-                            title: Text("Document #${doc.id}"),
-                            subtitle: Text(url),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.open_in_new),
-                              onPressed: () => _openUrl(url),
-                            ),
-                            onTap: () => _openUrl(url), // tap anywhere on tile to open
+                            title: Text(fileNameFromUrl(url),style: TextStyle(fontSize: 10),),
+                            // subtitle: Text(url),
+                            trailing: InkWell(
+                              onTap: () => _openUrl(url),
+                              child: Container(
+                                height: 35,
+                                width: 65,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Theme.of(context).primaryColor,
+                                      Theme.of(context).primaryColorDark,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text("View",style: TextStyle(color: Colors.white),
+                                )
+                                ),
+                              ),
+                            )
                           );
                         },
                       );
