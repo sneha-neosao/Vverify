@@ -1353,6 +1353,8 @@ class ApiService {
         "degree_qualification_name": educationUpdateFormModel.degree_qualification_name,
         "grades_type": educationUpdateFormModel.grades_type,
         "grades_obtained": educationUpdateFormModel.grades_obtained,
+        "case_uuid": educationUpdateFormModel.case_uuid,
+        "education_uuid": educationUpdateFormModel.education_uuid
       });
 
       _dio.options.headers['Authorization'] = 'Bearer $token';

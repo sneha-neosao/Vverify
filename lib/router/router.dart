@@ -14,10 +14,8 @@ import 'package:v_verify/screen/VerificationForms/EmploymentForm/Save/Form/Emplo
 import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Save/address_varification_form_new.dart';
 import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Update/name_address_verification_update_new.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/verify_request_update_new.dart';
-
 import '../screen/Add Signature/add_signature.dart';
 import '../screen/OTP_Verify-Screen/otp_verify_screen.dart';
-import '../screen/Order History/order_history.dart';
 import '../screen/ProfileScreen/OtherScreen/Terms_conditions.dart';
 import '../screen/ProfileScreen/OtherScreen/privacy_policy.dart';
 import '../screen/ProfileScreen/OtherScreen/refund_policy.dart';
@@ -31,13 +29,7 @@ import '../screen/VerificationForms/DrvingLicence/driving_licence.dart';
 import '../screen/VerificationForms/EducationVerification/DocUpdate/education_doc_update.dart';
 import '../screen/VerificationForms/EducationVerification/EducationDocUpload/EducationDocUpload.dart';
 import '../screen/VerificationForms/EducationVerification/EducationList/EducationList.dart';
-import '../screen/VerificationForms/EducationVerification/SaveForm/education_save_form.dart';
-import '../screen/VerificationForms/EducationVerification/Update/education_save_form1_update.dart';
 import '../screen/VerificationForms/EmploymentForm/EmployList/employ_data_list.dart';
-import '../screen/VerificationForms/EmploymentForm/Save/Form/EmploymentSaveForm.dart';
-import '../screen/VerificationForms/EmploymentForm/Save/Form/EmploymentSaveForm2.dart';
-import '../screen/VerificationForms/EmploymentForm/Save/Form/employmentSaveForm3.dart';
-import '../screen/VerificationForms/EmploymentForm/Update/employmentUpdateForm1.dart';
 import '../screen/VerificationForms/EmploymentForm/Update/employment_update_form_new.dart';
 import '../screen/VerificationForms/EmploymentForm/UploadDoc/employment_upload_document.dart';
 import '../screen/VerificationForms/EmploymentForm/employUpdateDoc/employ_update_doc.dart';
@@ -47,8 +39,6 @@ import '../screen/VerificationForms/GST_TIN_CIN/Save/gst_pan_cin_screen.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Update/gst_pan_cin_update_screen.dart';
 import '../screen/VerificationForms/NameAddressVerificationForm/Documents/DocUpdate/name_address_doc_update.dart';
 import '../screen/VerificationForms/NameAddressVerificationForm/Documents/DocUpload/name_address_doc_upload.dart';
-import '../screen/VerificationForms/NameAddressVerificationForm/Save/name_address_verification_form.dart';
-import '../screen/VerificationForms/NameAddressVerificationForm/Update/name_address_verification_update.dart';
 import '../screen/VerificationForms/PanVerification/save/pan_verification_save.dart';
 import '../screen/VerificationForms/PanVerification/update/pan_verification_update.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/UpdateForm/MumbaiPoliceVerificationUpdateForm1.dart';
@@ -68,7 +58,6 @@ import '../screen/VerificationForms/courtVerification/documents/updateDoc/court_
 import '../screen/VerificationForms/courtVerification/documents/uploadDoc/court_doc_upload.dart';
 import '../screen/VerificationForms/courtVerification/update/court_verification_update.dart';
 import '../screen/VerificationPending/Pagination/pending_doc_Pagination.dart';
-import '../screen/VerificationPending/verifyRequestUpdate/verify_request_update.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -222,6 +211,31 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: '/EducationSaveFormNew/:uid',
+        name: "EducationSaveFormNew",
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return EducationSaveFormNew(
+            Case_uuid: uid,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/EducationSaveFormUpdateNew/:uid/:case_uuid/:education_uuid',
+        name: 'EducationSaveFormUpdateNew',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid']!;
+          final caseUuid = state.pathParameters['case_uuid']!;
+          final education_uuid = state.pathParameters['education_uuid']!;
+
+          return EducationSaveFormUpdateNew(
+            uid: uid,
+            case_uuid: caseUuid,
+            education_uuid: education_uuid,
+          );
+        },
+      ),
+      GoRoute(
         path: '/aadhaarVerifyOtp/:number/:otp',
         name: "aadhaarVerifyOtp",
         builder: (context, state) {
@@ -318,16 +332,6 @@ class AppRouter {
       //   },
       // ),
       GoRoute(
-        path: '/EducationSaveFormNew/:uid',
-        name: "EducationSaveFormNew",
-        builder: (context, state) {
-          final uid = state.pathParameters['uid'] ?? "";
-          return EducationSaveFormNew(
-            Case_uuid: uid,
-          );
-        },
-      ),
-      GoRoute(
         path: '/EducationDocUpload',
         name: "EducationDocUpload",
         builder: (context, state) {
@@ -374,16 +378,6 @@ class AppRouter {
       //     );
       //   },
       // ),
-      GoRoute(
-        path: '/EducationSaveFormUpdateNew/:uid',
-        name: 'EducationSaveFormUpdateNew',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          return EducationSaveFormUpdateNew(
-            uid: uid,
-          );
-        },
-      ),
       // GoRoute(
       //   path: '/EmploymentUpdateForm1/:uid',
       //   name: 'EmploymentUpdateForm1',

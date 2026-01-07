@@ -9,6 +9,8 @@ class EducationUpdateFormModel {
   final String degree_qualification_name;
   final String grades_type;
   final String grades_obtained;
+  final String case_uuid;
+  final String education_uuid;
 
   EducationUpdateFormModel(
       {
@@ -21,6 +23,8 @@ class EducationUpdateFormModel {
         required this.degree_qualification_name,
         required this.grades_type,
         required this.grades_obtained,
+        required this.case_uuid,
+        required this.education_uuid
       });
 
   Map<String, dynamic> toJson() {
@@ -34,6 +38,8 @@ class EducationUpdateFormModel {
       "institution_address": degree_qualification_name,
       "institution_city": grades_type,
       "institution_state": grades_obtained,
+      "case_uuid": case_uuid,
+      "education_uuid": education_uuid
     };
   }
 }

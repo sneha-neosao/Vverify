@@ -34,7 +34,6 @@ class EducationDocListModel {
 
 class Datum {
   String? uid;
-  int? case_id;
   int? request_id;
   int? service_request_id;
   String? university_name;
@@ -55,10 +54,11 @@ class Datum {
   String? document;
   String? created_at;
   String? updated_at;
+  String? case_uuid;
+  String? education_uuid;
 
   Datum({
     this.uid,
-    this.case_id,
     this.request_id,
     this.service_request_id,
     this.university_name,
@@ -79,11 +79,12 @@ class Datum {
     this.document,
     this.created_at,
     this.updated_at,
+    this.case_uuid,
+    this.education_uuid
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     uid: json["uid"],
-    case_id: json["case_id"],
     request_id: json["request_id"],
     service_request_id: json["service_request_id"],
     university_name: json["university_name"],
@@ -104,11 +105,12 @@ class Datum {
     document: json["document"],
     created_at: json["created_at"],
     updated_at: json["updated_at"],
+    case_uuid: json["case_uuid"],
+    education_uuid: json["education_uuid"]
   );
 
   Map<String, dynamic> toJson() => {
     "uid": uid,
-    "case_id": case_id,
     "request_id": request_id,
     "service_request_id": service_request_id,
     "university_name": university_name,
@@ -129,6 +131,8 @@ class Datum {
     "document": document,
     "created_at": created_at,
     "updated_at": updated_at,
+    "case_uuid": case_uuid,
+    "education_uuid": education_uuid
   };
 
 }

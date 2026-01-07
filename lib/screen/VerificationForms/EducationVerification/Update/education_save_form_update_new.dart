@@ -19,8 +19,10 @@ import 'ShowDetails/Model/education_show_details_model.dart';
 
 class EducationSaveFormUpdateNew extends StatefulWidget {
   final String uid;
+  final String case_uuid;
+  final String education_uuid;
 
-  const EducationSaveFormUpdateNew({Key? key, required this.uid}) : super(key: key);
+  const EducationSaveFormUpdateNew({Key? key, required this.uid, required this.case_uuid, required this.education_uuid}) : super(key: key);
 
   @override
   State<EducationSaveFormUpdateNew> createState() => _EducationSaveFormUpdateNewState();
@@ -34,9 +36,14 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
   @override
   void initState() {
     educationControllerRecreateNew();
-    universityNameLoad();
-    collageNameLoad();
+    // universityNameLoad();
+    // collageNameLoad();
     educationDetailsDataLoad();
+    print(
+      "uuid at update form : ${widget.uid}\n"
+      "case uuid at update form : ${widget.case_uuid}\n"
+      "education uuid at update form : ${widget.education_uuid}"
+    );
     super.initState();
   }
 
@@ -66,6 +73,9 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
     degree_qualification_name: ${educationTextControllerNew.educationDegreeQualificationNameController.text}
     grades_type: ${selectedGrade ?? ""}
     grades_obtained: ${educationTextControllerNew.educationGradeObtainedController.text}
+    uuid: ${widget.uid}
+    case_uuid: ${widget.case_uuid}
+    education: ${widget.education_uuid}
     ''');
 
     context.read<EducationUpdateFormCubit>().educationUpdateForm(
@@ -81,6 +91,8 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
           degree_qualification_name: educationTextControllerNew.educationDegreeQualificationNameController.text,
           grades_type: selectedGrade ?? "",
           grades_obtained: educationTextControllerNew.educationGradeObtainedController.text,
+          case_uuid: widget.case_uuid,
+          education_uuid: widget.education_uuid
         ));
   }
 
@@ -152,52 +164,52 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                       const SizedBox(
                         height: 16,
                       ),
-                      Text("Choose an Option:",
-                          style: Theme.of(context).textTheme.bodySmall),
+                      // Text("Choose an Option:",
+                      //     style: Theme.of(context).textTheme.bodySmall),
 
-                      BlocProvider(
-                        create: (_) => FormUploadEducationtCubit(),
-                        child: BlocBuilder<FormUploadEducationtCubit, bool>(
-                            builder: (context, frmUpload) {
-                              return Column(
-                                children: [
-                                  ListTile(
-                                    splashColor: Colors.transparent,
-                                    onTap: () {
-                                      context
-                                          .read<FormUploadEducationtCubit>()
-                                          .formUploadYesNo(yesNo: false);
-                                    },
-                                    contentPadding: const EdgeInsets.all(0),
-                                    leading: Icon(Icons.radio_button_checked,
-                                        color: !frmUpload
-                                            ? Theme.of(context).primaryColorLight
-                                            : Theme.of(context).iconTheme.color),
-                                    title: Text("Fill the Form Manually",
-                                        style: Theme.of(context).textTheme.bodySmall),
-                                  ),
-                                  ListTile(
-                                    splashColor: Colors.transparent,
-                                    onTap: () {
-                                      context.pushReplacementNamed("EducationDocUpload");
-                                      context
-                                          .read<FormUploadEducationtCubit>()
-                                          .formUploadYesNo(yesNo: true);
-                                    },
-                                    contentPadding: const EdgeInsets.all(0),
-                                    leading: Icon(
-                                      Icons.radio_button_checked,
-                                      color: frmUpload
-                                          ? Theme.of(context).primaryColorLight
-                                          : Theme.of(context).iconTheme.color,
-                                    ),
-                                    title: Text("Upload Documents",
-                                        style: Theme.of(context).textTheme.bodySmall),
-                                  ),
-                                ],
-                              );
-                            }),
-                      ),
+                      // BlocProvider(
+                      //   create: (_) => FormUploadEducationtCubit(),
+                      //   child: BlocBuilder<FormUploadEducationtCubit, bool>(
+                      //       builder: (context, frmUpload) {
+                      //         return Column(
+                      //           children: [
+                      //             ListTile(
+                      //               splashColor: Colors.transparent,
+                      //               onTap: () {
+                      //                 context
+                      //                     .read<FormUploadEducationtCubit>()
+                      //                     .formUploadYesNo(yesNo: false);
+                      //               },
+                      //               contentPadding: const EdgeInsets.all(0),
+                      //               leading: Icon(Icons.radio_button_checked,
+                      //                   color: !frmUpload
+                      //                       ? Theme.of(context).primaryColorLight
+                      //                       : Theme.of(context).iconTheme.color),
+                      //               title: Text("Fill the Form Manually",
+                      //                   style: Theme.of(context).textTheme.bodySmall),
+                      //             ),
+                      //             ListTile(
+                      //               splashColor: Colors.transparent,
+                      //               onTap: () {
+                      //                 context.pushReplacementNamed("EducationDocUpload");
+                      //                 context
+                      //                     .read<FormUploadEducationtCubit>()
+                      //                     .formUploadYesNo(yesNo: true);
+                      //               },
+                      //               contentPadding: const EdgeInsets.all(0),
+                      //               leading: Icon(
+                      //                 Icons.radio_button_checked,
+                      //                 color: frmUpload
+                      //                     ? Theme.of(context).primaryColorLight
+                      //                     : Theme.of(context).iconTheme.color,
+                      //               ),
+                      //               title: Text("Upload Documents",
+                      //                   style: Theme.of(context).textTheme.bodySmall),
+                      //             ),
+                      //           ],
+                      //         );
+                      //       }),
+                      // ),
                       Text(
                         "Educational Details",
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
@@ -207,7 +219,7 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                         height: 12,
                       ),
                       Text(
-                        "Note : At least one of University/Board and School/College is required",
+                        "Note : Fill all required fields.",
                         style: Theme.of(context)
                             .textTheme
                             .bodySmall!
@@ -315,7 +327,9 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                           listener: (context, education) {
                             if (education is EducationUpdateFormSuccessState) {
                               if (education.data["status"] == 200) {
-                                context.pushReplacement("/EducationList");
+                                context.pushNamed("EducationList",pathParameters: {
+                                  'uid': widget.case_uuid
+                                });
                                 context
                                     .read<EducationCertificateDocuments>()
                                     .clearImage();
