@@ -134,7 +134,7 @@ class _EducationListState extends State<EducationList> {
               CustomButton(
                 onTap: () {
                   context.pushNamed(
-                    "EducationSaveFormNew",
+                    "EducationUploadDocumentNew",
                     pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
                   );
                 },

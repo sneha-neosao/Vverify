@@ -2418,4 +2418,74 @@ class ApiService {
       throw Exception('Failed to fetch userAgreeCondition: $e');
     }
   }
+
+  Future<Response> EducationDocsUpload({
+    required String token,
+    required String caseUuid,
+    required List<File> documents,
+  }) async {
+    try {
+      // Build FormData with fields + files
+      final formData = FormData.fromMap({
+        "case_uuid": caseUuid,
+        "type": "education",
+        // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
+        for (int i = 0; i < documents.length; i++)
+          "documents[$i][file]": await MultipartFile.fromFile(documents[i].path,
+          ),
+      });
+
+      // Debug logs
+      log("=== EducationDocsUpload Request ===");
+      log("Fields: case_uuid=$caseUuid, type=education");
+      log("Files: ${documents.map((d) => d.path.split('/').last).toList()}");
+
+      // POST with headers
+      final response = await _dio.post(
+        'verify/documents/upload',
+        data: formData,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      log("=== EducationDocsUpload Response ===");
+      log("Status: ${response.statusCode}");
+      log("Data: ${response.data}");
+
+      return response;
+    } catch (e) {
+      log("Error in EducationDocUpload: $e");
+      throw Exception("Failed to upload education documents: $e");
+    }
+  }
+
+  Future<Response> educationDocumentList({
+    required String token,
+    required String caseUuid,
+    required String type, // e.g. "education"
+  }) async {
+    try {
+      // Set Authorization header
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+
+      // GET request with query parameters
+      final response = await _dio.get(
+        'verify/documents/list',
+        queryParameters: {
+          "case_uuid": caseUuid,
+          "type": type,
+        },
+      );
+
+      log('educationDocumentList Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in educationDocumentList: $e');
+      throw Exception('Failed to fetch educationDocumentList: $e');
+    }
+  }
+
 }

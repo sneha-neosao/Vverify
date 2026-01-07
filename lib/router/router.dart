@@ -29,6 +29,7 @@ import '../screen/VerificationForms/DrvingLicence/driving_licence.dart';
 import '../screen/VerificationForms/EducationVerification/DocUpdate/education_doc_update.dart';
 import '../screen/VerificationForms/EducationVerification/EducationDocUpload/EducationDocUpload.dart';
 import '../screen/VerificationForms/EducationVerification/EducationList/EducationList.dart';
+import '../screen/VerificationForms/EducationVerification/EducationDocUpload/education_document_new.dart';
 import '../screen/VerificationForms/EmploymentForm/EmployList/employ_data_list.dart';
 import '../screen/VerificationForms/EmploymentForm/Update/employment_update_form_new.dart';
 import '../screen/VerificationForms/EmploymentForm/UploadDoc/employment_upload_document.dart';
@@ -235,6 +236,18 @@ class AppRouter {
           );
         },
       ),
+
+      GoRoute(
+        path: '/EducationUploadDocumentNew/:uid',
+        name: "EducationUploadDocumentNew",
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return EducationUploadDocumentNew(
+            Case_uuid: uid,
+          );
+        },
+      ),
+
       GoRoute(
         path: '/aadhaarVerifyOtp/:number/:otp',
         name: "aadhaarVerifyOtp",

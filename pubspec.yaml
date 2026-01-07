@@ -69,7 +69,7 @@ dependencies:
   syncfusion_flutter_signaturepad: ^29.1.37
   month_year_picker: ^0.5.0+1
   syncfusion_flutter_datepicker: ^29.1.33
-
+  url_launcher: ^6.2.5
 
 dev_dependencies:
   flutter_test:

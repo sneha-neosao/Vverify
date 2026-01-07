@@ -33,8 +33,7 @@ class EducationDocUploadCubit extends Cubit<EducationDocUploadState> {
         if (response.data["status"] == 200) {
           emit(EducationDocUploadSuccessState(response.data));
         } else if (response.data["status"] == 500) {
-          final errorMessage =
-              response.data['message'] ?? 'Unknown error occurred.';
+          final errorMessage = response.data['message'] ?? 'Unknown error occurred.';
           emit(EducationDocUploadErrorState(errorMessage));
         } else {
           emit(EducationDocUploadErrorState('${response.data["message"]}'));

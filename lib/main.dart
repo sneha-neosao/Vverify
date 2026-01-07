@@ -29,7 +29,9 @@ import 'package:v_verify/screen/VerificationForms/DrvingLicence/ShowData/Bloc/dr
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Update/Bloc/driving_licence_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/DocUpdate/Bloc/education_doc_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/DocUpdate/ShowData/Bloc/education_doc_show_data_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/EducationVerification/EducationDocList/bloc/education_doc_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/EducationDocUpload/Bloc/education_doc_upload_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/EducationVerification/EducationDocUpload/Bloc/education_docs_upload_cubit_new.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/EducationList/Bloc/education_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/Collage/Bloc/collage_name_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/University/Bloc/university_name_bloc.dart';
@@ -328,6 +330,12 @@ class MyApp extends StatelessWidget {
             create: (_) => RelivingLetterDocumentImage()),
         BlocProvider<ExperienceDocumentImage>(
             create: (_) => ExperienceDocumentImage()),
+        BlocProvider<EducationDocsUploadCubitNew>(
+            create: (_) => EducationDocsUploadCubitNew(ApiService())),
+        BlocProvider<EducationDocsFileCubit>(
+            create: (_) => EducationDocsFileCubit()),
+        BlocProvider<EducationDocumentListCubit>(
+            create: (_) => EducationDocumentListCubit(ApiService())),
       ],
       child: Builder(builder: (context) {
         return Sizer(builder: (BuildContext, Orientation, ScreenType) {
