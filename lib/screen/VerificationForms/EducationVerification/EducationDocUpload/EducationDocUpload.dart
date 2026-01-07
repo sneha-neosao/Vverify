@@ -58,7 +58,10 @@ class _EducationDocUploadState extends State<EducationDocUpload> {
                       splashColor: Colors.transparent,
                       onTap: () {
                         // context.pushReplacementNamed("EducationSaveForm");
-                        context.pushReplacementNamed("EducationSaveFormNew");
+                        context.pushNamed(
+                          "EducationSaveFormNew",
+                          pathParameters: {'uid': ""}, // must be non-empty
+                        );
                         context
                             .read<FormUploadEducationtCubit>()
                             .formUploadYesNo(yesNo: false);

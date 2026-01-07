@@ -139,7 +139,10 @@ class _EducationDocUpdateState extends State<EducationDocUpdate> {
                       listener: (context, educationDoc) {
                     if (educationDoc is EducationDocUpdateSuccessState) {
                       if (educationDoc.data["status"] == 200) {
-                        context.pushReplacementNamed("EducationList");
+                        context.pushReplacementNamed(
+                          "EducationList",
+                          pathParameters: {'uid': ""},
+                        );
                         context
                             .read<EducationCertificateDocuments>()
                             .clearImage();

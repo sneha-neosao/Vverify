@@ -17,7 +17,7 @@ class PendingDoc extends StatefulWidget {
   State<PendingDoc> createState() => _PendingDocState();
 }
 
-void checkCase({required String title, required BuildContext context}) {
+void checkCase({required String title, String? uuid,required BuildContext context}) {
   switch (title) {
     case "Police Verification":
       context.pushNamed("nonMumbaiForm");
@@ -36,7 +36,8 @@ void checkCase({required String title, required BuildContext context}) {
       context.pushNamed("EmployDataList");
       break;
     case "Education Verification":
-      context.pushNamed("EducationList");
+      context.pushNamed("EducationList",pathParameters: {'uid': uuid!},
+      );
       break;
     case "Driving License":
       context.pushNamed("DrivingLicence");
@@ -316,14 +317,11 @@ class _PendingDocState extends State<PendingDoc> {
                                                               "Employment Verification") {
                                                             context.pushNamed(
                                                                 "EmployDataList");
-                                                          } else if (data
-                                                                  .data![index]
-                                                                  .services![
-                                                                      servicesIndex]
-                                                                  .serviceTitle ==
-                                                              "Education Verification") {
-                                                            context.pushNamed(
-                                                                "EducationList");
+                                                          } else if (data.data![index].services![servicesIndex].serviceTitle =="Education Verification") {
+                                                            print("case_uuid at pending doc: ${data.data![index].case_uuid.toString()}");
+                                                            context.pushNamed("EducationList",pathParameters: {
+                                                            'uid': data.data![index].case_uuid.toString()
+                                                            });
                                                           } else {
                                                             ScaffoldMessenger
                                                                     .of(context)

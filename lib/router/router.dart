@@ -318,10 +318,13 @@ class AppRouter {
       //   },
       // ),
       GoRoute(
-        path: '/EducationSaveFormNew',
+        path: '/EducationSaveFormNew/:uid',
         name: "EducationSaveFormNew",
         builder: (context, state) {
-          return const EducationSaveFormNew();
+          final uid = state.pathParameters['uid'] ?? "";
+          return EducationSaveFormNew(
+            Case_uuid: uid,
+          );
         },
       ),
       GoRoute(
@@ -462,10 +465,13 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/EducationList',
+        path: '/EducationList/:uid',
         name: 'EducationList',
         builder: (context, state) {
-          return const EducationList();
+          final uid = state.pathParameters['uid'] ?? "";
+          return EducationList(
+            Case_uuid: uid,
+          );
         },
       ),
       GoRoute(

@@ -68,6 +68,7 @@ class verifyRequest {
   List<Service>? services;
   Entity? entity;
   Customer? customer;
+  String? case_uuid;
 
   verifyRequest({
     this.uuid,
@@ -89,6 +90,7 @@ class verifyRequest {
     this.services,
     this.entity,
     this.customer,
+    this.case_uuid
   });
 
   factory verifyRequest.fromJson(Map<String, dynamic> json) => verifyRequest(
@@ -120,6 +122,7 @@ class verifyRequest {
         customer: json["customer"] == null
             ? null
             : Customer.fromJson(json["customer"]),
+      case_uuid: json["case_uuid"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -144,6 +147,7 @@ class verifyRequest {
             : List<dynamic>.from(services!.map((x) => x.toJson())),
         "entity": entity?.toJson(),
         "customer": customer?.toJson(),
+        "case_uuid": case_uuid
       };
 }
 

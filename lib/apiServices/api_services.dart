@@ -987,6 +987,7 @@ class ApiService {
         "degree_qualification_name": educationSaveFormModel.degree_qualification_name,
         "grades_type": educationSaveFormModel.grades_type,
         "grades_obtained": educationSaveFormModel.grades_obtained,
+        "case_uuid": educationSaveFormModel.case_uuid
       });
       print("education ${formData.fields}");
       _dio.options.headers['Authorization'] = 'Bearer $token';

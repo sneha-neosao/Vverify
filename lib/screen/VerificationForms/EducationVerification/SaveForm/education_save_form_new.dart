@@ -14,8 +14,9 @@ import 'Bloc/education_save_form_state.dart';
 import 'Model/education_save_form_model.dart';
 
 class EducationSaveFormNew extends StatefulWidget {
+  String Case_uuid;
 
-  const EducationSaveFormNew({super.key});
+  EducationSaveFormNew({super.key,required this.Case_uuid,});
 
   @override
   State<EducationSaveFormNew> createState() => _EducationSaveFormNewState();
@@ -67,7 +68,9 @@ class _EducationSaveFormNewState extends State<EducationSaveFormNew> {
             degree_qualification_name: educationTextControllerNew.educationDegreeQualificationNameController.text,
             grades_type: selectedGrade ?? "",
             grades_obtained: educationTextControllerNew.educationGradeObtainedController.text,
-        ));
+          case_uuid: widget.Case_uuid,
+        )
+    );
   }
 
   void universityNameLoad() {

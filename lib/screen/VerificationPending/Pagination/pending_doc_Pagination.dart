@@ -93,7 +93,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
     super.dispose();
   }
 
-  void checkCase({required String title, required BuildContext context}) {
+  void checkCase({required String title, required int index, required BuildContext context}) {
     switch (title) {
       case "police-verification":
         context.pushNamed("nonMumbaiForm");
@@ -112,7 +112,9 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         context.pushNamed("EmployDataList");
         break;
       case "education-verification-list":
-        context.pushNamed("EducationList");
+        context.pushNamed("EducationList", pathParameters: {
+          'uid': data[index].case_uuid.toString()
+        });
         break;
       case "driving-licence-verification":
         context.pushNamed("DrivingLicence");
@@ -389,8 +391,10 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                           servicesIndex]
                                                                       .serviceTitle ==
                                                                   "Education Verification") {
-                                                                context.pushNamed(
-                                                                    "EducationList");
+                                                                print("case_uuid at pending doc: ${data[index].case_uuid.toString()}");
+                                                                context.pushNamed("EducationList",pathParameters: {
+                                                                  'uid': data[index].case_uuid.toString()
+                                                                });
                                                               } else {
                                                                 ScaffoldMessenger.of(
                                                                         context)
@@ -439,14 +443,11 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                       servicesIndex);
                                                             } else {
                                                               checkCase(
-                                                                  title: data[
-                                                                          index]
-                                                                      .services![
-                                                                          servicesIndex]
-                                                                      .serviceNavigate
-                                                                      .toString(),
-                                                                  context:
-                                                                      context);
+                                                                title: data[index].services![servicesIndex].serviceNavigate.toString(),
+                                                                index: index,
+                                                                context: context,
+                                                              );
+
                                                             }
                                                           }
                                                         },

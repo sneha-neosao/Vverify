@@ -9,6 +9,7 @@ class EducationSaveFormModel {
   final String degree_qualification_name;
   final String grades_type;
   final String grades_obtained;
+  final String case_uuid;
 
   EducationSaveFormModel(
       {required this.request_id,
@@ -19,6 +20,7 @@ class EducationSaveFormModel {
       required this.degree_qualification_name,
       required this.grades_type,
       required this.grades_obtained,
+        required this.case_uuid,
       });
 
   Map<String, dynamic> toJson() {
@@ -31,6 +33,7 @@ class EducationSaveFormModel {
       "institution_address": degree_qualification_name,
       "institution_city": grades_type,
       "institution_state": grades_obtained,
+      "case_uuid": case_uuid
     };
   }
 }

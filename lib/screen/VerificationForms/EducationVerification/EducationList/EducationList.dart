@@ -15,7 +15,9 @@ import 'Bloc/education_list_cubit.dart';
 import 'Model/education_list_model.dart';
 
 class EducationList extends StatefulWidget {
-  const EducationList({super.key});
+  String Case_uuid;
+
+  EducationList({super.key, required this.Case_uuid,});
 
   @override
   State<EducationList> createState() => _EducationListState();
@@ -26,6 +28,7 @@ class _EducationListState extends State<EducationList> {
   void initState() {
     educationList();
     super.initState();
+    print("case uuid on education list : ${widget.Case_uuid}");
   }
 
   void educationList() {
@@ -85,7 +88,12 @@ class _EducationListState extends State<EducationList> {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is EducationListEmptyState) {
                   return CustomButton(
-                    onTap: () => context.pushReplacement("/EducationSaveFormNew"),
+                    onTap: () {
+                      context.pushNamed(
+                        "EducationSaveFormNew",
+                        pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
+                      );
+                    },
                     text: "Add Education Details",
                     gradientColors: [
                       Theme.of(context).primaryColor,
@@ -96,7 +104,12 @@ class _EducationListState extends State<EducationList> {
                   final data = state.educationListModel;
                   if (data.data == null || data.data!.isEmpty) {
                     return CustomButton(
-                      onTap: () => context.pushReplacement("/EducationSaveFormNew"),
+                      onTap: () {
+                        context.pushNamed(
+                          "EducationSaveFormNew",
+                          pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
+                        );
+                      },
                       text: "Add Education Details",
                       gradientColors: [
                         Theme.of(context).primaryColor,
@@ -113,7 +126,12 @@ class _EducationListState extends State<EducationList> {
               height: 16,
             ),
             CustomButton(
-              onTap: () => context.pushReplacement("/EducationSaveFormNew"),
+              onTap: () {
+                context.pushNamed(
+                  "EducationSaveFormNew",
+                  pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
+                );
+              },
               text: "Add Documents",
               gradientColors: [
                 Theme.of(context).primaryColor,
