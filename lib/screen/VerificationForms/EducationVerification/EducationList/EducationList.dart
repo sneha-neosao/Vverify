@@ -180,8 +180,7 @@ class _EducationListState extends State<EducationList> {
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: data.data![index].data_preference == "form"
-                                ? Column(
+                            child: Column(
                                     children: [
                                       ListTile(
                                         shape: RoundedRectangleBorder(
@@ -371,6 +370,10 @@ class _EducationListState extends State<EducationList> {
                                       ),
                                       TextButton(
                                           onPressed: () {
+                                            print('uid: ${data.data![index].uid}');
+                                            print('case_uuid: ${data.data![index].case_uuid}');
+                                            print('education_uuid: ${data.data![index].education_uuid}');
+
                                             if (data.data![index].created_at ==
                                                 "pending") {
                                               ScaffoldMessenger.of(context)
@@ -400,122 +403,6 @@ class _EducationListState extends State<EducationList> {
                                                 .textTheme
                                                 .bodySmall,
                                           ))
-                                    ],
-                                  )
-                                : Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                          data.data![index].verification_remark!.toLowerCase() == ""
-                                              ? "Verification Pending"
-                                              : data.data![index].verification_remark!.toLowerCase() == "clear"
-                                              ? "Clear" : "discrepancy",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .copyWith(
-                                              fontSize: 14,
-                                              color: data.data![index].verification_remark!.toLowerCase() == ""
-                                                  ? Colors.orange
-                                                  : data.data![index].verification_remark!.toLowerCase() == "clear"
-                                                  ? Colors.green
-                                                  : Colors.red
-                                          )
-
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: CustomPaint(
-                                            painter: DottedBorderPainter(
-                                                context: context),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .primaryColorDark
-                                                    .withOpacity(0.2),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                // border: Border.all(color: Colors.black)
-                                              ),
-                                              width: double.infinity,
-                                              height: 150,
-                                              child: _fileName == null
-                                                  ? Center(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                                8.0),
-                                                        child: data.data![index]
-                                                                .document!
-                                                                .contains("pdf")
-                                                            ? Column(
-                                                                children: [
-                                                                  Image.asset(
-                                                                    "assets/images/pdf_logo.png",
-                                                                    width: 80,
-                                                                    height: 80,
-                                                                  ),
-                                                                  Text(
-                                                                    maxLines: 2,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    data
-                                                                        .data![
-                                                                            index]
-                                                                        .verification_remark!,
-                                                                  ),
-                                                                ],
-                                                              )
-                                                            : Image.network(data
-                                                                .data![index]
-                                                                .document!),
-                                                      ),
-                                                    )
-                                                  : Center(
-                                                      child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Text(
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          _fileName!),
-                                                    )),
-                                            )),
-                                      ),
-                                      Center(
-                                        child: TextButton(
-                                            onPressed: () {
-                                              if (data.data![index].v_status == "pending") {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(const SnackBar(
-                                                        content: Text(
-                                                            "Please wait your application under process")));
-                                              } else if (data.data![index].v_status == "clear") {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(const SnackBar(
-                                                        content: Text(
-                                                            "Your application already verified")));
-                                              } else {
-                                                context.pushReplacementNamed(
-                                                    "EducationDocUpdate",
-                                                    pathParameters: {
-                                                      'uid': data.data![index].uid
-                                                          .toString()
-                                                    });
-                                              }
-                                            },
-                                            child: Text(
-                                              "Update",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium,
-                                            )),
-                                      )
                                     ],
                                   ),
                           );

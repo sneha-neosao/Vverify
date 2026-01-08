@@ -86,6 +86,20 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
   void employmentSaveForm() {
     String token = context.read<TokenCubit>().state;
     String customerId = context.read<IdCubit>().state;
+
+    print('EmploymentSaveFormModel:');
+    print('request_id: $requestId');
+    print('service_request_id: $serviceRequestId');
+    print('customer_id: $customerId');
+    print('employer_name: ${employmentTextControllerNew.employmentEmployerNameController.text}');
+    print('employed_from: ${joinDateController.text}');
+    print('employed_to: ${leaveDateController.text}');
+    print('designation: ${employmentTextControllerNew.employmentDesignationController.text}');
+    print('department: ${employmentTextControllerNew.employmentDepartmentController.text}');
+    print('remunaration: ${employmentTextControllerNew.employmentRemunerationController.text}');
+    print('reporting_manager: ${employmentTextControllerNew.employmentReportingManagerController.text}');
+    print('reason_for_leaving: ${employmentTextControllerNew.employmentReasonForLeavingController.text}');
+
     context.read<EmploymentSaveFormCubit>().employmentSaveForm(
         customer_id: customerId,
         token: token,
@@ -101,7 +115,6 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
             remunaration: employmentTextControllerNew.employmentRemunerationController.text,
             reporting_manager: employmentTextControllerNew.employmentReportingManagerController.text,
             reason_for_leaving: employmentTextControllerNew.employmentReasonForLeavingController.text,
-            employment_supporting_doc: ""
         ));
   }
 
@@ -132,59 +145,6 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
                   ),
                   const SizedBox(
                     height: 16,
-                  ),
-                  Text("Choose an Option:",
-                      style: Theme.of(context).textTheme.bodySmall),
-                  BlocProvider(
-                    create: (_) => FormUploadEmploymentCubit(),
-                    child: BlocBuilder<FormUploadEmploymentCubit, bool>(
-                        builder: (context, frmUpload) {
-                          return
-
-                            Column(
-                              children: [
-                                ListTile(
-                                  splashColor: Colors.transparent,
-                                  onTap: () {
-                                    context
-                                        .read<FormUploadEmploymentCubit>()
-                                        .formUploadYesNo(yesNo: false);
-                                  },
-                                  contentPadding: const EdgeInsets.all(0),
-                                  leading: Icon(Icons.radio_button_checked,
-                                      color: !frmUpload
-                                          ? Theme.of(context).primaryColorLight
-                                          : Theme.of(context).iconTheme.color),
-                                  title: Text("Fill the Form Manually",
-                                      style: Theme.of(context).textTheme.bodySmall),
-                                ),
-                                ListTile(
-                                  splashColor: Colors.transparent,
-                                  onTap: () {
-                                    context.pushReplacementNamed(
-                                        "EmploymentUploadDocument");
-
-                                    context
-                                        .read<FormUploadEmploymentCubit>()
-                                        .formUploadYesNo(yesNo: false);
-
-                                    context
-                                        .read<FormUploadEmploymentCubit>()
-                                        .formUploadYesNo(yesNo: true);
-                                  },
-                                  contentPadding: const EdgeInsets.all(0),
-                                  leading: Icon(
-                                    Icons.radio_button_checked,
-                                    color: frmUpload
-                                        ? Theme.of(context).primaryColorLight
-                                        : Theme.of(context).iconTheme.color,
-                                  ),
-                                  title: Text("Upload Documents",
-                                      style: Theme.of(context).textTheme.bodySmall),
-                                ),
-                              ],
-                            );
-                        }),
                   ),
                   Text(
                     "Employment Details",
@@ -308,9 +268,7 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
                             context.pushReplacementNamed("EmployDataList");
 
                             context.read<EmploymentLetterImage>().clearImage();
-                            context
-                                .read<EmploymentSupportDocumentImage>()
-                                .clearImage();
+                            context.read<EmploymentSupportDocumentImage>().clearImage();
                           }
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(employSave.data["message"])));
@@ -324,7 +282,7 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
                         employSave is EmploymentSaveFormLoadingState,
                         height: 45,
                         onTap: () {
-                          context.pushReplacementNamed("EmployDataList");
+                          // context.pushReplacementNamed("EmployDataList");
                           FocusManager.instance.primaryFocus?.unfocus();
                           FocusManager.instance.primaryFocus?.unfocus();
                           if (_formKey.currentState?.validate() ?? false) {

@@ -956,7 +956,6 @@ class ApiService {
         "remunaration": employmentSaveFormModel.remunaration,
         "reporting_manager": employmentSaveFormModel.reporting_manager,
         "reason_for_leaving": employmentSaveFormModel.reason_for_leaving,
-        "employment_supporting_doc": employmentSaveFormModel.employment_supporting_doc,
         });
 
       print("employSave ${formData.fields}");
