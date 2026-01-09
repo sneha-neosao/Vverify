@@ -238,7 +238,7 @@ class _EducationSaveFormNewState extends State<EducationSaveFormNew> {
                           child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
                         );
                       }).toList(),
-                      dropdownColor: Colors.white,
+                      dropdownColor: Theme.of(context).scaffoldBackgroundColor,
                       decoration: InputDecoration(
                         contentPadding:
                         const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
@@ -256,7 +256,7 @@ class _EducationSaveFormNewState extends State<EducationSaveFormNew> {
                           borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
                         ),
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: Theme.of(context).scaffoldBackgroundColor,
                       ),
                     ),
                   ),

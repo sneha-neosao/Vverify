@@ -291,7 +291,7 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                               child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
                             );
                           }).toList(),
-                          dropdownColor: Colors.white,
+                          dropdownColor: Theme.of(context).scaffoldBackgroundColor,
                           decoration: InputDecoration(
                             contentPadding:
                             const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),

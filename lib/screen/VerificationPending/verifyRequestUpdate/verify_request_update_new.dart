@@ -291,51 +291,54 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
                     ),
                     SizedBox(
                       height: 54,
-                      child: DropdownButtonFormField<String>(
-                        value: genderValues.contains(selectedGender) ? selectedGender : null,
-                        hint: Text(
-                          "Select Gender",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(color: Colors.grey),
-                        ),
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return "Please Select Gender";
-                        //   }
-                        //   return null;
-                        // },
-                        onChanged: (String? value) {
-                          setState(() {
-                            selectedGender = value!.toLowerCase();
-                          });
-                        },
-                        items: genderValues.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
-                          );
-                        }).toList(),
-                        dropdownColor: Colors.white,
-                        decoration: InputDecoration(
-                          contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                      child: Theme(
+                        data: Theme.of(context).copyWith( highlightColor: Colors.black, ),
+                        child: DropdownButtonFormField<String>(
+                          value: genderValues.contains(selectedGender) ? selectedGender : null,
+                          hint: Text(
+                            "Select Gender",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(color: Colors.grey),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide:
-                            BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return "Please Select Gender";
+                          //   }
+                          //   return null;
+                          // },
+                          onChanged: (String? value) {
+                            setState(() {
+                              selectedGender = value!.toLowerCase();
+                            });
+                          },
+                          items: genderValues.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
+                            );
+                          }).toList(),
+                          dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+                          decoration: InputDecoration(
+                            contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide:
+                              BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                            ),
+                            filled: true,
+                            fillColor: Theme.of(context).scaffoldBackgroundColor,
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
                         ),
                       ),
                     ),
