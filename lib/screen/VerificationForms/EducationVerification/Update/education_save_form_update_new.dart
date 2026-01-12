@@ -32,6 +32,7 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
   final _formKey = GlobalKey<FormState>();
   String? selectedGrade;
   List<String> gradeValues = <String>['Percentage', 'CGPA', 'Grade'];
+  String? descrepancy_reason ;
 
   @override
   void initState() {
@@ -136,6 +137,7 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                     selectedGrade = gradeValues.contains(data.data!.gradesType)
                         ? data.data!.gradesType
                         : null; // null means hint will show
+                    descrepancy_reason = data.data!.verificationRemark;
                   });
 
                 }
@@ -210,6 +212,26 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                       //         );
                       //       }),
                       // ),
+                      Text(
+                        "Rejected Reason:",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(color: Colors.red),
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        descrepancy_reason ?? "NA",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(color: Colors.white),
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
                       Text(
                         "Educational Details",
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
@@ -309,7 +331,7 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                               borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
                             ),
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: Theme.of(context).scaffoldBackgroundColor,
                           ),
                         ),
                       ),

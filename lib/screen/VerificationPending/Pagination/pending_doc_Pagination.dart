@@ -285,6 +285,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                               }
                               return BlocBuilder<IsPressedCubit, int>(
                                   builder: (context, isPressed) {
+                                    final status = data[index].status?.toLowerCase() ?? "";
+
                                 return Card(
                                   color: Theme.of(context).cardColor,
                                   child: Column(
@@ -302,9 +304,30 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                 topLeft: Radius.circular(8),
                                                 topRight: Radius.circular(8))),
                                         title: data[index].first_name != null
-                                            ? Text(
-                                                "${data[index].first_name} ${data[index].middle_name} ${data[index].last_name!}"
-                                                    .toString())
+                                            ? Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                    "${data[index].first_name} ${data[index].middle_name} ${data[index].last_name!}"
+                                                        .toString()
+                                                ),
+                                                Spacer(),
+                                                // Row(
+                                                //   children: [
+                                                //     Text(
+                                                //     data[index].status!.toLowerCase() == ""
+                                                //             ? "Pending"
+                                                //             : data[index].status!.toLowerCase() == "discrepancy"
+                                                //               ? "Discrepancy"
+                                                //               : "Verified",
+                                                //       style: TextStyle(color: Colors.black),
+                                                //     ),
+                                                //   ],
+                                                // ),
+                                                // SizedBox(width: 6,),
+                                                Icon(Icons.mode_edit,color: Colors.black,size: 16,)
+                                              ],
+                                            )
                                             : Text(data[index]
                                                 .entity!
                                                 .entityName
@@ -468,66 +491,85 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                         ),
                                                         subtitle: Row(
                                                           children: [
-                                                            data[index].services![servicesIndex].status ==
-                                                                        "failed" ||
-                                                                    data[index]
-                                                                            .services![
-                                                                                servicesIndex]
-                                                                            .status ==
-                                                                        "rejected"
-                                                                ? const Icon(
-                                                                    Icons.info,
-                                                                    color: Colors
-                                                                        .red,
-                                                                    size: 18,
-                                                                  )
-                                                                : data[index]
-                                                                            .services![
-                                                                                servicesIndex]
-                                                                            .status ==
-                                                                        "verified"
-                                                                    ? const Icon(
-                                                                        Icons
-                                                                            .verified,
-                                                                        color: Colors
-                                                                            .green,
-                                                                        size:
-                                                                            18,
-                                                                      )
-                                                                    : data[index].services![servicesIndex].status ==
-                                                                            "NA"
-                                                                        ? Icon(
-                                                                            Icons.person_add,
-                                                                            color:
-                                                                                Theme.of(context).primaryColorDark,
-                                                                            size:
-                                                                                18,
-                                                                          )
-                                                                        : Icon(
-                                                                            Icons.schedule,
-                                                                            color:
-                                                                                Theme.of(context).primaryColorDark,
-                                                                            size:
-                                                                                18,
-                                                                          ),
+                                                            Icon(
+                                                                status == ""
+                                                                    ? Icons.schedule
+                                                                    : data[index].status!.toLowerCase() == "discrepancy"
+                                                                    ? Icons.not_interested
+                                                                    : Icons.verified,
+                                                              color:
+                                                              status == ""
+                                                                    ? Colors.orangeAccent
+                                                                    : data[index].status!.toLowerCase() == "discrepancy"
+                                                                    ? Colors.red
+                                                                    : Colors.green,
+                                                              size: 14,
+                                                            ),
+                                                            // data[index].services![servicesIndex].status ==
+                                                            //             "failed" ||
+                                                            //         data[index]
+                                                            //                 .services![
+                                                            //                     servicesIndex]
+                                                            //                 .status ==
+                                                            //             "rejected"
+                                                            //     ? const Icon(
+                                                            //         Icons.info,
+                                                            //         color: Colors
+                                                            //             .red,
+                                                            //         size: 18,
+                                                            //       )
+                                                            //     : data[index]
+                                                            //                 .services![
+                                                            //                     servicesIndex]
+                                                            //                 .status ==
+                                                            //             "verified"
+                                                            //         ? const Icon(
+                                                            //             Icons
+                                                            //                 .verified,
+                                                            //             color: Colors
+                                                            //                 .green,
+                                                            //             size:
+                                                            //                 18,
+                                                            //           )
+                                                            //         : data[index].services![servicesIndex].status ==
+                                                            //                 "NA"
+                                                            //             ? Icon(
+                                                            //                 Icons.person_add,
+                                                            //                 color:
+                                                            //                     Theme.of(context).primaryColorDark,
+                                                            //                 size:
+                                                            //                     18,
+                                                            //               )
+                                                            //             : Icon(
+                                                            //                 Icons.schedule,
+                                                            //                 color:
+                                                            //                     Theme.of(context).primaryColorDark,
+                                                            //                 size:
+                                                            //                     18,
+                                                            //               ),
                                                             const SizedBox(
                                                               width: 4,
                                                             ),
                                                             Text(
-                                                                '${data[index].services![servicesIndex].status}',
+                                                              status == ""
+                                                                  ? "Pending"
+                                                                  : data[index].status!.toLowerCase() == "discrepancy"
+                                                                  ? "Discrepancy"
+                                                                  : "Verified",
                                                                 style: Theme.of(
-                                                                        context)
+                                                                    context)
                                                                     .textTheme
                                                                     .bodySmall!
                                                                     .copyWith(
-                                                                        fontSize:
-                                                                            14,
-                                                                        color: data[index].services![servicesIndex].status == "failed" ||
-                                                                                data[index].services![servicesIndex].status == "rejected"
-                                                                            ? Colors.red
-                                                                            : data[index].services![servicesIndex].status == "verified"
-                                                                                ? Colors.green
-                                                                                : Theme.of(context).primaryColorDark))
+                                                                    fontSize:
+                                                                    14,
+                                                                    color: status == ""
+                                                                        ? Colors.orangeAccent
+                                                                        : data[index].status!.toLowerCase() == "discrepancy"
+                                                                        ? Colors.red
+                                                                        : Colors.green
+                                                                )
+                                                            ),
                                                           ],
                                                         ),
                                                         trailing: data[index]

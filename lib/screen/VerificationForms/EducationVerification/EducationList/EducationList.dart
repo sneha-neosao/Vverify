@@ -192,18 +192,18 @@ class _EducationListState extends State<EducationList> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                                data.data![index].verification_remark!.toLowerCase() == ""
+                                                data.data![index].v_status!.toLowerCase() == ""
                                                     ? "Verification Pending"
-                                                    : data.data![index].verification_remark!.toLowerCase() == "clear"
-                                                    ? "Clear" : "discrepancy",
+                                                    : data.data![index].v_status!.toLowerCase() == "verified"
+                                                    ? "Verified" : "Discrepancy",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodySmall!
                                                     .copyWith(
                                                     fontSize: 14,
-                                                    color: data.data![index].verification_remark!.toLowerCase() == ""
+                                                    color: data.data![index].v_status!.toLowerCase() == ""
                                                         ? Colors.orange
-                                                        : data.data![index].verification_remark!.toLowerCase() == "clear"
+                                                        : data.data![index].v_status!.toLowerCase() == "verified"
                                                         ? Colors.green
                                                         : Colors.red
                                                 )
@@ -374,13 +374,13 @@ class _EducationListState extends State<EducationList> {
                                             print('case_uuid: ${data.data![index].case_uuid}');
                                             print('education_uuid: ${data.data![index].education_uuid}');
 
-                                            if (data.data![index].created_at ==
-                                                "pending") {
+                                            if (data.data![index].v_status ==
+                                                "") {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                       content: Text(
                                                           "Please wait your application under process")));
-                                            } else if (data.data![index].created_at ==
+                                            } else if (data.data![index].v_status ==
                                                 "verified") {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
