@@ -312,20 +312,17 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                         .toString()
                                                 ),
                                                 Spacer(),
-                                                // Row(
-                                                //   children: [
-                                                //     Text(
-                                                //     data[index].status!.toLowerCase() == ""
-                                                //             ? "Pending"
-                                                //             : data[index].status!.toLowerCase() == "discrepancy"
-                                                //               ? "Discrepancy"
-                                                //               : "Verified",
-                                                //       style: TextStyle(color: Colors.black),
-                                                //     ),
-                                                //   ],
-                                                // ),
-                                                // SizedBox(width: 6,),
-                                                Icon(Icons.mode_edit,color: Colors.black,size: 16,)
+                                                InkWell(
+                                                  onTap: (){
+                                                    context.pushNamed("VerifyRequestEditFormNew",
+                                                      pathParameters: {'request_id': data[index].requestId!.toString()}, // must be non-empty
+                                                    );
+                                                  },
+                                                  child: Padding(
+                                                    padding: EdgeInsets.all(6.0),
+                                                    child: Icon(Icons.mode_edit,color: Colors.black,size: 16,),
+                                                  ),
+                                                )
                                               ],
                                             )
                                             : Text(data[index]
@@ -355,13 +352,6 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                 horizontal: 8,
                                                                 vertical: 4),
                                                         onTap: () {
-                                                          // employmentTextController.employmentNameController
-                                                          //         .text =
-                                                          //     "${data[index].first_name} ${data[index].middle_name} ${data[index].last_name}";
-                                                          // personNameController
-                                                          //         .text =
-                                                          //     "${data[index].first_name} ${data[index].middle_name} ${data[index].last_name}";
-
                                                           serviceRequestId = data[
                                                                   index]
                                                               .services![
@@ -377,14 +367,6 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                           if (data[index]
                                                                   .detailsUpdated ==
                                                               0) {
-                                                            // context.pushNamed(
-                                                            //     "verifyRequestUpdate",
-                                                            //     pathParameters: {
-                                                            //       'uuid': data[
-                                                            //               index]
-                                                            //           .uuid
-                                                            //           .toString()
-                                                            //     });
                                                             context.pushNamed(
                                                                 "verifyRequestUpdateNew",
                                                                 pathParameters: {
@@ -505,48 +487,6 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                     : Colors.green,
                                                               size: 14,
                                                             ),
-                                                            // data[index].services![servicesIndex].status ==
-                                                            //             "failed" ||
-                                                            //         data[index]
-                                                            //                 .services![
-                                                            //                     servicesIndex]
-                                                            //                 .status ==
-                                                            //             "rejected"
-                                                            //     ? const Icon(
-                                                            //         Icons.info,
-                                                            //         color: Colors
-                                                            //             .red,
-                                                            //         size: 18,
-                                                            //       )
-                                                            //     : data[index]
-                                                            //                 .services![
-                                                            //                     servicesIndex]
-                                                            //                 .status ==
-                                                            //             "verified"
-                                                            //         ? const Icon(
-                                                            //             Icons
-                                                            //                 .verified,
-                                                            //             color: Colors
-                                                            //                 .green,
-                                                            //             size:
-                                                            //                 18,
-                                                            //           )
-                                                            //         : data[index].services![servicesIndex].status ==
-                                                            //                 "NA"
-                                                            //             ? Icon(
-                                                            //                 Icons.person_add,
-                                                            //                 color:
-                                                            //                     Theme.of(context).primaryColorDark,
-                                                            //                 size:
-                                                            //                     18,
-                                                            //               )
-                                                            //             : Icon(
-                                                            //                 Icons.schedule,
-                                                            //                 color:
-                                                            //                     Theme.of(context).primaryColorDark,
-                                                            //                 size:
-                                                            //                     18,
-                                                            //               ),
                                                             const SizedBox(
                                                               width: 4,
                                                             ),

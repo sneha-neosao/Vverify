@@ -59,6 +59,7 @@ import '../screen/VerificationForms/courtVerification/documents/updateDoc/court_
 import '../screen/VerificationForms/courtVerification/documents/uploadDoc/court_doc_upload.dart';
 import '../screen/VerificationForms/courtVerification/update/court_verification_update.dart';
 import '../screen/VerificationPending/Pagination/pending_doc_Pagination.dart';
+import '../screen/VerificationPending/verifyRequestUpdate/verify_request_edit_form_new.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -151,6 +152,17 @@ class AppRouter {
       //     return const OrderHistory();
       //   },
       // ),
+      GoRoute(
+        path: '/VerifyRequestEditFormNew/:request_id',
+        name: "VerifyRequestEditFormNew",
+        builder: (context, state) {
+          final requestId = state.pathParameters['request_id'] ?? "";
+          return VerifyRequestEditFormNew(
+            request_id: requestId,
+          );
+        },
+      ),
+
       GoRoute(
         path: '/EditProfile/:user_type',
         name: "edit_profile",
