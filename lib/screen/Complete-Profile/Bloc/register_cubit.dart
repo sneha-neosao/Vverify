@@ -17,6 +17,11 @@ class RegisterCubit extends Cubit<RegisterState> {
       required String mobileNumber,
       required String email,
       required String userType,
+      required String companyName,
+      required String companyHr,
+      required String companyHrNumber,
+      required String companyEmail,
+      required String companyAddress,
        File? profilePhoto}) async {
     emit(RegisterLoading());
     try {
@@ -26,7 +31,13 @@ class RegisterCubit extends Cubit<RegisterState> {
           mobileNumber: mobileNumber,
           email: email,
           userType: userType,
-          profilePhoto: profilePhoto);
+          companyName: companyName,
+          companyHr: companyHr,
+          companyHrNumber: companyHrNumber,
+          companyEmail: companyEmail,
+          companyAddress: companyAddress,
+          profilePhoto: profilePhoto
+      );
 
       if (response.data != null && response.data.containsKey("status")) {
         final status = response.data["status"];

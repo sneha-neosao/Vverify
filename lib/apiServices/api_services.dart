@@ -67,6 +67,11 @@ class ApiService {
     required String lastName,
     required String mobileNumber,
     required String email,
+    required String companyName,
+    required String companyHr,
+    required String companyHrNumber,
+    required String companyEmail,
+    required String companyAddress,
     File? profilePhoto,
     required String userType,
   }) async {
@@ -75,6 +80,11 @@ class ApiService {
       "lastName": lastName,
       'mobileNumber': mobileNumber,
       "email": email,
+      "companyName": companyName,
+      "contactPersonName": companyHr,
+      "contactPersonPhone": companyHrNumber,
+      "companyEmail": companyEmail,
+      "companyAddress": companyAddress,
       if (profilePhoto != null)
         "profilePhoto": await MultipartFile.fromFile(
           profilePhoto.path,

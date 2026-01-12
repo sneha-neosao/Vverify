@@ -141,7 +141,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       CustomButton(
                         text: "Edit Profile",
                         onTap: () {
-                          context.pushNamed("edit_profile");
+                          context.pushNamed("edit_profile",
+                            pathParameters: {'user_type': data.profileResult!.userType!}, // must be non-empty
+                          );
                         },
                         gradientColors: const [
                           Color(0xFFEE3B27),

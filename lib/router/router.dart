@@ -152,10 +152,13 @@ class AppRouter {
       //   },
       // ),
       GoRoute(
-        path: '/EditProfile',
+        path: '/EditProfile/:user_type',
         name: "edit_profile",
         builder: (context, state) {
-          return EditProfile();
+          final String userTypeStr = state.pathParameters['user_type']!;
+          return EditProfile(
+            user_type: userTypeStr, // change EditProfile to accept String
+          );
         },
       ),
 

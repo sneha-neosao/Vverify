@@ -10,6 +10,7 @@ import 'package:v_verify/commonComponent/customTextFiled.dart';
 import 'package:v_verify/screen/Complete-Profile/Bloc/register_cubit.dart';
 import 'package:v_verify/screen/Complete-Profile/Bloc/register_state.dart';
 import 'package:v_verify/screen/Complete-Profile/model/register_model.dart';
+import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
 
 import '../../commonComponent/bloc/shared_preferences_cubit.dart';
@@ -32,6 +33,11 @@ class _CompleteProfileState extends State<CompleteProfile> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController companyNameController = TextEditingController();
+  final TextEditingController companyHrController = TextEditingController();
+  final TextEditingController companyHrNumberController = TextEditingController();
+  final TextEditingController companyEmailController = TextEditingController();
+  final TextEditingController companyAddressController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -43,6 +49,11 @@ class _CompleteProfileState extends State<CompleteProfile> {
       required String lastName,
       required String email,
       required String userType,
+      required String companyName,
+      required String companyHr,
+      required String companyHrNumber,
+      required String companyEmail,
+      required String companyAddress,
       File? profilePhoto}) async {
     context
         .read<RegisterCubit>()
@@ -52,7 +63,13 @@ class _CompleteProfileState extends State<CompleteProfile> {
             mobileNumber: widget.mobileNum,
             email: email,
             userType: userType,
-            profilePhoto: profilePhoto)
+            companyName: companyName,
+            companyHr: companyHr,
+            companyHrNumber: companyHrNumber,
+            companyEmail: companyEmail,
+            companyAddress: companyAddress,
+            profilePhoto: profilePhoto
+    )
         .then((_) {});
   }
 
@@ -494,6 +511,149 @@ class _CompleteProfileState extends State<CompleteProfile> {
                     keyboardType: TextInputType.emailAddress,
                     hintText: "Enter Email Address",
                   ),
+                  if( broker == true && individual == false)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 28,
+                      ),
+                      RichText(
+                          text: TextSpan(
+                              text: "Company Name",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontWeight: FontWeight.w700),
+                              children: [
+                                TextSpan(
+                                  text: " * ",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+                                ),
+                              ]
+                          )
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      CustomTextField(
+                        controller: companyNameController,
+                        keyboardType: TextInputType.text,
+                        hintText: "Enter Company Name",
+                      ),
+                      const SizedBox(
+                        height: 28,
+                      ),
+                      RichText(
+                          text: TextSpan(
+                              text: "Company Person / HR Name",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontWeight: FontWeight.w700),
+                              children: [
+                                TextSpan(
+                                  text: " * ",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+                                ),
+                              ]
+                          )
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      CustomTextField(
+                        controller: companyHrController,
+                        keyboardType: TextInputType.text,
+                        hintText: "Enter Person / HR Name",
+                      ),
+                      const SizedBox(
+                        height: 28,
+                      ),
+                      RichText(
+                          text: TextSpan(
+                              text: "Contact Person / HR Phone",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontWeight: FontWeight.w700),
+                              children: [
+                                TextSpan(
+                                  text: " * ",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+                                ),
+                              ]
+                          )
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      CustomTextField(
+                        controller: companyHrNumberController,
+                        keyboardType: TextInputType.text,
+                        hintText: "Enter Contact Person / HR Phone",
+                      ),
+                      const SizedBox(
+                        height: 28,
+                      ),
+                      RichText(
+                          text: TextSpan(
+                              text: "Company Email",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontWeight: FontWeight.w700),
+                              children: [
+                                TextSpan(
+                                  text: " * ",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+                                ),
+                              ]
+                          )
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      CustomTextField(
+                        controller: companyEmailController,
+                        keyboardType: TextInputType.text,
+                        hintText: "Enter Company Email",
+                      ),
+                      // const SizedBox(
+                      //   height: 28,
+                      // ),
+                      // RichText(
+                      //     text: TextSpan(
+                      //       text: ,
+                      //       style: Theme.of(context)
+                      //           .textTheme
+                      //           .bodySmall!
+                      //           .copyWith(fontWeight: FontWeight.w700),
+                      //     )
+                      // ),
+                      // const SizedBox(
+                      //   height: 4,
+                      // ),
+                      FormFieldNotRequired(
+                        controller: companyAddressController,
+                        hintText: "Enter Company Address",
+                        titleText: "Company Address",
+                        textInputType: TextInputType.text,
+                      ),
+                    ],
+                  ),
                   const SizedBox(
                     height: 32,
                   ),
@@ -521,6 +681,11 @@ class _CompleteProfileState extends State<CompleteProfile> {
                               lastName: lastNameController.text,
                               email: emailController.text,
                               userType: individual == true ? "1" : "2",
+                              companyName: companyNameController.text,
+                              companyHr: companyHrController.text,
+                              companyHrNumber: companyHrNumberController.text,
+                              companyEmail: companyEmailController.text,
+                              companyAddress: companyAddressController.text,
                               profilePhoto: _image);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(

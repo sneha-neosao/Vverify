@@ -14,11 +14,14 @@ import '../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../ProfileScreen/bloc/profile_cubit.dart';
 import '../ProfileScreen/bloc/profile_state.dart';
 import '../ProfileScreen/model/profile_model.dart';
+import '../VerificationForms/common/form_widget.dart';
 import 'bloc/editProfile_cubit.dart';
 import 'bloc/editProfile_sate.dart';
 
 class EditProfile extends StatefulWidget {
-  EditProfile({super.key});
+  final String user_type;
+
+  EditProfile({super.key, required this.user_type});
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -34,6 +37,11 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailAddressController = TextEditingController();
+  final TextEditingController companyNameController = TextEditingController();
+  final TextEditingController companyHrController = TextEditingController();
+  final TextEditingController companyHrNumberController = TextEditingController();
+  final TextEditingController companyEmailController = TextEditingController();
+  final TextEditingController companyAddressController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -278,6 +286,59 @@ class _EditProfileState extends State<EditProfile> {
                                 const SizedBox(
                                   height: 16,
                                 ),
+                                if(widget.user_type.toLowerCase() == "broker")
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      CustomTextField(
+                                        labelText: "Company Name",
+                                        controller: companyNameController
+                                          ..text = data.lastName!,
+                                        hintText: "Enter Company Name",
+                                        keyboardType: TextInputType.text,
+                                      ),
+                                      const SizedBox(
+                                        height: 16,
+                                      ),
+                                      CustomTextField(
+                                        labelText: "Company Person / HR Name",
+                                        controller: companyHrController
+                                          ..text = data.lastName!,
+                                        hintText: "Enter Person / HR Name",
+                                        keyboardType: TextInputType.text,
+                                      ),
+                                      const SizedBox(
+                                        height: 16,
+                                      ),
+                                      CustomTextField(
+                                        labelText: "Contact Person / HR Phone",
+                                        controller: companyHrNumberController
+                                          ..text = data.lastName!,
+                                        hintText: "Enter Contact Person / HR Phone",
+                                        keyboardType: TextInputType.text,
+                                      ),
+                                      const SizedBox(
+                                        height: 16,
+                                      ),
+                                      CustomTextField(
+                                        labelText: "Company Email",
+                                        controller: companyEmailController
+                                          ..text = data.lastName!,
+                                        hintText: "Enter Company Email",
+                                        keyboardType: TextInputType.text,
+                                      ),
+                                      const SizedBox(
+                                        height: 16,
+                                      ),
+                                      CustomTextField(
+                                        labelText: "Company Address",
+                                        controller: companyAddressController
+                                          ..text = data.lastName!,
+                                        hintText: "Enter Company Address",
+                                        keyboardType: TextInputType.text,
+                                      ),
+                                    ],
+                                  ),
                                 const SizedBox(
                                   height: 24,
                                 ),

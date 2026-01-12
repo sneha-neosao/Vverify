@@ -150,7 +150,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         validator: (value) {
           if (value == null || value.isEmpty) {
             return widget.validationMessage ??
-                '${widget.labelText} is required';
+                'This field is required';
           }
           if (widget.validator != null) {
             return widget.validator!(value);
