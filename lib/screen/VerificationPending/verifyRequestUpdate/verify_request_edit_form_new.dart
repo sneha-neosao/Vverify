@@ -34,7 +34,7 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
   TextEditingController joiningController = TextEditingController();
   TextEditingController dobController = TextEditingController();
   String? selectedGender;
-  List<String> genderValues = <String>['Male', 'Female', 'Other'];
+  List<String> genderValues = <String>['male', 'female', 'other'];
 
   @override
   void initState() {
@@ -170,10 +170,8 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                   dobController.text = data.data!.dob ?? "";
                   // Set the dropdown initially if API provides value
                   setState(() {
-                    selectedGender = genderValues.contains(data.data!.gender!)
-                        ? data.data!.gender!
-                        : null;
-                    // selectedGender = data.data!.gender!;
+                    final apiGender = data.data!.gender?.toLowerCase();
+                    selectedGender = genderValues.contains(apiGender) ? apiGender : null;
                   });
 
                 }
@@ -353,13 +351,16 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                             // },
                             onChanged: (String? value) {
                               setState(() {
-                                selectedGender = value!.toLowerCase();
+                                selectedGender = value; // stays lowercase
                               });
                             },
                             items: genderValues.map((String value) {
                               return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
+                                value: value, // lowercase value
+                                child: Text(
+                                  value[0].toUpperCase() + value.substring(1), // show "Male"
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
                               );
                             }).toList(),
                             dropdownColor: Theme.of(context).scaffoldBackgroundColor,

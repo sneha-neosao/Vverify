@@ -314,6 +314,8 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.get('verify-request/list', queryParameters: data);
+      print('getTransactionList Response: ${response.data}');
+
       log('getTransactionList Response: ${response.data}');
       return response;
     } catch (e) {
@@ -2539,7 +2541,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.put('verify-request/entity/update', queryParameters: data);
+      await _dio.put('verify-request/update', queryParameters: data);
       log('verifyRequestUpdate Response: ${response.data}');
       return response;
     } catch (e) {
