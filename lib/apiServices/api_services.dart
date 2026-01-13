@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentForm/Update/Model/employment_update_form_model.dart';
+import 'package:v_verify/screen/VerificationPending/model/verify_request_edit_model.dart';
 
 import '../screen/Order History/load_more/models/post.dart';
 import '../screen/VerificationForms/EducationVerification/SaveForm/Model/education_save_form_model.dart';
@@ -137,6 +138,12 @@ class ApiService {
     required String email,
     required String customerId,
     File? profilePhoto,
+    required String companyName,
+    required String contactPersonName,
+    required String contactPersonPhone,
+    required String companyEmail,
+    required String companyAddress,
+    required String userType
   }) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
@@ -149,7 +156,13 @@ class ApiService {
           "profilePhoto": await MultipartFile.fromFile(
             profilePhoto.path,
             filename: profilePhoto.path.split('/').last, // Use the file name
-          )
+          ),
+        "companyName": companyName,
+        "contactPersonName": contactPersonName,
+        "contactPersonPhone": contactPersonPhone,
+        "companyEmail": companyEmail,
+        "companyAddress": companyAddress,
+        "userType": userType
       });
 
       final response = await _dio.post(
@@ -2497,4 +2510,41 @@ class ApiService {
     }
   }
 
+  Future<Response> VerifyRequestEditUpdate({
+    required String token,
+    required String uuid,
+    required String firstName,
+    required String middleName,
+    required String lastName,
+    required String phone,
+    required String dob,
+    required String email,
+    required String employee_code,
+    required String date_of_joining,
+    required String gender,
+  }) async {
+    Map<String, dynamic> data = {
+      "uuid": uuid,
+      "first_name": firstName,
+      "middle_name": middleName,
+      "last_name": lastName,
+      "phone": phone,
+      "dob": dob,
+      "email": email,
+      "employee_code": employee_code,
+      "date_of_joining": date_of_joining,
+      "gender": gender,
+    };
+
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.put('verify-request/entity/update', queryParameters: data);
+      log('verifyRequestUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in verifyRequestUpdate: $e');
+      throw Exception('Failed to fetch verifyRequestUpdate: $e');
+    }
+  }
 }

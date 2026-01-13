@@ -260,6 +260,7 @@ class _PendingDocState extends State<PendingDoc> {
                                                 "VerifyRequestEditFormNew",
                                                 pathParameters: {
                                                   'request_id': data.data![index].requestId!.toString(),
+                                                  'uuid': data.data![index].uuid.toString(),
                                                 },
                                               );
                                             },

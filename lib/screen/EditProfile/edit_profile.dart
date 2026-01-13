@@ -43,6 +43,7 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController companyEmailController = TextEditingController();
   final TextEditingController companyAddressController = TextEditingController();
 
+  int? user_type;
   final _formKey = GlobalKey<FormState>();
 
   void _updateProfile(
@@ -56,12 +57,19 @@ class _EditProfileState extends State<EditProfile> {
     final String? id = prefs.getString('id');
     if (token!.isNotEmpty) {
       context.read<EditProfileCubit>().editProfile(
-          token: token,
-          email: email,
-          customerId: id!,
-          profilePhoto: profilePhoto,
-          firstName: firstNameController.text,
-          lastName: lastNameController.text);
+        token: token,
+        email: email,
+        customerId: id!,
+        profilePhoto: profilePhoto,
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        companyName: companyNameController.text,
+        contactPersonName: companyHrController.text,
+        contactPersonPhone: companyHrNumberController.text,
+        companyEmail: companyEmailController.text,
+        companyAddress: companyAddressController.text,
+        userType: user_type.toString(),
+      );
     }
   }
 
@@ -108,292 +116,292 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(ScreenSize.screenHeight / 12),
+          preferredSize: Size.fromHeight(ScreenSize.screenHeight / 16),
           child: AppBar(
             title: const Text("Edit Profile"),
           ),
           //child: CustomAppbar(title: "Edit Profile")
         ),
-        body: SingleChildScrollView(
-          child: BlocBuilder<PickImageCubit, File>(
-              builder: (context, profilePath) {
-            return BlocBuilder<ProfileCubit, ProfileState>(
-              builder: (context, profile) {
-                if (profile is ProfileLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (profile is ProfileError) {
-                  return Center(
-                    child: Text(profile.errorMessage),
-                  );
-                } else if (profile is ProfileSuccess) {
-                  ProfileResult? data = profile.profileModel.profileResult;
-                  return Column(
-                    children: [
-                      Stack(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.red, width: 2),
-                              borderRadius: BorderRadius.circular(100),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: BlocBuilder<PickImageCubit, File>(
+                builder: (context, profilePath) {
+              return BlocBuilder<ProfileCubit, ProfileState>(
+                builder: (context, profile) {
+                  if (profile is ProfileLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (profile is ProfileError) {
+                    return Center(
+                      child: Text(profile.errorMessage),
+                    );
+                  } else if (profile is ProfileSuccess) {
+                    ProfileResult? data = profile.profileModel.profileResult;
+                      user_type = data!.userTypeId!;
+                    return Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.red, width: 2),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              width: 130.58,
+                              height: 130.58,
+                              child: CircleAvatar(
+                                  radius: 100.0,
+                                  backgroundColor: Colors.white,
+                                  backgroundImage: _image == null
+                                      ? NetworkImage(data!.profilePhoto!)
+                                      : FileImage(_image!)),
                             ),
-                            width: 130.58,
-                            height: 130.58,
-                            child: CircleAvatar(
-                                radius: 100.0,
-                                backgroundColor: Colors.white,
-                                backgroundImage: _image == null
-                                    ? NetworkImage(data!.profilePhoto!)
-                                    : FileImage(_image!)),
-                          ),
-                          Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                showDialog<String>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    backgroundColor:
-                                        Theme.of(context).primaryColorLight,
-                                    title: Text(
-                                      'Select Profile Image',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(color: Colors.white),
-                                    ),
-                                    content: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        SizedBox(
-                                          height: 100,
-                                          child: Column(
-                                            children: [
-                                              IconButton(
-                                                  onPressed: () {
-                                                    _pickImageFromGallery()
-                                                        .then((_) {
-                                                      context.pop();
-                                                    });
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.photo,
-                                                    size: 40,
-                                                    color: Colors.white,
-                                                  )),
-                                              Text("Pick image",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall!
-                                                      .copyWith(
-                                                          color: Colors.white))
-                                            ],
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  showDialog<String>(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      backgroundColor:
+                                          Theme.of(context).primaryColorLight,
+                                      title: Text(
+                                        'Select Profile Image',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(color: Colors.white),
+                                      ),
+                                      content: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          SizedBox(
+                                            height: 100,
+                                            child: Column(
+                                              children: [
+                                                IconButton(
+                                                    onPressed: () {
+                                                      _pickImageFromGallery()
+                                                          .then((_) {
+                                                        context.pop();
+                                                      });
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.photo,
+                                                      size: 40,
+                                                      color: Colors.white,
+                                                    )),
+                                                Text("Pick image",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                            color: Colors.white))
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 100,
-                                          child: Column(
-                                            children: [
-                                              IconButton(
-                                                  onPressed: () {
-                                                    _pickImageFromCamera()
-                                                        .then((_) {
-                                                      context.pop();
-                                                    });
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.camera_alt_outlined,
-                                                    size: 40,
-                                                    color: Colors.white,
-                                                  )),
-                                              Text("Take Photo",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall!
-                                                      .copyWith(
-                                                          color: Colors.white))
-                                            ],
+                                          SizedBox(
+                                            height: 100,
+                                            child: Column(
+                                              children: [
+                                                IconButton(
+                                                    onPressed: () {
+                                                      _pickImageFromCamera()
+                                                          .then((_) {
+                                                        context.pop();
+                                                      });
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.camera_alt_outlined,
+                                                      size: 40,
+                                                      color: Colors.white,
+                                                    )),
+                                                Text("Take Photo",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                            color: Colors.white))
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
+                                  );
+                                },
+                                //onTap: context.read<PickImageCubit>().pickImage,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(100),
                                   ),
-                                );
-                              },
-                              //onTap: context.read<PickImageCubit>().pickImage,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(100),
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    color: Colors.white,
-                                    Icons.edit,
-                                    size: 25,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      color: Colors.white,
+                                      Icons.edit,
+                                      size: 25,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Container(
+                          ],
+                        ),
+                        Padding(
                           padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).cardColor,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                CustomTextField(
-                                  validator: validateEmail,
-                                  labelText: "Enter Email",
-                                  controller: emailAddressController
-                                    ..text = data!.email!,
-                                  hintText: "Enter Email",
-                                  keyboardType: TextInputType.text,
-                                ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                CustomTextField(
-                                  labelText: "First Name",
-                                  controller: firstNameController
-                                    ..text = data.firstName!,
-                                  hintText: "Enter First Name",
-                                  keyboardType: TextInputType.text,
-                                ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                CustomTextField(
-                                  labelText: "Last Name",
-                                  controller: lastNameController
-                                    ..text = data.lastName!,
-                                  hintText: "Enter Last Name",
-                                  keyboardType: TextInputType.text,
-                                ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                if(widget.user_type.toLowerCase() == "broker")
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      CustomTextField(
-                                        labelText: "Company Name",
-                                        controller: companyNameController
-                                          ..text = data.lastName!,
-                                        hintText: "Enter Company Name",
-                                        keyboardType: TextInputType.text,
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      CustomTextField(
-                                        labelText: "Company Person / HR Name",
-                                        controller: companyHrController
-                                          ..text = data.lastName!,
-                                        hintText: "Enter Person / HR Name",
-                                        keyboardType: TextInputType.text,
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      CustomTextField(
-                                        labelText: "Contact Person / HR Phone",
-                                        controller: companyHrNumberController
-                                          ..text = data.lastName!,
-                                        hintText: "Enter Contact Person / HR Phone",
-                                        keyboardType: TextInputType.text,
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      CustomTextField(
-                                        labelText: "Company Email",
-                                        controller: companyEmailController
-                                          ..text = data.lastName!,
-                                        hintText: "Enter Company Email",
-                                        keyboardType: TextInputType.text,
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      CustomTextField(
-                                        labelText: "Company Address",
-                                        controller: companyAddressController
-                                          ..text = data.lastName!,
-                                        hintText: "Enter Company Address",
-                                        keyboardType: TextInputType.text,
-                                      ),
-                                    ],
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  CustomTextField(
+                                    validator: validateEmail,
+                                    labelText: "Enter Email",
+                                    controller: emailAddressController
+                                      ..text = data!.email!,
+                                    hintText: "Enter Email",
+                                    keyboardType: TextInputType.text,
                                   ),
-                                const SizedBox(
-                                  height: 24,
-                                ),
-                                BlocConsumer<EditProfileCubit,
-                                        EditProfileState>(
-                                    listener: (context, state) {
-                                  if (state is EditProfileSuccess) {
-                                    getProfile();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                "Profile update successfully")));
-                                    Navigator.pop(context, false);
-                                  } else if (state is EditProfileFailure) {}
-                                }, builder: (context, state) {
-                                  return CustomButton(
-                                      isLoading: state is EditProfileLoading,
-                                      text: "Update Profile",
-                                      gradientColors: [
-                                        Theme.of(context).primaryColor,
-                                        Theme.of(context).primaryColorLight
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  CustomTextField(
+                                    labelText: "First Name",
+                                    controller: firstNameController
+                                      ..text = data.firstName!,
+                                    hintText: "Enter First Name",
+                                    keyboardType: TextInputType.text,
+                                  ),
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  CustomTextField(
+                                    labelText: "Last Name",
+                                    controller: lastNameController
+                                      ..text = data.lastName!,
+                                    hintText: "Enter Last Name",
+                                    keyboardType: TextInputType.text,
+                                  ),
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  if(widget.user_type.toLowerCase() == "company")
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        CustomTextField(
+                                          labelText: "Company Name",
+                                          controller: companyNameController
+                                            ..text = data.companyName!,
+                                          hintText: "Enter Company Name",
+                                          keyboardType: TextInputType.text,
+                                        ),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
+                                        CustomTextField(
+                                          labelText: "Company Person / HR Name",
+                                          controller: companyHrController
+                                            ..text = data.companyHr!,
+                                          hintText: "Enter Person / HR Name",
+                                          keyboardType: TextInputType.text,
+                                        ),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
+                                        CustomTextField(
+                                          labelText: "Contact Person / HR Phone",
+                                          controller: companyHrNumberController
+                                            ..text = data.companyHrNumber!,
+                                          hintText: "Enter Contact Person / HR Phone",
+                                          keyboardType: TextInputType.text,
+                                        ),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
+                                        CustomTextField(
+                                          labelText: "Company Email",
+                                          controller: companyEmailController
+                                            ..text = data.companyEmail!,
+                                          hintText: "Enter Company Email",
+                                          keyboardType: TextInputType.text,
+                                        ),
+                                        FormFieldNotRequired(
+                                          titleText: "Company Address",
+                                          controller: companyAddressController
+                                            ..text = data.companyAddress!,
+                                          hintText: "Enter Company Address",
+                                          textInputType: TextInputType.text,
+                                        ),
                                       ],
-                                      onTap: () {
-                                        if (_formKey.currentState?.validate() ??
-                                            false) {
-                                          _updateProfile(
-                                              firstname:
-                                                  firstNameController.text,
-                                              lastName: lastNameController.text,
-                                              email:
-                                                  emailAddressController.text,
-                                              customer: data.id!.toString(),
-                                              profilePhoto: _image);
-                                        } else {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                                  content: Text(
-                                                      'Please fill all fields')));
-                                        }
-                                      });
-                                })
-                              ],
+                                    ),
+                                  const SizedBox(
+                                    height: 24,
+                                  ),
+                                  BlocConsumer<EditProfileCubit,
+                                          EditProfileState>(
+                                      listener: (context, state) {
+                                    if (state is EditProfileSuccess) {
+                                      getProfile();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  "Profile update successfully")));
+                                      Navigator.pop(context, false);
+                                    } else if (state is EditProfileFailure) {}
+                                  }, builder: (context, state) {
+                                    return CustomButton(
+                                        isLoading: state is EditProfileLoading,
+                                        text: "Update Profile",
+                                        gradientColors: [
+                                          Theme.of(context).primaryColor,
+                                          Theme.of(context).primaryColorLight
+                                        ],
+                                        onTap: () {
+                                          if (_formKey.currentState?.validate() ??
+                                              false) {
+                                            _updateProfile(
+                                                firstname:
+                                                    firstNameController.text,
+                                                lastName: lastNameController.text,
+                                                email:
+                                                    emailAddressController.text,
+                                                customer: data.id!.toString(),
+                                                profilePhoto: _image);
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(const SnackBar(
+                                                    content: Text(
+                                                        'Please fill all fields')));
+                                          }
+                                        });
+                                  })
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ), // BlocBuilder<EditProfileCubit, EditProfileState>(
-                    ],
+                        ), // BlocBuilder<EditProfileCubit, EditProfileState>(
+                      ],
+                    );
+                  }
+                  return const Center(
+                    child: Text("Error..."),
                   );
-                }
-                return const Center(
-                  child: Text("Error..."),
-                );
-              },
-            );
-          }),
+                },
+              );
+            }),
+          ),
         ));
   }
 }

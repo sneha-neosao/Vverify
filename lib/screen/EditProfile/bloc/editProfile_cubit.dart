@@ -17,14 +17,30 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       required String lastName,
       required String email,
       required String customerId,
-      File? profilePhoto}) async {
+      File? profilePhoto,
+        required String companyName,
+        required String contactPersonName,
+        required String contactPersonPhone,
+        required String companyEmail,
+        required String companyAddress,
+        required String userType
+      }) async {
     emit(EditProfileLoading());
     try {
       final response = await _apiService.getUpdateProfile(
           token: token,
           email: email,
           customerId: customerId,
-          profilePhoto: profilePhoto, firstName: firstName,lastName: lastName);
+          profilePhoto: profilePhoto,
+          firstName: firstName,
+          lastName: lastName,
+          companyName: companyName,
+          contactPersonName: contactPersonName,
+          contactPersonPhone: contactPersonPhone,
+          companyEmail: companyEmail,
+          companyAddress: companyAddress,
+          userType: userType
+      );
 
       if (response.data != null) {
         final editProfileResponse = EditProfileModel.fromJson(response.data);

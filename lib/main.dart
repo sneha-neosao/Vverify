@@ -80,6 +80,7 @@ import 'package:v_verify/screen/VerificationForms/courtVerification/documents/up
 import 'package:v_verify/screen/VerificationForms/courtVerification/update/Bloc/court_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/courtVerification/update/ShowData/bloc/show_court_data_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_cubit.dart';
 import 'package:v_verify/theme/theme_cubit.dart';
 import 'package:v_verify/theme/theme_data.dart';
@@ -336,6 +337,8 @@ class MyApp extends StatelessWidget {
             create: (_) => EducationDocsFileCubit()),
         BlocProvider<EducationDocumentListCubit>(
             create: (_) => EducationDocumentListCubit(ApiService())),
+        BlocProvider<VerifyRequestEditCubit>(
+            create: (_) => VerifyRequestEditCubit(ApiService())),
       ],
       child: Builder(builder: (context) {
         return Sizer(builder: (BuildContext, Orientation, ScreenType) {

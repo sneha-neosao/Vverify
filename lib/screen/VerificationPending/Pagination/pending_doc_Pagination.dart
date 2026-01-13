@@ -319,6 +319,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                       "VerifyRequestEditFormNew",
                                                       pathParameters: {
                                                         'request_id': data[index].requestId!.toString(),
+                                                        'uuid': data[index].uuid.toString(),
                                                       },
                                                     );
                                                   },

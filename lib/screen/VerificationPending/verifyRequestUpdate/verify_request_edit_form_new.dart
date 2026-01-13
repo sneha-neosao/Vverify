@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Bloc/verify_details_state.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
+import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_state.dart';
 import '../../../../commonComponent/custom_button.dart';
 import '../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../VerificationForms/VerifyDeatils/Bloc/verify_details_cubit.dart';
@@ -13,8 +16,9 @@ import '../../VerificationForms/common/validator.dart';
 
 class VerifyRequestEditFormNew extends StatefulWidget {
   final String request_id;
+  String uuid;
 
-  const VerifyRequestEditFormNew({Key? key,required this.request_id}) : super(key: key);
+  VerifyRequestEditFormNew({Key? key,required this.request_id, required this.uuid}) : super(key: key);
 
   @override
   State<VerifyRequestEditFormNew> createState() => _VerifyRequestEditFormNewState();
@@ -56,35 +60,35 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
     super.dispose();
   }
 
-  // void verifyUpdateData() {
-  //   final String token = context.read<TokenCubit>().state;
-  //   print('''
-  //     UUID: ${widget.uuid}
-  //     Phone: ${phoneController.text.trim()}
-  //     DOB: ${dobController.text}
-  //     First Name: ${firstnameController.text}
-  //     Middle Name: ${middleNameController.text}
-  //     Last Name: ${lastnameController.text}
-  //     Email: ${emailController.text}
-  //     Employee Code: ${employeeCodeController.text}
-  //     Date of Joining: ${joiningController.text}
-  //     Gender: $selectedGender
-  //     ''');
-  //
-  //   context.read<VerifyRequestUpdateCubit>().verifyRequestUpdate(
-  //       token: token,
-  //       uuid: widget.uuid,
-  //       phone: phoneController.text.trim(),
-  //       dob: dobController.text,
-  //       firstName: firstnameController.text,
-  //       middleName: middleNameController.text,
-  //       lastName: lastnameController.text,
-  //       email: emailController.text,
-  //       employee_code: employeeCodeController.text,
-  //       date_of_joining: joiningController.text,
-  //       gender: selectedGender ?? ""
-  //   );
-  // }
+  void verifyUpdateData() {
+    final String token = context.read<TokenCubit>().state;
+    print('''
+      UUID: ${widget.uuid}
+      Phone: ${phoneController.text.trim()}
+      DOB: ${dobController.text}
+      First Name: ${firstnameController.text}
+      Middle Name: ${middleNameController.text}
+      Last Name: ${lastnameController.text}
+      Email: ${emailController.text}
+      Employee Code: ${employeeCodeController.text}
+      Date of Joining: ${joiningController.text}
+      Gender: $selectedGender
+      ''');
+
+    context.read<VerifyRequestEditCubit>().verifyRequestUpdate(
+        token: token,
+        uuid: widget.uuid,
+        phone: phoneController.text.trim(),
+        dob: dobController.text,
+        firstName: firstnameController.text,
+        middleName: middleNameController.text,
+        lastName: lastnameController.text,
+        email: emailController.text,
+        employee_code: employeeCodeController.text,
+        date_of_joining: joiningController.text,
+        gender: selectedGender ?? ""
+    );
+  }
 
   final _formkey = GlobalKey<FormState>();
 
@@ -384,52 +388,36 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                       const SizedBox(
                         height: 24,
                       ),
-                      CustomButton(
-                        // isLoading: verifyUpdate is VerifyRequestUpdateLoadingState,
-                        onTap: () {
-                          if (_formkey.currentState?.validate() ?? false) {
-                            // verifyUpdateData();
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                content: Text("Please fill all fields")));
-                          }
-                        },
-                        text: "SAVE",
-                        gradientColors: [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColorDark,
-                        ],
-                      )
-                      // BlocConsumer<VerifyRequestUpdateCubit, VerifyRequestUpdateState>(
-                      //     listener: (context, verifyUpdate) {
-                      //       if (verifyUpdate is VerifyRequestUpdateSuccessState) {
-                      //         ScaffoldMessenger.of(context).showSnackBar(
-                      //             SnackBar(content: Text(verifyUpdate.data["message"])));
-                      //         if (verifyUpdate.data["status"] == 200) {
-                      //           context.pushReplacementNamed("bottomNav");
-                      //         }
-                      //       } else if (verifyUpdate is VerifyRequestUpdateErrorState) {
-                      //         ScaffoldMessenger.of(context).showSnackBar(
-                      //             SnackBar(content: Text(verifyUpdate.message)));
-                      //       }
-                      //     }, builder: (context, verifyUpdate) {
-                      //   return CustomButton(
-                      //     isLoading: verifyUpdate is VerifyRequestUpdateLoadingState,
-                      //     onTap: () {
-                      //       if (_formkey.currentState?.validate() ?? false) {
-                      //         verifyUpdateData();
-                      //       } else {
-                      //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      //             content: Text("Please fill all fields")));
-                      //       }
-                      //     },
-                      //     text: "SAVE",
-                      //     gradientColors: [
-                      //       Theme.of(context).primaryColor,
-                      //       Theme.of(context).primaryColorDark,
-                      //     ],
-                      //   );
-                      // }),
+                      BlocConsumer<VerifyRequestEditCubit, VerifyRequestEditState>(
+                          listener: (context, verifyUpdate) {
+                            if (verifyUpdate is VerifyRequestEditSuccessState) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(verifyUpdate.data["message"])));
+                              if (verifyUpdate.data["status"] == 200) {
+                                context.pushReplacementNamed("bottomNav");
+                              }
+                            } else if (verifyUpdate is VerifyRequestEditErrorState) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(verifyUpdate.message)));
+                            }
+                          }, builder: (context, verifyUpdate) {
+                        return CustomButton(
+                          isLoading: verifyUpdate is VerifyRequestEditLoadingState,
+                          onTap: () {
+                            if (_formkey.currentState?.validate() ?? false) {
+                              verifyUpdateData();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  content: Text("Please fill all fields")));
+                            }
+                          },
+                          text: "SAVE",
+                          gradientColors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).primaryColorDark,
+                          ],
+                        );
+                      }),
                     ],
                   );
                 }

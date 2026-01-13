@@ -153,11 +153,15 @@ class AppRouter {
       //   },
       // ),
       GoRoute(
-        path: '/VerifyRequestEditFormNew/:request_id',
+        path: '/VerifyRequestEditFormNew/:request_id/:uuid',
         name: "VerifyRequestEditFormNew",
         builder: (context, state) {
           final requestId = state.pathParameters['request_id']!;
-          return VerifyRequestEditFormNew(request_id: requestId);
+          final uuid = state.pathParameters['uuid']!;
+          return VerifyRequestEditFormNew(
+              request_id: requestId,
+              uuid: uuid,
+          );
         },
       ),
 
