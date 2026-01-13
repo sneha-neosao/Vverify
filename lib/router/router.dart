@@ -156,10 +156,8 @@ class AppRouter {
         path: '/VerifyRequestEditFormNew/:request_id',
         name: "VerifyRequestEditFormNew",
         builder: (context, state) {
-          final requestId = state.pathParameters['request_id'] ?? "";
-          return VerifyRequestEditFormNew(
-            request_id: requestId,
-          );
+          final requestId = state.pathParameters['request_id']!;
+          return VerifyRequestEditFormNew(request_id: requestId);
         },
       ),
 

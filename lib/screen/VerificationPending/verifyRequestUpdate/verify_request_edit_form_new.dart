@@ -6,6 +6,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Bloc/verify_details_state.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import '../../../../commonComponent/custom_button.dart';
+import '../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../VerificationForms/VerifyDeatils/Bloc/verify_details_cubit.dart';
 import '../../VerificationForms/VerifyDeatils/Model/verify_details_model.dart';
 import '../../VerificationForms/common/validator.dart';
@@ -34,6 +35,12 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
   @override
   void initState() {
     super.initState();
+    // trigger API call with request_id
+    String token = context.read<TokenCubit>().state;
+    context.read<VerifyDetailsCubit>().verifyDetails(
+      token: token,
+      requestId: widget.request_id
+    );
   }
 
   @override
@@ -159,7 +166,10 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                   dobController.text = data.data!.dob ?? "";
                   // Set the dropdown initially if API provides value
                   setState(() {
-                    selectedGender = data.data!.gender!;
+                    selectedGender = genderValues.contains(data.data!.gender!)
+                        ? data.data!.gender!
+                        : null;
+                    // selectedGender = data.data!.gender!;
                   });
 
                 }

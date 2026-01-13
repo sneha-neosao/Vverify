@@ -226,8 +226,7 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                         descrepancy_reason ?? "NA",
                         style: Theme.of(context)
                             .textTheme
-                            .bodySmall!
-                            .copyWith(color: Colors.white),
+                            .bodySmall!,
                       ),
                       const SizedBox(
                         height: 4,
