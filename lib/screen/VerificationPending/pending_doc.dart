@@ -225,7 +225,18 @@ class _PendingDocState extends State<PendingDoc> {
                             itemCount: data.data!.length,
                             shrinkWrap: true,
                             itemBuilder: (BuildContext context, int index) {
-                              final status = data.data![index].status?.toLowerCase() ?? "";
+                              final rawStatus = data.data![index].status?.toLowerCase() ?? "";
+                              String status;
+
+                              if (rawStatus.isEmpty || rawStatus == "-" || rawStatus == "") {
+                                status = "pending";
+                              } else if (rawStatus == "discrepancy") {
+                                status = "discrepancy";
+                              } else if (rawStatus == "verified" || rawStatus == "clear") {
+                                status = "verified";
+                              } else {
+                                status = rawStatus; // fallback for other values
+                              }
                               return Card(
                                 color: Theme.of(context).cardColor,
                                 child: Column(
@@ -416,41 +427,42 @@ class _PendingDocState extends State<PendingDoc> {
                                                     subtitle: Row(
                                                       children: [
                                                         Icon(
-                                                          status == ""
-                                                              ? Icons.schedule
-                                                              : data.data![index].status!.toLowerCase() == "discrepancy"
+                                                          status.toLowerCase() == "verified"
+                                                              ? Icons.verified
+                                                              : status.toLowerCase() == "discrepancy"
                                                               ? Icons.not_interested
-                                                              : Icons.verified,
+                                                              : Icons.schedule,
                                                           color:
-                                                          status == ""
-                                                              ? Colors.orangeAccent
-                                                              : data.data![index].status!.toLowerCase() == "discrepancy"
+                                                          status.toLowerCase() == "verified"
+                                                              ? Colors.green
+                                                              : status.toLowerCase() == "discrepancy"
                                                               ? Colors.red
-                                                              : Colors.green,
+                                                              : Colors.orangeAccent,
                                                           size: 14,
                                                         ),
                                                         const SizedBox(
                                                           width: 4,
                                                         ),
                                                         Text(
-                                                            '${data.data![index].services![servicesIndex].status}',
+                                                            status.toLowerCase() == "verified"
+                                                                ? "Verified"
+                                                                : status.toLowerCase() == "discrepancy"
+                                                                ? "Discrepancy"
+                                                                : "Pending",
                                                             style: Theme.of(
-                                                                    context)
+                                                                context)
                                                                 .textTheme
                                                                 .bodySmall!
                                                                 .copyWith(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: data.data![index].services![servicesIndex].status ==
-                                                                                "failed" ||
-                                                                            data.data![index].services![servicesIndex].status ==
-                                                                                "rejected"
-                                                                        ? Colors
-                                                                            .red
-                                                                        : data.data![index].services![servicesIndex].status ==
-                                                                                "verified"
-                                                                            ? Colors.green
-                                                                            : Theme.of(context).primaryColorDark))
+                                                                fontSize:
+                                                                14,
+                                                                color: status.toLowerCase() == "verified"
+                                                                    ? Colors.green
+                                                                    : status.toLowerCase() == "discrepancy"
+                                                                    ? Colors.red
+                                                                    : Colors.orangeAccent
+                                                            )
+                                                        )
                                                       ],
                                                     ),
                                                     trailing: data

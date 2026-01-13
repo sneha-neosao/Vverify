@@ -285,9 +285,20 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                               }
                               return BlocBuilder<IsPressedCubit, int>(
                                   builder: (context, isPressed) {
-                                    final status = data[index].status?.toLowerCase() ?? "";
+                                    final rawStatus = data[index].status?.toLowerCase() ?? "";
+                                    String status;
 
-                                return Card(
+                                    if (rawStatus.isEmpty || rawStatus == "-" || rawStatus == "") {
+                                      status = "pending";
+                                    } else if (rawStatus == "discrepancy") {
+                                      status = "discrepancy";
+                                    } else if (rawStatus == "verified" || rawStatus == "clear") {
+                                      status = "verified";
+                                    } else {
+                                      status = rawStatus; // fallback for other values
+                                    }
+
+                                    return Card(
                                   color: Theme.of(context).cardColor,
                                   child: Column(
                                     children: [
@@ -479,28 +490,28 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                         subtitle: Row(
                                                           children: [
                                                             Icon(
-                                                                status == ""
-                                                                    ? Icons.schedule
-                                                                    : data[index].status!.toLowerCase() == "discrepancy"
-                                                                    ? Icons.not_interested
-                                                                    : Icons.verified,
+                                                              status.toLowerCase() == "verified"
+                                                                  ? Icons.verified
+                                                                  : status.toLowerCase() == "discrepancy"
+                                                                  ? Icons.not_interested
+                                                                  : Icons.schedule,
                                                               color:
-                                                              status == ""
-                                                                    ? Colors.orangeAccent
-                                                                    : data[index].status!.toLowerCase() == "discrepancy"
-                                                                    ? Colors.red
-                                                                    : Colors.green,
+                                                              status.toLowerCase() == "verified"
+                                                                  ? Colors.green
+                                                                  : status.toLowerCase() == "discrepancy"
+                                                                  ? Colors.red
+                                                                  : Colors.orangeAccent,
                                                               size: 14,
                                                             ),
                                                             const SizedBox(
                                                               width: 4,
                                                             ),
                                                             Text(
-                                                              status == ""
-                                                                  ? "Pending"
-                                                                  : data[index].status!.toLowerCase() == "discrepancy"
+                                                                status.toLowerCase() == "verified"
+                                                                  ? "Verified"
+                                                                  : status.toLowerCase() == "discrepancy"
                                                                   ? "Discrepancy"
-                                                                  : "Verified",
+                                                                  : "Pending",
                                                                 style: Theme.of(
                                                                     context)
                                                                     .textTheme
@@ -508,11 +519,11 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                     .copyWith(
                                                                     fontSize:
                                                                     14,
-                                                                    color: status == ""
-                                                                        ? Colors.orangeAccent
-                                                                        : data[index].status!.toLowerCase() == "discrepancy"
+                                                                    color: status.toLowerCase() == "verified"
+                                                                        ? Colors.green
+                                                                        : status.toLowerCase() == "discrepancy"
                                                                         ? Colors.red
-                                                                        : Colors.green
+                                                                        : Colors.orangeAccent
                                                                 )
                                                             ),
                                                           ],
