@@ -7,6 +7,8 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentForm/TextController/EmploymentSaveFormControllerNew.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 import '../../../../../commonComponent/custom_button.dart';
 import '../../../common/id.dart';
 import '../Bloc/EmploymentSaveForm.dart';
@@ -14,13 +16,16 @@ import '../Bloc/EmploymentSaveFormState.dart';
 import '../Model/employmentSaveForm_model.dart';
 
 class EmploymentSaveFormNew extends StatefulWidget {
-  const EmploymentSaveFormNew({super.key});
+  String Case_uuid;
+
+   EmploymentSaveFormNew({super.key,required this.Case_uuid,});
 
   @override
   State<EmploymentSaveFormNew> createState() => _EmploymentSaveFormNewState();
 }
 
 class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
+  bool isChecked = false;
   final _formKey = GlobalKey<FormState>();
   var maskFormatter = MaskTextInputFormatter(
       mask: '##-##-####', filter: {"#": RegExp(r'[0-9]')});
@@ -31,15 +36,10 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
   void initState() {
     employmentControllerRecreateNew();
     super.initState();
+    print("case uuid at employ add : ${widget.Case_uuid}");
   }
 
   DateTime _selectedDate = DateTime.now();
-
-  // Function to calculate the date 18 years ago
-  // DateTime _getDate18YearsAgo() {
-  //   DateTime today = DateTime.now();
-  //   return DateTime(today.year - 18, today.month, today.day);
-  // }
 
   // Function to show the date picker
   Future<void> _selectLeaveDate(BuildContext context) async {
@@ -99,6 +99,9 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
     print('remunaration: ${employmentTextControllerNew.employmentRemunerationController.text}');
     print('reporting_manager: ${employmentTextControllerNew.employmentReportingManagerController.text}');
     print('reason_for_leaving: ${employmentTextControllerNew.employmentReasonForLeavingController.text}');
+    print('reason_for_leaving: ${employmentTextControllerNew.employmentReasonForLeavingController.text}');
+    print('case_uuid: ${widget.Case_uuid}');
+    print('till_date: ${isChecked == 1 ? 1 : null}');
 
     context.read<EmploymentSaveFormCubit>().employmentSaveForm(
         customer_id: customerId,
@@ -115,6 +118,8 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
             remunaration: employmentTextControllerNew.employmentRemunerationController.text,
             reporting_manager: employmentTextControllerNew.employmentReportingManagerController.text,
             reason_for_leaving: employmentTextControllerNew.employmentReasonForLeavingController.text,
+            case_uuid: widget.Case_uuid,
+            till_date: isChecked == true ? 1 : null
         ));
   }
 
@@ -151,14 +156,12 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: Theme.of(context).primaryColorDark, fontSize: 16),
                   ),
-                  form_widget(
-                      maskFormatter: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                      ],
+                  CustomRequiredTextField(
                       controller: employmentTextControllerNew.employmentEmployerNameController,
                       titleText: "Employer Name",
                       hintText: "Enter Employer Name",
-                      textInputType: TextInputType.text),
+                      textInputType: TextInputType.text
+                  ),
                   const SizedBox(
                     height: 16,
                   ),
@@ -229,31 +232,60 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
                       ),
                     ),
                   ),
-                  FormFieldNotRequired(
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isChecked = value ?? false;
+                          }); },
+                        activeColor: Colors.orange, // fill color when checked
+                        checkColor: Colors.white, // tick mark color
+                      ),
+                      Text(
+                        "Till Date",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
+                  CustomNotRequiredTextField(
                       controller: employmentTextControllerNew.employmentDesignationController,
                       titleText: "Designation",
                       hintText: "Enter Designation",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
+                      textInputType: TextInputType.text
+                  ),
+                  CustomNotRequiredTextField(
                       controller: employmentTextControllerNew.employmentDepartmentController,
                       titleText: "Department",
                       hintText: "Enter Department",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
+                      textInputType: TextInputType.text
+                  ),
+
+                  CustomNotRequiredTextField(
                       controller: employmentTextControllerNew.employmentRemunerationController,
                       titleText: "Remuneration",
                       hintText: "Enter Remuneration",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
+                      textInputType: TextInputType.text
+                  ),
+
+                  CustomNotRequiredTextField(
                       controller: employmentTextControllerNew.employmentReportingManagerController,
                       titleText: "Reporting Manager",
                       hintText: "Enter Reporting Manager",
-                      textInputType: TextInputType.text),
-                  form_widget(
+                      textInputType: TextInputType.text
+                  ),
+
+                  CustomRequiredTextField(
                       controller: employmentTextControllerNew.employmentReasonForLeavingController,
                       titleText: "Reason For Leaving",
                       hintText: "Enter Reason For Leaving",
-                      textInputType: TextInputType.text),
+                      textInputType: TextInputType.text
+                  ),
+
                   const SizedBox(
                     height: 24,
                   ),
@@ -265,7 +297,9 @@ class _EmploymentSaveFormNewState extends State<EmploymentSaveFormNew> {
                       listener: (context, employSave) {
                         if (employSave is EmploymentSaveFormSuccessState) {
                           if (employSave.data["status"] == 200) {
-                            context.pushReplacementNamed("EmployDataList");
+                            context.pushNamed("EmployDataList", pathParameters: {
+                              'uid': widget.Case_uuid.toString()
+                            });
 
                             context.read<EmploymentLetterImage>().clearImage();
                             context.read<EmploymentSupportDocumentImage>().clearImage();

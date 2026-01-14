@@ -313,10 +313,11 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/EmploymentSaveFormNew',
+        path: '/EmploymentSaveFormNew/:uid',
         name: "EmploymentSaveFormNew",
         builder: (context, state) {
-          return const EmploymentSaveFormNew();
+          final uid = state.pathParameters['uid'] ?? "";
+          return EmploymentSaveFormNew(Case_uuid: uid,);
         },
       ),
       // GoRoute(
@@ -499,10 +500,11 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/EmployDataList',
+        path: '/EmployDataList/:uid',
         name: 'EmployDataList',
         builder: (context, state) {
-          return const EmployDataList();
+          final uid = state.pathParameters['uid'] ?? "";
+          return  EmployDataList(Case_uuid: uid,);
         },
       ),
       GoRoute(

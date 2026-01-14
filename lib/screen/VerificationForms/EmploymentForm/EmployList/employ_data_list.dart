@@ -15,7 +15,9 @@ import 'Bloc/employ_data_list_state.dart';
 import 'Model/employ_data_list_model.dart';
 
 class EmployDataList extends StatefulWidget {
-  const EmployDataList({super.key});
+  String Case_uuid;
+
+   EmployDataList({super.key, required this.Case_uuid});
 
   @override
   State<EmployDataList> createState() => _EmployDataListState();
@@ -80,39 +82,18 @@ Future<void> pickFile() async {
             const SizedBox(
               height: 16,
             ),
-            BlocBuilder<EmployDataListCubit, EmployDataListState>(
-              builder: (context, state) {
-                if (state is EmployDataListLoadingState) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is EmployDataListEmptyState) {
-                  return CustomButton(
-                    onTap: () {
-                      context.pushReplacement("/EmploymentSaveFormNew");
-                    },
-                    text: "Add Employment Details",
-                    gradientColors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColorDark,
-                    ],
-                  );
-                } else if (state is EmployDataListSuccessState) {
-                  final data = state.employListDataModel;
-                  if (data.data == null || data.data!.isEmpty) {
-                    return CustomButton(
-                      onTap: () {
-                        context.pushReplacement("/EmploymentSaveFormNew");
-                      },
-                      text: "Add Employment Details",
-                      gradientColors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColorDark,
-                      ],
-                    );
-                  }
-                  // render list
-                }
-                return const SizedBox();
+            CustomButton(
+              onTap: () {
+                context.pushNamed(
+                  "EmploymentSaveFormNew",
+                  pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
+                );
               },
+              text: "Add Employment Details",
+              gradientColors: [
+                Theme.of(context).primaryColor,
+                Theme.of(context).primaryColorDark,
+              ],
             ),
             const SizedBox(
               height: 16,
@@ -431,7 +412,7 @@ Future<void> pickFile() async {
                                                 "EmploymentUpdateFormNew",
                                                 pathParameters: {
                                                   'uid': data.data![index].uid
-                                                      .toString()
+                                                      .toString(),
                                                 });
                                           }
                                         },

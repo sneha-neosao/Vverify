@@ -33,7 +33,7 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
   TextEditingController joiningController = TextEditingController();
   TextEditingController dobController = TextEditingController();
   String? selectedGender;
-  List<String> genderValues = <String>['Male', 'Female', 'Other'];
+  List<String> genderValues = <String>['Male', 'Female', 'Others'];
 
   @override
   void initState() {

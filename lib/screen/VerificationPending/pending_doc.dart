@@ -33,7 +33,8 @@ void checkCase({required String title, String? uuid,required BuildContext contex
       context.pushNamed("NameAddressVerificationFormNew");
       break;
     case "Employment Verification":
-      context.pushNamed("EmployDataList");
+      context.pushNamed("EmployDataList",pathParameters: {'uid': uuid!},
+      );
       break;
     case "Education Verification":
       context.pushNamed("EducationList",pathParameters: {'uid': uuid!},
@@ -351,8 +352,9 @@ class _PendingDocState extends State<PendingDoc> {
                                                                       servicesIndex]
                                                                   .serviceTitle ==
                                                               "Employment Verification") {
-                                                            context.pushNamed(
-                                                                "EmployDataList");
+                                                            context.pushNamed("EmployDataList",pathParameters: {
+                                                              'uid': data.data![index].case_uuid.toString()}
+                                                            );
                                                           } else if (data.data![index].services![servicesIndex].serviceTitle =="Education Verification") {
                                                             print("case_uuid at pending doc: ${data.data![index].case_uuid.toString()}");
                                                             context.pushNamed("EducationList",pathParameters: {

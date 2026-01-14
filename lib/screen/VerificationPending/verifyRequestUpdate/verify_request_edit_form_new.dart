@@ -36,7 +36,7 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
   TextEditingController joiningController = TextEditingController();
   TextEditingController dobController = TextEditingController();
   String? selectedGender;
-  List<String> genderValues = <String>['male', 'female', 'other'];
+  List<String> genderValues = <String>['male', 'female', 'others'];
 
   @override
   void initState() {

@@ -109,7 +109,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         context.pushNamed("NameAddressVerificationFormNew");
         break;
       case "employment-verification-list":
-        context.pushNamed("EmployDataList");
+        context.pushNamed("EmployDataList",pathParameters: {'uid': data[index].case_uuid.toString()},
+        );
         break;
       case "education-verification-list":
         context.pushNamed("EducationList", pathParameters: {
@@ -404,8 +405,9 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                           servicesIndex]
                                                                       .serviceTitle ==
                                                                   "Employment Verification") {
-                                                                context.pushNamed(
-                                                                    "EmployDataList");
+                                                                context.pushNamed("EmployDataList",pathParameters: {
+                                                                  'uid': data[index].case_uuid.toString()}
+                                                                );
                                                               } else if (data[
                                                                           index]
                                                                       .services![

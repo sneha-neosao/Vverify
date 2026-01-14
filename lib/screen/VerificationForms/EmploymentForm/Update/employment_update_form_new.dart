@@ -14,6 +14,8 @@ import 'package:v_verify/screen/VerificationForms/EmploymentForm/Update/showData
 import 'package:v_verify/screen/VerificationForms/EmploymentForm/Update/showData/Bloc/employ_show_data_state.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentForm/Update/showData/Model/employ_show_data_model.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 import '../../../../commonComponent/custom_button.dart';
 import '../../common/id.dart';
 
@@ -27,6 +29,7 @@ class EmploymentUpdateFormNew extends StatefulWidget {
 }
 
 class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
+  bool isChecked = false;
   final _formKey = GlobalKey<FormState>();
   var maskFormatter = MaskTextInputFormatter(
       mask: '##-##-####', filter: {"#": RegExp(r'[0-9]')});
@@ -48,12 +51,6 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
   }
 
   DateTime _selectedDate = DateTime.now();
-
-  // Function to calculate the date 18 years ago
-  // DateTime _getDate18YearsAgo() {
-  //   DateTime today = DateTime.now();
-  //   return DateTime(today.year - 18, today.month, today.day);
-  // }
 
   // Function to show the date picker
   Future<void> _selectLeaveDate(BuildContext context) async {
@@ -137,10 +134,10 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
               key: _formKey,
               child: BlocConsumer<EmployShowDataCubit,
                   EmployShowDataState>
-                (listener: (context, educationData) {
-                if (educationData is EmployShowDataSuccessState) {
+                (listener: (context, employData) {
+                if (employData is EmployShowDataSuccessState) {
                   EmploymentShowDataModel data =
-                      educationData.employmentShowDataModel;
+                      employData.employmentShowDataModel;
                   employmentTextControllerNew.employmentEmployerNameController.text = data.data!.employer_name ?? "";
                   joinDateController.text = data.data!.employed_from ?? "";
                   leaveDateController.text = data.data!.employed_to ?? "";
@@ -149,19 +146,22 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
                   employmentTextControllerNew.employmentRemunerationController.text = data.data!.remunaration ?? "";
                   employmentTextControllerNew.employmentReportingManagerController.text = data.data!.reporting_manager ?? "";
                   employmentTextControllerNew.employmentReasonForLeavingController.text = data.data!.reason_for_leaving ?? "";
+                  // ✅ Checkbox logic
+                  isChecked = (data.data!.employed_to == null || data.data!.employed_to!.isEmpty);
+                  setState(() {});
                 }
-              }, builder: (context, educationData) {
-                if (educationData is EmployShowDataLoadingState) {
+              }, builder: (context, employData) {
+                if (employData is EmployShowDataLoadingState) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
-                } else if (educationData is EmployShowDataErrorState) {
+                } else if (employData is EmployShowDataErrorState) {
                   return Center(
-                    child: Text(educationData.message),
+                    child: Text(employData.message),
                   );
-                } else if (educationData is EmployShowDataSuccessState) {
+                } else if (employData is EmployShowDataSuccessState) {
                   EmploymentShowDataModel detailsData =
-                      educationData.employmentShowDataModel;
+                      employData.employmentShowDataModel;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -172,72 +172,17 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
                             .titleMedium!
                             .copyWith(color: Theme.of(context).primaryColorDark),
                       ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Text("Choose an Option:",
-                          style: Theme.of(context).textTheme.bodySmall),
-                      BlocProvider(
-                        create: (_) => FormUploadEmploymentCubit(),
-                        child: BlocBuilder<FormUploadEmploymentCubit, bool>(
-                            builder: (context, frmUpload) {
-                              return
-
-                                Column(
-                                  children: [
-                                    ListTile(
-                                      splashColor: Colors.transparent,
-                                      onTap: () {
-                                        context
-                                            .read<FormUploadEmploymentCubit>()
-                                            .formUploadYesNo(yesNo: false);
-                                      },
-                                      contentPadding: const EdgeInsets.all(0),
-                                      leading: Icon(Icons.radio_button_checked,
-                                          color: !frmUpload
-                                              ? Theme.of(context).primaryColorLight
-                                              : Theme.of(context).iconTheme.color),
-                                      title: Text("Fill the Form Manually",
-                                          style: Theme.of(context).textTheme.bodySmall),
-                                    ),
-                                    ListTile(
-                                      splashColor: Colors.transparent,
-                                      onTap: () {
-                                        context.pushReplacementNamed(
-                                            "EmploymentUploadDocument");
-
-                                        context
-                                            .read<FormUploadEmploymentCubit>()
-                                            .formUploadYesNo(yesNo: false);
-
-                                        context
-                                            .read<FormUploadEmploymentCubit>()
-                                            .formUploadYesNo(yesNo: true);
-                                      },
-                                      contentPadding: const EdgeInsets.all(0),
-                                      leading: Icon(
-                                        Icons.radio_button_checked,
-                                        color: frmUpload
-                                            ? Theme.of(context).primaryColorLight
-                                            : Theme.of(context).iconTheme.color,
-                                      ),
-                                      title: Text("Upload Documents",
-                                          style: Theme.of(context).textTheme.bodySmall),
-                                    ),
-                                  ],
-                                );
-                            }),
-                      ),
                       Text(
                         "Employment Details",
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
                             color: Theme.of(context).primaryColorDark, fontSize: 16),
                       ),
-                      form_widget(
+                      CustomRequiredTextField(
                           controller: employmentTextControllerNew.employmentEmployerNameController,
                           titleText: "Employer Name",
                           hintText: "Enter Employer Name",
-                          textInputType: TextInputType.text),
+                          textInputType: TextInputType.text
+                      ),
                       const SizedBox(
                         height: 16,
                       ),
@@ -308,31 +253,56 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
                           ),
                         ),
                       ),
-                      FormFieldNotRequired(
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: isChecked,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isChecked = value ?? false;
+                              }); },
+                            activeColor: Colors.orange, // fill color when checked
+                            checkColor: Colors.white, // tick mark color
+                          ),
+                          Text(
+                            "Till Date",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
+                      CustomNotRequiredTextField(
                           controller: employmentTextControllerNew.employmentDesignationController,
                           titleText: "Designation",
                           hintText: "Enter Designation",
-                          textInputType: TextInputType.text),
-                      FormFieldNotRequired(
+                          textInputType: TextInputType.text
+                      ),
+                      CustomNotRequiredTextField(
                           controller: employmentTextControllerNew.employmentDepartmentController,
                           titleText: "Department",
                           hintText: "Enter Department",
-                          textInputType: TextInputType.text),
-                      FormFieldNotRequired(
+                          textInputType: TextInputType.text
+                      ),
+                      CustomNotRequiredTextField(
                           controller: employmentTextControllerNew.employmentRemunerationController,
                           titleText: "Remuneration",
                           hintText: "Enter Remuneration",
-                          textInputType: TextInputType.text),
-                      FormFieldNotRequired(
+                          textInputType: TextInputType.text
+                      ),
+                      CustomNotRequiredTextField(
                           controller: employmentTextControllerNew.employmentReportingManagerController,
                           titleText: "Reporting Manager",
                           hintText: "Enter Reporting Manager",
-                          textInputType: TextInputType.text),
-                      form_widget(
+                          textInputType: TextInputType.text
+                      ),
+                      CustomRequiredTextField(
                           controller: employmentTextControllerNew.employmentReasonForLeavingController,
                           titleText: "Reason For Leaving",
                           hintText: "Enter Reason For Leaving",
-                          textInputType: TextInputType.text),
+                          textInputType: TextInputType.text
+                      ),
                       const SizedBox(
                         height: 24,
                       ),
@@ -344,7 +314,9 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
                           listener: (context, employSave) {
                             if (employSave is EmploymentUpdateFormSuccessState) {
                               if (employSave.data["status"] == 200) {
-                                context.pushReplacementNamed("EmployDataList");
+                                context.pushNamed("EmployDataList", pathParameters: {
+                                  'uid': employData.employmentShowDataModel.data!.uid!
+                                });
 
                                 context.read<EmploymentLetterImage>().clearImage();
                                 context
@@ -363,7 +335,9 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
                             employSave is EmploymentUpdateFormLoadingState,
                             height: 45,
                             onTap: () {
-                              context.pushReplacementNamed("EmployDataList");
+                              context.pushNamed("EmployDataList", pathParameters: {
+                                'uid': employData.employmentShowDataModel.data!.uid!
+                              });
                               FocusManager.instance.primaryFocus?.unfocus();
                               FocusManager.instance.primaryFocus?.unfocus();
                               if (_formKey.currentState?.validate() ?? false) {
