@@ -97,8 +97,13 @@ class _EducationUploadDocumentNewState extends State<EducationUploadDocumentNew>
                 const SizedBox(
                   height: 8,
                 ),
-                const Text(
-                    "Note : Upload one combined PDF if you have multiple documents."),
+                Text(
+                    "Note : Uploaded documents must not exceed 2 MB.",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontSize: 12, color: Colors.grey),
+                ),
                 const SizedBox(
                   height: 24,
                 ),

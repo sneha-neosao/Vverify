@@ -5,6 +5,8 @@ import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/SaveForm/TextController/education_text_controller_new.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../../commonComponent/custom_button.dart';
 import '../Names/Collage/Bloc/collage_name_cubit.dart';
@@ -126,33 +128,33 @@ class _EducationSaveFormNewState extends State<EducationSaveFormNew> {
                         .bodySmall!
                         .copyWith(fontSize: 12, color: Colors.grey),
                   ),
-                  form_widget(
+                  CustomRequiredTextField(
                       controller: educationTextControllerNew.educationUniversityNameController,
                       titleText: "Name Of University",
                       hintText: "Enter Name Of University",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
+                      textInputType: TextInputType.text
+                  ),
+                  CustomNotRequiredTextField(
                       controller: educationTextControllerNew.educationInstitutionNameController,
                       titleText: "Name Of Institute/College",
                       hintText: "Enter Name Of Institute/College",
-                      textInputType: TextInputType.text),
-                  form_widget(
-                    controller: educationTextControllerNew.educationYearOfPassingController,
-                    titleText: 'Year Of Passing',
-                    hintText: "Enter Year Of Passing",
-                    textInputType: TextInputType.number,
+                      textInputType: TextInputType.text
                   ),
-
-                  form_widget(
-                    controller: educationTextControllerNew.educationDegreeQualificationNameController,
-                    titleText: 'Name Of Degree',
-                    hintText: "Enter Name Of Degree",
-                    textInputType: TextInputType.text,
+                  CustomRequiredTextField(
+                      controller: educationTextControllerNew.educationYearOfPassingController,
+                      titleText: "Year Of Passing",
+                      hintText: "Enter Year Of Passing",
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
+                      controller: educationTextControllerNew.educationDegreeQualificationNameController,
+                      titleText: "Name Of Degree",
+                      hintText: "Enter Name Of Degree",
+                      textInputType: TextInputType.text
                   ),
                   const SizedBox(
                     height: 16,
                   ),
-
                   RichText(
                       text: TextSpan(
                         text: "Percentage/CGPA/Grade",
@@ -160,7 +162,8 @@ class _EducationSaveFormNewState extends State<EducationSaveFormNew> {
                             .textTheme
                             .bodySmall!
                             .copyWith(fontWeight: FontWeight.w700),
-                      )),
+                      )
+                  ),
                   const SizedBox(
                     height: 4,
                   ),
@@ -175,12 +178,6 @@ class _EducationSaveFormNewState extends State<EducationSaveFormNew> {
                             .bodySmall!
                             .copyWith(color: Colors.grey),
                       ),
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return "Please Select Gender";
-                      //   }
-                      //   return null;
-                      // },
                       onChanged: (String? value) {
                         setState(() {
                           selectedGrade = value;
@@ -214,11 +211,11 @@ class _EducationSaveFormNewState extends State<EducationSaveFormNew> {
                       ),
                     ),
                   ),
-                  FormFieldNotRequired(
-                    controller: educationTextControllerNew.educationGradeObtainedController,
-                    titleText: 'Percentage/CGPA/Grade Obtained',
-                    hintText: "Enter Percentage/CGPA/Grade Obtained",
-                    textInputType: TextInputType.text,
+                  CustomNotRequiredTextField(
+                      controller: educationTextControllerNew.educationGradeObtainedController,
+                      titleText: "Percentage/CGPA/Grade Obtained",
+                      hintText: "Enter Percentage/CGPA/Grade Obtained",
+                      textInputType: TextInputType.text
                   ),
                   const SizedBox(
                     height: 24,
@@ -246,6 +243,7 @@ class _EducationSaveFormNewState extends State<EducationSaveFormNew> {
                   }, builder: (context, education) {
                     return CustomButton(
                         height: 45,
+                        isLoading: education is EducationSaveFormLoadingState,
                         onTap: () {
                           FocusManager.instance.primaryFocus?.unfocus();
                           if (_formKey.currentState?.validate() ?? false) {

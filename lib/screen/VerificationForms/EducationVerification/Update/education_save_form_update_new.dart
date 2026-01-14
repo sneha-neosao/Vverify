@@ -6,6 +6,8 @@ import 'package:v_verify/screen/VerificationForms/EducationVerification/SaveForm
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Update/ShowDetails/Bloc/education_show_details_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../../commonComponent/custom_button.dart';
 import '../Names/Collage/Bloc/collage_name_cubit.dart';
@@ -166,52 +168,6 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                       const SizedBox(
                         height: 16,
                       ),
-                      // Text("Choose an Option:",
-                      //     style: Theme.of(context).textTheme.bodySmall),
-
-                      // BlocProvider(
-                      //   create: (_) => FormUploadEducationtCubit(),
-                      //   child: BlocBuilder<FormUploadEducationtCubit, bool>(
-                      //       builder: (context, frmUpload) {
-                      //         return Column(
-                      //           children: [
-                      //             ListTile(
-                      //               splashColor: Colors.transparent,
-                      //               onTap: () {
-                      //                 context
-                      //                     .read<FormUploadEducationtCubit>()
-                      //                     .formUploadYesNo(yesNo: false);
-                      //               },
-                      //               contentPadding: const EdgeInsets.all(0),
-                      //               leading: Icon(Icons.radio_button_checked,
-                      //                   color: !frmUpload
-                      //                       ? Theme.of(context).primaryColorLight
-                      //                       : Theme.of(context).iconTheme.color),
-                      //               title: Text("Fill the Form Manually",
-                      //                   style: Theme.of(context).textTheme.bodySmall),
-                      //             ),
-                      //             ListTile(
-                      //               splashColor: Colors.transparent,
-                      //               onTap: () {
-                      //                 context.pushReplacementNamed("EducationDocUpload");
-                      //                 context
-                      //                     .read<FormUploadEducationtCubit>()
-                      //                     .formUploadYesNo(yesNo: true);
-                      //               },
-                      //               contentPadding: const EdgeInsets.all(0),
-                      //               leading: Icon(
-                      //                 Icons.radio_button_checked,
-                      //                 color: frmUpload
-                      //                     ? Theme.of(context).primaryColorLight
-                      //                     : Theme.of(context).iconTheme.color,
-                      //               ),
-                      //               title: Text("Upload Documents",
-                      //                   style: Theme.of(context).textTheme.bodySmall),
-                      //             ),
-                      //           ],
-                      //         );
-                      //       }),
-                      // ),
                       Text(
                         "Rejected Reason:",
                         style: Theme.of(context)
@@ -246,33 +202,33 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                             .bodySmall!
                             .copyWith(fontSize: 12, color: Colors.grey),
                       ),
-                      form_widget(
+                      CustomRequiredTextField(
                           controller: educationTextControllerNew.educationUniversityNameController,
                           titleText: "Name Of University",
                           hintText: "Enter Name Of University",
-                          textInputType: TextInputType.text),
-                      FormFieldNotRequired(
+                          textInputType: TextInputType.text
+                      ),
+                      CustomNotRequiredTextField(
                           controller: educationTextControllerNew.educationInstitutionNameController,
                           titleText: "Name Of Institute/College",
                           hintText: "Enter Name Of Institute/College",
-                          textInputType: TextInputType.text),
-                      form_widget(
-                        controller: educationTextControllerNew.educationYearOfPassingController,
-                        titleText: 'Year Of Passing',
-                        hintText: "Enter Year Of Passing",
-                        textInputType: TextInputType.number,
+                          textInputType: TextInputType.text
                       ),
-
-                      form_widget(
-                        controller: educationTextControllerNew.educationDegreeQualificationNameController,
-                        titleText: 'Name Of Degree',
-                        hintText: "Enter Name Of Degree",
-                        textInputType: TextInputType.text,
+                      CustomRequiredTextField(
+                          controller: educationTextControllerNew.educationYearOfPassingController,
+                          titleText: "Year Of Passing",
+                          hintText: "Enter Year Of Passing",
+                          textInputType: TextInputType.text
+                      ),
+                      CustomRequiredTextField(
+                          controller: educationTextControllerNew.educationDegreeQualificationNameController,
+                          titleText: "Name Of Degree",
+                          hintText: "Enter Name Of Degree",
+                          textInputType: TextInputType.text
                       ),
                       const SizedBox(
                         height: 16,
                       ),
-
                       RichText(
                           text: TextSpan(
                             text: "Percentage/CGPA/Grade",
@@ -295,12 +251,6 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                                 .bodySmall!
                                 .copyWith(color: Colors.grey),
                           ),
-// validator: (value) {
-//   if (value == null || value.isEmpty) {
-//     return "Please Select Gender";
-//   }
-//   return null;
-// },
                           onChanged: (String? value) {
                             setState(() {
                               selectedGrade = value;
@@ -334,11 +284,11 @@ class _EducationSaveFormUpdateNewState extends State<EducationSaveFormUpdateNew>
                           ),
                         ),
                       ),
-                      FormFieldNotRequired(
-                        controller: educationTextControllerNew.educationGradeObtainedController,
-                        titleText: 'Percentage/CGPA/Grade Obtained',
-                        hintText: "Enter Percentage/CGPA/Grade Obtained",
-                        textInputType: TextInputType.text,
+                      CustomNotRequiredTextField(
+                          controller: educationTextControllerNew.educationGradeObtainedController,
+                          titleText: "Percentage/CGPA/Grade Obtained",
+                          hintText: "Enter Percentage/CGPA/Grade Obtained",
+                          textInputType: TextInputType.text
                       ),
                       const SizedBox(
                         height: 24,
