@@ -23,7 +23,7 @@ String? addressValidator(String? value) {
 String? validateMobile(String? value) {
   RegExp regExp = RegExp(r'^\d{10}$');
   if (value == null || value.isEmpty) {
-    return 'Please enter a mobile number';
+    return 'Mobile Number is required';
   } else if (!regExp.hasMatch(value)) {
     return 'Please enter a valid 10-digit mobile number';
   }
@@ -36,9 +36,9 @@ String? validateEmail(String? value) {
     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
   );
   if (value == null || value.isEmpty) {
-    return 'Please enter a email';
+    return 'Email is required';
   } else if (!regex.hasMatch(value)) {
-    return 'Please enter a valid email address.';
+    return 'Please enter a valid email.';
   }
   return null;
 }
@@ -110,7 +110,7 @@ String? validateEmailNotRequired(String? value) {
     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
   );
   if (value == null || value.isEmpty) {
-    return 'Please enter a email';
+    return null;
   } else if (!regex.hasMatch(value)) {
     return 'Please enter a valid email address.';
   }

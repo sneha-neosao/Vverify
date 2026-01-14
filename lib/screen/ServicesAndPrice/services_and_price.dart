@@ -286,245 +286,250 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                     SnackBar(content: Text(checkout.errorMessage)));
               }
             }, builder: (context, checkout) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 3,
-                        blurRadius: 3,
-                      )
-                    ]),
-                height: ScreenSize.screenHeight / 7,
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+              return SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 3,
+                          blurRadius: 3,
+                        )
+                      ]),
+                  height: ScreenSize.screenHeight / 7,
+                  width: double.infinity,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 22.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'No. of Tenants: $TenantsCount',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            showModalBottomSheet<void>(
-                                isScrollControlled: true,
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Container(
-                                    color: Theme.of(context)
-                                        .scaffoldBackgroundColor,
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'No. of Tenants: $TenantsCount',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                showModalBottomSheet<void>(
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
 
-                                    height: addList.length == 1
-                                        ? ScreenSize.screenHeight / 2.4
-                                        : addList.length == 2
-                                            ? ScreenSize.screenHeight / 2
-                                            : addList.length == 3
-                                                ? ScreenSize.screenHeight / 1.8
-                                                : addList.length > 3
-                                                    ? ScreenSize.screenHeight / 1.7
-                                                    : ScreenSize.screenHeight /
-                                                        2.8,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Center(
-                                            child: Container(
-                                                width: 60,
-                                                height: 6,
+                                        height: addList.length == 1
+                                            ? ScreenSize.screenHeight / 2.4
+                                            : addList.length == 2
+                                                ? ScreenSize.screenHeight / 2
+                                                : addList.length == 3
+                                                    ? ScreenSize.screenHeight / 1.8
+                                                    : addList.length > 3
+                                                        ? ScreenSize.screenHeight / 1.7
+                                                        : ScreenSize.screenHeight /
+                                                            2.8,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Center(
+                                                child: Container(
+                                                    width: 60,
+                                                    height: 6,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.grey,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                16))),
+                                              ),
+                                              Text("Price Breakup",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge!
+                                                      .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          fontSize: 16)),
+                                              const SizedBox(
+                                                height: 16,
+                                              ),
+                                              Container(
+                                                padding: const EdgeInsets.all(8),
                                                 decoration: BoxDecoration(
-                                                    color: Colors.grey,
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            16))),
-                                          ),
-                                          Text("Price Breakup",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleLarge!
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      fontSize: 16)),
-                                          const SizedBox(
-                                            height: 16,
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                color: Theme.of(context)
-                                                    .cardColor),
-                                            child: Column(
-                                              children: [
-                                                SizedBox(
-                                                  height: addList.length > 3
-                                                      ? ScreenSize
-                                                              .screenHeight /
-                                                          4
-                                                      : null,
-                                                  child: ListView.builder(
-                                                      itemCount: addList.length,
-                                                      shrinkWrap: true,
-                                                      itemBuilder:
-                                                          (BuildContext context,
-                                                              int index) {
-                                                        return ListTile(
-                                                          contentPadding:
-                                                              const EdgeInsets
-                                                                  .all(0),
-                                                          visualDensity:
-                                                              const VisualDensity(
-                                                                  horizontal: 0,
-                                                                  vertical: -4),
-                                                          title: Text(
-                                                              "${data.data![addList[index]["index"]].serviceTitle}",
-                                                              style: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .bodySmall),
-                                                          subtitle: Text(
-                                                            "₹${double.parse(data.data![addList[index]["index"]].servicePrice.toString()).toStringAsFixed(0)} X $TenantsCount",
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodySmall,
-                                                          ),
-                                                          trailing: Text(
-                                                            "₹${(double.parse(data.data![addList[index]["index"]].servicePrice!) * double.parse(TenantsCount.toString())).toStringAsFixed(0)}",
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodySmall,
-                                                          ),
-                                                        );
-                                                      }),
-                                                ),
+                                                        BorderRadius.circular(12),
+                                                    color: Theme.of(context)
+                                                        .cardColor),
+                                                child: Column(
+                                                  children: [
+                                                    SizedBox(
+                                                      height: addList.length > 3
+                                                          ? ScreenSize
+                                                                  .screenHeight /
+                                                              4
+                                                          : null,
+                                                      child: ListView.builder(
+                                                          itemCount: addList.length,
+                                                          shrinkWrap: true,
+                                                          itemBuilder:
+                                                              (BuildContext context,
+                                                                  int index) {
+                                                            return ListTile(
+                                                              contentPadding:
+                                                                  const EdgeInsets
+                                                                      .all(0),
+                                                              visualDensity:
+                                                                  const VisualDensity(
+                                                                      horizontal: 0,
+                                                                      vertical: -4),
+                                                              title: Text(
+                                                                  "${data.data![addList[index]["index"]].serviceTitle}",
+                                                                  style: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .bodySmall),
+                                                              subtitle: Text(
+                                                                "₹${double.parse(data.data![addList[index]["index"]].servicePrice.toString()).toStringAsFixed(0)} X $TenantsCount",
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .bodySmall,
+                                                              ),
+                                                              trailing: Text(
+                                                                "₹${(double.parse(data.data![addList[index]["index"]].servicePrice!) * double.parse(TenantsCount.toString())).toStringAsFixed(0)}",
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .bodySmall,
+                                                              ),
+                                                            );
+                                                          }),
+                                                    ),
 
-                                                ListTile(
-                                                  contentPadding:
-                                                      const EdgeInsets.all(0),
-                                                  visualDensity:
-                                                      const VisualDensity(
-                                                          horizontal: 0,
-                                                          vertical: -4),
-                                                  title: Text(
-                                                    "GST Charge 18%",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyLarge!
-                                                        .copyWith(fontSize: 14),
-                                                  ),
-                                                  trailing: Text(
-                                                    "₹${(totalPrice * TenantsCount * 18 / 100).toStringAsFixed(0)}",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyLarge!
-                                                        .copyWith(fontSize: 14),
-                                                  ),
+                                                    ListTile(
+                                                      contentPadding:
+                                                          const EdgeInsets.all(0),
+                                                      visualDensity:
+                                                          const VisualDensity(
+                                                              horizontal: 0,
+                                                              vertical: -4),
+                                                      title: Text(
+                                                        "GST Charge 18%",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge!
+                                                            .copyWith(fontSize: 14),
+                                                      ),
+                                                      trailing: Text(
+                                                        "₹${(totalPrice * TenantsCount * 18 / 100).toStringAsFixed(0)}",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge!
+                                                            .copyWith(fontSize: 14),
+                                                      ),
+                                                    ),
+                                                    ListTile(
+                                                      contentPadding:
+                                                          const EdgeInsets.all(0),
+                                                      visualDensity:
+                                                          const VisualDensity(
+                                                              horizontal: 0,
+                                                              vertical: -4),
+                                                      title: Text(
+                                                        "Grand Total",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge,
+                                                      ),
+                                                      trailing: Text(
+                                                        "₹${((totalPrice * TenantsCount) + (totalPrice * TenantsCount) * 18 / 100).toStringAsFixed(0)}",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                ListTile(
-                                                  contentPadding:
-                                                      const EdgeInsets.all(0),
-                                                  visualDensity:
-                                                      const VisualDensity(
-                                                          horizontal: 0,
-                                                          vertical: -4),
-                                                  title: Text(
-                                                    "Grand Total",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyLarge,
-                                                  ),
-                                                  trailing: Text(
-                                                    "₹${((totalPrice * TenantsCount) + (totalPrice * TenantsCount) * 18 / 100).toStringAsFixed(0)}",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyLarge,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 16,
-                                          ),
-                                          CustomButton(
-                                            isLoading: checkout
-                                                is CheckOutLoadingState,
-                                            onTap: () {
-                                              if (checkoutList.isEmpty) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(const SnackBar(
-                                                        content: Text(
-                                                            "Please select services")));
-                                              } else {
-                                                checkoutTransaction(
-                                                    payment_gateway: "Stripe",
-                                                    payment_mode: "Credit Card",
-                                                    quantity: TenantsCount,
-                                                    items: checkoutList);
-                                              }
-                                            },
-                                            text:
-                                                "Pay ₹${((totalPrice * TenantsCount) + (totalPrice * TenantsCount) * 18 / 100).toStringAsFixed(0)} /",
-                                            gradientColors: [
-                                              Theme.of(context).primaryColor,
-                                              Theme.of(context)
-                                                  .primaryColorLight
+                                              ),
+                                              const SizedBox(
+                                                height: 16,
+                                              ),
+                                              CustomButton(
+                                                isLoading: checkout
+                                                    is CheckOutLoadingState,
+                                                onTap: () {
+                                                  if (checkoutList.isEmpty) {
+                                                    ScaffoldMessenger.of(context)
+                                                        .showSnackBar(const SnackBar(
+                                                            content: Text(
+                                                                "Please select services")));
+                                                  } else {
+                                                    checkoutTransaction(
+                                                        payment_gateway: "Stripe",
+                                                        payment_mode: "Credit Card",
+                                                        quantity: TenantsCount,
+                                                        items: checkoutList);
+                                                  }
+                                                },
+                                                text:
+                                                    "Pay ₹${((totalPrice * TenantsCount) + (totalPrice * TenantsCount) * 18 / 100).toStringAsFixed(0)} /",
+                                                gradientColors: [
+                                                  Theme.of(context).primaryColor,
+                                                  Theme.of(context)
+                                                      .primaryColorLight
+                                                ],
+                                              ),
+                                              const SizedBox(height: 16,),
                                             ],
                                           ),
-                                          const SizedBox(height: 16,),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                });
+                                        ),
+                                      );
+                                    });
+                              },
+                              child: Text(
+                                'See price breakout',
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    color: Theme.of(context).primaryColorDark),
+                              ),
+                            ),
+                          ],
+                        ),
+                        CustomButton(
+                          isLoading: checkout is CheckOutLoadingState,
+                          width: ScreenSize.screenWidth / 2.5,
+                          text:
+                              "Pay ₹${((totalPrice * TenantsCount) + (totalPrice * TenantsCount) * 18 / 100).toStringAsFixed(0)} /-",
+                          onTap: () {
+                            if (checkoutList.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("Please select services")));
+                            } else {
+                              checkoutTransaction(
+                                  payment_gateway: "Stripe",
+                                  payment_mode: "Credit Card",
+                                  quantity: TenantsCount,
+                                  items: checkoutList);
+                            }
                           },
-                          child: Text(
-                            'See price breakout',
-                            style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: Theme.of(context).primaryColorDark),
-                          ),
+                          gradientColors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).primaryColorLight,
+                          ],
                         ),
                       ],
                     ),
-                    CustomButton(
-                      isLoading: checkout is CheckOutLoadingState,
-                      width: ScreenSize.screenWidth / 2.5,
-                      text:
-                          "Pay ₹${((totalPrice * TenantsCount) + (totalPrice * TenantsCount) * 18 / 100).toStringAsFixed(0)} /-",
-                      onTap: () {
-                        if (checkoutList.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Please select services")));
-                        } else {
-                          checkoutTransaction(
-                              payment_gateway: "Stripe",
-                              payment_mode: "Credit Card",
-                              quantity: TenantsCount,
-                              items: checkoutList);
-                        }
-                      },
-                      gradientColors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColorLight,
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
               );
             });

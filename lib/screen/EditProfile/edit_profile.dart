@@ -7,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:v_verify/commonComponent/screen_size.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../commonComponent/customTextFiled.dart';
 import '../../../commonComponent/custom_button.dart';
@@ -265,84 +267,60 @@ class _EditProfileState extends State<EditProfile> {
                               key: _formKey,
                               child: Column(
                                 children: [
-                                  CustomTextField(
-                                    validator: validateEmail,
-                                    labelText: "Enter Email",
-                                    controller: emailAddressController
-                                      ..text = data!.email!,
-                                    hintText: "Enter Email",
-                                    keyboardType: TextInputType.text,
+                                  CustomRequiredTextField(
+                                      validator: validateEmail,
+                                      controller: emailAddressController..text = data.email!,
+                                      titleText: "Email",
+                                      hintText: "Enter Email",
+                                      textInputType: TextInputType.text
                                   ),
-                                  const SizedBox(
-                                    height: 16,
+                                  CustomRequiredTextField(
+                                      controller: firstNameController..text = data.firstName!,
+                                      titleText: "First Name",
+                                      hintText: "Enter First Name",
+                                      textInputType: TextInputType.text
                                   ),
-                                  CustomTextField(
-                                    labelText: "First Name",
-                                    controller: firstNameController
-                                      ..text = data.firstName!,
-                                    hintText: "Enter First Name",
-                                    keyboardType: TextInputType.text,
-                                  ),
-                                  const SizedBox(
-                                    height: 16,
-                                  ),
-                                  CustomTextField(
-                                    labelText: "Last Name",
-                                    controller: lastNameController
-                                      ..text = data.lastName!,
-                                    hintText: "Enter Last Name",
-                                    keyboardType: TextInputType.text,
-                                  ),
-                                  const SizedBox(
-                                    height: 16,
+                                  CustomRequiredTextField(
+                                      controller: lastNameController..text = data.lastName!,
+                                      titleText: "Last Name",
+                                      hintText: "Enter Last Name",
+                                      textInputType: TextInputType.text
                                   ),
                                   if(widget.user_type.toLowerCase() == "company")
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        CustomTextField(
-                                          labelText: "Company Name",
-                                          controller: companyNameController
-                                            ..text = data.companyName!,
-                                          hintText: "Enter Company Name",
-                                          keyboardType: TextInputType.text,
+                                        CustomRequiredTextField(
+                                            controller: companyNameController..text = data.companyName!,
+                                            titleText: "Company Name",
+                                            hintText: "Enter Company Name",
+                                            textInputType: TextInputType.text
                                         ),
-                                        const SizedBox(
-                                          height: 16,
+                                        CustomRequiredTextField(
+                                            controller: companyHrController..text = data.companyHr!,
+                                            titleText: "Company Person / HR Name",
+                                            hintText: "Enter Person / HR Name",
+                                            textInputType: TextInputType.text
                                         ),
-                                        CustomTextField(
-                                          labelText: "Company Person / HR Name",
-                                          controller: companyHrController
-                                            ..text = data.companyHr!,
-                                          hintText: "Enter Person / HR Name",
-                                          keyboardType: TextInputType.text,
+                                        CustomRequiredTextField(
+                                            validator: validateMobile,
+                                            controller: companyHrNumberController..text = data.companyHrNumber!,
+                                            titleText: "Contact Person / HR Phone",
+                                            hintText: "Enter Contact Person / HR Phone",
+                                            textInputType: TextInputType.text
                                         ),
-                                        const SizedBox(
-                                          height: 16,
+                                        CustomRequiredTextField(
+                                            validator: validateEmail,
+                                            controller: companyEmailController..text = data.companyEmail!,
+                                            titleText: "Company Email",
+                                            hintText: "Enter Company Email",
+                                            textInputType: TextInputType.text
                                         ),
-                                        CustomTextField(
-                                          labelText: "Contact Person / HR Phone",
-                                          controller: companyHrNumberController
-                                            ..text = data.companyHrNumber!,
-                                          hintText: "Enter Contact Person / HR Phone",
-                                          keyboardType: TextInputType.text,
-                                        ),
-                                        const SizedBox(
-                                          height: 16,
-                                        ),
-                                        CustomTextField(
-                                          labelText: "Company Email",
-                                          controller: companyEmailController
-                                            ..text = data.companyEmail!,
-                                          hintText: "Enter Company Email",
-                                          keyboardType: TextInputType.text,
-                                        ),
-                                        FormFieldNotRequired(
-                                          titleText: "Company Address",
-                                          controller: companyAddressController
-                                            ..text = data.companyAddress!,
-                                          hintText: "Enter Company Address",
-                                          textInputType: TextInputType.text,
+                                        CustomNotRequiredTextField(
+                                            controller: companyAddressController..text = data.companyAddress!,
+                                            titleText: "Company Address",
+                                            hintText: "Enter Company Address",
+                                            textInputType: TextInputType.text
                                         ),
                                       ],
                                     ),

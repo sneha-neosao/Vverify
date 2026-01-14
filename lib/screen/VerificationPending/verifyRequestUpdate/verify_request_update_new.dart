@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../VerificationForms/common/form_widget.dart';
@@ -156,53 +158,43 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
                           .titleMedium!
                           .copyWith(color: Theme.of(context).primaryColorDark),
                     ),
-                    form_widget(
-                      maskFormatter: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                      ],
-                      textInputType: TextInputType.text,
-                      controller: firstnameController,
-                      titleText: 'First Name',
-                      hintText: "Enter First Name",
+                    CustomRequiredTextField(
+                        controller: firstnameController,
+                        titleText: "First Name",
+                        hintText: "Enter First Name",
+                        textInputType: TextInputType.text
                     ),
-                    FormFieldNotRequired(
-                      maskFormatter: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                      ],
-                      textInputType: TextInputType.text,
-                      controller: middleNameController,
-                      titleText: 'Middle Name',
-                      hintText: "Enter Middle Name",
+                    CustomNotRequiredTextField(
+                        controller: emailController,
+                        titleText: "Middle Name",
+                        hintText: "Enter Middle Name",
+                        textInputType: TextInputType.text
                     ),
-                    form_widget(
-                      maskFormatter: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                      ],
-                      textInputType: TextInputType.text,
-                      controller: lastnameController,
-                      titleText: 'Last Name',
-                      hintText: "Enter Last Name",
+                    CustomRequiredTextField(
+                        controller: lastnameController,
+                        titleText: "Last Name",
+                        hintText: "Enter Last Name",
+                        textInputType: TextInputType.text
                     ),
-                    FormFieldNotRequired(
-                      maskFormatter: [mobileMaskFormatter],
-                      validator: validateMobileNotRequired,
-                      textInputType: TextInputType.number,
-                      controller: phoneController,
-                      titleText: 'Mobile Number',
-                      hintText: "Enter Mobile Number",
+                    CustomNotRequiredTextField(
+                        validator: validateMobileNotRequired,
+                        controller: phoneController,
+                        titleText: "Mobile Number",
+                        hintText: "Enter Mobile Number",
+                        textInputType: TextInputType.text
                     ),
-                    FormFieldNotRequired(
-                      maskFormatter: [emailFormatter],
-                      textInputType: TextInputType.text,
-                      controller: emailController,
-                      titleText: 'Email',
-                      hintText: "Enter Email",
+                    CustomNotRequiredTextField(
+                        validator: validateEmailNotRequired,
+                        controller: emailController,
+                        titleText: "Email",
+                        hintText: "Enter Email",
+                        textInputType: TextInputType.text
                     ),
-                    FormFieldNotRequired(
-                      textInputType: TextInputType.text,
-                      controller: employeeCodeController,
-                      titleText: 'Employee Code',
-                      hintText: "Enter Employee Code",
+                    CustomNotRequiredTextField(
+                        controller: employeeCodeController,
+                        titleText: "Employee Code",
+                        hintText: "Enter Employee Code",
+                        textInputType: TextInputType.text
                     ),
                     const SizedBox(
                       height: 16,
@@ -220,12 +212,6 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
                     ),
                     TextFormField(
                       readOnly: true,
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Please enter date of joining';
-                      //   }
-                      //   return null;
-                      // },
                       style: Theme.of(context).textTheme.bodySmall,
                       keyboardType: TextInputType.number,
                       inputFormatters: [maskFormatter],
@@ -255,12 +241,6 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
                     ),
                     TextFormField(
                       readOnly: true,
-                      // validator: (value) {
-                      //   if (value == null || value.isEmpty) {
-                      //     return 'Please enter birth date';
-                      //   }
-                      //   return null;
-                      // },
                       style: Theme.of(context).textTheme.bodySmall,
                       keyboardType: TextInputType.number,
                       inputFormatters: [maskFormatter],
@@ -302,12 +282,6 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
                                 .bodySmall!
                                 .copyWith(color: Colors.grey),
                           ),
-                          // validator: (value) {
-                          //   if (value == null || value.isEmpty) {
-                          //     return "Please Select Gender";
-                          //   }
-                          //   return null;
-                          // },
                           onChanged: (String? value) {
                             setState(() {
                               selectedGender = value!.toLowerCase();

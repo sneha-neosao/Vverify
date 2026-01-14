@@ -8,7 +8,7 @@ class VerifyRequestEditCubit extends Cubit<VerifyRequestEditState> {
   VerifyRequestEditCubit(this._apiService)
       : super(VerifyRequestEditInitialState());
 
-  void verifyRequestUpdate(
+  void VerifyRequestEditUpdate(
       {required String token,
         required String uuid,
         required String firstName,
@@ -23,7 +23,7 @@ class VerifyRequestEditCubit extends Cubit<VerifyRequestEditState> {
         String? status}) async {
     emit(VerifyRequestEditLoadingState());
     try {
-      final response = await _apiService.verifyRequestUpdate(
+      final response = await _apiService.VerifyRequestEditUpdate(
           token: token,
           uuid: uuid,
           phone: phone,

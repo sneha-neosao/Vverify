@@ -111,52 +111,6 @@ class _EducationSaveFormNewState extends State<EducationSaveFormNew> {
                   const SizedBox(
                     height: 16,
                   ),
-                  // Text("Choose an Option:",
-                  //     style: Theme.of(context).textTheme.bodySmall),
-
-                  // BlocProvider(
-                  //   create: (_) => FormUploadEducationtCubit(),
-                  //   child: BlocBuilder<FormUploadEducationtCubit, bool>(
-                  //       builder: (context, frmUpload) {
-                  //         return Column(
-                  //           children: [
-                  //             ListTile(
-                  //               splashColor: Colors.transparent,
-                  //               onTap: () {
-                  //                 context
-                  //                     .read<FormUploadEducationtCubit>()
-                  //                     .formUploadYesNo(yesNo: false);
-                  //               },
-                  //               contentPadding: const EdgeInsets.all(0),
-                  //               leading: Icon(Icons.radio_button_checked,
-                  //                   color: !frmUpload
-                  //                       ? Theme.of(context).primaryColorLight
-                  //                       : Theme.of(context).iconTheme.color),
-                  //               title: Text("Fill the Form Manually",
-                  //                   style: Theme.of(context).textTheme.bodySmall),
-                  //             ),
-                  //             // ListTile(
-                  //             //   splashColor: Colors.transparent,
-                  //             //   onTap: () {
-                  //             //     context.pushReplacementNamed("EducationDocUpload");
-                  //             //     context
-                  //             //         .read<FormUploadEducationtCubit>()
-                  //             //         .formUploadYesNo(yesNo: true);
-                  //             //   },
-                  //             //   contentPadding: const EdgeInsets.all(0),
-                  //             //   leading: Icon(
-                  //             //     Icons.radio_button_checked,
-                  //             //     color: frmUpload
-                  //             //         ? Theme.of(context).primaryColorLight
-                  //             //         : Theme.of(context).iconTheme.color,
-                  //             //   ),
-                  //             //   title: Text("Upload Documents",
-                  //             //       style: Theme.of(context).textTheme.bodySmall),
-                  //             // ),
-                  //           ],
-                  //         );
-                  //       }),
-                  // ),
                   Text(
                     "Educational Details",
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(

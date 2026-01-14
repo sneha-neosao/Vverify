@@ -15,6 +15,8 @@ import 'package:v_verify/screen/VerificationForms/common/validator.dart';
 
 import '../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../commonComponent/custom_button.dart';
+import '../../widgets/custom_not_required_text_field.dart';
+import '../../widgets/custom_required_text_field.dart';
 import '../PushNotification/Bloc/push_notification_cubit.dart';
 import '../PushNotification/firebase_token.dart';
 
@@ -355,302 +357,68 @@ class _CompleteProfileState extends State<CompleteProfile> {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 28,
+                  CustomRequiredTextField(
+                      controller: firstNameController,
+                      titleText: "First Name",
+                      hintText: "Enter First Name",
+                      textInputType: TextInputType.text
                   ),
-                  RichText(
-                      text: TextSpan(
-                          text: "First Name",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(fontWeight: FontWeight.w700),
-                          children: [
-                            TextSpan(
-                              text: " * ",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-                            ),
-                          ]
-                      )
+                  CustomRequiredTextField(
+                      controller: lastNameController,
+                      titleText: "Last Name",
+                      hintText: "Enter Last Name",
+                      textInputType: TextInputType.text
                   ),
-                  const SizedBox(
-                    height: 4,
+                  CustomRequiredTextField(
+                      validator: validateMobile,
+                      readOnly: true,
+                      controller: mobileController,
+                      titleText: "Mobile Number",
+                      hintText: "Enter Last Name",
+                      textInputType: TextInputType.text
                   ),
-                  CustomTextField(
-                    controller: firstNameController,
-                    keyboardType: TextInputType.text,
-                    hintText: "Enter First Name",
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  RichText(
-                      text: TextSpan(
-                          text: "Last Name",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(fontWeight: FontWeight.w700),
-                          children: [
-                            TextSpan(
-                              text: " * ",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-                            ),
-                          ]
-                      )
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  CustomTextField(
-                    controller: lastNameController,
-                    keyboardType: TextInputType.text,
-                    hintText: "Enter Last Name",
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  RichText(
-                      text: TextSpan(
-                          text: "Mobile Number",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(fontWeight: FontWeight.w700),
-                          children: [
-                            TextSpan(
-                              text: " * ",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-                            ),
-                          ]
-                      )
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  TextFormField(
-                    readOnly: true,
-                    validator: validateMobile,
-                    controller: mobileController,
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                            color: Theme.of(context).canvasColor, width: 1.0),
-                      ),
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 1.0),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                            color: Theme.of(context).canvasColor, width: 1.0),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 18.0,
-                        vertical: 14.0,
-                      ),
-                      filled: true,
-                      // fillColor: Colors.white,
-                    ),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: Colors.grey),
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  RichText(
-                      text: TextSpan(
-                          text: "Email Address",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(fontWeight: FontWeight.w700),
-                          children: [
-                            TextSpan(
-                              text: " * ",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-                            ),
-                          ]
-                      )
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  CustomTextField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an email address';
-                      }
-                      // Regular expression for basic email validation
-                      final emailRegExp = RegExp(
-                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                      if (!emailRegExp.hasMatch(value)) {
-                        return 'Please enter a valid email address';
-                      }
-                      return null;
-                    },
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    hintText: "Enter Email Address",
+                  CustomRequiredTextField(
+                      validator: validateEmail,
+                      controller: emailController,
+                      titleText: "Email Address",
+                      hintText: "Enter Email Address",
+                      textInputType: TextInputType.text
                   ),
                   if( broker == true && individual == false)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(
-                        height: 28,
+                      CustomRequiredTextField(
+                          controller: companyNameController,
+                          titleText: "Company Name",
+                          hintText: "Enter Company Name",
+                          textInputType: TextInputType.text
                       ),
-                      RichText(
-                          text: TextSpan(
-                              text: "Company Name",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontWeight: FontWeight.w700),
-                              children: [
-                                TextSpan(
-                                  text: " * ",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-                                ),
-                              ]
-                          )
+                      CustomRequiredTextField(
+                          controller: companyHrController,
+                          titleText: "Company Person / HR Name",
+                          hintText: "Enter Person / HR Name",
+                          textInputType: TextInputType.text
                       ),
-                      const SizedBox(
-                        height: 4,
+                      CustomRequiredTextField(
+                          validator: validateMobile,
+                          controller: companyHrNumberController,
+                          titleText: "Contact Person / HR Phone",
+                          hintText: "Enter Contact Person / HR Phone",
+                          textInputType: TextInputType.text
                       ),
-                      CustomTextField(
-                        controller: companyNameController,
-                        keyboardType: TextInputType.text,
-                        hintText: "Enter Company Name",
+                      CustomRequiredTextField(
+                          validator: validateEmail,
+                          controller: companyEmailController,
+                          titleText: "Company Email",
+                          hintText: "Enter Company Email",
+                          textInputType: TextInputType.text
                       ),
-                      const SizedBox(
-                        height: 28,
-                      ),
-                      RichText(
-                          text: TextSpan(
-                              text: "Company Person / HR Name",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontWeight: FontWeight.w700),
-                              children: [
-                                TextSpan(
-                                  text: " * ",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-                                ),
-                              ]
-                          )
-                      ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      CustomTextField(
-                        controller: companyHrController,
-                        keyboardType: TextInputType.text,
-                        hintText: "Enter Person / HR Name",
-                      ),
-                      const SizedBox(
-                        height: 28,
-                      ),
-                      RichText(
-                          text: TextSpan(
-                              text: "Contact Person / HR Phone",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontWeight: FontWeight.w700),
-                              children: [
-                                TextSpan(
-                                  text: " * ",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-                                ),
-                              ]
-                          )
-                      ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      CustomTextField(
-                        controller: companyHrNumberController,
-                        keyboardType: TextInputType.text,
-                        hintText: "Enter Contact Person / HR Phone",
-                      ),
-                      const SizedBox(
-                        height: 28,
-                      ),
-                      RichText(
-                          text: TextSpan(
-                              text: "Company Email",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontWeight: FontWeight.w700),
-                              children: [
-                                TextSpan(
-                                  text: " * ",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-                                ),
-                              ]
-                          )
-                      ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      CustomTextField(
-                        controller: companyEmailController,
-                        keyboardType: TextInputType.text,
-                        hintText: "Enter Company Email",
-                      ),
-                      // const SizedBox(
-                      //   height: 28,
-                      // ),
-                      // RichText(
-                      //     text: TextSpan(
-                      //       text: ,
-                      //       style: Theme.of(context)
-                      //           .textTheme
-                      //           .bodySmall!
-                      //           .copyWith(fontWeight: FontWeight.w700),
-                      //     )
-                      // ),
-                      // const SizedBox(
-                      //   height: 4,
-                      // ),
-                      FormFieldNotRequired(
-                        controller: companyAddressController,
-                        hintText: "Enter Company Address",
-                        titleText: "Company Address",
-                        textInputType: TextInputType.text,
+                      CustomNotRequiredTextField(
+                          controller: companyAddressController,
+                          titleText: "Company Address",
+                          hintText: "Enter Company Address",
+                          textInputType: TextInputType.text
                       ),
                     ],
                   ),

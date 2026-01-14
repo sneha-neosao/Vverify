@@ -8,6 +8,8 @@ import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Bloc/verify_deta
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_state.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 import '../../../../commonComponent/custom_button.dart';
 import '../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../VerificationForms/VerifyDeatils/Bloc/verify_details_cubit.dart';
@@ -75,7 +77,7 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
       Gender: $selectedGender
       ''');
 
-    context.read<VerifyRequestEditCubit>().verifyRequestUpdate(
+    context.read<VerifyRequestEditCubit>().VerifyRequestEditUpdate(
         token: token,
         uuid: widget.uuid,
         phone: phoneController.text.trim(),
@@ -197,53 +199,43 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                             .titleMedium!
                             .copyWith(color: Theme.of(context).primaryColorDark),
                       ),
-                      form_widget(
-                        maskFormatter: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                        ],
-                        textInputType: TextInputType.text,
-                        controller: firstnameController,
-                        titleText: 'First Name',
-                        hintText: "Enter First Name",
+                      CustomRequiredTextField(
+                          controller: firstnameController,
+                          titleText: "First Name",
+                          hintText: "Enter First Name",
+                          textInputType: TextInputType.text
                       ),
-                      FormFieldNotRequired(
-                        maskFormatter: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                        ],
-                        textInputType: TextInputType.text,
-                        controller: middleNameController,
-                        titleText: 'Middle Name',
-                        hintText: "Enter Middle Name",
+                      CustomNotRequiredTextField(
+                          controller: middleNameController,
+                          titleText: "Middle Name",
+                          hintText: "Enter Middle Name",
+                          textInputType: TextInputType.text
                       ),
-                      form_widget(
-                        maskFormatter: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                        ],
-                        textInputType: TextInputType.text,
-                        controller: lastnameController,
-                        titleText: 'Last Name',
-                        hintText: "Enter Last Name",
+                      CustomRequiredTextField(
+                          controller: lastnameController,
+                          titleText: "Last Name",
+                          hintText: "Enter Last Name",
+                          textInputType: TextInputType.text
                       ),
-                      FormFieldNotRequired(
-                        maskFormatter: [mobileMaskFormatter],
-                        validator: validateMobileNotRequired,
-                        textInputType: TextInputType.number,
-                        controller: phoneController,
-                        titleText: 'Mobile Number',
-                        hintText: "Enter Mobile Number",
+                      CustomNotRequiredTextField(
+                          validator: validateMobileNotRequired,
+                          controller: phoneController,
+                          titleText: "Mobile Number",
+                          hintText: "Enter Mobile Number",
+                          textInputType: TextInputType.text
                       ),
-                      FormFieldNotRequired(
-                        maskFormatter: [emailFormatter],
-                        textInputType: TextInputType.text,
-                        controller: emailController,
-                        titleText: 'Email',
-                        hintText: "Enter Email",
+                      CustomNotRequiredTextField(
+                          validator: validateEmailNotRequired,
+                          controller: emailController,
+                          titleText: "Email",
+                          hintText: "Enter Email",
+                          textInputType: TextInputType.text
                       ),
-                      FormFieldNotRequired(
-                        textInputType: TextInputType.text,
-                        controller: employeeCodeController,
-                        titleText: 'Employee Code',
-                        hintText: "Enter Employee Code",
+                      CustomNotRequiredTextField(
+                          controller: employeeCodeController,
+                          titleText: "Employee Code",
+                          hintText: "Enter Employee Code",
+                          textInputType: TextInputType.text
                       ),
                       const SizedBox(
                         height: 16,
