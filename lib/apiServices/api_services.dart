@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:v_verify/screen/VerificationPending/model/verify_request_edit_model.dart';
 import '../screen/Order History/load_more/models/post.dart';
 import '../screen/VerificationForms/EducationVerification/Form/Models/education_save_form_model.dart';
 import '../screen/VerificationForms/EducationVerification/Form/Models/education_update_form_model.dart';
@@ -294,6 +293,7 @@ class ApiService {
     }
   }
 
+  /// Verification Request
   Future<Response> verifyRequestList({
     required String token,
     required int customer_id,
@@ -350,6 +350,439 @@ class ApiService {
       throw Exception('Failed to load data');
     }
   }
+
+  Future<Response> verifyRequestUpdate({
+    required String token,
+    required String uuid,
+    required String firstName,
+    required String middleName,
+    required String lastName,
+    required String phone,
+    required String dob,
+    required String email,
+    required String employee_code,
+    required String date_of_joining,
+    required String gender
+  }) async {
+    Map<String, dynamic> data = {
+      "uuid": uuid,
+      "first_name": firstName,
+      "middle_name": middleName,
+      "last_name": lastName,
+      "phone": phone,
+      "dob": dob,
+      "email": email,
+      "employee_code": employee_code,
+      "date_of_joining": date_of_joining,
+      "gender": gender
+    };
+
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.put('verify-request/entity/update', queryParameters: data);
+      log('verifyRequestUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in verifyRequestUpdate: $e');
+      throw Exception('Failed to fetch verifyRequestUpdate: $e');
+    }
+  }
+
+  Future<Response> VerifyRequestEditUpdate({
+    required String token,
+    required String uuid,
+    required String firstName,
+    required String middleName,
+    required String lastName,
+    required String phone,
+    required String dob,
+    required String email,
+    required String employee_code,
+    required String date_of_joining,
+    required String gender,
+  }) async {
+    Map<String, dynamic> data = {
+      "uuid": uuid,
+      "first_name": firstName,
+      "middle_name": middleName,
+      "last_name": lastName,
+      "phone": phone,
+      "dob": dob,
+      "email": email,
+      "employee_code": employee_code,
+      "date_of_joining": date_of_joining,
+      "gender": gender,
+    };
+
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.put('verify-request/update', queryParameters: data);
+      log('verifyRequestUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in verifyRequestUpdate: $e');
+      throw Exception('Failed to fetch verifyRequestUpdate: $e');
+    }
+  }
+
+
+  /// Education Verification
+  Future<Response> educationList({
+    required String token,
+    required int request_id,
+    required int service_request_id,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+          'verify/education/education-list?request_id=$request_id&service_request_id=$service_request_id');
+      log('educationList Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in educationList: $e');
+      throw Exception('Failed to fetch educationList: $e');
+    }
+  }
+
+  Future<Response> EducationFormSave(
+      {required String token,
+        required String customer_id,
+        required EducationSaveFormModel educationSaveFormModel}) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "customer_id": customer_id,
+        "request_id": educationSaveFormModel.request_id,
+        "service_request_id": educationSaveFormModel.service_request_id,
+        "university_name": educationSaveFormModel.university_name,
+        "institution_name": educationSaveFormModel.instituition_name,
+        "year_of_passing": educationSaveFormModel.year_of_passing,
+        "degree_qualification_name": educationSaveFormModel.degree_qualification_name,
+        "grades_type": educationSaveFormModel.grades_type,
+        "grades_obtained": educationSaveFormModel.grades_obtained,
+        "case_uuid": educationSaveFormModel.case_uuid
+      });
+      print("education ${formData.fields}");
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/education/form/save', data: formData);
+      log('EducationFormSave Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in EducationFormSave: $e');
+      throw Exception('Failed to fetch EducationFormSave: $e');
+    }
+  }
+
+  Future<Response> EducationFormUpdate(
+      {required String customer_id,
+        required String token,
+        required EducationUpdateFormModel educationUpdateFormModel}) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "uid": educationUpdateFormModel.uid,
+        "customer_id": customer_id,
+        "request_id": educationUpdateFormModel.request_id,
+        "service_request_id": educationUpdateFormModel.service_request_id,
+        "university_name": educationUpdateFormModel.university_name,
+        "institution_name": educationUpdateFormModel.instituition_name,
+        "year_of_passing": educationUpdateFormModel.year_of_passing,
+        "degree_qualification_name": educationUpdateFormModel.degree_qualification_name,
+        "grades_type": educationUpdateFormModel.grades_type,
+        "grades_obtained": educationUpdateFormModel.grades_obtained,
+        "case_uuid": educationUpdateFormModel.case_uuid,
+        "education_uuid": educationUpdateFormModel.education_uuid
+      });
+
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/education/form/update', data: formData);
+      log('EducationFormUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in EducationFormUpdate: $e');
+      throw Exception('Failed to fetch EducationFormUpdate: $e');
+    }
+  }
+
+  Future<Response> educationShowDataDetails({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/education/edit/$uid');
+      log('educationShowDataDetails Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in educationShowDataDetails: $e');
+      throw Exception('Failed to fetch educationShowDataDetails: $e');
+    }
+  }
+
+  Future<Response> EducationDocsUpload({
+    required String token,
+    required String caseUuid,
+    required List<File> documents,
+  }) async {
+    try {
+      // Build FormData with fields + files
+      final formData = FormData.fromMap({
+        "case_uuid": caseUuid,
+        "type": "education",
+        // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
+        for (int i = 0; i < documents.length; i++)
+          "documents[$i][file]": await MultipartFile.fromFile(documents[i].path,
+          ),
+      });
+
+      // Debug logs
+      log("=== EducationDocsUpload Request ===");
+      log("Fields: case_uuid=$caseUuid, type=education");
+      log("Files: ${documents.map((d) => d.path.split('/').last).toList()}");
+
+      // POST with headers
+      final response = await _dio.post(
+        'verify/documents/upload',
+        data: formData,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      log("=== EducationDocsUpload Response ===");
+      log("Status: ${response.statusCode}");
+      log("Data: ${response.data}");
+
+      return response;
+    } catch (e) {
+      log("Error in EducationDocUpload: $e");
+      throw Exception("Failed to upload education documents: $e");
+    }
+  }
+
+  Future<Response> educationDocumentList({
+    required String token,
+    required String caseUuid,
+    required String type, // e.g. "education"
+  }) async {
+    try {
+      // Set Authorization header
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+
+      // GET request with query parameters
+      final response = await _dio.get(
+        'verify/documents/list',
+        queryParameters: {
+          "case_uuid": caseUuid,
+          "type": type,
+        },
+      );
+
+      log('educationDocumentList Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in educationDocumentList: $e');
+      throw Exception('Failed to fetch educationDocumentList: $e');
+    }
+  }
+
+
+  /// Employment Verification
+  Future<Response> employmentList({
+    required String token,
+    required int request_id,
+    required int service_request_id,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+          'verify/employment/employment-list?request_id=$request_id&service_request_id=$service_request_id');
+      log('employmentList Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in employmentList: $e');
+      throw Exception('Failed to fetch employmentList: $e');
+    }
+  }
+
+  Future<Response> EmploymentSaveForm(
+      {required String token,
+        required String customer_id,
+        required EmploymentSaveFormModel employmentSaveFormModel}) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "request_id": employmentSaveFormModel.request_id,
+        "customer_id": customer_id,
+        "service_request_id": employmentSaveFormModel.service_request_id,
+        "employer_name": employmentSaveFormModel.employer_name,
+        "employed_from": employmentSaveFormModel.employed_from,
+        "employed_to": employmentSaveFormModel.employed_to,
+        "designation": employmentSaveFormModel.designation,
+        "department": employmentSaveFormModel.department,
+        "remunaration": employmentSaveFormModel.remunaration,
+        "reporting_manager": employmentSaveFormModel.reporting_manager,
+        "reason_for_leaving": employmentSaveFormModel.reason_for_leaving,
+        "case_uuid": employmentSaveFormModel.case_uuid,
+        "till_date": employmentSaveFormModel.till_date,
+      });
+
+      print("employSave ${formData.fields}");
+
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/employment/form/save', data: formData);
+      log('EmploymentSaveDoc Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in EmploymentSaveDoc: $e');
+      throw Exception('Failed to fetch EmploymentSaveDoc: $e');
+    }
+  }
+
+  Future<Response> employmentUpdateForm(
+      {required String token,
+        required String customer_id,
+        required EmploymentUpdateFormModel employmentUpdateFormModel}) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "uid": employmentUpdateFormModel.uid,
+        "request_id": employmentUpdateFormModel.request_id,
+        "customer_id": customer_id,
+        "service_request_id": employmentUpdateFormModel.service_request_id,
+        "employer_name": employmentUpdateFormModel.employer_name,
+        "employed_from": employmentUpdateFormModel.employed_from,
+        "employed_to": employmentUpdateFormModel.employed_to,
+        "designation": employmentUpdateFormModel.designation,
+        "department": employmentUpdateFormModel.department,
+        "remunaration": employmentUpdateFormModel.remunaration,
+        "reporting_manager": employmentUpdateFormModel.reporting_manager,
+        "reason_for_leaving": employmentUpdateFormModel.reason_for_leaving,
+        "employment_uuid": employmentUpdateFormModel.employment_uuid,
+        "case_uuid": employmentUpdateFormModel.case_uuid,
+        "till_date": employmentUpdateFormModel.till_date
+      });
+
+      print("employSave ${formData.fields}");
+
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/employment/form/update', data: formData);
+      log('employmentUpdateForm Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in employmentUpdateForm: $e');
+      throw Exception('Failed to fetch employmentUpdateForm: $e');
+    }
+  }
+
+  Future<Response> employShowData({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/employment/$uid/show');
+      log('employShowData Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in employShowData: $e');
+      throw Exception('Failed to fetch employShowData: $e');
+    }
+  }
+
+  Future<Response> EmploymentDocsUpload({
+    required String token,
+    required String caseUuid,
+    required List<File> documents,
+  }) async {
+    try {
+      // Build FormData with fields + files
+      final formData = FormData.fromMap({
+        "case_uuid": caseUuid,
+        "type": "employment",
+        // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
+        for (int i = 0; i < documents.length; i++)
+          "documents[$i][file]": await MultipartFile.fromFile(documents[i].path,
+          ),
+      });
+
+      // Debug logs
+      log("=== EmploymentDocsUpload Request ===");
+      log("Fields: case_uuid=$caseUuid, type=education");
+      log("Files: ${documents.map((d) => d.path.split('/').last).toList()}");
+
+      // POST with headers
+      final response = await _dio.post(
+        'verify/documents/upload',
+        data: formData,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      log("=== EmploymentDocsUpload Response ===");
+      log("Status: ${response.statusCode}");
+      log("Data: ${response.data}");
+
+      return response;
+    } catch (e) {
+      log("Error in EmploymentDocUpload: $e");
+      throw Exception("Failed to upload employment documents: $e");
+    }
+  }
+
+  Future<Response> employmentDocumentList({
+    required String token,
+    required String caseUuid,
+    required String type, // e.g. "education"
+  }) async {
+    try {
+      // Set Authorization header
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+
+      // GET request with query parameters
+      final response = await _dio.get(
+        'verify/documents/list',
+        queryParameters: {
+          "case_uuid": caseUuid,
+          "type": type,
+        },
+      );
+
+      log('employmentDocumentList Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in employmentDocumentList: $e');
+      throw Exception('Failed to fetch employmentDocumentList: $e');
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   Future<Response> tenantNonMumbaiForm(
       {required String token,
@@ -645,43 +1078,6 @@ class ApiService {
     }
   }
 
-  Future<Response> verifyRequestUpdate({
-    required String token,
-    required String uuid,
-    required String firstName,
-    required String middleName,
-    required String lastName,
-    required String phone,
-    required String dob,
-    required String email,
-    required String employee_code,
-    required String date_of_joining,
-    required String gender
-  }) async {
-    Map<String, dynamic> data = {
-      "uuid": uuid,
-      "first_name": firstName,
-      "middle_name": middleName,
-      "last_name": lastName,
-      "phone": phone,
-      "dob": dob,
-      "email": email,
-      "employee_code": employee_code,
-      "date_of_joining": date_of_joining,
-      "gender": gender
-    };
-
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.put('verify-request/entity/update', queryParameters: data);
-      log('verifyRequestUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in verifyRequestUpdate: $e');
-      throw Exception('Failed to fetch verifyRequestUpdate: $e');
-    }
-  }
 
   Future<Response> ReferenceVerification(
       {required String customer_id,
@@ -931,129 +1327,7 @@ class ApiService {
     }
   }
 
-  Future<Response> EmploymentSaveDoc(
-      {required String token,
-      required String customer_id,
-      required String request_id,
-      required String service_request_id,
-      required File employment_supporting_doc}) async {
-    try {
-      FormData formData = FormData.fromMap({
-        "request_id": request_id,
-        "customer_id": customer_id,
-        "service_request_id": service_request_id,
-        "show_on_report": "1",
-        "employment_supporting_doc": await MultipartFile.fromFile(
-          employment_supporting_doc.path,
-          filename: employment_supporting_doc.path
-              .split('/')
-              .last, // Use the file name
-        ),
-      });
-      print("emp doc ${formData.fields}");
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/employment/document/save', data: formData);
-      log('EmploymentSaveDoc Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in EmploymentSaveDoc: $e');
-      throw Exception('Failed to fetch EmploymentSaveDoc: $e');
-    }
-  }
 
-  Future<Response> EmploymentSaveForm(
-      {required String token,
-      required String customer_id,
-      required EmploymentSaveFormModel employmentSaveFormModel}) async {
-    try {
-      FormData formData = FormData.fromMap({
-        "request_id": employmentSaveFormModel.request_id,
-        "customer_id": customer_id,
-        "service_request_id": employmentSaveFormModel.service_request_id,
-        "employer_name": employmentSaveFormModel.employer_name,
-        "employed_from": employmentSaveFormModel.employed_from,
-        "employed_to": employmentSaveFormModel.employed_to,
-        "designation": employmentSaveFormModel.designation,
-        "department": employmentSaveFormModel.department,
-        "remunaration": employmentSaveFormModel.remunaration,
-        "reporting_manager": employmentSaveFormModel.reporting_manager,
-        "reason_for_leaving": employmentSaveFormModel.reason_for_leaving,
-        "case_uuid": employmentSaveFormModel.case_uuid,
-        "till_date": employmentSaveFormModel.till_date,
-        });
-
-      print("employSave ${formData.fields}");
-
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/employment/form/save', data: formData);
-      log('EmploymentSaveDoc Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in EmploymentSaveDoc: $e');
-      throw Exception('Failed to fetch EmploymentSaveDoc: $e');
-    }
-  }
-
-  Future<Response> EducationFormSave(
-      {required String token,
-      required String customer_id,
-      required EducationSaveFormModel educationSaveFormModel}) async {
-    try {
-      FormData formData = FormData.fromMap({
-        "customer_id": customer_id,
-        "request_id": educationSaveFormModel.request_id,
-        "service_request_id": educationSaveFormModel.service_request_id,
-        "university_name": educationSaveFormModel.university_name,
-        "institution_name": educationSaveFormModel.instituition_name,
-        "year_of_passing": educationSaveFormModel.year_of_passing,
-        "degree_qualification_name": educationSaveFormModel.degree_qualification_name,
-        "grades_type": educationSaveFormModel.grades_type,
-        "grades_obtained": educationSaveFormModel.grades_obtained,
-        "case_uuid": educationSaveFormModel.case_uuid
-      });
-      print("education ${formData.fields}");
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/education/form/save', data: formData);
-      log('EducationFormSave Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in EducationFormSave: $e');
-      throw Exception('Failed to fetch EducationFormSave: $e');
-    }
-  }
-
-  Future<Response> EducationDocUpload({
-    required String token,
-    required String customer_id,
-    required String request_id,
-    required String service_request_id,
-    required File document,
-  }) async {
-    try {
-      FormData formData = FormData.fromMap({
-        "request_id": request_id,
-        "customer_id": customer_id,
-        "service_request_id": service_request_id,
-        "show_on_report": "1",
-        "document": await MultipartFile.fromFile(
-          document.path,
-          filename: document.path.split('/').last, // Use the file name
-        )
-      });
-      print("edu doc ${formData.fields}");
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/education/document/save', data: formData);
-      log('EducationFormSave Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in EducationFormSave: $e');
-      throw Exception('Failed to fetch EducationFormSave: $e');
-    }
-  }
 
   Future<Response> VerifyDetailsView({
     required String token,
@@ -1331,119 +1605,15 @@ class ApiService {
     }
   }
 
-  Future<Response> educationShowDataDetails({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/education/edit/$uid');
-      log('educationShowDataDetails Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in educationShowDataDetails: $e');
-      throw Exception('Failed to fetch educationShowDataDetails: $e');
-    }
-  }
 
-  Future<Response> employShowData({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/employment/$uid/show');
-      log('employShowData Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in employShowData: $e');
-      throw Exception('Failed to fetch employShowData: $e');
-    }
-  }
 
-  Future<Response> EducationFormUpdate(
-      {required String customer_id,
-        required String token,
-        required EducationUpdateFormModel educationUpdateFormModel}) async {
-    try {
-      FormData formData = FormData.fromMap({
-        "uid": educationUpdateFormModel.uid,
-        "customer_id": customer_id,
-        "request_id": educationUpdateFormModel.request_id,
-        "service_request_id": educationUpdateFormModel.service_request_id,
-        "university_name": educationUpdateFormModel.university_name,
-        "institution_name": educationUpdateFormModel.instituition_name,
-        "year_of_passing": educationUpdateFormModel.year_of_passing,
-        "degree_qualification_name": educationUpdateFormModel.degree_qualification_name,
-        "grades_type": educationUpdateFormModel.grades_type,
-        "grades_obtained": educationUpdateFormModel.grades_obtained,
-        "case_uuid": educationUpdateFormModel.case_uuid,
-        "education_uuid": educationUpdateFormModel.education_uuid
-      });
 
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-      await _dio.post('verify/education/form/update', data: formData);
-      log('EducationFormUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in EducationFormUpdate: $e');
-      throw Exception('Failed to fetch EducationFormUpdate: $e');
-    }
-  }
 
-  Future<Response> employmentUpdateForm(
-      {required String token,
-      required String customer_id,
-      required EmploymentUpdateFormModel employmentUpdateFormModel}) async {
-    try {
-      FormData formData = FormData.fromMap({
-        "uid": employmentUpdateFormModel.uid,
-        "request_id": employmentUpdateFormModel.request_id,
-        "customer_id": customer_id,
-        "service_request_id": employmentUpdateFormModel.service_request_id,
-        "employer_name": employmentUpdateFormModel.employer_name,
-        "employed_from": employmentUpdateFormModel.employed_from,
-        "employed_to": employmentUpdateFormModel.employed_to,
-        "designation": employmentUpdateFormModel.designation,
-        "department": employmentUpdateFormModel.department,
-        "remunaration": employmentUpdateFormModel.remunaration,
-        "reporting_manager": employmentUpdateFormModel.reporting_manager,
-        "reason_for_leaving": employmentUpdateFormModel.reason_for_leaving,
-        "employment_uuid": employmentUpdateFormModel.employment_uuid,
-        "case_uuid": employmentUpdateFormModel.case_uuid,
-        "till_date": employmentUpdateFormModel.till_date
-      });
 
-      print("employSave ${formData.fields}");
 
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/employment/form/update', data: formData);
-      log('employmentUpdateForm Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in employmentUpdateForm: $e');
-      throw Exception('Failed to fetch employmentUpdateForm: $e');
-    }
-  }
 
-  Future<Response> educationList({
-    required String token,
-    required int request_id,
-    required int service_request_id,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get(
-          'verify/education/education-list?request_id=$request_id&service_request_id=$service_request_id');
-      log('educationList Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in educationList: $e');
-      throw Exception('Failed to fetch educationList: $e');
-    }
-  }
+
+
 
   Future<Response> tenantNonMumbaiUpdateDocuments(
       {required String token,
@@ -1612,116 +1782,7 @@ class ApiService {
     }
   }
 
-  Future<Response> educationDocShowData({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/education/edit/$uid');
-      log('educationDocShowData Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in educationDocShowData: $e');
-      throw Exception('Failed to fetch educationDocShowData: $e');
-    }
-  }
 
-  Future<Response> EducationDocUpdate({
-    required String customer_id,
-    required String token,
-    required String uid,
-    required String request_id,
-    required String service_request_id,
-    required File document,
-  }) async {
-    try {
-      FormData formData = FormData.fromMap({
-        "customer_id": customer_id,
-        "uid": uid,
-        "request_id": request_id,
-        "service_request_id": service_request_id,
-        "document": document.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                document.path,
-                filename: document.path.split('/').last, // Use the file name
-              )
-      });
-
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/education/document/update', data: formData);
-      log('EducationDocUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in EducationDocUpdate: $e');
-      throw Exception('Failed to fetch EducationDocUpdate: $e');
-    }
-  }
-
-  Future<Response> employmentList({
-    required String token,
-    required int request_id,
-    required int service_request_id,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get(
-          'verify/employment/employment-list?request_id=$request_id&service_request_id=$service_request_id');
-      log('employmentList Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in employmentList: $e');
-      throw Exception('Failed to fetch employmentList: $e');
-    }
-  }
-
-  Future<Response> employmentUpdateDoc(
-      {required String customer_id,
-      required String token,
-      required String uid,
-      required String request_id,
-      required String service_request_id,
-      required File employment_supporting_doc}) async {
-    try {
-      FormData formData = FormData.fromMap({
-        "uid": uid,
-        "customer_id": customer_id,
-        "request_id": request_id,
-        "service_request_id": service_request_id,
-        "employment_supporting_doc": employment_supporting_doc.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-          employment_supporting_doc.path,
-          filename: employment_supporting_doc.path
-              .split('/')
-              .last, // Use the file name
-        ),
-      });
-      log("---- EMPLOYMENT UPDATE DOC REQUEST ----");
-
-      for (var field in formData.fields) {
-        log("FIELD ➜ ${field.key} : ${field.value}");
-      }
-
-      for (var file in formData.files) {
-        log("FILE ➜ ${file.key}");
-        log("    filename : ${file.value.filename}");
-        log("    contentType : ${file.value.contentType}");
-      }
-
-      log("--------------------------------------");
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/employment/document/update', data: formData);
-      log('employmentUpdateDoc Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in employmentUpdateDoc: $e');
-      throw Exception('Failed to fetch employmentUpdateDoc: $e');
-    }
-  }
 
   Future<Response> collageNameGetData({
     required String token,
@@ -2445,110 +2506,9 @@ class ApiService {
     }
   }
 
-  Future<Response> EducationDocsUpload({
-    required String token,
-    required String caseUuid,
-    required List<File> documents,
-  }) async {
-    try {
-      // Build FormData with fields + files
-      final formData = FormData.fromMap({
-        "case_uuid": caseUuid,
-        "type": "education",
-        // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
-        for (int i = 0; i < documents.length; i++)
-          "documents[$i][file]": await MultipartFile.fromFile(documents[i].path,
-          ),
-      });
 
-      // Debug logs
-      log("=== EducationDocsUpload Request ===");
-      log("Fields: case_uuid=$caseUuid, type=education");
-      log("Files: ${documents.map((d) => d.path.split('/').last).toList()}");
 
-      // POST with headers
-      final response = await _dio.post(
-        'verify/documents/upload',
-        data: formData,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
-      );
 
-      log("=== EducationDocsUpload Response ===");
-      log("Status: ${response.statusCode}");
-      log("Data: ${response.data}");
 
-      return response;
-    } catch (e) {
-      log("Error in EducationDocUpload: $e");
-      throw Exception("Failed to upload education documents: $e");
-    }
-  }
 
-  Future<Response> educationDocumentList({
-    required String token,
-    required String caseUuid,
-    required String type, // e.g. "education"
-  }) async {
-    try {
-      // Set Authorization header
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-
-      // GET request with query parameters
-      final response = await _dio.get(
-        'verify/documents/list',
-        queryParameters: {
-          "case_uuid": caseUuid,
-          "type": type,
-        },
-      );
-
-      log('educationDocumentList Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in educationDocumentList: $e');
-      throw Exception('Failed to fetch educationDocumentList: $e');
-    }
-  }
-
-  Future<Response> VerifyRequestEditUpdate({
-    required String token,
-    required String uuid,
-    required String firstName,
-    required String middleName,
-    required String lastName,
-    required String phone,
-    required String dob,
-    required String email,
-    required String employee_code,
-    required String date_of_joining,
-    required String gender,
-  }) async {
-    Map<String, dynamic> data = {
-      "uuid": uuid,
-      "first_name": firstName,
-      "middle_name": middleName,
-      "last_name": lastName,
-      "phone": phone,
-      "dob": dob,
-      "email": email,
-      "employee_code": employee_code,
-      "date_of_joining": date_of_joining,
-      "gender": gender,
-    };
-
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-      await _dio.put('verify-request/update', queryParameters: data);
-      log('verifyRequestUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in verifyRequestUpdate: $e');
-      throw Exception('Failed to fetch verifyRequestUpdate: $e');
-    }
-  }
 }

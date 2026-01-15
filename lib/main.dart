@@ -33,6 +33,7 @@ import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Blo
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Blocs/education_update_form_bloc/education_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/Collage/Bloc/collage_name_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/University/Bloc/university_name_bloc.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_list_bloc/employment_doc_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_update_form_bloc/employment_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/List/Blocs/employment_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Documents/update/bloc/gst_pan_cin_doc_update_cubit.dart';
@@ -313,6 +314,10 @@ class MyApp extends StatelessWidget {
             create: (_) => EducationDocumentListCubit(ApiService())),
         BlocProvider<VerifyRequestEditCubit>(
             create: (_) => VerifyRequestEditCubit(ApiService())),
+        BlocProvider<EmploymentDocumentListCubit>(
+            create: (_) => EmploymentDocumentListCubit(ApiService())),
+        BlocProvider<EmploymentDocsFileCubit>(
+            create: (_) => EmploymentDocsFileCubit()),
       ],
       child: Builder(builder: (context) {
         return Sizer(builder: (BuildContext, Orientation, ScreenType) {

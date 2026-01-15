@@ -101,10 +101,10 @@ Future<void> pickFile() async {
             ),
             CustomButton(
               onTap: () {
-                // context.pushNamed(
-                //   "EducationUploadDocumentNew",
-                //   pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
-                // );
+                context.pushNamed(
+                  "EmploymentDocumentUpload",
+                  pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
+                );
               },
               text: "Add Documents",
               gradientColors: [

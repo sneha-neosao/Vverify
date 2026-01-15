@@ -1,29 +1,26 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_upload_bloc/education_document_upload_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_upload_bloc/education_document_upload_state.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_list_bloc/employment_doc_list_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_list_bloc/employment_doc_list_state.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_upload_bloc/employment_document_upload_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_upload_bloc/employment_document_upload_state.dart';
 import 'package:v_verify/screen/VerificationForms/common/pick_multiple_photos.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../EducationVerification/Documents/Blocs/education_document_list_bloc/education_doc_list_cubit.dart';
-import '../../../EducationVerification/Documents/Blocs/education_document_list_bloc/education_doc_list_state.dart';
-
-
-class EmploymentUploadDocumentNew extends StatefulWidget {
+class EmploymentDocumentUpload extends StatefulWidget {
   String Case_uuid;
 
-  EmploymentUploadDocumentNew({super.key,required this.Case_uuid});
+  EmploymentDocumentUpload({super.key,required this.Case_uuid});
 
   @override
-  State<EmploymentUploadDocumentNew> createState() => _EmploymentUploadDocumentNewState();
+  State<EmploymentDocumentUpload> createState() => _EmploymentDocumentUploadState();
 }
 
-class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNew> {
+class _EmploymentDocumentUploadState extends State<EmploymentDocumentUpload> {
 
   @override
   void initState() {
@@ -34,19 +31,19 @@ class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNe
 
   void educationList() {
     String token = context.read<TokenCubit>().state;
-    context.read<EducationDocumentListCubit>().loadEducationDocumentList(
+    context.read<EmploymentDocumentListCubit>().loadEmploymentDocumentList(
         token: token,
         caseUuid: widget.Case_uuid,
-        type: "education"
+        type: "employment"
     );
   }
 
-  void educationUploadDocData() async {
+  void employmentUploadDocData() async {
     String token = context.read<TokenCubit>().state;
-    context.read<EducationDocsUploadCubitNew>().uploadEducationDocs(
+    context.read<EmploymentUploadCubit>().employmentUpload(
         token: token,
         caseUuid: widget.Case_uuid,
-        documents: context.read<EducationDocsFileCubit>().state,
+        documents: context.read<EmploymentDocsFileCubit>().state,
     );
   }
 
@@ -61,26 +58,26 @@ class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNe
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Education Verification",
+                  "Employment Verification",
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!
                       .copyWith(color: Theme.of(context).primaryColorDark),
                 ),
                 const SizedBox(height: 16,),
-                BlocBuilder<EducationDocsFileCubit, List<File>>(
+                BlocBuilder<EmploymentDocsFileCubit, List<File>>(
                   builder: (context, uploadDocs) {
                     return PickMultiplePhoto(
                       widthSize: double.infinity,
                       title: "Select Documents",
                       mainTitle: "Upload Certificate/Marksheet/Document",
                       onPressedPickImage: () {
-                        context.read<EducationDocsFileCubit>().pickMultipleFiles().then((_) {
+                        context.read<EmploymentDocsFileCubit>().pickMultipleFiles().then((_) {
                           context.pop();
                         });
                       },
                       onPressedTakePhoto: () {
-                        context.read<EducationDocsFileCubit>().pickImageFromCamera().then((_) {
+                        context.read<EmploymentDocsFileCubit>().pickImageFromCamera().then((_) {
                           context.pop();
                         });
                       },
@@ -93,45 +90,46 @@ class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNe
                   height: 8,
                 ),
                 const Text(
-                    "Note : Upload one combined PDF if you have multiple documents."),
+                    "Note : Uploaded documents must not exceed 2 MB."
+                ),
                 const SizedBox(
                   height: 24,
                 ),
-                BlocConsumer<EducationDocsUploadCubitNew, EducationDocUploadStateNew>(
-                    listener: (context, educationDoc) {
-                      if (educationDoc is EducationDocUploadSuccessStateNew) {
-                        if (educationDoc.data["status"] == 200) {
-                          context.pushNamed("EducationList",pathParameters: {
+                BlocConsumer<EmploymentUploadCubit, EmploymentUploadState>(
+                    listener: (context, employmentDoc) {
+                      if (employmentDoc is EmploymentUploadSuccessState) {
+                        if (employmentDoc.data["status"] == 200) {
+                          context.pushNamed("EmployDataList",pathParameters: {
                             'uid': widget.Case_uuid
                           });
-                          context.read<EducationDocsFileCubit>().clearFiles();
+                          context.read<EmploymentDocsFileCubit>().clearFiles();
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(
-                                educationDoc.data["message"],
+                                employmentDoc.data["message"],
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               )));
                         }
-                      } else if (educationDoc is EducationDocUploadErrorStateNew) {
+                      } else if (employmentDoc is EmploymentUploadErrorState) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(
-                              educationDoc.message,
+                              employmentDoc.message,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             )));
-                        print("uploadMessage ${educationDoc.message}");
+                        print("uploadMessage ${employmentDoc.message}");
                       }
                     }, builder: (context, educationDoc) {
                   return CustomButton(
-                    isLoading: educationDoc is EducationDocUploadLoadingStateNew,
+                    isLoading: educationDoc is EmploymentUploadLoadingState,
                     onTap: () {
-                      if (context.read<EducationDocsFileCubit>().state.isEmpty) {
+                      if (context.read<EmploymentDocsFileCubit>().state.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text(
                                 "Please Upload Certificate/Marksheet/Document")));
                       } else {
-                        educationUploadDocData();
+                        employmentUploadDocData();
                       }
                     },
                     text: "SUBMIT",
@@ -143,7 +141,7 @@ class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNe
                 }),
                 const SizedBox(height: 16),
                 Text(
-                  "Education Document List",
+                  "Employment Document List",
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!
@@ -152,13 +150,13 @@ class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNe
                 const SizedBox(
                   height: 16,
                 ),
-                BlocBuilder<EducationDocumentListCubit, EducationDocumentListState>(
+                BlocBuilder<EmploymentDocumentListCubit, EmploymentDocumentListState>(
                   builder: (context, state) {
-                    if (state is EducationDocumentListLoadingState) {
+                    if (state is EmploymentDocumentListLoadingState) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (state is EducationDocumentListEmptyState) {
+                    } else if (state is EmploymentDocumentListEmptyState) {
                       return const Text("No related data found");
-                    } else if (state is EducationDocumentListSuccessState) {
+                    } else if (state is EmploymentDocumentListSuccessState) {
                       final data = state.educationDocuments;
 
                       // If no documents, show button
@@ -201,27 +199,6 @@ class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNe
                               return 'Document';
                             }
                           }
-                          // String fileNameFromUrl(String url) {
-                          //   try {
-                          //     final uri = Uri.parse(url);
-                          //     final pathParam = uri.queryParameters['path'];
-                          //
-                          //     if (pathParam == null || pathParam.isEmpty) {
-                          //       return 'Document';
-                          //     }
-                          //
-                          //     final fullName = pathParam.split('/').last;
-                          //
-                          //     // Extract only date-time + extension
-                          //     final match = RegExp(r'\d{8}-\d{6}\.\w+$').firstMatch(fullName);
-                          //
-                          //     return match?.group(0) ?? fullName;
-                          //   } catch (_) {
-                          //     return 'Document';
-                          //   }
-                          // }
-
-
                           return ListTile(
                             leading: Container(
                               width: 60,
@@ -272,7 +249,7 @@ class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNe
                           );
                         },
                       );
-                    } else if (state is EducationDocumentListErrorState) {
+                    } else if (state is EmploymentDocumentListErrorState) {
                       return Text("Error: ${state.message}");
                     }
                     return const SizedBox();

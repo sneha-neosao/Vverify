@@ -9,6 +9,7 @@ import 'package:v_verify/screen/Payment%20Successful/payment_successful.dart';
 import 'package:v_verify/screen/ServicesAndPrice/services_and_price.dart';
 import 'package:v_verify/screen/SplashScreen/SplashScreen.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Screens/education_update_form_screen.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Screens/employment_document_upload_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Screens/employment_save_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Screens/employment_update_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/List/Screens/employment_list.dart';
@@ -217,6 +218,20 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        path: '/EmploymentDocumentUpload/:uid',
+        name: "EmploymentDocumentUpload",
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return EmploymentDocumentUpload(
+            Case_uuid: uid,
+          );
+        },
+      ),
+
+
+
+
       GoRoute(
         path: '/EditProfile/:user_type',
         name: "edit_profile",
