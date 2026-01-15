@@ -8,8 +8,8 @@ import 'package:v_verify/screen/VerificationForms/EmploymentForm/Update/Model/em
 import 'package:v_verify/screen/VerificationPending/model/verify_request_edit_model.dart';
 
 import '../screen/Order History/load_more/models/post.dart';
-import '../screen/VerificationForms/EducationVerification/SaveForm/Model/education_save_form_model.dart';
-import '../screen/VerificationForms/EducationVerification/Update/Model/education_update_form_model.dart';
+import '../screen/VerificationForms/EducationVerification/Form/Models/education_save_form_model.dart';
+import '../screen/VerificationForms/EducationVerification/Form/Models/education_update_form_model.dart';
 import '../screen/VerificationForms/EmploymentForm/Save/Model/employmentSaveForm_model.dart';
 import '../screen/VerificationForms/NameAddressVerificationForm/Save/model/name_address_verification_model.dart';
 import '../screen/VerificationForms/NameAddressVerificationForm/Update/model/name_address_verification_model.dart';

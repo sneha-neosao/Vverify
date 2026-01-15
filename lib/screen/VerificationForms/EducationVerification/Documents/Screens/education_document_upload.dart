@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -8,22 +7,20 @@ import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_upload_bloc/education_document_upload_state.dart';
 import 'package:v_verify/screen/VerificationForms/common/pick_multiple_photos.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../Blocs/education_document_list_bloc/education_doc_list_cubit.dart';
+import '../Blocs/education_document_list_bloc/education_doc_list_state.dart';
+import '../Blocs/education_upload_bloc/education_document_upload_cubit.dart';
 
-import '../../EducationVerification/Documents/Blocs/education_document_list_bloc/education_doc_list_cubit.dart';
-import '../../EducationVerification/Documents/Blocs/education_document_list_bloc/education_doc_list_state.dart';
-import '../../EducationVerification/Documents/Blocs/education_upload_bloc/education_document_upload_cubit.dart';
-
-
-class EmploymentUploadDocumentNew extends StatefulWidget {
+class EducationDocumentUpload extends StatefulWidget {
   String Case_uuid;
 
-  EmploymentUploadDocumentNew({super.key,required this.Case_uuid});
+  EducationDocumentUpload({super.key,required this.Case_uuid});
 
   @override
-  State<EmploymentUploadDocumentNew> createState() => _EmploymentUploadDocumentNewState();
+  State<EducationDocumentUpload> createState() => _EducationDocumentUploadState();
 }
 
-class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNew> {
+class _EducationDocumentUploadState extends State<EducationDocumentUpload> {
 
   @override
   void initState() {
@@ -92,8 +89,13 @@ class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNe
                 const SizedBox(
                   height: 8,
                 ),
-                const Text(
-                    "Note : Upload one combined PDF if you have multiple documents."),
+                Text(
+                    "Note : Uploaded documents must not exceed 2 MB.",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontSize: 12, color: Colors.grey),
+                ),
                 const SizedBox(
                   height: 24,
                 ),
@@ -201,27 +203,6 @@ class _EmploymentUploadDocumentNewState extends State<EmploymentUploadDocumentNe
                               return 'Document';
                             }
                           }
-                          // String fileNameFromUrl(String url) {
-                          //   try {
-                          //     final uri = Uri.parse(url);
-                          //     final pathParam = uri.queryParameters['path'];
-                          //
-                          //     if (pathParam == null || pathParam.isEmpty) {
-                          //       return 'Document';
-                          //     }
-                          //
-                          //     final fullName = pathParam.split('/').last;
-                          //
-                          //     // Extract only date-time + extension
-                          //     final match = RegExp(r'\d{8}-\d{6}\.\w+$').firstMatch(fullName);
-                          //
-                          //     return match?.group(0) ?? fullName;
-                          //   } catch (_) {
-                          //     return 'Document';
-                          //   }
-                          // }
-
-
                           return ListTile(
                             leading: Container(
                               width: 60,

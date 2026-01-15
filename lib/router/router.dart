@@ -8,8 +8,7 @@ import 'package:v_verify/screen/Order%20Details/order_details.dart';
 import 'package:v_verify/screen/Payment%20Successful/payment_successful.dart';
 import 'package:v_verify/screen/ServicesAndPrice/services_and_price.dart';
 import 'package:v_verify/screen/SplashScreen/SplashScreen.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/SaveForm/education_save_form_new.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Update/education_save_form_update_new.dart';
+import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Screens/education_update_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentForm/Save/Form/EmploymentSaveFormNew.dart';
 import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Save/address_varification_form_new.dart';
 import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Update/name_address_verification_update_new.dart';
@@ -26,10 +25,9 @@ import '../screen/VerificationForms/DrvingLicence/Document/update/driving_doc_up
 import '../screen/VerificationForms/DrvingLicence/Document/upload/driver_doc_upload.dart';
 import '../screen/VerificationForms/DrvingLicence/Update/driving_licence_update.dart';
 import '../screen/VerificationForms/DrvingLicence/driving_licence.dart';
-import '../screen/VerificationForms/EducationVerification/DocUpdate/education_doc_update.dart';
-import '../screen/VerificationForms/EducationVerification/EducationDocUpload/EducationDocUpload.dart';
-import '../screen/VerificationForms/EducationVerification/EducationList/EducationList.dart';
-import '../screen/VerificationForms/EducationVerification/EducationDocUpload/education_document_new.dart';
+import '../screen/VerificationForms/EducationVerification/List/Screens/education_list.dart';
+import '../screen/VerificationForms/EducationVerification/Documents/Screens/education_document_upload.dart';
+import '../screen/VerificationForms/EducationVerification/Form/Screens/education_save_form_screen.dart';
 import '../screen/VerificationForms/EmploymentForm/EmployList/employ_data_list.dart';
 import '../screen/VerificationForms/EmploymentForm/Update/employment_update_form_new.dart';
 import '../screen/VerificationForms/EmploymentForm/UploadDoc/employment_upload_document.dart';
@@ -144,14 +142,6 @@ class AppRouter {
           );
         },
       ),
-
-      // GoRoute(
-      //   path: '/OrderHistory',
-      //   name: "order_history",
-      //   builder: (context, state) {
-      //     return const OrderHistory();
-      //   },
-      // ),
       GoRoute(
         path: '/VerifyRequestEditFormNew/:request_id/:uuid',
         name: "VerifyRequestEditFormNew",
@@ -161,6 +151,45 @@ class AppRouter {
           return VerifyRequestEditFormNew(
               request_id: requestId,
               uuid: uuid,
+          );
+        },
+      ),
+
+      /// Education Verification Service related routes
+      GoRoute(
+        path: '/EducationSaveFormScreen/:uid',
+        name: "EducationSaveFormScreen",
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return EducationSaveFormScreen(
+            Case_uuid: uid,
+          );
+        },
+      ),
+
+      GoRoute(
+        path: '/EducationUpdateFormScreen/:uid/:case_uuid/:education_uuid',
+        name: 'EducationUpdateFormScreen',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid']!;
+          final caseUuid = state.pathParameters['case_uuid']!;
+          final education_uuid = state.pathParameters['education_uuid']!;
+
+          return EducationUpdateFormScreen(
+            uid: uid,
+            case_uuid: caseUuid,
+            education_uuid: education_uuid,
+          );
+        },
+      ),
+
+      GoRoute(
+        path: '/EducationDocumentUpload/:uid',
+        name: "EducationDocumentUpload",
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return EducationDocumentUpload(
+            Case_uuid: uid,
           );
         },
       ),
@@ -228,42 +257,9 @@ class AppRouter {
           );
         },
       ),
-      GoRoute(
-        path: '/EducationSaveFormNew/:uid',
-        name: "EducationSaveFormNew",
-        builder: (context, state) {
-          final uid = state.pathParameters['uid'] ?? "";
-          return EducationSaveFormNew(
-            Case_uuid: uid,
-          );
-        },
-      ),
-      GoRoute(
-        path: '/EducationSaveFormUpdateNew/:uid/:case_uuid/:education_uuid',
-        name: 'EducationSaveFormUpdateNew',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          final caseUuid = state.pathParameters['case_uuid']!;
-          final education_uuid = state.pathParameters['education_uuid']!;
 
-          return EducationSaveFormUpdateNew(
-            uid: uid,
-            case_uuid: caseUuid,
-            education_uuid: education_uuid,
-          );
-        },
-      ),
 
-      GoRoute(
-        path: '/EducationUploadDocumentNew/:uid',
-        name: "EducationUploadDocumentNew",
-        builder: (context, state) {
-          final uid = state.pathParameters['uid'] ?? "";
-          return EducationUploadDocumentNew(
-            Case_uuid: uid,
-          );
-        },
-      ),
+
 
       GoRoute(
         path: '/aadhaarVerifyOtp/:number/:otp',
@@ -363,13 +359,6 @@ class AppRouter {
       //   },
       // ),
       GoRoute(
-        path: '/EducationDocUpload',
-        name: "EducationDocUpload",
-        builder: (context, state) {
-          return const EducationDocUpload();
-        },
-      ),
-      GoRoute(
         path: '/ReferenceFormUpdate/:uid',
         name: 'ReferenceFormUpdate',
         builder: (context, state) {
@@ -450,16 +439,6 @@ class AppRouter {
         builder: (context, state) {
           final uid = state.pathParameters['uid']!;
           return MumbaiDocUpdate(
-            uid: uid,
-          );
-        },
-      ),
-      GoRoute(
-        path: '/EducationDocUpdate/:uid',
-        name: 'EducationDocUpdate',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          return EducationDocUpdate(
             uid: uid,
           );
         },
