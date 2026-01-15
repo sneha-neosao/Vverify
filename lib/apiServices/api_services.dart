@@ -4,12 +4,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../screen/Order History/load_more/models/post.dart';
+import '../screen/VerificationForms/AddressVerificationForm/Save/model/name_address_verification_model.dart';
+import '../screen/VerificationForms/AddressVerificationForm/Update/model/name_address_verification_model.dart';
 import '../screen/VerificationForms/EducationVerification/Form/Models/education_save_form_model.dart';
 import '../screen/VerificationForms/EducationVerification/Form/Models/education_update_form_model.dart';
 import '../screen/VerificationForms/EmploymentVerification/Form/Models/employment_save_form_model.dart';
 import '../screen/VerificationForms/EmploymentVerification/Form/Models/employment_update_form_model.dart';
-import '../screen/VerificationForms/NameAddressVerificationForm/Save/model/name_address_verification_model.dart';
-import '../screen/VerificationForms/NameAddressVerificationForm/Update/model/name_address_verification_model.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/UpdateForm/Update/Model/mumbaiPoliceUpdateForm_model.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/UploadDocuments/Model/upload_documents_mumbai.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/forms/model/mumbai_model.dart';
@@ -86,7 +86,9 @@ class ApiService {
       if (profilePhoto != null)
         "profilePhoto": await MultipartFile.fromFile(
           profilePhoto.path,
-          filename: profilePhoto.path.split('/').last, // Use the file name
+          filename: profilePhoto.path
+              .split('/')
+              .last, // Use the file name
         ),
       "userType": userType
     });
@@ -112,10 +114,9 @@ class ApiService {
     }
   }
 
-  Future<Response> getServicesPricing(
-      {required String token,
-      required String type_id,
-      required String entity_id}) async {
+  Future<Response> getServicesPricing({required String token,
+    required String type_id,
+    required String entity_id}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio
@@ -152,7 +153,9 @@ class ApiService {
         if (profilePhoto != null)
           "profilePhoto": await MultipartFile.fromFile(
             profilePhoto.path,
-            filename: profilePhoto.path.split('/').last, // Use the file name
+            filename: profilePhoto.path
+                .split('/')
+                .last, // Use the file name
           ),
         "companyName": companyName,
         "contactPersonName": contactPersonName,
@@ -208,7 +211,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-          await _dio.post('transaction/checkout', queryParameters: data);
+      await _dio.post('transaction/checkout', queryParameters: data);
       log('getTransactionCheckout Response: ${response.data}');
       return response;
     } catch (e) {
@@ -238,7 +241,7 @@ class ApiService {
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-          await _dio.get('transaction/list', queryParameters: data);
+      await _dio.get('transaction/list', queryParameters: data);
       log('getTransactionList Response: ${response.data}');
       return response;
     } catch (e) {
@@ -311,7 +314,7 @@ class ApiService {
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-          await _dio.get('verify-request/list', queryParameters: data);
+      await _dio.get('verify-request/list', queryParameters: data);
       print('getTransactionList Response: ${response.data}');
 
       log('getTransactionList Response: ${response.data}');
@@ -338,10 +341,12 @@ class ApiService {
 
     _dio.options.headers['Authorization'] = 'Bearer $token';
     final response =
-        await _dio.get('verify-request/list', queryParameters: data);
+    await _dio.get('verify-request/list', queryParameters: data);
 
     if (response.statusCode == 200) {
-      debugPrint("verifyRequestListPagination ${response.data}", wrapWidth: 1024); // increase wrap width
+      print("verifyRequestListPagination ${response.data}",);
+      debugPrint("verifyRequestListPagination ${response.data}",
+          wrapWidth: 1024); // increase wrap width
       List<verifyRequest> items = (response.data['data'] as List)
           .map((itemJson) => verifyRequest.fromJson(itemJson))
           .toList();
@@ -446,10 +451,9 @@ class ApiService {
     }
   }
 
-  Future<Response> EducationFormSave(
-      {required String token,
-        required String customer_id,
-        required EducationSaveFormModel educationSaveFormModel}) async {
+  Future<Response> EducationFormSave({required String token,
+    required String customer_id,
+    required EducationSaveFormModel educationSaveFormModel}) async {
     try {
       FormData formData = FormData.fromMap({
         "customer_id": customer_id,
@@ -458,7 +462,8 @@ class ApiService {
         "university_name": educationSaveFormModel.university_name,
         "institution_name": educationSaveFormModel.instituition_name,
         "year_of_passing": educationSaveFormModel.year_of_passing,
-        "degree_qualification_name": educationSaveFormModel.degree_qualification_name,
+        "degree_qualification_name": educationSaveFormModel
+            .degree_qualification_name,
         "grades_type": educationSaveFormModel.grades_type,
         "grades_obtained": educationSaveFormModel.grades_obtained,
         "case_uuid": educationSaveFormModel.case_uuid
@@ -475,10 +480,9 @@ class ApiService {
     }
   }
 
-  Future<Response> EducationFormUpdate(
-      {required String customer_id,
-        required String token,
-        required EducationUpdateFormModel educationUpdateFormModel}) async {
+  Future<Response> EducationFormUpdate({required String customer_id,
+    required String token,
+    required EducationUpdateFormModel educationUpdateFormModel}) async {
     try {
       FormData formData = FormData.fromMap({
         "uid": educationUpdateFormModel.uid,
@@ -488,7 +492,8 @@ class ApiService {
         "university_name": educationUpdateFormModel.university_name,
         "institution_name": educationUpdateFormModel.instituition_name,
         "year_of_passing": educationUpdateFormModel.year_of_passing,
-        "degree_qualification_name": educationUpdateFormModel.degree_qualification_name,
+        "degree_qualification_name": educationUpdateFormModel
+            .degree_qualification_name,
         "grades_type": educationUpdateFormModel.grades_type,
         "grades_obtained": educationUpdateFormModel.grades_obtained,
         "case_uuid": educationUpdateFormModel.case_uuid,
@@ -540,7 +545,10 @@ class ApiService {
       // Debug logs
       log("=== EducationDocsUpload Request ===");
       log("Fields: case_uuid=$caseUuid, type=education");
-      log("Files: ${documents.map((d) => d.path.split('/').last).toList()}");
+      log("Files: ${documents.map((d) =>
+      d.path
+          .split('/')
+          .last).toList()}");
 
       // POST with headers
       final response = await _dio.post(
@@ -609,10 +617,9 @@ class ApiService {
     }
   }
 
-  Future<Response> EmploymentSaveForm(
-      {required String token,
-        required String customer_id,
-        required EmploymentSaveFormModel employmentSaveFormModel}) async {
+  Future<Response> EmploymentSaveForm({required String token,
+    required String customer_id,
+    required EmploymentSaveFormModel employmentSaveFormModel}) async {
     try {
       FormData formData = FormData.fromMap({
         "request_id": employmentSaveFormModel.request_id,
@@ -643,10 +650,9 @@ class ApiService {
     }
   }
 
-  Future<Response> employmentUpdateForm(
-      {required String token,
-        required String customer_id,
-        required EmploymentUpdateFormModel employmentUpdateFormModel}) async {
+  Future<Response> employmentUpdateForm({required String token,
+    required String customer_id,
+    required EmploymentUpdateFormModel employmentUpdateFormModel}) async {
     try {
       FormData formData = FormData.fromMap({
         "uid": employmentUpdateFormModel.uid,
@@ -713,7 +719,10 @@ class ApiService {
       // Debug logs
       log("=== EmploymentDocsUpload Request ===");
       log("Fields: case_uuid=$caseUuid, type=education");
-      log("Files: ${documents.map((d) => d.path.split('/').last).toList()}");
+      log("Files: ${documents.map((d) =>
+      d.path
+          .split('/')
+          .last).toList()}");
 
       // POST with headers
       final response = await _dio.post(
@@ -763,10 +772,102 @@ class ApiService {
     }
   }
 
+  ///  Address Verification
+  Future<Response> addressList({
+    required String token,
+    required int request_id,
+    required int service_request_id,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+          'verify/address/list?request_id=$request_id&service_request_id=$service_request_id');
+      log('employmentList Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in addressList: $e');
+      throw Exception('Failed to fetch addressList: $e');
+    }
+  }
 
+  Future<Response> NameAddressStore(
+      {required String token,
+        required String customer_id,
+        required NameAddressVerificationModel nameAddressVerificationModel}) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": nameAddressVerificationModel.request_id,
+      "service_request_id": nameAddressVerificationModel.service_request_id,
+      "current_address_line_1": nameAddressVerificationModel.current_address_line_1,
+      "current_address_line_2": nameAddressVerificationModel.current_address_line_2,
+      "current_city": nameAddressVerificationModel.current_city_id,
+      "current_state": nameAddressVerificationModel.current_state,
+      "current_postal_code": nameAddressVerificationModel.current_pinCode,
+      "permanent_address_line_1": nameAddressVerificationModel.permanent_address_line_1,
+      "permanent_address_line_2": nameAddressVerificationModel.permanent_address_line_2,
+      "permanent_city": nameAddressVerificationModel.permanent_city_id,
+      "permanent_state": nameAddressVerificationModel.permanent_state,
+      "permanent_postal_code": nameAddressVerificationModel.permanent_pinCode,
+    });
 
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/name-address/form/store', data: formData);
+      log('NameAddressStoreVerification Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in NameAddressStoreVerification: $e');
+      throw Exception('Failed to fetch NameAddressStoreVerification: $e');
+    }
+  }
 
+  Future<Response> NameAddressUpdate(
+      {required String token,
+        required String customer_id,
+        required NameAddressVerificationUpdateModel
+        nameAddressVerificationUpdateModel}) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": nameAddressVerificationUpdateModel.request_id,
+      "service_request_id": nameAddressVerificationUpdateModel.service_request_id,
+      "current_address_line_1": nameAddressVerificationUpdateModel.current_address_line_1,
+      "current_address_line_2": nameAddressVerificationUpdateModel.current_address_line_2,
+      "current_city": nameAddressVerificationUpdateModel.current_city_id,
+      "current_state": nameAddressVerificationUpdateModel.current_state,
+      "current_postal_code": nameAddressVerificationUpdateModel.current_pinCode,
+      "permanent_address_line_1": nameAddressVerificationUpdateModel.permanent_address_line_1,
+      "permanent_address_line_2": nameAddressVerificationUpdateModel.permanent_address_line_2,
+      "permanent_city": nameAddressVerificationUpdateModel.permanent_city_id,
+      "permanent_state": nameAddressVerificationUpdateModel.permanent_state,
+      "permanent_postal_code": nameAddressVerificationUpdateModel.permanent_pinCode,
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/name-address/form/update', data: formData);
+      log('NameAddressUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in NameAddressUpdate: $e');
+      throw Exception('Failed to fetch NameAddressUpdate: $e');
+    }
+  }
 
+  Future<Response> nameAddressShowData({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/name-address/show/$uid');
+      log('nameAddressShowData Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in nameAddressShowData: $e');
+      throw Exception('Failed to fetch nameAddressShowData: $e');
+    }
+  }
 
 
 
@@ -1132,70 +1233,6 @@ class ApiService {
     } catch (e) {
       log('Error in verifyRequestUpdate:$e');
       throw Exception('Failed to fetch verifyRequestUpdate: $e');
-    }
-  }
-
-  Future<Response> NameAddressStore(
-      {required String token,
-      required String customer_id,
-      required NameAddressVerificationModel nameAddressVerificationModel}) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": nameAddressVerificationModel.request_id,
-      "service_request_id": nameAddressVerificationModel.service_request_id,
-      "current_address_line_1": nameAddressVerificationModel.current_address_line_1,
-      "current_address_line_2": nameAddressVerificationModel.current_address_line_2,
-      "current_city": nameAddressVerificationModel.current_city_id,
-      "current_state": nameAddressVerificationModel.current_state,
-      "current_postal_code": nameAddressVerificationModel.current_pinCode,
-      "permanent_address_line_1": nameAddressVerificationModel.permanent_address_line_1,
-      "permanent_address_line_2": nameAddressVerificationModel.permanent_address_line_2,
-      "permanent_city": nameAddressVerificationModel.permanent_city_id,
-      "permanent_state": nameAddressVerificationModel.permanent_state,
-      "permanent_postal_code": nameAddressVerificationModel.permanent_pinCode,
-    });
-
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/name-address/form/store', data: formData);
-      log('NameAddressStoreVerification Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in NameAddressStoreVerification: $e');
-      throw Exception('Failed to fetch NameAddressStoreVerification: $e');
-    }
-  }
-
-  Future<Response> NameAddressUpdate(
-      {required String token,
-      required String customer_id,
-      required NameAddressVerificationUpdateModel
-          nameAddressVerificationUpdateModel}) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": nameAddressVerificationUpdateModel.request_id,
-      "service_request_id": nameAddressVerificationUpdateModel.service_request_id,
-      "current_address_line_1": nameAddressVerificationUpdateModel.current_address_line_1,
-      "current_address_line_2": nameAddressVerificationUpdateModel.current_address_line_2,
-      "current_city": nameAddressVerificationUpdateModel.current_city_id,
-      "current_state": nameAddressVerificationUpdateModel.current_state,
-      "current_postal_code": nameAddressVerificationUpdateModel.current_pinCode,
-      "permanent_address_line_1": nameAddressVerificationUpdateModel.permanent_address_line_1,
-      "permanent_address_line_2": nameAddressVerificationUpdateModel.permanent_address_line_2,
-      "permanent_city": nameAddressVerificationUpdateModel.permanent_city_id,
-      "permanent_state": nameAddressVerificationUpdateModel.permanent_state,
-      "permanent_postal_code": nameAddressVerificationUpdateModel.permanent_pinCode,
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/name-address/form/update', data: formData);
-      log('NameAddressUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in NameAddressUpdate: $e');
-      throw Exception('Failed to fetch NameAddressUpdate: $e');
     }
   }
 
@@ -1812,20 +1849,7 @@ class ApiService {
     }
   }
 
-  Future<Response> nameAddressShowData({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/name-address/show/$uid');
-      log('nameAddressShowData Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in nameAddressShowData: $e');
-      throw Exception('Failed to fetch nameAddressShowData: $e');
-    }
-  }
+
 
   Future<Response> drivingLicenceSave({
     required String customer_id,

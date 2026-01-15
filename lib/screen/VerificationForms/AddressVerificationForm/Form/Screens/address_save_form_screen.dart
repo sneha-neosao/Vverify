@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/pickphoto.dart';
@@ -16,17 +18,22 @@ import '../../Save/model/name_address_verification_model.dart';
 
 TextEditingController personNameController = TextEditingController();
 
-class NameAddressVerificationFormNew extends StatefulWidget {
-  const NameAddressVerificationFormNew({super.key});
+class AddressSaveFormScreen extends StatefulWidget {
+  String Case_uuid;
+
+   AddressSaveFormScreen({super.key,required this.Case_uuid,});
 
   @override
-  State<NameAddressVerificationFormNew> createState() =>
-      _NameAddressVerificationFormNewState();
+  State<AddressSaveFormScreen> createState() =>
+      _AddressSaveFormScreenState();
 }
 
-class _NameAddressVerificationFormNewState extends State<NameAddressVerificationFormNew> {
-
+class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
+  bool isChecked = false;
   bool isSameAddress = false;
+
+  var maskFormatter = MaskTextInputFormatter(
+      mask: '##-##-####', filter: {"#": RegExp(r'[0-9]')});
 
   TextEditingController currentLine1AddressController = TextEditingController();
   TextEditingController currentLine2AddressController = TextEditingController();
@@ -38,10 +45,55 @@ class _NameAddressVerificationFormNewState extends State<NameAddressVerification
   TextEditingController permanentCityAddressController = TextEditingController();
   TextEditingController permanentStateAddressController = TextEditingController();
   TextEditingController permanentPinCodeController = TextEditingController();
+  TextEditingController residenceFromDateController = TextEditingController();
+  TextEditingController residenceToDateController = TextEditingController();
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
+  }
+
+  // Function to show the date picker
+  Future<void> _selectResidenceFromDate(BuildContext context) async {
+    // DateTime date18YearsAgo = _getDate18YearsAgo();
+
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1950), // Min date: 18 years ago
+      lastDate: DateTime.now(), // Max date: today
+    );
+
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+
+      //setState(() {
+      _selectedDate = pickedDate;
+      residenceFromDateController.text = formattedDate;
+      // });
+    }
+  }
+
+  // Function to show the date picker
+  Future<void> _selectResidenceToDate(BuildContext context) async {
+    // DateTime date18YearsAgo = _getDate18YearsAgo();
+
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1950), // Min date: 18 years ago
+      lastDate: DateTime.now(), // Max date: today
+    );
+
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+
+      //setState(() {
+      _selectedDate = pickedDate;
+      residenceToDateController.text = formattedDate;
+      // });
+    }
   }
 
   @override
@@ -84,10 +136,6 @@ class _NameAddressVerificationFormNewState extends State<NameAddressVerification
     );
   }
 
-  void pickImageClear() {
-    context.read<NameAddressAadhaarFrontSideCubit>().clearImage();
-    context.read<NameAddressAadhaarBackSideCubit>().clearImage();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,60 +155,6 @@ class _NameAddressVerificationFormNewState extends State<NameAddressVerification
                         .textTheme
                         .titleMedium!
                         .copyWith(color: Theme.of(context).primaryColorDark),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Text("Choose an Option:",
-                      style: Theme.of(context).textTheme.bodySmall),
-                  BlocProvider(
-                    create: (_) => FormUploadNameAddressCubit(),
-                    child: BlocBuilder<FormUploadNameAddressCubit, bool>(
-                        builder: (context, frmUpload) {
-                          return Column(
-                            children: [
-                              ListTile(
-                                splashColor: Colors.transparent,
-                                onTap: () {
-                                  context
-                                      .read<FormUploadNameAddressCubit>()
-                                      .formUploadYesNo(yesNo: false);
-                                },
-                                contentPadding: const EdgeInsets.all(0),
-                                leading: Icon(Icons.radio_button_checked,
-                                    color: !frmUpload
-                                        ? Theme.of(context).primaryColorLight
-                                        : Theme.of(context).iconTheme.color),
-                                title: Text("Fill the Form Manually",
-                                    style: Theme.of(context).textTheme.bodySmall),
-                              ),
-                              ListTile(
-                                splashColor: Colors.transparent,
-                                onTap: () {
-                                  context
-                                      .pushReplacementNamed("NameAddressDocUpload");
-
-                                  context
-                                      .read<FormUploadNameAddressCubit>()
-                                      .formUploadYesNo(yesNo: false);
-
-                                  context
-                                      .read<FormUploadNameAddressCubit>()
-                                      .formUploadYesNo(yesNo: true);
-                                },
-                                contentPadding: const EdgeInsets.all(0),
-                                leading: Icon(
-                                  Icons.radio_button_checked,
-                                  color: frmUpload
-                                      ? Theme.of(context).primaryColorLight
-                                      : Theme.of(context).iconTheme.color,
-                                ),
-                                title: Text("Upload Documents",
-                                    style: Theme.of(context).textTheme.bodySmall),
-                              ),
-                            ],
-                          );
-                        }),
                   ),
                   const SizedBox(
                     height: 16,
@@ -214,19 +208,20 @@ class _NameAddressVerificationFormNewState extends State<NameAddressVerification
                     children: [
                       Checkbox(
                         value: isSameAddress,
-                        onChanged: (value) {
+                        onChanged: (bool? value) {
                           setState(() {
-                            isSameAddress = value!;
-                          });
-                        },
-                        side: const BorderSide(
-                          color: Colors.orange,
-                          width: 2,
-                        ),
-                        activeColor: Colors.orange,
-                        checkColor: Colors.white,
+                            isSameAddress = value ?? false;
+                          }); },
+                        activeColor: Colors.orange, // fill color when checked
+                        checkColor: Colors.white, // tick mark color
                       ),
-                      const Text("Same as Current Address"),
+                      Text(
+                        "Same as Current Address",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontWeight: FontWeight.w700),
+                      ),
                     ],
                   ),
                   FormFieldNotRequired(
@@ -255,6 +250,104 @@ class _NameAddressVerificationFormNewState extends State<NameAddressVerification
                       titleText: 'Postal Code',
                       hintText: "Enter Postal Code",
                       textInputType: TextInputType.number),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Text(
+                    "Residing Period",
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Theme.of(context).primaryColorDark, fontSize: 16),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                          text: "Residing From",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontWeight: FontWeight.w700),
+                          children: [
+                            TextSpan(
+                              text: " * ",
+                              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                  fontWeight: FontWeight.w700, color: Colors.red),
+                            ),
+                          ])),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  TextFormField(
+                    readOnly: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter residing from date';
+                      }
+                      return null;
+                    },
+                    style: Theme.of(context).textTheme.bodySmall,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [maskFormatter],
+                    controller: residenceFromDateController,
+                    decoration: InputDecoration(
+                      hintText: "DD-MM-YYYY",
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () => _selectResidenceFromDate(
+                            context), // Open date picker when icon is pressed
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                        text: "Residing To",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontWeight: FontWeight.w700),
+                      )),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  TextFormField(
+                    readOnly: true,
+                    style: Theme.of(context).textTheme.bodySmall,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [maskFormatter],
+                    controller: residenceToDateController,
+                    decoration: InputDecoration(
+                      hintText: "DD-MM-YYYY",
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () => _selectResidenceToDate(
+                            context), // Open date picker when icon is pressed
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isChecked = value ?? false;
+                          }); },
+                        activeColor: Colors.orange, // fill color when checked
+                        checkColor: Colors.white, // tick mark color
+                      ),
+                      Text(
+                        "Till Date",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 24),
                   BlocConsumer<NameAddressVerificationFormCubit,
                       NameAddressVerificationState>(
@@ -262,13 +355,6 @@ class _NameAddressVerificationFormNewState extends State<NameAddressVerification
                         if (nameAddress is NameAddressVerificationSuccessState) {
                           if (nameAddress.data["status"] == 200) {
                             context.pushReplacementNamed("bottomNav");
-                            pickImageClear();
-                            context
-                                .read<NameAddressAadhaarFrontSideCubit>()
-                                .clearImage();
-                            context
-                                .read<NameAddressAadhaarBackSideCubit>()
-                                .clearImage();
                           }
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(nameAddress.data["message"])));

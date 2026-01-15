@@ -29,8 +29,8 @@ void checkCase({required String title, String? uuid,required BuildContext contex
       context.pushNamed("ReferenceForm");
       break;
     case "Fullname and address verification":
-      // context.pushNamed("NameAddressVerificationForm");
-      context.pushNamed("NameAddressVerificationFormNew");
+      context.pushNamed("AddressList",pathParameters: {'uid': uuid!},
+      );
       break;
     case "Employment Verification":
       context.pushNamed("EmployDataList",pathParameters: {'uid': uuid!},
@@ -341,17 +341,13 @@ class _PendingDocState extends State<PendingDoc> {
                                           ),
                                         ],
                                       )
-                                          : Text(
-                                        data.data![index].entity!.entityName.toString(),
-                                      ),
+                                          : Text(data.data![index].entity!.entityName.toString(),),
                                     ),
                                     isPressed == index
                                         ? ListView.builder(
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
+                                            physics: const NeverScrollableScrollPhysics(),
                                             shrinkWrap: true,
-                                            itemCount: data
-                                                .data![index].services!.length,
+                                            itemCount: data.data![index].services!.length,
                                             itemBuilder: (BuildContext context,
                                                 int servicesIndex) {
                                               return Column(
@@ -363,53 +359,15 @@ class _PendingDocState extends State<PendingDoc> {
                                                             horizontal: 8,
                                                             vertical: 4),
                                                     onTap: () {
-                                                      serviceRequestId = data
-                                                          .data![index]
-                                                          .services![
-                                                              servicesIndex]
-                                                          .serviceRequestId
-                                                          .toString();
+                                                      serviceRequestId = data.data![index].services![servicesIndex].serviceRequestId.toString();
 
-                                                      requestId = data
-                                                          .data![index]
-                                                          .requestId
-                                                          .toString();
+                                                      requestId = data.data![index].requestId.toString();
 
-                                                      if (data.data![index]
-                                                              .detailsUpdated ==
-                                                          0) {
-                                                        // context.pushNamed(
-                                                        //     "verifyRequestUpdate",
-                                                        //     pathParameters: {
-                                                        //       'uuid': data
-                                                        //           .data![index]
-                                                        //           .uuid
-                                                        //           .toString()
-                                                        //     });
-                                                        context.pushNamed(
-                                                            "verifyRequestUpdateNew",
-                                                            pathParameters: {
-                                                              'uuid': data
-                                                                  .data![index]
-                                                                  .uuid
-                                                                  .toString()
-                                                            });
-                                                      } else if (data
-                                                              .data![index]
-                                                              .detailsUpdated ==
-                                                          1) {
-                                                        if (data
-                                                                .data![index]
-                                                                .services![
-                                                                    servicesIndex]
-                                                                .status ==
-                                                            "pending") {
-                                                          if (data
-                                                                  .data![index]
-                                                                  .services![
-                                                                      servicesIndex]
-                                                                  .serviceTitle ==
-                                                              "Employment Verification") {
+                                                      if (data.data![index].detailsUpdated == 0) {
+                                                        context.pushNamed("verifyRequestUpdateNew", pathParameters: {'uuid': data.data![index].uuid.toString()});
+                                                      } else if (data.data![index].detailsUpdated == 1) {
+                                                        if (data.data![index].services![servicesIndex].status == "pending") {
+                                                          if (data.data![index].services![servicesIndex].serviceTitle == "Employment Verification") {
                                                             context.pushNamed("EmployDataList",pathParameters: {
                                                               'uid': data.data![index].case_uuid.toString()}
                                                             );
@@ -418,26 +376,16 @@ class _PendingDocState extends State<PendingDoc> {
                                                             context.pushNamed("EducationList",pathParameters: {
                                                             'uid': data.data![index].case_uuid.toString()
                                                             });
+                                                          } else if (data.data![index].services![servicesIndex].serviceTitle =="Fullname and address verification") {
+                                                            print("case_uuid at pending doc: ${data.data![index].case_uuid.toString()}");
+                                                            context.pushNamed("AddressList",pathParameters: {
+                                                              'uid': data.data![index].case_uuid.toString()
+                                                            });
                                                           } else {
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                                    const SnackBar(
-                                                                        content:
-                                                                            Text("Please wait your application under process")));
+                                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait your application under process")));
                                                           }
-                                                        } else if (data
-                                                                .data![index]
-                                                                .services![
-                                                                    servicesIndex]
-                                                                .status ==
-                                                            "verified") {
-                                                          ScaffoldMessenger.of(
-                                                                  context)
-                                                              .showSnackBar(
-                                                                  const SnackBar(
-                                                                      content: Text(
-                                                                          "Your application already verified")));
+                                                        } else if (data.data![index].services![servicesIndex].status == "verified") {
+                                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your application already verified")));
                                                         } else if (data
                                                                 .data![index]
                                                                 .services![

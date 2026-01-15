@@ -22,6 +22,10 @@ import 'package:v_verify/screen/ServicesAndPrice/bloc/servicePrice_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/bloc_checkout/checkout_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarGetOtp/Bloc/aadhaar_verification_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarVerifyOtp/bloc/aadhaarVerifyOtp_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/DocUpdate/bloc/name_address_doc_update_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/DocUpload/Bloc/name_address_doc_upload_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Blocs/address_list_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Update/ShowData/Bloc/nameAddress_showData_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Bloc/driving_licence_bloc.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/update/Bloc/driving_doc_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/upload/bloc/driver_doc_upload_cubit.dart';
@@ -41,11 +45,6 @@ import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Documents/upload/b
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Save/Bloc/gst_pan_cin_save_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Update/Bloc/gst_pan_cin_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Update/ShowData/Bloc/GstPanCin_show_data_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Documents/DocUpdate/bloc/name_address_doc_update_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Documents/DocUpload/Bloc/name_address_doc_upload_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Save/Bloc/name_address_verification_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Update/Bloc/name_address_verification_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Update/ShowData/Bloc/nameAddress_showData_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Mumbai/PoliceStationId/Bloc/police_station_id_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Mumbai/UpdateForm/Update/Bloc/mumbaiPoliceUpdateFrom_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Mumbai/UpdateForm/showDetails/Bloc/mumbaiShowData_cubit.dart';
@@ -78,6 +77,8 @@ import 'package:v_verify/theme/theme_cubit.dart';
 import 'package:v_verify/theme/theme_data.dart';
 
 import 'firebase_options.dart';
+import 'screen/VerificationForms/AddressVerificationForm/Save/Bloc/name_address_verification_cubit.dart';
+import 'screen/VerificationForms/AddressVerificationForm/Update/Bloc/name_address_verification_cubit.dart';
 import 'screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_upload_bloc/education_document_upload_cubit.dart';
 import 'screen/VerificationForms/EducationVerification/Form/Blocs/education_save_form_bloc/education_save_form_cubit.dart';
 import 'screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_upload_bloc/employment_document_upload_cubit.dart';
@@ -318,6 +319,8 @@ class MyApp extends StatelessWidget {
             create: (_) => EmploymentDocumentListCubit(ApiService())),
         BlocProvider<EmploymentDocsFileCubit>(
             create: (_) => EmploymentDocsFileCubit()),
+        BlocProvider<AddressListCubit>(
+            create: (_) => AddressListCubit(ApiService())),
       ],
       child: Builder(builder: (context) {
         return Sizer(builder: (BuildContext, Orientation, ScreenType) {

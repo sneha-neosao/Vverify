@@ -8,13 +8,12 @@ import 'package:v_verify/screen/Order%20Details/order_details.dart';
 import 'package:v_verify/screen/Payment%20Successful/payment_successful.dart';
 import 'package:v_verify/screen/ServicesAndPrice/services_and_price.dart';
 import 'package:v_verify/screen/SplashScreen/SplashScreen.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Screens/address_list.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Screens/education_update_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Screens/employment_document_upload_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Screens/employment_save_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Screens/employment_update_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/List/Screens/employment_list.dart';
-import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Form/Screens/address_save_form_screen.dart';
-import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Update/name_address_verification_update_new.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/verify_request_update_new.dart';
 import '../screen/Add Signature/add_signature.dart';
 import '../screen/OTP_Verify-Screen/otp_verify_screen.dart';
@@ -24,6 +23,10 @@ import '../screen/ProfileScreen/OtherScreen/refund_policy.dart';
 import '../screen/ProfileScreen/ProfilePage.dart';
 import '../screen/VerificationForms/AadhaarVerification/AadhaarGetOtp/aadhaar_verification.dart';
 import '../screen/VerificationForms/AadhaarVerification/AadhaarVerifyOtp/AadhaarVerifyOtp.dart';
+import '../screen/VerificationForms/AddressVerificationForm/Documents/DocUpdate/name_address_doc_update.dart';
+import '../screen/VerificationForms/AddressVerificationForm/Documents/DocUpload/name_address_doc_upload.dart';
+import '../screen/VerificationForms/AddressVerificationForm/Form/Screens/address_save_form_screen.dart';
+import '../screen/VerificationForms/AddressVerificationForm/Update/name_address_verification_update_new.dart';
 import '../screen/VerificationForms/DrvingLicence/Document/update/driving_doc_update.dart';
 import '../screen/VerificationForms/DrvingLicence/Document/upload/driver_doc_upload.dart';
 import '../screen/VerificationForms/DrvingLicence/Update/driving_licence_update.dart';
@@ -35,8 +38,6 @@ import '../screen/VerificationForms/GST_TIN_CIN/Documents/update/gst_pan_cin_doc
 import '../screen/VerificationForms/GST_TIN_CIN/Documents/upload/gst_pan_cin_doc_upload.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Save/gst_pan_cin_screen.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Update/gst_pan_cin_update_screen.dart';
-import '../screen/VerificationForms/NameAddressVerificationForm/Documents/DocUpdate/name_address_doc_update.dart';
-import '../screen/VerificationForms/NameAddressVerificationForm/Documents/DocUpload/name_address_doc_upload.dart';
 import '../screen/VerificationForms/PanVerification/save/pan_verification_save.dart';
 import '../screen/VerificationForms/PanVerification/update/pan_verification_update.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/UpdateForm/MumbaiPoliceVerificationUpdateForm1.dart';
@@ -325,18 +326,12 @@ class AppRouter {
           return const ReferenceForm();
         },
       ),
-      // GoRoute(
-      //   path: '/NameAddressVerificationForm',
-      //   name: "NameAddressVerificationForm",
-      //   builder: (context, state) {
-      //     return const NameAddressVerificationForm();
-      //   },
-      // ),
       GoRoute(
-        path: '/NameAddressVerificationFormNew',
-        name: "NameAddressVerificationFormNew",
+        path: '/AddressSaveFormScreen/:uid',
+        name: "AddressSaveFormScreen",
         builder: (context, state) {
-          return const NameAddressVerificationFormNew();
+          final uid = state.pathParameters['uid'] ?? "";
+          return AddressSaveFormScreen(Case_uuid: uid,);
         },
       ),
       GoRoute(
@@ -429,6 +424,16 @@ class AppRouter {
         builder: (context, state) {
           final uid = state.pathParameters['uid'] ?? "";
           return  EmployDataList(Case_uuid: uid,);
+        },
+      ),
+      GoRoute(
+        path: '/AddressList/:uid',
+        name: 'AddressList',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return AddressList(
+            Case_uuid: uid,
+          );
         },
       ),
       GoRoute(

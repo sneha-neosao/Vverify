@@ -3,35 +3,35 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/List/Blocs/education_list_state.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Blocs/address_list_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Blocs/address_list_state.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Models/address_list_model.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 import '../../../../Bottom/bottomNavbar.dart';
-import '../Blocs/education_list_cubit.dart';
-import '../Models/education_list_model.dart';
 
-class EducationList extends StatefulWidget {
+class AddressList extends StatefulWidget {
   String Case_uuid;
 
-  EducationList({super.key, required this.Case_uuid,});
+  AddressList({super.key, required this.Case_uuid,});
 
   @override
-  State<EducationList> createState() => _EducationListState();
+  State<AddressList> createState() => _AddressListState();
 }
 
-class _EducationListState extends State<EducationList> {
+class _AddressListState extends State<AddressList> {
   @override
   void initState() {
-    educationList();
+    addressList();
     super.initState();
-    print("case uuid on education list : ${widget.Case_uuid}");
+    print("case uuid on address list : ${widget.Case_uuid}");
   }
 
-  void educationList() {
+  void addressList() {
     String token = context.read<TokenCubit>().state;
-    context.read<EducationListCubit>().educationList(
+    context.read<AddressListCubit>().addressList(
         token: token,
-        request_id: int.parse(requestId!),
-        service_request_id: int.parse(serviceRequestId!));
+        requestId: int.parse(requestId!),
+        serviceRequestId: int.parse(serviceRequestId!));
   }
 
   @override
@@ -53,7 +53,7 @@ class _EducationListState extends State<EducationList> {
           child: Column(
             children: [
               Text(
-                "Education Verification List",
+                "Address Verification List",
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium!
@@ -62,45 +62,18 @@ class _EducationListState extends State<EducationList> {
               const SizedBox(
                 height: 16,
               ),
-              BlocBuilder<EducationListCubit, EducationListState>(
-                builder: (context, state) {
-                  if (state is EducationListLoadingState) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is EducationListEmptyState) {
-                    return CustomButton(
-                      onTap: () {
-                        context.pushNamed(
-                          "EducationSaveFormScreen",
-                          pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
-                        );
-                      },
-                      text: "Add Education Details",
-                      gradientColors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColorDark,
-                      ],
-                    );
-                  } else if (state is EducationListSuccessState) {
-                    final data = state.educationListModel;
-                    if (data.data == null || data.data!.isEmpty) {
-                      return CustomButton(
-                        onTap: () {
-                          context.pushNamed(
-                            "EducationSaveFormScreen",
-                            pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
-                          );
-                        },
-                        text: "Add Education Details",
-                        gradientColors: [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColorDark,
-                        ],
-                      );
-                    }
-                    // render list
-                  }
-                  return const SizedBox();
+              CustomButton(
+                onTap: () {
+                  context.pushNamed(
+                    "AddressSaveFormScreen",
+                    pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
+                  );
                 },
+                text: "Add Address Details",
+                gradientColors: [
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).primaryColorDark,
+                ],
               ),
               const SizedBox(
                 height: 16,
@@ -135,25 +108,25 @@ class _EducationListState extends State<EducationList> {
               const SizedBox(
                 height: 16,
               ),
-              BlocBuilder<EducationListCubit, EducationListState>(
-                  builder: (context, educationList) {
-                if (educationList is EducationListLoadingState) {
+              BlocBuilder<AddressListCubit, AddressDataListState>(
+                  builder: (context, addressList) {
+                if (addressList is AddressDataListLoadingState) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
-                } else if (educationList is EducationListErrorState) {
+                } else if (addressList is AddressDataListEmptyState) {
                   return const Center(
-                    child: Text("Not found education verification data...!"),
+                    child: SizedBox.shrink(),
                   );
-                } else if (educationList is EducationListSuccessState) {
-                  EducationDocListModel data = educationList.educationListModel;
+                } else if (addressList is AddressDataListSuccessState) {
+                  AddressListModel data = addressList.addressListDataModel;
 
                   return Expanded(
                     child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: data.data!.length,
                         itemBuilder: (context, index) {
-                          final rawStatus = data.data![index].v_status ?? "";
+                          final rawStatus = data.data![index].vStatus ?? "";
                           String status;
 
                           if (rawStatus.isEmpty || rawStatus == "-" || rawStatus == "") {
@@ -204,12 +177,20 @@ class _EducationListState extends State<EducationList> {
                                                 const SizedBox(
                                                   height: 8,
                                                 ),
+                                                Text(
+                                                  "Person's Current Address",
+                                                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                                      color: Theme.of(context).primaryColorDark, fontSize: 16),
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
                                                 Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      "University Name",
+                                                      "Address Line 1",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall!
@@ -217,9 +198,9 @@ class _EducationListState extends State<EducationList> {
                                                               color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].university_name?.trim().isEmpty ?? true
+                                                      data.data![index].currentAddressLine1?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].university_name!,
+                                                          : data.data![index].currentAddressLine1!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,
@@ -234,7 +215,7 @@ class _EducationListState extends State<EducationList> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      "Institution Name",
+                                                      "Address Line 2",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall!
@@ -242,9 +223,9 @@ class _EducationListState extends State<EducationList> {
                                                               color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].institution_name?.trim().isEmpty ?? true
+                                                      data.data![index].currentAddressLine2?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].institution_name!,
+                                                          : data.data![index].currentAddressLine2!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,
@@ -259,7 +240,7 @@ class _EducationListState extends State<EducationList> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      "Degree Name",
+                                                      "City",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall!
@@ -267,9 +248,9 @@ class _EducationListState extends State<EducationList> {
                                                               color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].degree_qualification_name?.trim().isEmpty ?? true
+                                                      data.data![index].currentAddressCity?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].degree_qualification_name!,
+                                                          : data.data![index].currentAddressCity!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,
@@ -284,7 +265,7 @@ class _EducationListState extends State<EducationList> {
                                                   CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      "Year Of Passing",
+                                                      "State",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall!
@@ -292,9 +273,9 @@ class _EducationListState extends State<EducationList> {
                                                           color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].year_of_passing?.trim().isEmpty ?? true
+                                                      data.data![index].currentAddressState?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].year_of_passing!,
+                                                          : data.data![index].currentAddressState!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,
@@ -309,7 +290,7 @@ class _EducationListState extends State<EducationList> {
                                                   CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      "Grades Type",
+                                                      "Postal Code",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall!
@@ -317,9 +298,42 @@ class _EducationListState extends State<EducationList> {
                                                           color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].grades_type?.trim().isEmpty ?? true
+                                                      data.data![index].currentAddressPostalCode?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].grades_type!,
+                                                          : data.data![index].currentAddressPostalCode!,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall,
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Text(
+                                                  "Person's Permanent Address",
+                                                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                                      color: Theme.of(context).primaryColorDark, fontSize: 16),
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Address Line 1",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                          color: Colors.grey),
+                                                    ),
+                                                    Text(
+                                                      data.data![index].currentAddressLine1?.trim().isEmpty ?? true
+                                                          ? "NA"
+                                                          : data.data![index].currentAddressLine1!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,
@@ -331,20 +345,95 @@ class _EducationListState extends State<EducationList> {
                                                 ),
                                                 Column(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      "Grades Obtained",
+                                                      "Address Line 2",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall!
                                                           .copyWith(
-                                                              color: Colors.grey),
+                                                          color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].grades_obtained?.trim().isEmpty ?? true
+                                                      data.data![index].currentAddressLine2?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].grades_obtained!,
+                                                          : data.data![index].currentAddressLine2!,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall,
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "City",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                          color: Colors.grey),
+                                                    ),
+                                                    Text(
+                                                      data.data![index].currentAddressCity?.trim().isEmpty ?? true
+                                                          ? "NA"
+                                                          : data.data![index].currentAddressCity!,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall,
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "State",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                          color: Colors.grey),
+                                                    ),
+                                                    Text(
+                                                      data.data![index].currentAddressState?.trim().isEmpty ?? true
+                                                          ? "NA"
+                                                          : data.data![index].currentAddressState!,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall,
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Postal Code",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                          color: Colors.grey),
+                                                    ),
+                                                    Text(
+                                                      data.data![index].currentAddressPostalCode?.trim().isEmpty ?? true
+                                                          ? "NA"
+                                                          : data.data![index].currentAddressPostalCode!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,
@@ -359,16 +448,16 @@ class _EducationListState extends State<EducationList> {
                                       TextButton(
                                           onPressed: () {
                                             print('uid: ${data.data![index].uid}');
-                                            print('case_uuid: ${data.data![index].case_uuid}');
-                                            print('education_uuid: ${data.data![index].education_uuid}');
+                                            print('case_uuid: ${data.data![index].caseUuid}');
+                                            print('address_uuid: ${data.data![index].addressUuid}');
 
-                                            if (data.data![index].v_status ==
+                                            if (data.data![index].vStatus ==
                                                 "") {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                       content: Text(
                                                           "Please wait your application under process")));
-                                            } else if (data.data![index].v_status ==
+                                            } else if (data.data![index].vStatus ==
                                                 "verified") {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
@@ -379,8 +468,8 @@ class _EducationListState extends State<EducationList> {
                                                 'EducationUpdateFormScreen',
                                                 pathParameters: {
                                                   'uid': data.data![index].uid!,
-                                                  'case_uuid': data.data![index].case_uuid!,
-                                                  'education_uuid': data.data![index].education_uuid!
+                                                  'case_uuid': data.data![index].caseUuid!,
+                                                  'address_uuid': data.data![index].addressUuid!
                                                 },
                                               );
                                             }

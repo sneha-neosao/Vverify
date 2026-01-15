@@ -1,15 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
-import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Update/model/name_address_verification_model.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Update/model/name_address_verification_model.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
-import 'package:v_verify/screen/VerificationForms/common/pickphoto.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
-
 import '../../common/form_widget.dart';
 import '../Save/Bloc/name_address_verification_cubit.dart';
 import 'Bloc/name_address_verification_cubit.dart';

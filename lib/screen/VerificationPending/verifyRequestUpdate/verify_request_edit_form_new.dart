@@ -335,12 +335,6 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                                   .bodySmall!
                                   .copyWith(color: Colors.grey),
                             ),
-                            // validator: (value) {
-                            //   if (value == null || value.isEmpty) {
-                            //     return "Please Select Gender";
-                            //   }
-                            //   return null;
-                            // },
                             onChanged: (String? value) {
                               setState(() {
                                 selectedGender = value; // stays lowercase

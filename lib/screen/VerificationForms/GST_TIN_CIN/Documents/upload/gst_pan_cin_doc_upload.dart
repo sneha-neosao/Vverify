@@ -1,15 +1,13 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Save/Bloc/name_address_verification_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Documents/upload/bloc/gst_pan_cin_doc_upload_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 import 'package:v_verify/screen/VerificationForms/common/pickphoto.dart';
-
-import '../../../NameAddressVerificationForm/Save/Bloc/name_address_verification_cubit.dart';
 import 'bloc/gst_pan_cin_doc_upload_state.dart';
 
 class GstPanCinDocUpload extends StatefulWidget {

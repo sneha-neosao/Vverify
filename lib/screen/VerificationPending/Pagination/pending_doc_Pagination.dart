@@ -103,8 +103,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         context.pushNamed("ReferenceForm");
         break;
       case "name-address-verifcation":
-        // context.pushNamed("NameAddressVerificationForm");
-        context.pushNamed("NameAddressVerificationFormNew");
+        context.pushNamed("AddressList",pathParameters: {'uid': data[index].case_uuid.toString()},
+        );
         break;
       case "employment-verification-list":
         context.pushNamed("EmployDataList",pathParameters: {'uid': data[index].case_uuid.toString()},
@@ -470,6 +470,11 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                   "Education Verification") {
                                                                 print("case_uuid at pending doc: ${data[index].case_uuid.toString()}");
                                                                 context.pushNamed("EducationList",pathParameters: {
+                                                                  'uid': data[index].case_uuid.toString()
+                                                                });
+                                                              } else if (data[index].services![servicesIndex].serviceTitle =="Fullname and address verification") {
+                                                                print("case_uuid at pending doc: ${data[index].case_uuid.toString()}");
+                                                                context.pushNamed("AddressList",pathParameters: {
                                                                   'uid': data[index].case_uuid.toString()
                                                                 });
                                                               } else {
