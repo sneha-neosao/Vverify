@@ -244,48 +244,106 @@ class _PendingDocState extends State<PendingDoc> {
                                   children: [
                                     ListTile(
                                       onTap: () {
-                                        context
-                                            .read<IsPressedCubit>()
-                                            .isPressed(index);
+                                        context.read<IsPressedCubit>().isPressed(index);
                                       },
-                                      tileColor:
-                                          Theme.of(context).primaryColorDark,
+                                      tileColor: Colors.orangeAccent,
                                       shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(8),
-                                              topRight: Radius.circular(8))),
-                                      title: data.data![index].name == null
-                                          ? Text(data
-                                              .data![index].entity!.entityName.toString())
-                                          : Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                              "${data.data![index].first_name} ${data.data![index].middle_name} ${data.data![index].last_name}"
-                                                  .toString()
-                                          ),
-                                          Spacer(),
-                                          InkWell(
-                                            onTap: (){
-                                              print("requestid at pending doc : ${data.data![index].requestId}");
-                                              context.pushNamed(
-                                                "VerifyRequestEditFormNew",
-                                                pathParameters: {
-                                                  'request_id': data.data![index].requestId!.toString(),
-                                                  'uuid': data.data![index].uuid.toString(),
-                                                },
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding: EdgeInsets.all(6.0),
-                                              child: Icon(Icons.mode_edit,color: Colors.black,size: 16,),
-                                            ),
-                                          )
-                                        ],
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(8),
+                                          topRight: Radius.circular(8),
+                                        ),
                                       ),
-                                      trailing: Icon(isPressed == index
-                                          ? Icons.keyboard_arrow_up
-                                          : Icons.keyboard_arrow_down),
+                                      title: data.data![index].first_name != null
+                                          ? Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              // ✅ Case name (fixed width via Expanded, wraps to next line)
+                                              Expanded(
+                                                child: Text(
+                                                  "${data.data![index].first_name} ${data.data![index].middle_name} ${data.data![index].last_name}",
+                                                  maxLines: 2,
+                                                  softWrap: true,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(
+                                                    color: Colors.black,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+
+                                              // ✏️ Edit icon (unchanged)
+                                              InkWell(
+                                                onTap: () {
+                                                  context.pushNamed(
+                                                    "VerifyRequestEditFormNew",
+                                                    pathParameters: {
+                                                      'request_id':
+                                                      data.data![index].requestId!.toString(),
+                                                      'uuid': data.data![index].uuid.toString(),
+                                                    },
+                                                  );
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.all(6.0),
+                                                  child: Icon(
+                                                    Icons.mode_edit,
+                                                    color: Colors.black,
+                                                    size: 16,
+                                                  ),
+                                                ),
+                                              ),
+
+                                              // ⬆⬇ Arrow (ONLY change)
+                                              Icon(
+                                                isPressed == index
+                                                    ? Icons.keyboard_arrow_up
+                                                    : Icons.keyboard_arrow_down,
+                                                color: Colors.black,
+                                              ),
+                                            ],
+                                          ),
+
+                                          // ✅ Status row (unchanged)
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                status.toLowerCase() == "verified"
+                                                    ? Icons.verified
+                                                    : status.toLowerCase() == "discrepancy"
+                                                    ? Icons.not_interested
+                                                    : Icons.schedule,
+                                                color: Colors.black,
+                                                size: 14,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                status.toLowerCase() == "verified"
+                                                    ? "Verified"
+                                                    : status.toLowerCase() == "discrepancy"
+                                                    ? "Discrepancy"
+                                                    : "Pending",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .copyWith(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                          : Text(
+                                        data.data![index].entity!.entityName.toString(),
+                                      ),
                                     ),
                                     isPressed == index
                                         ? ListView.builder(

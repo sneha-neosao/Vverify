@@ -7,12 +7,12 @@ import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/pickphoto.dart';
 
-import '../../common/form_widget.dart';
-import '../../common/id.dart';
-import '../../common/validator.dart';
-import 'Bloc/name_address_verification_cubit.dart';
-import 'Bloc/name_address_verification_state.dart';
-import 'model/name_address_verification_model.dart';
+import '../../../common/form_widget.dart';
+import '../../../common/id.dart';
+import '../../../common/validator.dart';
+import '../../Save/Bloc/name_address_verification_cubit.dart';
+import '../../Save/Bloc/name_address_verification_state.dart';
+import '../../Save/model/name_address_verification_model.dart';
 
 TextEditingController personNameController = TextEditingController();
 

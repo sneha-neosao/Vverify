@@ -80,6 +80,16 @@ String? validateNO(String? value) {
   return null;
 }
 
+String? validatePAN(String? value) {
+  RegExp panRegExp = RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
+
+  if (value == null || value.isEmpty) {
+    return "Tenant's PAN Number is required";
+  } else if (!panRegExp.hasMatch(value)) {
+    return 'Please enter a valid PAN number';
+  }
+  return null;
+}
 
 String? addressValidatorNotRequired(String? value) {
   if (value == null || value.isEmpty) {

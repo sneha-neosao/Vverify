@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
+import 'package:v_verify/screen/VerificationForms/common/validator.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../common/form_widget.dart';
@@ -48,61 +50,21 @@ class _PanVerificationSaveState extends State<PanVerificationSave> {
               const SizedBox(
                 height: 16,
               ),
-              Center(
-                  child: Text(
+              Text(
                 "Let's Verify PAN Card",
-                style: Theme.of(context).textTheme.bodyLarge,
-              )),
-              // Center(
-              //     child: Text(
-              //   "Tenant's PAN number",
-              //   style: Theme.of(context).textTheme.bodySmall,
-              // )),
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.orange)
+              ),
               const SizedBox(
                 height: 16,
               ),
-              form_widget(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter PAN card number';
-                    }
-                    final emailRegExp =
-                        RegExp(r'^[A-Z]{3}[PCHABGJLFT][A-Z][0-9]{4}[A-Z]$');
-                    if (!emailRegExp.hasMatch(value)) {
-                      return 'Please enter a valid PAN card';
-                    }
-                    return null;
-                  },
-                  maskFormatter: [panMaskFormatter],
+              CustomRequiredTextField(
+                  validator: validatePAN,
+                  // maskFormatter: [panMaskFormatter],
                   controller: panVerificationController,
-                  titleText: "Tenant's PAN number",
-                  hintText: "Enter Tenant's PAN number",
-                  textInputType: TextInputType.text),
-              // TextFormField(
-              //   validator: (value) {
-              //     if (value == null || value.isEmpty) {
-              //       return 'Please enter PAN card number';
-              //     }
-              //     final emailRegExp =
-              //         RegExp(r'^[A-Z]{3}[PCHABGJLFT][A-Z][0-9]{4}[A-Z]$');
-              //     if (!emailRegExp.hasMatch(value)) {
-              //       return 'Please enter a valid PAN card';
-              //     }
-              //     return null;
-              //   },
-              //   textCapitalization: TextCapitalization.characters,
-              //   style: Theme.of(context).textTheme.bodySmall,
-              //   keyboardType: TextInputType.text,
-              //   inputFormatters: [panMaskFormatter],
-              //   controller: panVerificationController,
-              //   decoration: InputDecoration(
-              //     hintText: "Enter PAN Number",
-              //     focusedBorder: OutlineInputBorder(
-              //       borderSide: BorderSide(
-              //           color: Theme.of(context).canvasColor, width: 1.0),
-              //     ),
-              //   ),
-              // ),
+                  titleText: "Tenant's PAN Number",
+                  hintText: "Enter Tenant's PAN Number",
+                  textInputType: TextInputType.text
+              ),
               const SizedBox(
                 height: 24,
               ),
@@ -138,7 +100,7 @@ class _PanVerificationSaveState extends State<PanVerificationSave> {
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text("Please validate PAN number")));
+                                content: Text("Please enter PAN number")));
                       }
                     },
                     text: "SUBMIT",
