@@ -28,18 +28,13 @@ import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/upload/
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/ShowData/Bloc/drving_licence_shwodata_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Update/Bloc/driving_licence_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_list_bloc/education_doc_list_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_upload_bloc/education_document_upload_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/List/Blocs/education_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Blocs/education_show_details_bloc/education_show_details_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Blocs/education_update_form_bloc/education_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/Collage/Bloc/collage_name_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/University/Bloc/university_name_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentForm/EmployList/Bloc/employ_data_list_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentForm/Save/Bloc/EmploymentSaveForm.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentForm/Update/Bloc/employment_update_form.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentForm/Update/showData/Bloc/employ_show_data_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentForm/UploadDoc/Bloc/employment_upload_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentForm/employUpdateDoc/Bloc/employ_doc_update_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_update_form_bloc/employment_update_form_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/List/Blocs/employment_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Documents/update/bloc/gst_pan_cin_doc_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Documents/upload/bloc/gst_pan_cin_doc_upload_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Save/Bloc/gst_pan_cin_save_cubit.dart';
@@ -82,7 +77,11 @@ import 'package:v_verify/theme/theme_cubit.dart';
 import 'package:v_verify/theme/theme_data.dart';
 
 import 'firebase_options.dart';
+import 'screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_upload_bloc/education_document_upload_cubit.dart';
 import 'screen/VerificationForms/EducationVerification/Form/Blocs/education_save_form_bloc/education_save_form_cubit.dart';
+import 'screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_upload_bloc/employment_document_upload_cubit.dart';
+import 'screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_save_form_bloc/employment_save_form_cubit.dart';
+import 'screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_show_details_bloc/employ_show_details_cubit.dart';
 
 void main() async {
   await dotenv.load();
@@ -188,10 +187,6 @@ class MyApp extends StatelessWidget {
             create: (_) => AadhaarGetOtpCubit(ApiService())),
         BlocProvider<AadhaarVerifyOtpCubit>(
             create: (_) => AadhaarVerifyOtpCubit(ApiService())),
-        BlocProvider<EmploymentLetterImage>(
-            create: (_) => EmploymentLetterImage()),
-        BlocProvider<EmploymentSupportDocumentImage>(
-            create: (_) => EmploymentSupportDocumentImage()),
         BlocProvider<EmploymentSaveFormCubit>(
             create: (_) => EmploymentSaveFormCubit(ApiService())),
         BlocProvider<VerifyRequestUpdateCubit>(
@@ -241,8 +236,6 @@ class MyApp extends StatelessWidget {
             create: (_) => MumbaiDocUpdateCubit(ApiService())),
         BlocProvider<EmployDataListCubit>(
             create: (_) => EmployDataListCubit(ApiService())),
-        BlocProvider<EmployDocUpdateCubit>(
-            create: (_) => EmployDocUpdateCubit(ApiService())),
         BlocProvider<UniversityNameBloc>(
             create: (_) => UniversityNameBloc(ApiService())),
         BlocProvider<CollageNameCubit>(
@@ -252,8 +245,6 @@ class MyApp extends StatelessWidget {
                 NameAddressVerificationUpdateFormCubit(ApiService())),
         BlocProvider<NameAddressShowDataCubit>(
             create: (_) => NameAddressShowDataCubit(ApiService())),
-        BlocProvider<EmploymentSupportDocument>(
-            create: (_) => EmploymentSupportDocument()),
         BlocProvider<DrivingLicenceBloc>(
             create: (_) => DrivingLicenceBloc(ApiService())),
         BlocProvider<DrivingLicenceShowDataCubit>(
@@ -314,10 +305,6 @@ class MyApp extends StatelessWidget {
             create: (_) => UploadDocumentMumbai()),
         BlocProvider<PoliceStationCityIdCubit>(
             create: (_) => PoliceStationCityIdCubit(ApiService())),
-        BlocProvider<RelivingLetterDocumentImage>(
-            create: (_) => RelivingLetterDocumentImage()),
-        BlocProvider<ExperienceDocumentImage>(
-            create: (_) => ExperienceDocumentImage()),
         BlocProvider<EducationDocsUploadCubitNew>(
             create: (_) => EducationDocsUploadCubitNew(ApiService())),
         BlocProvider<EducationDocsFileCubit>(

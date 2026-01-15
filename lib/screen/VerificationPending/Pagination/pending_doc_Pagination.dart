@@ -6,8 +6,6 @@ import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 
 import '../../../commonComponent/screen_size.dart';
-import '../../VerificationForms/EmploymentForm/TextController/EmploymentSaveFormController.dart';
-import '../../VerificationForms/NameAddressVerificationForm/Save/name_address_verification_form.dart';
 import '../../VerificationForms/common/id.dart';
 import '../../VerificationForms/common/url.dart';
 import '../bloc/pendingDoc_cubit.dart';

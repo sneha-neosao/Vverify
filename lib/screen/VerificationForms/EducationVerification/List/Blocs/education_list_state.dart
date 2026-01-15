@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-
-import '../../../EmploymentForm/Update/showData/Model/employ_show_data_model.dart';
 import '../Models/education_list_model.dart';
 
 class EducationListState extends Equatable {

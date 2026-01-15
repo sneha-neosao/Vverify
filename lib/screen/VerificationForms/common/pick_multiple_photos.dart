@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_upload_bloc/education_document_upload_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_upload_bloc/education_document_upload_cubit.dart';
 import '../../../commonComponent/dottedBorder.dart';
 
 class PickMultiplePhoto extends StatelessWidget {

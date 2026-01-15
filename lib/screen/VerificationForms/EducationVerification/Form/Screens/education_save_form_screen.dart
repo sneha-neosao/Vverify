@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Blocs/education_save_form_bloc/education_save_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Blocs/education_save_form_bloc/education_save_form_state.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/TextController/education_text_controller_new.dart';
+import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/TextController/education_text_controllers.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../apiServices/api_services.dart';
-import '../../../../EmploymentForm/EmployList/Model/employ_data_list_model.dart';
 import '../model/collage_name_model.dart';
 import 'collage_name_state.dart';
 

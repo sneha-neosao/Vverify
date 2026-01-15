@@ -9,7 +9,9 @@ import 'package:v_verify/screen/Payment%20Successful/payment_successful.dart';
 import 'package:v_verify/screen/ServicesAndPrice/services_and_price.dart';
 import 'package:v_verify/screen/SplashScreen/SplashScreen.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Screens/education_update_form_screen.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentForm/Save/Form/EmploymentSaveFormNew.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Screens/employment_save_form_screen.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Screens/employment_update_form_screen.dart';
+import 'package:v_verify/screen/VerificationForms/EmploymentVerification/List/Screens/employment_list.dart';
 import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Save/address_varification_form_new.dart';
 import 'package:v_verify/screen/VerificationForms/NameAddressVerificationForm/Update/name_address_verification_update_new.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/verify_request_update_new.dart';
@@ -26,12 +28,8 @@ import '../screen/VerificationForms/DrvingLicence/Document/upload/driver_doc_upl
 import '../screen/VerificationForms/DrvingLicence/Update/driving_licence_update.dart';
 import '../screen/VerificationForms/DrvingLicence/driving_licence.dart';
 import '../screen/VerificationForms/EducationVerification/List/Screens/education_list.dart';
-import '../screen/VerificationForms/EducationVerification/Documents/Screens/education_document_upload.dart';
+import '../screen/VerificationForms/EducationVerification/Documents/Screens/education_document_upload_screen.dart';
 import '../screen/VerificationForms/EducationVerification/Form/Screens/education_save_form_screen.dart';
-import '../screen/VerificationForms/EmploymentForm/EmployList/employ_data_list.dart';
-import '../screen/VerificationForms/EmploymentForm/Update/employment_update_form_new.dart';
-import '../screen/VerificationForms/EmploymentForm/UploadDoc/employment_upload_document.dart';
-import '../screen/VerificationForms/EmploymentForm/employUpdateDoc/employ_update_doc.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Documents/update/gst_pan_cin_doc_update.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Documents/upload/gst_pan_cin_doc_upload.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Save/gst_pan_cin_screen.dart';
@@ -194,6 +192,31 @@ class AppRouter {
         },
       ),
 
+
+      /// Employment Verification Service related routes
+      GoRoute(
+        path: '/EmploymentSaveFormScreen/:case_uid',
+        name: "EmploymentSaveFormScreen",
+        builder: (context, state) {
+          final case_uid = state.pathParameters['case_uid'] ?? "";
+          return EmploymentSaveFormScreen(Case_uuid: case_uid,);
+        },
+      ),
+      GoRoute(
+        path: '/EmploymentUpdateFormScreen/:uid/:case_uuid/:employment_uuid',
+        name: 'EmploymentUpdateFormScreen',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid']!;
+          final caseUuid = state.pathParameters['case_uuid']!;
+          final employment_uuid = state.pathParameters['employment_uuid']!;
+
+          return EmploymentUpdateFormScreen(
+            uid: uid,
+            case_uuid: caseUuid,
+            employment_uuid: employment_uuid,
+          );
+        },
+      ),
       GoRoute(
         path: '/EditProfile/:user_type',
         name: "edit_profile",
@@ -302,42 +325,6 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/EmploymentUploadDocument',
-        name: "EmploymentUploadDocument",
-        builder: (context, state) {
-          return const EmploymentUploadDocument();
-        },
-      ),
-      GoRoute(
-        path: '/EmploymentSaveFormNew/:case_uid',
-        name: "EmploymentSaveFormNew",
-        builder: (context, state) {
-          final case_uid = state.pathParameters['case_uid'] ?? "";
-          return EmploymentSaveFormNew(Case_uuid: case_uid,);
-        },
-      ),
-      // GoRoute(
-      //   path: '/EmploymentSaveForm',
-      //   name: "EmploymentSaveForm",
-      //   builder: (context, state) {
-      //     return const EmploymentSaveForm();
-      //   },
-      // ),
-      // GoRoute(
-      //   path: '/EmploymentSaveForm2',
-      //   name: "EmploymentSaveForm2",
-      //   builder: (context, state) {
-      //     return const EmploymentSaveForm2();
-      //   },
-      // ),
-      // GoRoute(
-      //   path: '/EmploymentSaveForm3',
-      //   name: "EmploymentSaveForm3",
-      //   builder: (context, state) {
-      //     return const EmploymentSaveForm3();
-      //   },
-      // ),
-      GoRoute(
         path: '/PendingDoc',
         name: "PendingDoc",
         builder: (context, state) {
@@ -351,13 +338,6 @@ class AppRouter {
           return const ProfilePage();
         },
       ),
-      // GoRoute(
-      //   path: '/EducationSaveForm',
-      //   name: "EducationSaveForm",
-      //   builder: (context, state) {
-      //     return const EducationSaveForm();
-      //   },
-      // ),
       GoRoute(
         path: '/ReferenceFormUpdate/:uid',
         name: 'ReferenceFormUpdate',
@@ -388,41 +368,6 @@ class AppRouter {
           );
         },
       ),
-      // GoRoute(
-      //   path: '/EducationSaveForm1Update/:uid',
-      //   name: 'EducationSaveForm1Update',
-      //   builder: (context, state) {
-      //     final uid = state.pathParameters['uid']!;
-      //     return EducationSaveForm1Update(
-      //       uid: uid,
-      //     );
-      //   },
-      // ),
-      // GoRoute(
-      //   path: '/EmploymentUpdateForm1/:uid',
-      //   name: 'EmploymentUpdateForm1',
-      //   builder: (context, state) {
-      //     final uid = state.pathParameters['uid']!;
-      //     return EmploymentUpdateForm1(
-      //       uid: uid,
-      //     );
-      //   },
-      // ),
-      GoRoute(
-        path: '/EmploymentUpdateFormNew/:uid/:case_uuid/:employment_uuid',
-        name: 'EmploymentUpdateFormNew',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          final caseUuid = state.pathParameters['case_uuid']!;
-          final employment_uuid = state.pathParameters['employment_uuid']!;
-
-          return EmploymentUpdateFormNew(
-            uid: uid,
-            case_uuid: caseUuid,
-            employment_uuid: employment_uuid,
-          );
-        },
-      ),
       GoRoute(
         path: '/UpdateDocumentsNonMumbai/:uid',
         name: 'UpdateDocumentsNonMumbai',
@@ -443,26 +388,6 @@ class AppRouter {
           );
         },
       ),
-      GoRoute(
-        path: '/EmployUpdateDoc/:uid',
-        name: 'EmployUpdateDoc',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          return EmployUpdateDoc(
-            uid: uid,
-          );
-        },
-      ),
-      // GoRoute(
-      //   path: '/NameAddressVerificationUpdate/:uid',
-      //   name: 'NameAddressVerificationUpdate',
-      //   builder: (context, state) {
-      //     final uid = state.pathParameters['uid']!;
-      //     return NameAddressVerificationUpdate(
-      //       uid: uid,
-      //     );
-      //   },
-      // ),
       GoRoute(
         path: '/NameAddressVerificationUpdateNew/:uid',
         name: 'NameAddressVerificationUpdateNew',

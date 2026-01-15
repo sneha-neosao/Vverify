@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../../../EmploymentForm/EmployList/Model/employ_data_list_model.dart';
 import '../model/collage_name_model.dart';
 
 class CollageNameState extends Equatable {
