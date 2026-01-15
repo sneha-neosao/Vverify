@@ -29,6 +29,7 @@ File? filePath;
 
   @override
   void initState() {
+    print("employment case uuid at employment data list : ${widget.Case_uuid}");
     employmentListDataLoad();
     super.initState();
   }
@@ -86,7 +87,7 @@ Future<void> pickFile() async {
               onTap: () {
                 context.pushNamed(
                   "EmploymentSaveFormNew",
-                  pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
+                  pathParameters: {'case_uid': widget.Case_uuid}, // must be non-empty
                 );
               },
               text: "Add Employment Details",
@@ -409,11 +410,13 @@ Future<void> pickFile() async {
                                                         "Your application already verified")));
                                           } else {
                                             context.pushNamed(
-                                                "EmploymentUpdateFormNew",
-                                                pathParameters: {
-                                                  'uid': data.data![index].uid
-                                                      .toString(),
-                                                });
+                                              'EmploymentUpdateFormNew',
+                                              pathParameters: {
+                                                'uid': data.data![index].uid!,
+                                                'case_uuid': data.data![index].case_uuid!,
+                                                'employment_uuid': data.data![index].employment_uuid!
+                                              },
+                                            );
                                           }
                                         },
                                         child: Text(

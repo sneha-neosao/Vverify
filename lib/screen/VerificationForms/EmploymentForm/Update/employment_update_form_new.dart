@@ -21,8 +21,10 @@ import '../../common/id.dart';
 
 class EmploymentUpdateFormNew extends StatefulWidget {
   final String uid;
+  final String case_uuid;
+  final String employment_uuid;
 
-  const EmploymentUpdateFormNew({super.key, required this.uid});
+  const EmploymentUpdateFormNew({super.key, required this.uid, required this.case_uuid, required this.employment_uuid});
 
   @override
   State<EmploymentUpdateFormNew> createState() => _EmploymentUpdateFormNewState();
@@ -97,6 +99,23 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
   void employmentSaveForm() {
     String token = context.read<TokenCubit>().state;
     String customerId = context.read<IdCubit>().state;
+
+    print('EmploymentSaveFormModel:');
+    print('request_id: $requestId');
+    print('service_request_id: $serviceRequestId');
+    print('customer_id: $customerId');
+    print('employer_name: ${employmentTextControllerNew.employmentEmployerNameController.text}');
+    print('employed_from: ${joinDateController.text}');
+    print('employed_to: ${leaveDateController.text}');
+    print('designation: ${employmentTextControllerNew.employmentDesignationController.text}');
+    print('department: ${employmentTextControllerNew.employmentDepartmentController.text}');
+    print('remunaration: ${employmentTextControllerNew.employmentRemunerationController.text}');
+    print('reporting_manager: ${employmentTextControllerNew.employmentReportingManagerController.text}');
+    print('reason_for_leaving: ${employmentTextControllerNew.employmentReasonForLeavingController.text}');
+    print('reason_for_leaving: ${employmentTextControllerNew.employmentReasonForLeavingController.text}');
+    print('case_uuid: ${widget.case_uuid}');
+    print('till_date: ${isChecked == 1 ? 1 : null}');
+
     context.read<EmploymentUpdateFormCubit>().employmentUpdateForm(
         customer_id: customerId,
         token: token,
@@ -113,7 +132,9 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
             remunaration: employmentTextControllerNew.employmentRemunerationController.text,
             reporting_manager: employmentTextControllerNew.employmentReportingManagerController.text,
             reason_for_leaving: employmentTextControllerNew.employmentReasonForLeavingController.text,
-            employment_supporting_doc: ""
+            case_uuid: widget.case_uuid,
+            till_date: isChecked == true ? 1 : null,
+            employment_uuid: widget.employment_uuid
         ));
   }
 
@@ -335,9 +356,6 @@ class _EmploymentUpdateFormNewState extends State<EmploymentUpdateFormNew> {
                             employSave is EmploymentUpdateFormLoadingState,
                             height: 45,
                             onTap: () {
-                              context.pushNamed("EmployDataList", pathParameters: {
-                                'uid': employData.employmentShowDataModel.data!.uid!
-                              });
                               FocusManager.instance.primaryFocus?.unfocus();
                               FocusManager.instance.primaryFocus?.unfocus();
                               if (_formKey.currentState?.validate() ?? false) {

@@ -58,6 +58,8 @@ class Datum {
   int? show_on_report;
   String? created_at;
   String? updated_at;
+  String? case_uuid;
+  String? employment_uuid;
 
   Datum({
     this.uid,
@@ -85,6 +87,8 @@ class Datum {
     this.show_on_report,
     this.created_at,
     this.updated_at,
+    this.case_uuid,
+    this.employment_uuid
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -113,6 +117,8 @@ class Datum {
     show_on_report: json["show_on_report"],
     created_at: json["created_at"],
     updated_at: json["updated_at"],
+      case_uuid: json["case_uuid"],
+      employment_uuid: json["employment_uuid"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -141,5 +147,7 @@ class Datum {
     "show_on_report": show_on_report,
     "created_at": created_at,
     "updated_at": updated_at,
+    "case_uuid": case_uuid,
+    "employment_uuid": employment_uuid
   };
 }

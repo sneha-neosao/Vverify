@@ -13,7 +13,9 @@ class EmploymentUpdateFormModel {
   final String remunaration;
   final String reporting_manager;
   final String reason_for_leaving;
-  final String employment_supporting_doc;
+  final String case_uuid;
+  final dynamic till_date;
+  final String employment_uuid;
 
   EmploymentUpdateFormModel({
     required this.uid,
@@ -28,6 +30,8 @@ class EmploymentUpdateFormModel {
     required this.remunaration,
     required this.reporting_manager,
     required this.reason_for_leaving,
-    required this.employment_supporting_doc
+    required this.case_uuid,
+    required this.till_date,
+    required this.employment_uuid
   });
 }
