@@ -23,7 +23,6 @@ import '../screen/ProfileScreen/OtherScreen/refund_policy.dart';
 import '../screen/ProfileScreen/ProfilePage.dart';
 import '../screen/VerificationForms/AadhaarVerification/AadhaarGetOtp/aadhaar_verification.dart';
 import '../screen/VerificationForms/AadhaarVerification/AadhaarVerifyOtp/AadhaarVerifyOtp.dart';
-import '../screen/VerificationForms/AddressVerificationForm/Documents/DocUpload/name_address_doc_upload.dart';
 import '../screen/VerificationForms/AddressVerificationForm/Form/Screens/address_save_form_screen.dart';
 import '../screen/VerificationForms/AddressVerificationForm/Form/Screens/address_update_form_screen.dart';
 import '../screen/VerificationForms/DrvingLicence/Document/update/driving_doc_update.dart';
@@ -507,13 +506,6 @@ class AppRouter {
           return ReferenceUpdateDoc(
             uid: uid,
           );
-        },
-      ),
-      GoRoute(
-        path: '/NameAddressDocUpload',
-        name: 'NameAddressDocUpload',
-        builder: (context, state) {
-          return NameAddressDocUpload();
         },
       ),
       GoRoute(

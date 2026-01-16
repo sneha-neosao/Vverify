@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../apiServices/api_services.dart';
-import '../model/name_address_verification_model.dart';
+import '../../../../../../apiServices/api_services.dart';
+import '../../Models/address_update_model.dart';
 import 'name_address_verification_state.dart';
 
 

@@ -22,10 +22,9 @@ import 'package:v_verify/screen/ServicesAndPrice/bloc/servicePrice_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/bloc_checkout/checkout_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarGetOtp/Bloc/aadhaar_verification_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarVerifyOtp/bloc/aadhaarVerifyOtp_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/DocUpdate/bloc/name_address_doc_update_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/DocUpload/Bloc/name_address_doc_upload_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Blocs/address_list_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Update/ShowData/Bloc/nameAddress_showData_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_save_form_bloc/address_save_form_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_show_details_bloc/address_show_details_bloc.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Bloc/driving_licence_bloc.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/update/Bloc/driving_doc_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/upload/bloc/driver_doc_upload_cubit.dart';
@@ -75,10 +74,8 @@ import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_cub
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_cubit.dart';
 import 'package:v_verify/theme/theme_cubit.dart';
 import 'package:v_verify/theme/theme_data.dart';
-
 import 'firebase_options.dart';
-import 'screen/VerificationForms/AddressVerificationForm/Save/Bloc/name_address_verification_cubit.dart';
-import 'screen/VerificationForms/AddressVerificationForm/Update/Bloc/name_address_verification_cubit.dart';
+import 'screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_update_form_bloc/name_address_verification_cubit.dart';
 import 'screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_upload_bloc/education_document_upload_cubit.dart';
 import 'screen/VerificationForms/EducationVerification/Form/Blocs/education_save_form_bloc/education_save_form_cubit.dart';
 import 'screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_upload_bloc/employment_document_upload_cubit.dart';
@@ -279,10 +276,6 @@ class MyApp extends StatelessWidget {
             create: (_) => ReferenceDocShowDataCubit(ApiService())),
         BlocProvider<ReferenceDocUpdateCubit>(
             create: (_) => ReferenceDocUpdateCubit(ApiService())),
-        BlocProvider<NameAddressDocUploadCubit>(
-            create: (_) => NameAddressDocUploadCubit(ApiService())),
-        BlocProvider<NameAddressDocUpdateCubit>(
-            create: (_) => NameAddressDocUpdateCubit(ApiService())),
         BlocProvider<GstPanCinDocUploadCubit>(
             create: (_) => GstPanCinDocUploadCubit(ApiService())),
         BlocProvider<GstDocUpload>(create: (_) => GstDocUpload()),

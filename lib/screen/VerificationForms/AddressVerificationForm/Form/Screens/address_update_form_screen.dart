@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
-import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Update/model/name_address_verification_model.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Models/address_update_model.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
-import '../../Save/Bloc/name_address_verification_cubit.dart';
-import '../../Update/Bloc/name_address_verification_cubit.dart';
-import '../../Update/Bloc/name_address_verification_state.dart';
-import '../../Update/ShowData/Bloc/nameAddress_showData_cubit.dart';
-import '../../Update/ShowData/Bloc/nameAddress_showData_state.dart';
-import '../../Update/ShowData/Model/nameAddress_showData_mdoel.dart';
+import '../Blocs/address_update_form_bloc/name_address_verification_cubit.dart';
+import '../Blocs/address_update_form_bloc/name_address_verification_state.dart';
+import '../Blocs/address_show_details_bloc/address_show_details_bloc.dart';
+import '../Blocs/address_show_details_bloc/address_show_details_state.dart';
+import '../Models/address_show_details_model.dart';
 
 class AddressUpdateFormScreen extends StatefulWidget {
   final String uid;

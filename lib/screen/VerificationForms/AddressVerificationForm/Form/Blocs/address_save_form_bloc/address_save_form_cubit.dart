@@ -1,12 +1,10 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../../../../apiServices/api_services.dart';
-import '../model/name_address_verification_model.dart';
-import 'name_address_verification_state.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_save_form_bloc/address_save_from_state.dart';
+import '../../../../../../apiServices/api_services.dart';
+import '../../Models/address_save_model.dart';
 
 class NameAddressAadhaarFrontSideCubit extends Cubit<File> {
   NameAddressAadhaarFrontSideCubit() : super(File(""));

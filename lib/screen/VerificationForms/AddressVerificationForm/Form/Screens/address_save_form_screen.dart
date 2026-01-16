@@ -1,22 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
-import 'package:v_verify/screen/VerificationForms/common/pickphoto.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_save_form_bloc/address_save_form_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_save_form_bloc/address_save_from_state.dart';
 import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
-
-import '../../../common/form_widget.dart';
 import '../../../common/id.dart';
-import '../../../common/validator.dart';
-import '../../Save/Bloc/name_address_verification_cubit.dart';
-import '../../Save/Bloc/name_address_verification_state.dart';
-import '../../Save/model/name_address_verification_model.dart';
+import '../Models/address_save_model.dart';
 
 TextEditingController personNameController = TextEditingController();
 

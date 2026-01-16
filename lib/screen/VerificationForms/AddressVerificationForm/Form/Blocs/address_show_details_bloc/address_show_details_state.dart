@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../Model/nameAddress_showData_mdoel.dart';
+import '../../Models/address_show_details_model.dart';
 
 class NameAddressShowDataState extends Equatable {
   @override

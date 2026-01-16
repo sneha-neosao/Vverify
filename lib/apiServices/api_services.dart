@@ -4,8 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../screen/Order History/load_more/models/post.dart';
-import '../screen/VerificationForms/AddressVerificationForm/Save/model/name_address_verification_model.dart';
-import '../screen/VerificationForms/AddressVerificationForm/Update/model/name_address_verification_model.dart';
+import '../screen/VerificationForms/AddressVerificationForm/Form/Models/address_save_model.dart';
+import '../screen/VerificationForms/AddressVerificationForm/Form/Models/address_update_model.dart';
 import '../screen/VerificationForms/EducationVerification/Form/Models/education_save_form_model.dart';
 import '../screen/VerificationForms/EducationVerification/Form/Models/education_update_form_model.dart';
 import '../screen/VerificationForms/EmploymentVerification/Form/Models/employment_save_form_model.dart';
@@ -880,6 +880,77 @@ class ApiService {
     }
   }
 
+  Future<Response> AddressDocsUpload({
+    required String token,
+    required String caseUuid,
+    required List<File> documents,
+  }) async {
+    try {
+      // Build FormData with fields + files
+      final formData = FormData.fromMap({
+        "case_uuid": caseUuid,
+        "type": "all",
+        // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
+        for (int i = 0; i < documents.length; i++)
+          "documents[$i][file]": await MultipartFile.fromFile(documents[i].path,
+          ),
+      });
+
+      // Debug logs
+      log("=== AddressDocsUpload Request ===");
+      log("Fields: case_uuid=$caseUuid, type=education");
+      log("Files: ${documents.map((d) =>
+      d.path
+          .split('/')
+          .last).toList()}");
+
+      // POST with headers
+      final response = await _dio.post(
+        'verify/documents/upload',
+        data: formData,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      log("=== AddressDocsUpload Response ===");
+      log("Status: ${response.statusCode}");
+      log("Data: ${response.data}");
+
+      return response;
+    } catch (e) {
+      log("Error in AddressDocUpload: $e");
+      throw Exception("Failed to upload address documents: $e");
+    }
+  }
+
+  Future<Response> addressDocumentList({
+    required String token,
+    required String caseUuid,
+    required String type, // e.g. "education"
+  }) async {
+    try {
+      // Set Authorization header
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+
+      // GET request with query parameters
+      final response = await _dio.get(
+        'verify/documents/list',
+        queryParameters: {
+          "case_uuid": caseUuid,
+          "type": type,
+        },
+      );
+
+      log('addressDocumentList Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in addressDocumentList: $e');
+      throw Exception('Failed to fetch addressDocumentList: $e');
+    }
+  }
 
 
 
