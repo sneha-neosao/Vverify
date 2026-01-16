@@ -22,6 +22,8 @@ import 'package:v_verify/screen/ServicesAndPrice/bloc/servicePrice_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/bloc_checkout/checkout_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarGetOtp/Bloc/aadhaar_verification_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarVerifyOtp/bloc/aadhaarVerifyOtp_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Blocs/address_document_list_bloc/address_doc_list_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Blocs/address_document_upload_bloc/address_document_upload_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Blocs/address_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_save_form_bloc/address_save_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_show_details_bloc/address_show_details_bloc.dart';
@@ -314,6 +316,12 @@ class MyApp extends StatelessWidget {
             create: (_) => EmploymentDocsFileCubit()),
         BlocProvider<AddressListCubit>(
             create: (_) => AddressListCubit(ApiService())),
+        BlocProvider<AddressDocsUploadCubitNew>(
+            create: (_) => AddressDocsUploadCubitNew(ApiService())),
+        BlocProvider<AddressDocsFileCubit>(
+            create: (_) => AddressDocsFileCubit()),
+        BlocProvider<AddressDocumentListCubit>(
+            create: (_) => AddressDocumentListCubit(ApiService())),
       ],
       child: Builder(builder: (context) {
         return Sizer(builder: (BuildContext, Orientation, ScreenType) {

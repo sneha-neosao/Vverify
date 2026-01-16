@@ -8,6 +8,7 @@ import 'package:v_verify/screen/Order%20Details/order_details.dart';
 import 'package:v_verify/screen/Payment%20Successful/payment_successful.dart';
 import 'package:v_verify/screen/ServicesAndPrice/services_and_price.dart';
 import 'package:v_verify/screen/SplashScreen/SplashScreen.dart';
+import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Screens/address_documnet_upload_screen.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Screens/address_list.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Screens/education_update_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Screens/employment_document_upload_screen.dart';
@@ -155,6 +156,16 @@ class AppRouter {
 
       /// Education Verification Service related routes
       GoRoute(
+        path: '/EducationList/:uid',
+        name: 'EducationList',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return EducationList(
+            Case_uuid: uid,
+          );
+        },
+      ),
+      GoRoute(
         path: '/EducationSaveFormScreen/:uid',
         name: "EducationSaveFormScreen",
         builder: (context, state) {
@@ -164,7 +175,6 @@ class AppRouter {
           );
         },
       ),
-
       GoRoute(
         path: '/EducationUpdateFormScreen/:uid/:case_uuid/:education_uuid',
         name: 'EducationUpdateFormScreen',
@@ -180,7 +190,6 @@ class AppRouter {
           );
         },
       ),
-
       GoRoute(
         path: '/EducationDocumentUpload/:uid',
         name: "EducationDocumentUpload",
@@ -194,6 +203,14 @@ class AppRouter {
 
 
       /// Employment Verification Service related routes
+      GoRoute(
+        path: '/EmployDataList/:uid',
+        name: 'EmployDataList',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return  EmployDataList(Case_uuid: uid,);
+        },
+      ),
       GoRoute(
         path: '/EmploymentSaveFormScreen/:case_uid',
         name: "EmploymentSaveFormScreen",
@@ -229,6 +246,51 @@ class AppRouter {
       ),
 
 
+
+      /// Address Verification Service related routes
+      GoRoute(
+        path: '/AddressList/:uid',
+        name: 'AddressList',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return AddressList(
+            Case_uuid: uid,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/AddressSaveFormScreen/:uid',
+        name: "AddressSaveFormScreen",
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return AddressSaveFormScreen(Case_uuid: uid,);
+        },
+      ),
+      GoRoute(
+        path: '/AddressUpdateFormScreen/:uid/:case_uuid/:address_uuid',
+        name: 'AddressUpdateFormScreen',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid']!;
+          final caseUuid = state.pathParameters['case_uuid']!;
+          final address_uuid = state.pathParameters['address_uuid']!;
+
+          return AddressUpdateFormScreen(
+            uid: uid,
+            case_uuid: caseUuid,
+            address_uuid: address_uuid,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/AddressDocumentUpload/:uid',
+        name: "AddressDocumentUpload",
+        builder: (context, state) {
+          final uid = state.pathParameters['uid'] ?? "";
+          return AddressDocumentUpload(
+            Case_uuid: uid,
+          );
+        },
+      ),
 
 
       GoRoute(
@@ -324,14 +386,7 @@ class AppRouter {
           return const ReferenceForm();
         },
       ),
-      GoRoute(
-        path: '/AddressSaveFormScreen/:uid',
-        name: "AddressSaveFormScreen",
-        builder: (context, state) {
-          final uid = state.pathParameters['uid'] ?? "";
-          return AddressSaveFormScreen(Case_uuid: uid,);
-        },
-      ),
+
       GoRoute(
         path: '/PendingDoc',
         name: "PendingDoc",
@@ -396,49 +451,7 @@ class AppRouter {
           );
         },
       ),
-      GoRoute(
-        path: '/AddressUpdateFormScreen/:uid/:case_uuid/:address_uuid',
-        name: 'AddressUpdateFormScreen',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          final caseUuid = state.pathParameters['case_uuid']!;
-          final address_uuid = state.pathParameters['address_uuid']!;
 
-          return AddressUpdateFormScreen(
-            uid: uid,
-            case_uuid: caseUuid,
-            address_uuid: address_uuid,
-          );
-        },
-      ),
-      GoRoute(
-        path: '/EducationList/:uid',
-        name: 'EducationList',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid'] ?? "";
-          return EducationList(
-            Case_uuid: uid,
-          );
-        },
-      ),
-      GoRoute(
-        path: '/EmployDataList/:uid',
-        name: 'EmployDataList',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid'] ?? "";
-          return  EmployDataList(Case_uuid: uid,);
-        },
-      ),
-      GoRoute(
-        path: '/AddressList/:uid',
-        name: 'AddressList',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid'] ?? "";
-          return AddressList(
-            Case_uuid: uid,
-          );
-        },
-      ),
       GoRoute(
         path: '/DrivingLicence',
         name: 'DrivingLicence',

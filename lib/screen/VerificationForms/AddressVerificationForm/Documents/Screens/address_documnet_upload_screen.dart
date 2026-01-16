@@ -34,7 +34,7 @@ class _AddressDocumentUploadState extends State<AddressDocumentUpload> {
     context.read<AddressDocumentListCubit>().loadAddressDocumentList(
         token: token,
         caseUuid: widget.Case_uuid,
-        type: "education"
+        type: "all"
     );
   }
 

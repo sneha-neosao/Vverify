@@ -108,7 +108,7 @@ class _AddressListState extends State<AddressList> {
               CustomButton(
                 onTap: () {
                   context.pushNamed(
-                    "EducationDocumentUpload",
+                    "AddressDocumentUpload",
                     pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
                   );
                 },
