@@ -102,12 +102,6 @@ void secondCheckCase(
               'uid': data.data![index].services![servicesIndex].uid.toString()
             });
       break;
-    // case "Employment Verification":
-    //   context.pushNamed("EmployDataList");
-    //   break;
-    // case "Education Verification":
-    //   context.pushNamed("EducationList");
-    //   break;
     case "Driving License":
       data.data![index].services![servicesIndex].dataPreference == "form"
           ? context.pushNamed("DrivingLicenceUpdate", pathParameters: {

@@ -165,7 +165,7 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
                         textInputType: TextInputType.text
                     ),
                     CustomNotRequiredTextField(
-                        controller: emailController,
+                        controller: middleNameController,
                         titleText: "Middle Name",
                         hintText: "Enter Middle Name",
                         textInputType: TextInputType.text

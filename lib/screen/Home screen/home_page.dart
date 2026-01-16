@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             content: const Text(
               textAlign: TextAlign.justify,
-              "By using our verification services, you acknowledge that we retrieve data from official sources and are not responsible for any inaccuracies. This includes Aadhaar, GST, CIN, PAN, police verification, full name & address validation, reference checks, and driving license verification. Please ensure all details are correct before proceeding.",
+              "By using our verification services, you acknowledge that we retrieve data from official sources and are not responsible for any inaccuracies. This includes Aadhaar, GST, CIN, PAN, police verification, address verification, reference checks, and driving license verification. Please ensure all details are correct before proceeding.",
             ),
             actions: <Widget>[
               BlocProvider(

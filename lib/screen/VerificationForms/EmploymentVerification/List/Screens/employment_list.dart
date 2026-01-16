@@ -148,6 +148,19 @@ Future<void> pickFile() async {
                       shrinkWrap: true,
                       itemCount: data.data!.length,
                       itemBuilder: (context, index) {
+                        final rawStatus = data.data![index].v_status ?? "";
+                        String status;
+
+                        if (rawStatus.isEmpty || rawStatus == "-" || rawStatus == "") {
+                          status = "pending";
+                        } else if (rawStatus == "discrepancy") {
+                          status = "discrepancy";
+                        } else if (rawStatus == "verified" || rawStatus == "clear") {
+                          status = "verified";
+                        } else {
+                          status = rawStatus; // fallback for other values
+                        }
+
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
@@ -169,20 +182,20 @@ Future<void> pickFile() async {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  data.data![index].v_status!.toLowerCase() == ""
-                                                      ? "Verification Pending"
-                                                      : data.data![index].v_status!.toLowerCase() == "clear"
-                                                      ? "Clear" : "discrepancy",
+                                                  status.toLowerCase() == "verified"
+                                                      ? "Verified"
+                                                      : status.toLowerCase() == "discrepancy"
+                                                      ? "Discrepancy" : "Verification Pending",
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodySmall!
                                                       .copyWith(
                                                       fontSize: 14,
-                                                      color: data.data![index].v_status!.toLowerCase() == ""
-                                                          ? Colors.orange
-                                                          : data.data![index].v_status!.toLowerCase() == "clear"
+                                                      color: status.toLowerCase() == "verified"
                                                           ? Colors.green
-                                                          : Colors.red
+                                                          :status.toLowerCase() == "discrepancy"
+                                                          ? Colors.red
+                                                          : Colors.orange
                                                   )
 
                                               ),

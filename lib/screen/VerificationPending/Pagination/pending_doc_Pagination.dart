@@ -179,12 +179,6 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                 'uid': data[index].services![servicesIndex].uid.toString()
               });
         break;
-      // case "Employment Verification":
-      //   context.pushNamed("EmployDataList");
-      //   break;
-      // case "Education Verification":
-      //   context.pushNamed("EducationList");
-      //   break;
       case "driving-licence-verification":
         data[index].services![servicesIndex].dataPreference == "form"
             ? context.pushNamed("DrivingLicenceUpdate", pathParameters: {
