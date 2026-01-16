@@ -6,6 +6,7 @@ import 'package:v_verify/screen/Home%20screen/home_page.dart';
 import 'package:v_verify/screen/Login-Screen/login_screen.dart';
 import 'package:v_verify/screen/Order%20Details/order_details.dart';
 import 'package:v_verify/screen/Payment%20Successful/payment_successful.dart';
+import 'package:v_verify/screen/ServicesAndPrice/apply_coupon_screen.dart';
 import 'package:v_verify/screen/ServicesAndPrice/services_and_price.dart';
 import 'package:v_verify/screen/SplashScreen/SplashScreen.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Screens/address_documnet_upload_screen.dart';
@@ -292,6 +293,13 @@ class AppRouter {
         },
       ),
 
+      GoRoute(
+        path: '/ApplyCouponScreen',
+        name: "ApplyCouponScreen",
+        builder: (context, state) {
+          return ApplyCouponScreen();
+        },
+      ),
 
       GoRoute(
         path: '/EditProfile/:user_type',

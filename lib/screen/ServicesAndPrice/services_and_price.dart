@@ -326,15 +326,15 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                                             .scaffoldBackgroundColor,
 
                                         height: addList.length == 1
-                                            ? ScreenSize.screenHeight / 2.4
+                                            ? ScreenSize.screenHeight / 2
                                             : addList.length == 2
-                                                ? ScreenSize.screenHeight / 2
+                                                ? ScreenSize.screenHeight / 1.8
                                                 : addList.length == 3
-                                                    ? ScreenSize.screenHeight / 1.8
+                                                    ? ScreenSize.screenHeight / 1.6
                                                     : addList.length > 3
-                                                        ? ScreenSize.screenHeight / 1.7
+                                                        ? ScreenSize.screenHeight / 1.5
                                                         : ScreenSize.screenHeight /
-                                                            2.8,
+                                                            2.3,
                                         child: Padding(
                                           padding: const EdgeInsets.all(16.0),
                                           child: Column(
@@ -358,7 +358,8 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                                                       .copyWith(
                                                           fontWeight:
                                                               FontWeight.w700,
-                                                          fontSize: 16)),
+                                                          fontSize: 16)
+                                              ),
                                               const SizedBox(
                                                 height: 16,
                                               ),
@@ -458,6 +459,43 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                                                       ),
                                                     ),
                                                   ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 16,
+                                              ),
+                                              Container(
+                                                width: double.infinity,
+                                                height: 50,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  border: Border.all(color: Colors.orange, width: 2),
+                                                ),
+                                                child: ElevatedButton(
+                                                  onPressed: () {
+                                                    // your onTap logic here
+                                                    context.pushNamed(
+                                                      "ApplyCouponScreen", );
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: Colors.transparent,
+                                                    elevation: 0,
+                                                    padding: EdgeInsets.zero,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(8),
+                                                    ),
+                                                  ),
+                                                  child: const Center(
+                                                    child: Text(
+                                                      "Apply Coupon",
+                                                      style: TextStyle(
+                                                        color: Colors.orange,
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                               const SizedBox(
