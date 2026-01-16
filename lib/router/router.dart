@@ -23,10 +23,9 @@ import '../screen/ProfileScreen/OtherScreen/refund_policy.dart';
 import '../screen/ProfileScreen/ProfilePage.dart';
 import '../screen/VerificationForms/AadhaarVerification/AadhaarGetOtp/aadhaar_verification.dart';
 import '../screen/VerificationForms/AadhaarVerification/AadhaarVerifyOtp/AadhaarVerifyOtp.dart';
-import '../screen/VerificationForms/AddressVerificationForm/Documents/DocUpdate/name_address_doc_update.dart';
 import '../screen/VerificationForms/AddressVerificationForm/Documents/DocUpload/name_address_doc_upload.dart';
 import '../screen/VerificationForms/AddressVerificationForm/Form/Screens/address_save_form_screen.dart';
-import '../screen/VerificationForms/AddressVerificationForm/Update/name_address_verification_update_new.dart';
+import '../screen/VerificationForms/AddressVerificationForm/Form/Screens/address_update_form_screen.dart';
 import '../screen/VerificationForms/DrvingLicence/Document/update/driving_doc_update.dart';
 import '../screen/VerificationForms/DrvingLicence/Document/upload/driver_doc_upload.dart';
 import '../screen/VerificationForms/DrvingLicence/Update/driving_licence_update.dart';
@@ -399,12 +398,17 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/NameAddressVerificationUpdateNew/:uid',
-        name: 'NameAddressVerificationUpdateNew',
+        path: '/AddressUpdateFormScreen/:uid/:case_uuid/:address_uuid',
+        name: 'AddressUpdateFormScreen',
         builder: (context, state) {
           final uid = state.pathParameters['uid']!;
-          return NameAddressVerificationUpdateNew(
+          final caseUuid = state.pathParameters['case_uuid']!;
+          final address_uuid = state.pathParameters['address_uuid']!;
+
+          return AddressUpdateFormScreen(
             uid: uid,
+            case_uuid: caseUuid,
+            address_uuid: address_uuid,
           );
         },
       ),
@@ -517,16 +521,6 @@ class AppRouter {
         name: 'GstPanCinDocUpload',
         builder: (context, state) {
           return const GstPanCinDocUpload();
-        },
-      ),
-      GoRoute(
-        path: '/NameAddressDocUpdate/:uid',
-        name: 'NameAddressDocUpdate',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          return NameAddressDocUpdate(
-            uid: uid,
-          );
         },
       ),
       GoRoute(

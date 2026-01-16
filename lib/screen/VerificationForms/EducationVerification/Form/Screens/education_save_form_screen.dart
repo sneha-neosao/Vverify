@@ -225,12 +225,9 @@ class _EducationSaveFormScreenState extends State<EducationSaveFormScreen> {
                       if (education.data["status"] == 200) {
                         educationUniversityBoards = null;
                         educationSchoolBoards = null;
-                        context.pushNamed("EducationList",pathParameters: {
+                        context.pushNamed("AddressList",pathParameters: {
                           'uid': widget.Case_uuid
                         });
-                        context
-                            .read<EducationCertificateDocuments>()
-                            .clearImage();
                       }
 
                       ScaffoldMessenger.of(context).showSnackBar(

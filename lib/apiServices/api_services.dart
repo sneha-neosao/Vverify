@@ -800,20 +800,25 @@ class ApiService {
       "service_request_id": nameAddressVerificationModel.service_request_id,
       "current_address_line_1": nameAddressVerificationModel.current_address_line_1,
       "current_address_line_2": nameAddressVerificationModel.current_address_line_2,
-      "current_city": nameAddressVerificationModel.current_city_id,
-      "current_state": nameAddressVerificationModel.current_state,
-      "current_postal_code": nameAddressVerificationModel.current_pinCode,
+      "current_address_city": nameAddressVerificationModel.current_city_id,
+      "current_address_state": nameAddressVerificationModel.current_state,
+      "current_address_postal_code": nameAddressVerificationModel.current_pinCode,
       "permanent_address_line_1": nameAddressVerificationModel.permanent_address_line_1,
       "permanent_address_line_2": nameAddressVerificationModel.permanent_address_line_2,
-      "permanent_city": nameAddressVerificationModel.permanent_city_id,
-      "permanent_state": nameAddressVerificationModel.permanent_state,
-      "permanent_postal_code": nameAddressVerificationModel.permanent_pinCode,
+      "permanent_address_city": nameAddressVerificationModel.permanent_city_id,
+      "permanent_address_state": nameAddressVerificationModel.permanent_state,
+      "permanent_address_postal_code": nameAddressVerificationModel.permanent_pinCode,
+      "residing_from_date": nameAddressVerificationModel.residing_from_date,
+      "residing_to_date": nameAddressVerificationModel.residing_to_date,
+      "data_preference": nameAddressVerificationModel.data_preference,
+      "case_uuid": nameAddressVerificationModel.case_uuid,
+      "till_date": nameAddressVerificationModel.till_date,
     });
 
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/name-address/form/store', data: formData);
+      await _dio.post('verify/address/form/save', data: formData);
       log('NameAddressStoreVerification Response: ${response.data}');
       return response;
     } catch (e) {
@@ -833,19 +838,25 @@ class ApiService {
       "service_request_id": nameAddressVerificationUpdateModel.service_request_id,
       "current_address_line_1": nameAddressVerificationUpdateModel.current_address_line_1,
       "current_address_line_2": nameAddressVerificationUpdateModel.current_address_line_2,
-      "current_city": nameAddressVerificationUpdateModel.current_city_id,
-      "current_state": nameAddressVerificationUpdateModel.current_state,
-      "current_postal_code": nameAddressVerificationUpdateModel.current_pinCode,
+      "current_address_city": nameAddressVerificationUpdateModel.current_city_id,
+      "current_address_state": nameAddressVerificationUpdateModel.current_state,
+      "current_address_postal_code": nameAddressVerificationUpdateModel.current_pinCode,
       "permanent_address_line_1": nameAddressVerificationUpdateModel.permanent_address_line_1,
       "permanent_address_line_2": nameAddressVerificationUpdateModel.permanent_address_line_2,
-      "permanent_city": nameAddressVerificationUpdateModel.permanent_city_id,
-      "permanent_state": nameAddressVerificationUpdateModel.permanent_state,
-      "permanent_postal_code": nameAddressVerificationUpdateModel.permanent_pinCode,
+      "permanent_address_city": nameAddressVerificationUpdateModel.permanent_city_id,
+      "permanent_address_state": nameAddressVerificationUpdateModel.permanent_state,
+      "permanent_address_postal_code": nameAddressVerificationUpdateModel.permanent_pinCode,
+      "case_uuid": nameAddressVerificationUpdateModel.case_uuid,
+      "address_uuid": nameAddressVerificationUpdateModel.address_uuid,
+      "data_preference": nameAddressVerificationUpdateModel.data_preference,
+      "residing_from_date": nameAddressVerificationUpdateModel.residing_from_date,
+      "residing_to_date": nameAddressVerificationUpdateModel.residing_to_date,
+      "uid": nameAddressVerificationUpdateModel.uid,
     });
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/name-address/form/update', data: formData);
+      await _dio.post('verify/address/form/update', data: formData);
       log('NameAddressUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -860,7 +871,7 @@ class ApiService {
   }) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/name-address/show/$uid');
+      final response = await _dio.get('verify/address/$uid/show');
       log('nameAddressShowData Response: ${response.data}');
       return response;
     } catch (e) {

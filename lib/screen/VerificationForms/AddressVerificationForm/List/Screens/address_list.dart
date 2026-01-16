@@ -62,18 +62,45 @@ class _AddressListState extends State<AddressList> {
               const SizedBox(
                 height: 16,
               ),
-              CustomButton(
-                onTap: () {
-                  context.pushNamed(
-                    "AddressSaveFormScreen",
-                    pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
-                  );
+              BlocBuilder<AddressListCubit, AddressDataListState>(
+                builder: (context, state) {
+                  if (state is AddressDataListLoadingState) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is AddressDataListEmptyState) {
+                    return CustomButton(
+                      onTap: () {
+                        context.pushNamed(
+                          "AddressSaveFormScreen",
+                          pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
+                        );
+                      },
+                      text: "Add Address Details",
+                      gradientColors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColorDark,
+                      ],
+                    );
+                  } else if (state is AddressDataListSuccessState) {
+                    final data = state.addressListDataModel;
+                    if (data.data == null || data.data!.isEmpty) {
+                      return CustomButton(
+                        onTap: () {
+                          context.pushNamed(
+                            "AddressSaveFormScreen",
+                            pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
+                          );
+                        },
+                        text: "Add Address Details",
+                        gradientColors: [
+                          Theme.of(context).primaryColor,
+                          Theme.of(context).primaryColorDark,
+                        ],
+                      );
+                    }
+                    // render list
+                  }
+                  return const SizedBox();
                 },
-                text: "Add Address Details",
-                gradientColors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).primaryColorDark,
-                ],
               ),
               const SizedBox(
                 height: 16,
@@ -465,7 +492,7 @@ class _AddressListState extends State<AddressList> {
                                                           "Your application already verified")));
                                             } else {
                                               context.pushNamed(
-                                                'EducationUpdateFormScreen',
+                                                'AddressUpdateFormScreen',
                                                 pathParameters: {
                                                   'uid': data.data![index].uid!,
                                                   'case_uuid': data.data![index].caseUuid!,

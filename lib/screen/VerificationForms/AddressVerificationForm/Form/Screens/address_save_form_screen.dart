@@ -8,6 +8,8 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/pickphoto.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../common/form_widget.dart';
 import '../../../common/id.dart';
@@ -32,9 +34,6 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
   bool isChecked = false;
   bool isSameAddress = false;
 
-  var maskFormatter = MaskTextInputFormatter(
-      mask: '##-##-####', filter: {"#": RegExp(r'[0-9]')});
-
   TextEditingController currentLine1AddressController = TextEditingController();
   TextEditingController currentLine2AddressController = TextEditingController();
   TextEditingController currentCityAddressController = TextEditingController();
@@ -47,53 +46,10 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
   TextEditingController permanentPinCodeController = TextEditingController();
   TextEditingController residenceFromDateController = TextEditingController();
   TextEditingController residenceToDateController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-  }
-
-  // Function to show the date picker
-  Future<void> _selectResidenceFromDate(BuildContext context) async {
-    // DateTime date18YearsAgo = _getDate18YearsAgo();
-
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1950), // Min date: 18 years ago
-      lastDate: DateTime.now(), // Max date: today
-    );
-
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-
-      //setState(() {
-      _selectedDate = pickedDate;
-      residenceFromDateController.text = formattedDate;
-      // });
-    }
-  }
-
-  // Function to show the date picker
-  Future<void> _selectResidenceToDate(BuildContext context) async {
-    // DateTime date18YearsAgo = _getDate18YearsAgo();
-
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1950), // Min date: 18 years ago
-      lastDate: DateTime.now(), // Max date: today
-    );
-
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-
-      //setState(() {
-      _selectedDate = pickedDate;
-      residenceToDateController.text = formattedDate;
-      // });
-    }
   }
 
   @override
@@ -116,6 +72,26 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
   void nameAddressFormSave() {
     String token = context.read<TokenCubit>().state;
     String customerId = context.read<IdCubit>().state;
+
+    print('AddressSaveFormModel:');
+    print('request_id: $requestId');
+    print('service_request_id: $serviceRequestId');
+    print('current_address_line_1: ${currentLine1AddressController.text}');
+    print('current_address_line_2: ${currentLine2AddressController.text}');
+    print('current_city_id: ${currentCityAddressController.text}');
+    print('current_state: ${currentStateAddressController.text}');
+    print('current_pinCode: ${currentPinCodeController.text}');
+    print('permanent_address_line_1: ${isSameAddress ? currentLine1AddressController.text : permanentLine1AddressController.text}');
+    print('permanent_address_line_2: ${isSameAddress ? currentLine2AddressController.text : permanentLine2AddressController.text}');
+    print('permanent_city_id: ${isSameAddress ? currentCityAddressController.text : permanentCityAddressController.text}');
+    print('permanent_state: ${isSameAddress ? currentStateAddressController.text : permanentStateAddressController.text}');
+    print('permanent_pinCode: ${isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text}');
+    print('residing_from_date: ${residenceFromDateController.text}');
+    print('residing_to_date: ${residenceToDateController.text}');
+    print('data_preference: form');
+    print('case_uuid: ${widget.Case_uuid}');
+    print('till_date: ${isChecked == true ? 1 : null}');
+
     context.read<NameAddressVerificationFormCubit>().nameAddressForm(
         customer_id: customerId,
         token: token,
@@ -131,7 +107,12 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
             permanent_address_line_2: isSameAddress ? currentLine2AddressController.text : permanentLine2AddressController.text,
             permanent_city_id: isSameAddress ? currentCityAddressController.text : permanentCityAddressController.text,
             permanent_state: isSameAddress ? currentStateAddressController.text : permanentStateAddressController.text,
-            permanent_pinCode: isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text
+            permanent_pinCode: isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text,
+            residing_from_date: residenceFromDateController.text,
+            residing_to_date: residenceToDateController.text,
+            data_preference: "form",
+            case_uuid: widget.Case_uuid,
+            till_date: isChecked == true ? 1 : null
         )
     );
   }
@@ -167,32 +148,36 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
                   const SizedBox(
                     height: 16,
                   ),
-                  FormFieldNotRequired(
+                  CustomRequiredTextField(
                       controller: currentLine1AddressController,
                       titleText: "Address Line 1",
                       hintText: "Enter Line 1 Address",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
                       controller: currentLine2AddressController,
                       titleText: "Address Line 2",
                       hintText: "Enter Line 2 Address",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
                       controller: currentCityAddressController,
                       titleText: "City",
                       hintText: "Enter City",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
                       controller: currentStateAddressController,
                       titleText: "State",
                       hintText: "Enter State",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
-                      maskFormatter: [pinMask],
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
                       controller: currentPinCodeController,
-                      titleText: 'Postal Code',
+                      titleText: "Postal Code",
                       hintText: "Enter Postal Code",
-                      textInputType: TextInputType.number),
+                      textInputType: TextInputType.text
+                  ),
                   const SizedBox(
                     height: 16,
                   ),
@@ -224,32 +209,36 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
                       ),
                     ],
                   ),
-                  FormFieldNotRequired(
+                  CustomRequiredTextField(
                       controller: isSameAddress ? currentLine1AddressController : permanentLine1AddressController,
                       titleText: "Address Line 1",
-                      hintText: "Enter Line 1 Address",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
+                      hintText: "Enter Address Line 1",
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
                       controller: isSameAddress ? currentLine2AddressController : permanentLine2AddressController,
                       titleText: "Address Line 2",
-                      hintText: "Enter Line 2 Address",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
+                      hintText: "Enter Address Line 2",
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
                       controller: isSameAddress ? currentCityAddressController : permanentCityAddressController,
                       titleText: "City",
                       hintText: "Enter City",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
                       controller: isSameAddress ? currentStateAddressController : permanentStateAddressController,
                       titleText: "State",
                       hintText: "Enter State",
-                      textInputType: TextInputType.text),
-                  FormFieldNotRequired(
-                      maskFormatter: [pinMask],
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
                       controller: isSameAddress ? currentPinCodeController : permanentPinCodeController,
-                      titleText: 'Postal Code',
+                      titleText: "Postal Code",
                       hintText: "Enter Postal Code",
-                      textInputType: TextInputType.number),
+                      textInputType: TextInputType.text
+                  ),
                   const SizedBox(
                     height: 16,
                   ),
@@ -261,72 +250,17 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
                   const SizedBox(
                     height: 16,
                   ),
-                  RichText(
-                      text: TextSpan(
-                          text: "Residing From",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(fontWeight: FontWeight.w700),
-                          children: [
-                            TextSpan(
-                              text: " * ",
-                              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                  fontWeight: FontWeight.w700, color: Colors.red),
-                            ),
-                          ])),
-                  const SizedBox(
-                    height: 8,
+                  CustomRequiredTextField(
+                      controller: residenceFromDateController,
+                      titleText: "Residing From",
+                      hintText: "Enter Residing From",
+                      textInputType: TextInputType.text
                   ),
-                  TextFormField(
-                    readOnly: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter residing from date';
-                      }
-                      return null;
-                    },
-                    style: Theme.of(context).textTheme.bodySmall,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [maskFormatter],
-                    controller: residenceFromDateController,
-                    decoration: InputDecoration(
-                      hintText: "DD-MM-YYYY",
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () => _selectResidenceFromDate(
-                            context), // Open date picker when icon is pressed
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  RichText(
-                      text: TextSpan(
-                        text: "Residing To",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(fontWeight: FontWeight.w700),
-                      )),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  TextFormField(
-                    readOnly: true,
-                    style: Theme.of(context).textTheme.bodySmall,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [maskFormatter],
-                    controller: residenceToDateController,
-                    decoration: InputDecoration(
-                      hintText: "DD-MM-YYYY",
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () => _selectResidenceToDate(
-                            context), // Open date picker when icon is pressed
-                      ),
-                    ),
+                  CustomNotRequiredTextField(
+                      controller: residenceToDateController,
+                      titleText: "Residing To",
+                      hintText: "Enter Residing To",
+                      textInputType: TextInputType.text
                   ),
                   Row(
                     children: [
@@ -354,7 +288,9 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
                       listener: (context, nameAddress) {
                         if (nameAddress is NameAddressVerificationSuccessState) {
                           if (nameAddress.data["status"] == 200) {
-                            context.pushReplacementNamed("bottomNav");
+                            context.pushNamed("EducationList",pathParameters: {
+                              'uid': widget.Case_uuid
+                            });
                           }
                           ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(nameAddress.data["message"])));

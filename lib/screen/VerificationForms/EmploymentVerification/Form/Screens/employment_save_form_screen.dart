@@ -217,6 +217,7 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
                     height: 8,
                   ),
                   TextFormField(
+                    enabled: !isChecked,
                     readOnly: true,
                     style: Theme.of(context).textTheme.bodySmall,
                     keyboardType: TextInputType.number,
