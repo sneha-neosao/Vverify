@@ -196,6 +196,16 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                               .copyWith(color: Colors.red),
                         ),
                         const SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          data.data!.permanent_address_verification_remark!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: Colors.red),
+                        ),
+                        const SizedBox(
                           height: 16,
                         ),
                         Text(
@@ -349,7 +359,7 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                               if (updateData
                               is NameAddressVerificationUpdateSuccessState) {
                                 if (updateData.data["status"] == 200) {
-                                  context.pushNamed("EducationList",pathParameters: {
+                                  context.pushNamed("AddressList",pathParameters: {
                                     'uid': widget.case_uuid
                                   });
                                 }

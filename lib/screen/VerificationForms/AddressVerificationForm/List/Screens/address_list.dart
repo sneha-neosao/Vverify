@@ -467,6 +467,67 @@ class _AddressListState extends State<AddressList> {
                                                     ),
                                                   ],
                                                 ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Text(
+                                                  "Residing Period",
+                                                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                                      color: Theme.of(context).primaryColorDark, fontSize: 16),
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Residing From",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                          color: Colors.grey),
+                                                    ),
+                                                    Text(
+                                                      data.data![index].residingFromDate?.trim().isEmpty ?? true
+                                                          ? "NA"
+                                                          : data.data![index].residingFromDate!,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall,
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Residing to",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                          color: Colors.grey),
+                                                    ),
+                                                    Text(
+                                                      data.data![index].residingToDate?.trim().isEmpty ?? true
+                                                          ? "NA"
+                                                          : data.data![index].residingToDate!,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall,
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
                                               ],
                                             ),
                                           ],

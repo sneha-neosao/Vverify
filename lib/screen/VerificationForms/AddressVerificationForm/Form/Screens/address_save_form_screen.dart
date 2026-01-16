@@ -288,7 +288,7 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
                       listener: (context, nameAddress) {
                         if (nameAddress is NameAddressVerificationSuccessState) {
                           if (nameAddress.data["status"] == 200) {
-                            context.pushNamed("EducationList",pathParameters: {
+                            context.pushNamed("AddressList",pathParameters: {
                               'uid': widget.Case_uuid
                             });
                           }
