@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -96,7 +97,7 @@ class ApiService {
       'account/register',
       data: formData,
     );
-    log('register response $response');
+    // log('register response $response');
     return response;
   }
 
@@ -106,10 +107,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('account/profile/$id');
 
-      log('getProfile Response: ${response.data}');
+      // log('getProfile Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in getProfile: $e');
+      // log('Error in getProfile: $e');
       throw Exception('Failed to fetch getProfile: $e');
     }
   }
@@ -121,10 +122,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio
           .get('services/pricing?type_id=$type_id&entity_id=$entity_id');
-      log('ServicesPricing Response: ${response.data}');
+      // log('ServicesPricing Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in ServicesPricing: $e');
+      // log('Error in ServicesPricing: $e');
       throw Exception('Failed to fetch ServicesPricing: $e');
     }
   }
@@ -170,10 +171,10 @@ class ApiService {
         data: formData,
       );
 
-      log('UpdateProfile Response: ${response.data}');
+      // log('UpdateProfile Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in UpdateProfile: $e');
+      // log('Error in UpdateProfile: $e');
       throw Exception('Failed to fetch UpdateProfile: $e');
     }
   }
@@ -182,10 +183,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('entities');
-      log('getEntity Response: ${response.data}');
+      // log('getEntity Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in getEntity: $e');
+      // log('Error in getEntity: $e');
       throw Exception('Failed to fetch getEntity: $e');
     }
   }
@@ -212,10 +213,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
       await _dio.post('transaction/checkout', queryParameters: data);
-      log('getTransactionCheckout Response: ${response.data}');
+      // log('getTransactionCheckout Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in getTransactionCheckout: $e');
+      // log('Error in getTransactionCheckout: $e');
       throw Exception('Failed to fetch getTransactionCheckout: $e');
     }
   }
@@ -242,10 +243,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
       await _dio.get('transaction/list', queryParameters: data);
-      log('getTransactionList Response: ${response.data}');
+      // log('getTransactionList Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in getTransactionList: $e');
+      // log('Error in getTransactionList: $e');
       throw Exception('Failed to fetch getTransactionList: $e');
     }
   }
@@ -269,7 +270,7 @@ class ApiService {
       "status": status
     });
     if (response.data["status"] == 200) {
-      debugPrint("tranList ${response.data}", wrapWidth: 1024);
+      // debugPrint("tranList ${response.data}", wrapWidth: 1024);
       // Assuming the API returns a list of items as data
       List<history> items = (response.data['data'] as List)
           .map((itemJson) => history.fromJson(itemJson))
@@ -288,10 +289,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('transaction/$txnId/show');
-      log('getTransactionDetails Response: ${response.data}');
+      // log('getTransactionDetails Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in getTransactionDetails: $e');
+      // log('Error in getTransactionDetails: $e');
       throw Exception('Failed to fetch getTransactionDetails: $e');
     }
   }
@@ -317,7 +318,7 @@ class ApiService {
       await _dio.get('verify-request/list', queryParameters: data);
       print('getTransactionList Response: ${response.data}');
 
-      log('getTransactionList Response: ${response.data}');
+      // log('getTransactionList Response: ${response.data}');
       return response;
     } catch (e) {
       log('Error in getTransactionList: $e');
@@ -344,9 +345,11 @@ class ApiService {
     await _dio.get('verify-request/list', queryParameters: data);
 
     if (response.statusCode == 200) {
-      print("verifyRequestListPagination ${response.data}",);
-      debugPrint("verifyRequestListPagination ${response.data}",
-          wrapWidth: 1024); // increase wrap width
+      final rawJson = jsonEncode(response.data);
+      for (var i = 0; i < rawJson.length; i += 1000) {
+        debugPrint(rawJson.substring(i, i + 1000 > rawJson.length ? rawJson.length : i + 1000));
+      }
+
       List<verifyRequest> items = (response.data['data'] as List)
           .map((itemJson) => verifyRequest.fromJson(itemJson))
           .toList();
@@ -386,10 +389,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
       await _dio.put('verify-request/entity/update', queryParameters: data);
-      log('verifyRequestUpdate Response: ${response.data}');
+      // log('verifyRequestUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in verifyRequestUpdate: $e');
+      // log('Error in verifyRequestUpdate: $e');
       throw Exception('Failed to fetch verifyRequestUpdate: $e');
     }
   }
@@ -424,10 +427,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
       await _dio.put('verify-request/update', queryParameters: data);
-      log('verifyRequestUpdate Response: ${response.data}');
+      // log('verifyRequestUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in verifyRequestUpdate: $e');
+      // log('Error in verifyRequestUpdate: $e');
       throw Exception('Failed to fetch verifyRequestUpdate: $e');
     }
   }
@@ -443,10 +446,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get(
           'verify/education/education-list?request_id=$request_id&service_request_id=$service_request_id');
-      log('educationList Response: ${response.data}');
+      // log('educationList Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in educationList: $e');
+      // log('Error in educationList: $e');
       throw Exception('Failed to fetch educationList: $e');
     }
   }
@@ -472,10 +475,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
       await _dio.post('verify/education/form/save', data: formData);
-      log('EducationFormSave Response: ${response.data}');
+      // log('EducationFormSave Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in EducationFormSave: $e');
+      // log('Error in EducationFormSave: $e');
       throw Exception('Failed to fetch EducationFormSave: $e');
     }
   }
@@ -503,10 +506,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
       await _dio.post('verify/education/form/update', data: formData);
-      log('EducationFormUpdate Response: ${response.data}');
+      // log('EducationFormUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in EducationFormUpdate: $e');
+      // log('Error in EducationFormUpdate: $e');
       throw Exception('Failed to fetch EducationFormUpdate: $e');
     }
   }
@@ -518,10 +521,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/education/edit/$uid');
-      log('educationShowDataDetails Response: ${response.data}');
+      // log('educationShowDataDetails Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in educationShowDataDetails: $e');
+      // log('Error in educationShowDataDetails: $e');
       throw Exception('Failed to fetch educationShowDataDetails: $e');
     }
   }
@@ -543,12 +546,12 @@ class ApiService {
       });
 
       // Debug logs
-      log("=== EducationDocsUpload Request ===");
-      log("Fields: case_uuid=$caseUuid, type=education");
-      log("Files: ${documents.map((d) =>
-      d.path
-          .split('/')
-          .last).toList()}");
+      // log("=== EducationDocsUpload Request ===");
+      // log("Fields: case_uuid=$caseUuid, type=education");
+      // log("Files: ${documents.map((d) =>
+      // d.path
+      //     .split('/')
+      //     .last).toList()}");
 
       // POST with headers
       final response = await _dio.post(
@@ -561,13 +564,13 @@ class ApiService {
         ),
       );
 
-      log("=== EducationDocsUpload Response ===");
-      log("Status: ${response.statusCode}");
-      log("Data: ${response.data}");
+      // log("=== EducationDocsUpload Response ===");
+      // log("Status: ${response.statusCode}");
+      // log("Data: ${response.data}");
 
       return response;
     } catch (e) {
-      log("Error in EducationDocUpload: $e");
+      // log("Error in EducationDocUpload: $e");
       throw Exception("Failed to upload education documents: $e");
     }
   }
@@ -590,10 +593,10 @@ class ApiService {
         },
       );
 
-      log('educationDocumentList Response: ${response.data}');
+      // log('educationDocumentList Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in educationDocumentList: $e');
+      // log('Error in educationDocumentList: $e');
       throw Exception('Failed to fetch educationDocumentList: $e');
     }
   }
@@ -609,10 +612,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get(
           'verify/employment/employment-list?request_id=$request_id&service_request_id=$service_request_id');
-      log('employmentList Response: ${response.data}');
+      // log('employmentList Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in employmentList: $e');
+      // log('Error in employmentList: $e');
       throw Exception('Failed to fetch employmentList: $e');
     }
   }
@@ -642,10 +645,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
       await _dio.post('verify/employment/form/save', data: formData);
-      log('EmploymentSaveDoc Response: ${response.data}');
+      // log('EmploymentSaveDoc Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in EmploymentSaveDoc: $e');
+      // log('Error in EmploymentSaveDoc: $e');
       throw Exception('Failed to fetch EmploymentSaveDoc: $e');
     }
   }
@@ -677,10 +680,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
       await _dio.post('verify/employment/form/update', data: formData);
-      log('employmentUpdateForm Response: ${response.data}');
+      // log('employmentUpdateForm Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in employmentUpdateForm: $e');
+      // log('Error in employmentUpdateForm: $e');
       throw Exception('Failed to fetch employmentUpdateForm: $e');
     }
   }
@@ -692,10 +695,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/employment/$uid/show');
-      log('employShowData Response: ${response.data}');
+      // log('employShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in employShowData: $e');
+      // log('Error in employShowData: $e');
       throw Exception('Failed to fetch employShowData: $e');
     }
   }
@@ -717,12 +720,12 @@ class ApiService {
       });
 
       // Debug logs
-      log("=== EmploymentDocsUpload Request ===");
-      log("Fields: case_uuid=$caseUuid, type=education");
-      log("Files: ${documents.map((d) =>
-      d.path
-          .split('/')
-          .last).toList()}");
+      // log("=== EmploymentDocsUpload Request ===");
+      // log("Fields: case_uuid=$caseUuid, type=education");
+      // log("Files: ${documents.map((d) =>
+      // d.path
+      //     .split('/')
+      //     .last).toList()}");
 
       // POST with headers
       final response = await _dio.post(
@@ -735,13 +738,13 @@ class ApiService {
         ),
       );
 
-      log("=== EmploymentDocsUpload Response ===");
-      log("Status: ${response.statusCode}");
-      log("Data: ${response.data}");
+      // log("=== EmploymentDocsUpload Response ===");
+      // log("Status: ${response.statusCode}");
+      // log("Data: ${response.data}");
 
       return response;
     } catch (e) {
-      log("Error in EmploymentDocUpload: $e");
+      // log("Error in EmploymentDocUpload: $e");
       throw Exception("Failed to upload employment documents: $e");
     }
   }
@@ -764,10 +767,10 @@ class ApiService {
         },
       );
 
-      log('employmentDocumentList Response: ${response.data}');
+      // log('employmentDocumentList Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in employmentDocumentList: $e');
+      // log('Error in employmentDocumentList: $e');
       throw Exception('Failed to fetch employmentDocumentList: $e');
     }
   }
@@ -782,10 +785,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get(
           'verify/address/list?request_id=$request_id&service_request_id=$service_request_id');
-      log('employmentList Response: ${response.data}');
+      // log('employmentList Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in addressList: $e');
+      // log('Error in addressList: $e');
       throw Exception('Failed to fetch addressList: $e');
     }
   }
@@ -819,10 +822,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
       await _dio.post('verify/address/form/save', data: formData);
-      log('NameAddressStoreVerification Response: ${response.data}');
+      // log('NameAddressStoreVerification Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in NameAddressStoreVerification: $e');
+      // log('Error in NameAddressStoreVerification: $e');
       throw Exception('Failed to fetch NameAddressStoreVerification: $e');
     }
   }
@@ -857,10 +860,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
       await _dio.post('verify/address/form/update', data: formData);
-      log('NameAddressUpdate Response: ${response.data}');
+      // log('NameAddressUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in NameAddressUpdate: $e');
+      // log('Error in NameAddressUpdate: $e');
       throw Exception('Failed to fetch NameAddressUpdate: $e');
     }
   }
@@ -872,10 +875,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/address/$uid/show');
-      log('nameAddressShowData Response: ${response.data}');
+      // log('nameAddressShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in nameAddressShowData: $e');
+      // log('Error in nameAddressShowData: $e');
       throw Exception('Failed to fetch nameAddressShowData: $e');
     }
   }
@@ -897,12 +900,12 @@ class ApiService {
       });
 
       // Debug logs
-      log("=== AddressDocsUpload Request ===");
-      log("Fields: case_uuid=$caseUuid, type=education");
-      log("Files: ${documents.map((d) =>
-      d.path
-          .split('/')
-          .last).toList()}");
+      // log("=== AddressDocsUpload Request ===");
+      // log("Fields: case_uuid=$caseUuid, type=education");
+      // log("Files: ${documents.map((d) =>
+      // d.path
+      //     .split('/')
+      //     .last).toList()}");
 
       // POST with headers
       final response = await _dio.post(
@@ -915,13 +918,13 @@ class ApiService {
         ),
       );
 
-      log("=== AddressDocsUpload Response ===");
-      log("Status: ${response.statusCode}");
-      log("Data: ${response.data}");
+      // log("=== AddressDocsUpload Response ===");
+      // log("Status: ${response.statusCode}");
+      // log("Data: ${response.data}");
 
       return response;
     } catch (e) {
-      log("Error in AddressDocUpload: $e");
+      // log("Error in AddressDocUpload: $e");
       throw Exception("Failed to upload address documents: $e");
     }
   }
@@ -944,10 +947,10 @@ class ApiService {
         },
       );
 
-      log('addressDocumentList Response: ${response.data}');
+      // log('addressDocumentList Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in addressDocumentList: $e');
+      // log('Error in addressDocumentList: $e');
       throw Exception('Failed to fetch addressDocumentList: $e');
     }
   }
@@ -1056,10 +1059,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/police/non-mumbai/form/save', data: formData);
-      log('tenantNonMumbaiForm Response: ${response.data}');
+      // log('tenantNonMumbaiForm Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in tenantNonMumbaiForm: $e');
+      // log('Error in tenantNonMumbaiForm: $e');
       throw Exception('Failed to fetch tenantNonMumbaiForm: $e');
     }
   }
@@ -1144,10 +1147,10 @@ class ApiService {
 
       final response =
           await _dio.post('verify/police/mumbai/form/save', data: formData);
-      log('tenantMumbaiForm Response: ${response.data}');
+      // log('tenantMumbaiForm Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in tenantMumbaiForm: $e');
+      // log('Error in tenantMumbaiForm: $e');
       throw Exception('Failed to fetch tenantMumbaiForm: $e');
     }
   }
@@ -1199,10 +1202,10 @@ class ApiService {
 
       final response = await _dio.post('verify/police/non-mumbai/document/save',
           data: formData);
-      log('tenantNonMumbaiUploadDocuments Response: ${response.data}');
+      // log('tenantNonMumbaiUploadDocuments Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in tenantNonMumbaiUploadDocuments: $e');
+      // log('Error in tenantNonMumbaiUploadDocuments: $e');
       throw Exception('Failed to fetch tenantNonMumbaiUploadDocuments: $e');
     }
   }
@@ -1253,10 +1256,10 @@ class ApiService {
 
       final response =
           await _dio.post('verify/police/mumbai/document/save', data: formData);
-      log('tenantMumbaiUploadDocuments Response: ${response.data}');
+      // log('tenantMumbaiUploadDocuments Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in tenantMumbaiUploadDocuments: $e');
+      // log('Error in tenantMumbaiUploadDocuments: $e');
       throw Exception('Failed to fetch tenantMumbaiUploadDocuments: $e');
     }
   }
@@ -1282,10 +1285,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/reference/form/store', data: formData);
-      log('ReferenceVerification Response: ${response.data}');
+      // log('ReferenceVerification Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in ReferenceVerification: $e');
+      // log('Error in ReferenceVerification: $e');
       throw Exception('Failed to fetch ReferenceVerification: $e');
     }
   }
@@ -1310,10 +1313,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/reference/form/update', data: formData);
-      log('verifyRequestUpdate Response: ${response.data}');
+      // log('verifyRequestUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in verifyRequestUpdate:$e');
+      // log('Error in verifyRequestUpdate:$e');
       throw Exception('Failed to fetch verifyRequestUpdate: $e');
     }
   }
@@ -1335,10 +1338,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/aadhaar/get-otp', queryParameters: data);
-      log('AadhaarGetOtp Response: ${response.data}');
+      // log('AadhaarGetOtp Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in AadhaarGetOtp: $e');
+      // log('Error in AadhaarGetOtp: $e');
       throw Exception('Failed to fetch AadhaarGetOtp: $e');
     }
   }
@@ -1360,10 +1363,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/pan/store', queryParameters: data);
-      log('panNumberSave Response: ${response.data}');
+      // log('panNumberSave Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in panNumberSave: $e');
+      // log('Error in panNumberSave: $e');
       throw Exception('Failed to fetch panNumberSave: $e');
     }
   }
@@ -1385,10 +1388,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/pan/show/$uid', data: formData);
-      log('panNumberSave Response: ${response.data}');
+      // log('panNumberSave Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in panNumberShowData: $e');
+      // log('Error in panNumberShowData: $e');
       throw Exception('Failed to fetch panNumberShowData: $e');
     }
   }
@@ -1410,10 +1413,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/pan/update', queryParameters: data);
-      log('panNumberUpdate Response: ${response.data}');
+      // log('panNumberUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in panNumberUpdate: $e');
+      // log('Error in panNumberUpdate: $e');
       throw Exception('Failed to fetch panNumberUpdate: $e');
     }
   }
@@ -1438,10 +1441,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/aadhaar/verify-otp', queryParameters: data);
-      log('AadhaarVerifyOtp Response: ${response.data}');
+      // log('AadhaarVerifyOtp Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in AadhaarVerifyOtp: $e');
+      // log('Error in AadhaarVerifyOtp: $e');
       throw Exception('Failed to fetch AadhaarVerifyOtp: $e');
     }
   }
@@ -1455,10 +1458,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify-request/$request_id/show');
-      log('VerifyDetailsView Response: ${response.data}');
+      // log('VerifyDetailsView Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in VerifyDetailsView: $e');
+      // log('Error in VerifyDetailsView: $e');
       throw Exception('Failed to fetch VerifyDetailsView: $e');
     }
   }
@@ -1470,10 +1473,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/reference/show/$uid');
-      log('ReferenceCheckDetailsView Response: ${response.data}');
+      // log('ReferenceCheckDetailsView Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in ReferenceCheckDetailsView: $e');
+      // log('Error in ReferenceCheckDetailsView: $e');
       throw Exception('Failed to fetch ReferenceCheckDetailsView: $e');
     }
   }
@@ -1485,10 +1488,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/police/mumbai/$uid');
-      log('mumbaiShowData Response: ${response.data}');
+      // log('mumbaiShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in mumbaiShowData: $e');
+      // log('Error in mumbaiShowData: $e');
       throw Exception('Failed to fetch mumbaiShowData: $e');
     }
   }
@@ -1585,10 +1588,10 @@ class ApiService {
 
       final response =
           await _dio.post('verify/police/mumbai/form/update', data: formData);
-      log('tenantMumbaiFormUpdate Response: ${response.data}');
+      // log('tenantMumbaiFormUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in tenantMumbaiForm: $e');
+      // log('Error in tenantMumbaiForm: $e');
       throw Exception('Failed to fetch tenantMumbaiFormUpdate: $e');
     }
   }
@@ -1600,10 +1603,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/police/non-mumbai/$uid');
-      log('mumbaiShowData Response: ${response.data}');
+      // log('mumbaiShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in mumbaiShowData: $e');
+      // log('Error in mumbaiShowData: $e');
       throw Exception('Failed to fetch mumbaiShowData: $e');
     }
   }
@@ -1716,10 +1719,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.post('verify/police/non-mumbai/form/update',
           data: formData);
-      log('tenantNonMumbaiFormUpdate Response: ${response.data}');
+      // log('tenantNonMumbaiFormUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in tenantNonMumbaiFormUpdate: $e');
+      // log('Error in tenantNonMumbaiFormUpdate: $e');
       throw Exception('Failed to fetch tenantNonMumbaiFormUpdate: $e');
     }
   }
@@ -1796,10 +1799,10 @@ class ApiService {
 
       final response = await _dio
           .post('verify/police/non-mumbai/document/update', data: formData);
-      log('tenantNonMumbaiUpdateDocuments Response: ${response.data}');
+      // log('tenantNonMumbaiUpdateDocuments Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in tenantNonMumbaiUpdateDocuments: $e');
+      // log('Error in tenantNonMumbaiUpdateDocuments: $e');
       throw Exception('Failed to fetch tenantNonMumbaiUpdateDocuments: $e');
     }
   }
@@ -1811,10 +1814,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/police/non-mumbai/$uid');
-      log('nonMumbaiDocumentShowData Response: ${response.data}');
+      // log('nonMumbaiDocumentShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in nonMumbaiDocumentShowData: $e');
+      // log('Error in nonMumbaiDocumentShowData: $e');
       throw Exception('Failed to fetch nonMumbaiDocumentShowData: $e');
     }
   }
@@ -1826,10 +1829,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/police/mumbai/$uid');
-      log('mumbaiDocumentShowData Response: ${response.data}');
+      // log('mumbaiDocumentShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in mumbaiDocumentShowData: $e');
+      // log('Error in mumbaiDocumentShowData: $e');
       throw Exception('Failed to fetch mumbaiDocumentShowData: $e');
     }
   }
@@ -1893,10 +1896,10 @@ class ApiService {
 
       final response = await _dio.post('verify/police/mumbai/document/update',
           data: formData);
-      log('tenantMumbaiUploadDocuments Response: ${response.data}');
+      // log('tenantMumbaiUploadDocuments Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in tenantMumbaiUploadDocuments: $e');
+      // log('Error in tenantMumbaiUploadDocuments: $e');
       throw Exception('Failed to fetch tenantMumbaiUploadDocuments: $e');
     }
   }
@@ -1909,10 +1912,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('college-schools');
-      log('collageNameGetData Response: ${response.data}');
+      // log('collageNameGetData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in collageNameGetData: $e');
+      // log('Error in collageNameGetData: $e');
       throw Exception('Failed to fetch collageNameGetData: $e');
     }
   }
@@ -1923,10 +1926,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('universities-boards');
-      log('universityNameGetData Response: ${response.data}');
+      // log('universityNameGetData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in universityNameGetData: $e');
+      // log('Error in universityNameGetData: $e');
       throw Exception('Failed to fetch universityNameGetData: $e');
     }
   }
@@ -1952,10 +1955,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/driver-licence/form/store', data: formData);
-      log('drivingLicenceSave Response: ${response.data}');
+      // log('drivingLicenceSave Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in drivingLicenceSave: $e');
+      // log('Error in drivingLicenceSave: $e');
       throw Exception('Failed to fetch drivingLicenceSave: $e');
     }
   }
@@ -1967,10 +1970,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/driver-licence/show/$uid');
-      log('drivingLicenceShowData Response: ${response.data}');
+      // log('drivingLicenceShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in drivingLicenceShowData: $e');
+      // log('Error in drivingLicenceShowData: $e');
       throw Exception('Failed to fetch drivingLicenceShowData: $e');
     }
   }
@@ -1994,10 +1997,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/driver-licence/form/update', data: formData);
-      log('drivingLicenceSave Response: ${response.data}');
+      // log('drivingLicenceSave Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in drivingLicenceSave: $e');
+      // log('Error in drivingLicenceSave: $e');
       throw Exception('Failed to fetch drivingLicenceSave: $e');
     }
   }
@@ -2023,10 +2026,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/gst-pan-cin/form/store', data: formData);
-      log('gstPanCinSave Response: ${response.data}');
+      // log('gstPanCinSave Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in gstPanCinSave: $e');
+      // log('Error in gstPanCinSave: $e');
       throw Exception('Failed to fetch gstPanCinSave: $e');
     }
   }
@@ -2038,10 +2041,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/gst-pan-cin/show/$uid');
-      log('gstPanCinShowData Response: ${response.data}');
+      // log('gstPanCinShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in gstPanCinShowData: $e');
+      // log('Error in gstPanCinShowData: $e');
       throw Exception('Failed to fetch gstPanCinShowData: $e');
     }
   }
@@ -2067,10 +2070,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/gst-pan-cin/form/update', data: formData);
-      log('gstPanCinUpdate Response: ${response.data}');
+      // log('gstPanCinUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in gstPanCinUpdate: $e');
+      // log('Error in gstPanCinUpdate: $e');
       throw Exception('Failed to fetch gstPanCinUpdate: $e');
     }
   }
@@ -2081,10 +2084,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('cities');
-      log('policeStationCityId Response: ${response.data}');
+      // log('policeStationCityId Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in policeStationCityId: $e');
+      // log('Error in policeStationCityId: $e');
       throw Exception('Failed to fetch policeStationCityId: $e');
     }
   }
@@ -2097,10 +2100,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio
           .get('police-stations', queryParameters: {"city_id": city_id});
-      log('universityNameGetData Response: ${response.data}');
+      // log('universityNameGetData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in universityNameGetData: $e');
+      // log('Error in universityNameGetData: $e');
       throw Exception('Failed to fetch universityNameGetData: $e');
     }
   }
@@ -2125,10 +2128,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('account/firebase/update', data: formData);
-      log('pushNotificationApi Response: ${response.data}');
+      // log('pushNotificationApi Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in pushNotificationApi: $e');
+      // log('Error in pushNotificationApi: $e');
       throw Exception('Failed to fetch pushNotificationApi: $e');
     }
   }
@@ -2172,10 +2175,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/court/form/store', data: formData);
-      log('courtVerification Response: ${response.data}');
+      // log('courtVerification Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in courtVerification: $e');
+      // log('Error in courtVerification: $e');
       throw Exception('Failed to fetch courtVerification: $e');
     }
   }
@@ -2185,10 +2188,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/court/show/$uid');
-      log('courtShowData Response: ${response.data}');
+      // log('courtShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in courtShowData: $e');
+      // log('Error in courtShowData: $e');
       throw Exception('Failed to fetch courtShowData: $e');
     }
   }
@@ -2218,10 +2221,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/court/form/update', data: formData);
-      log('courtVerificationUpdate Response: ${response.data}');
+      // log('courtVerificationUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in courtVerificationUpdate: $e');
+      // log('Error in courtVerificationUpdate: $e');
       throw Exception('Failed to fetch courtVerificationUpdate: $e');
     }
   }
@@ -2246,10 +2249,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/reference/document/store', data: formData);
-      log('referenceCheckDocUpload Response: ${response.data}');
+      // log('referenceCheckDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in referenceCheckDocUpload: $e');
+      // log('Error in referenceCheckDocUpload: $e');
       throw Exception('Failed to fetch referenceCheckDocUpload: $e');
     }
   }
@@ -2259,10 +2262,10 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify/reference/show/$uid');
-      log('referenceCheckDocShowData Response: ${response.data}');
+      // log('referenceCheckDocShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in referenceCheckDocShowData: $e');
+      // log('Error in referenceCheckDocShowData: $e');
       throw Exception('Failed to fetch referenceCheckDocShowData: $e');
     }
   }
@@ -2289,10 +2292,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/reference/document/update', data: formData);
-      log('referenceCheckDocUpload Response: ${response.data}');
+      // log('referenceCheckDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in referenceCheckDocUpload: $e');
+      // log('Error in referenceCheckDocUpload: $e');
       throw Exception('Failed to fetch referenceCheckDocUpload: $e');
     }
   }
@@ -2328,10 +2331,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/name-address/document/store', data: formData);
-      log('nameAddressDocUpload Response: ${response.data}');
+      // log('nameAddressDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in nameAddressDocUpload: $e');
+      // log('Error in nameAddressDocUpload: $e');
       throw Exception('Failed to fetch nameAddressDocUpload: $e');
     }
   }
@@ -2367,10 +2370,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.post('verify/name-address/document/update',
           data: formData);
-      log('nameAddressDocUpload Response: ${response.data}');
+      // log('nameAddressDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in nameAddressDocUpload: $e');
+      // log('Error in nameAddressDocUpload: $e');
       throw Exception('Failed to fetch nameAddressDocUpload: $e');
     }
   }
@@ -2411,10 +2414,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/gst-pan-cin/document/store', data: formData);
-      log('gstPanCinDocUpload Response: ${response.data}');
+      // log('gstPanCinDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in gstPanCinDocUpload: $e');
+      // log('Error in gstPanCinDocUpload: $e');
       throw Exception('Failed to fetch gstPanCinDocUpload: $e');
     }
   }
@@ -2455,10 +2458,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/gst-pan-cin/document/update', data: formData);
-      log('gstPanCinDocUpdate Response: ${response.data}');
+      // log('gstPanCinDocUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in gstPanCinDocUpdate: $e');
+      // log('Error in gstPanCinDocUpdate: $e');
       throw Exception('Failed to fetch gstPanCinDocUpdate: $e');
     }
   }
@@ -2488,10 +2491,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/court/document/store', data: formData);
-      log('courtVerificationDocUpload Response: ${response.data}');
+      // log('courtVerificationDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in courtVerificationDocUpload: $e');
+      // log('Error in courtVerificationDocUpload: $e');
       throw Exception('Failed to fetch courtVerificationDocUpload: $e');
     }
   }
@@ -2526,10 +2529,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('verify/court/document/update', data: formData);
-      log('courtVerificationDocUpdate Response: ${response.data}');
+      // log('courtVerificationDocUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in courtVerificationDocUpdate: $e');
+      // log('Error in courtVerificationDocUpdate: $e');
       throw Exception('Failed to fetch courtVerificationDocUpdate: $e');
     }
   }
@@ -2554,10 +2557,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.post('verify/driver-licence/document/store',
           data: formData);
-      log('drivingDocUpload Response: ${response.data}');
+      // log('drivingDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in drivingDocUpload: $e');
+      // log('Error in drivingDocUpload: $e');
       throw Exception('Failed to fetch drivingDocUpload: $e');
     }
   }
@@ -2584,10 +2587,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.post('verify/driver-licence/document/update',
           data: formData);
-      log('drivingDocUpdate Response: ${response.data}');
+      // log('drivingDocUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in drivingDocUpdate: $e');
+      // log('Error in drivingDocUpdate: $e');
       throw Exception('Failed to fetch drivingDocUpdate: $e');
     }
   }
@@ -2604,10 +2607,10 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.post('account/update/agree/status', data: formData);
-      log('userAgreeCondition Response: ${response.data}');
+      // log('userAgreeCondition Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in userAgreeCondition: $e');
+      // log('Error in userAgreeCondition: $e');
       throw Exception('Failed to fetch userAgreeCondition: $e');
     }
   }

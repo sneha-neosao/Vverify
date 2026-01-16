@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../model/pan_verification_show_model.dart';
+import '../../Models/pan_show_details_model.dart';
 
 class PanVerificationShowState extends Equatable {
   @override

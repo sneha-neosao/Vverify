@@ -38,8 +38,8 @@ import '../screen/VerificationForms/GST_TIN_CIN/Documents/update/gst_pan_cin_doc
 import '../screen/VerificationForms/GST_TIN_CIN/Documents/upload/gst_pan_cin_doc_upload.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Save/gst_pan_cin_screen.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Update/gst_pan_cin_update_screen.dart';
-import '../screen/VerificationForms/PanVerification/save/pan_verification_save.dart';
-import '../screen/VerificationForms/PanVerification/update/pan_verification_update.dart';
+import '../screen/VerificationForms/PanVerification/Screens/pan_save_form_screen.dart';
+import '../screen/VerificationForms/PanVerification/Screens/pan_update_form_screen.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/UpdateForm/MumbaiPoliceVerificationUpdateForm1.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/UploadDocuments/upload_documents_Mumbai.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/forms/MumbaiPoliceVerificationForm1.dart';
@@ -300,6 +300,28 @@ class AppRouter {
           return ApplyCouponScreen();
         },
       ),
+
+
+      /// KYC Verification Service related routes
+      GoRoute(
+        path: '/PanSaveFormScreen',
+        name: 'PanSaveFormScreen',
+        builder: (context, state) {
+          return  const PanSaveFormScreen();
+        },
+      ),
+      GoRoute(
+        path: '/PanUpdateFormScreen/:uid',
+        name: 'PanUpdateFormScreen',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid']!;
+          return PanUpdateFormScreen(
+            uid: uid,
+          );
+        },
+      ),
+
+
 
       GoRoute(
         path: '/EditProfile/:user_type',
@@ -566,16 +588,7 @@ class AppRouter {
           );
         },
       ),
-      GoRoute(
-        path: '/PanVerificationUpdate/:uid',
-        name: 'PanVerificationUpdate',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          return PanVerificationUpdate(
-            uid: uid,
-          );
-        },
-      ),
+
 
       GoRoute(
         path: '/CourtDocUpload',
@@ -627,13 +640,7 @@ class AppRouter {
           return  SignatureScreen();
         },
       ),
-      GoRoute(
-        path: '/PanVerificationSave',
-        name: 'PanVerificationSave',
-        builder: (context, state) {
-          return  const PanVerificationSave();
-        },
-      ),
+
     ],
   );
 }

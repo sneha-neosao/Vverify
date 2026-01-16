@@ -10,17 +10,17 @@ import 'package:v_verify/widgets/custom_required_text_field.dart';
 import '../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../common/form_widget.dart';
 import '../../common/id.dart';
-import 'Bloc/pan_verification_save_bloc.dart';
-import 'Bloc/pan_verification_save_state.dart';
+import '../Blocs/pan_save_form_bloc/pan_save_form_cubit.dart';
+import '../Blocs/pan_save_form_bloc/pan_save_form_state.dart';
 
-class PanVerificationSave extends StatefulWidget {
-  const PanVerificationSave({super.key});
+class PanSaveFormScreen extends StatefulWidget {
+  const PanSaveFormScreen({super.key});
 
   @override
-  State<PanVerificationSave> createState() => _PanVerificationSaveState();
+  State<PanSaveFormScreen> createState() => _PanSaveFormScreenState();
 }
 
-class _PanVerificationSaveState extends State<PanVerificationSave> {
+class _PanSaveFormScreenState extends State<PanSaveFormScreen> {
   final panMaskFormatter = MaskTextInputFormatter(
     mask: 'AAAAA####A',
     filter: {"A": RegExp(r'[A-Za-z]'), "#": RegExp(r'[0-9]')},

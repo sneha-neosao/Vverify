@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/PanVerification/update/show/Bloc/pan_verification_show_state.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Blocs/pan_show_details_bloc/pan_show_details_state.dart';
 
-import '../../../../../../apiServices/api_services.dart';
-import '../model/pan_verification_show_model.dart';
+import '../../../../../apiServices/api_services.dart';
+import '../../Models/pan_show_details_model.dart';
 
 class PanVerificationShowCubit extends Cubit<PanVerificationShowState> {
   ApiService _apiService;

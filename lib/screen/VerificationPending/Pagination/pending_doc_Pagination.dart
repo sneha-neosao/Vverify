@@ -97,7 +97,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         context.pushNamed("nonMumbaiForm");
         break;
       case "pan-card-verification":
-        context.pushNamed("PanVerificationSave");
+        context.pushNamed("PanSaveFormScreen");
         break;
       case "reference-check-verification":
         context.pushNamed("ReferenceForm");
@@ -156,7 +156,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                   });
         break;
       case "pan-card-verification":
-        context.pushNamed("PanVerificationUpdate", pathParameters: {
+        context.pushNamed("PanUpdateFormScreen", pathParameters: {
           'uid': data[index].services![servicesIndex].uid.toString()
         });
         break;
@@ -280,6 +280,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                   builder: (context, isPressed) {
                                     final rawStatus = data[index].status?.toLowerCase() ?? "";
                                     String status;
+                                    print("verification status : ${rawStatus}");
 
                                     if (rawStatus.isEmpty || rawStatus == "-" || rawStatus == "") {
                                       status = "pending";
@@ -287,7 +288,9 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                       status = "discrepancy";
                                     } else if (rawStatus == "verified" || rawStatus == "clear") {
                                       status = "verified";
-                                    } else {
+                                    } else if (rawStatus == "rejected") {
+                                      status = "rejected";
+                                    }else {
                                       status = rawStatus; // fallback for other values
                                     }
 
@@ -378,7 +381,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                               Text(
                                                 status.toLowerCase() == "verified"
                                                     ? "Verified"
-                                                    : status.toLowerCase() == "discrepancy"
+                                                    : status.toLowerCase() == "discrepancy" || status.toLowerCase() == "rejected"
                                                     ? "Discrepancy"
                                                     : "Pending",
                                                 style: Theme.of(context)
