@@ -464,40 +464,62 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                                               const SizedBox(
                                                 height: 16,
                                               ),
-                                              Container(
-                                                width: double.infinity,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius: BorderRadius.circular(8),
-                                                  border: Border.all(color: Colors.orange, width: 2),
-                                                ),
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    // your onTap logic here
-                                                    context.pushNamed(
-                                                      "ApplyCouponScreen", );
-                                                  },
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor: Colors.transparent,
-                                                    elevation: 0,
-                                                    padding: EdgeInsets.zero,
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8),
-                                                    ),
-                                                  ),
-                                                  child: const Center(
-                                                    child: Text(
-                                                      "Apply Coupon",
-                                                      style: TextStyle(
-                                                        color: Colors.orange,
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
+                                               Row(
+                                                children: [
+                                                  Spacer(),
+                                                   Padding(
+                                                     padding: EdgeInsets.symmetric(horizontal: 12.0),
+                                                     child: InkWell(
+                                                       onTap: (){
+                                                         context.pushNamed(
+                                                           "ApplyCouponScreen", );
+                                                       },
+                                                       child: const Text(
+                                                        "Have a coupon ?",
+                                                        style: TextStyle(
+                                                          color: Colors.orange,
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                       ),
+                                                     ),
+                                                   ),
+                                                ],
                                               ),
+                                              // Container(
+                                              //   width: double.infinity,
+                                              //   height: 50,
+                                              //   decoration: BoxDecoration(
+                                              //     color: Colors.white,
+                                              //     borderRadius: BorderRadius.circular(8),
+                                              //     border: Border.all(color: Colors.orange, width: 2),
+                                              //   ),
+                                              //   child: ElevatedButton(
+                                              //     onPressed: () {
+                                              //       // your onTap logic here
+                                              //       context.pushNamed(
+                                              //         "ApplyCouponScreen", );
+                                              //     },
+                                              //     style: ElevatedButton.styleFrom(
+                                              //       backgroundColor: Colors.transparent,
+                                              //       elevation: 0,
+                                              //       padding: EdgeInsets.zero,
+                                              //       shape: RoundedRectangleBorder(
+                                              //         borderRadius: BorderRadius.circular(8),
+                                              //       ),
+                                              //     ),
+                                              //     child: const Center(
+                                              //       child: Text(
+                                              //         "Apply Coupon",
+                                              //         style: TextStyle(
+                                              //           color: Colors.orange,
+                                              //           fontSize: 16,
+                                              //           fontWeight: FontWeight.bold,
+                                              //         ),
+                                              //       ),
+                                              //     ),
+                                              //   ),
+                                              // ),
                                               const SizedBox(
                                                 height: 16,
                                               ),
