@@ -123,7 +123,7 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Full Name & Address Verification",
+                    "Address Verification",
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium!

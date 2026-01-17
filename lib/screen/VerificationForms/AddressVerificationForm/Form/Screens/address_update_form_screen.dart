@@ -169,7 +169,7 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Full Name & Address Verification",
+                          "Address Verification",
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium!
