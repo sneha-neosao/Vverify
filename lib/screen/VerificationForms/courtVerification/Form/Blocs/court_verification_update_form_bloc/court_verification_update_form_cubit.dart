@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pinput/pinput.dart';
 
-import '../../../../../apiServices/api_services.dart';
-import 'court_update_state.dart';
+import '../../../../../../apiServices/api_services.dart';
+import 'court_verification_update_form_state.dart';
 
 class CourtUpdateCubit extends Cubit<CourtUpdateState> {
   ApiService _apiService;

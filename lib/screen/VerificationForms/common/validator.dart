@@ -10,7 +10,7 @@ String? cannotBeEmpty(String? value) {
 
 String? addressValidator(String? value) {
   if (value == null || value.isEmpty) {
-    return 'Please enter an address';
+    return null;
   }
   if (value.length <= 10) {
     return 'Please enter more than 10 characters';

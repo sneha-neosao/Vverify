@@ -410,7 +410,7 @@ Future<void> pickFile() async {
                                     TextButton(
                                         onPressed: () {
                                           if (data.data![index].v_status ==
-                                              "pending") {
+                                              "") {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(const SnackBar(
                                                     content: Text(

@@ -146,7 +146,7 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
                       hintText: "Enter Line 1 Address",
                       textInputType: TextInputType.text
                   ),
-                  CustomRequiredTextField(
+                  CustomNotRequiredTextField(
                       controller: currentLine2AddressController,
                       titleText: "Address Line 2",
                       hintText: "Enter Line 2 Address",

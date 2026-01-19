@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/update/ShowData/bloc/show_court_data_state.dart';
+import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_show_details_bloc/court_verification_show_details_state.dart';
 import '../../../../../../apiServices/api_services.dart';
-import '../Model/show_court_data_model.dart';
+import '../../Models/court_verification_show_details_model.dart';
 
 class ShowCourtDataCubit extends Cubit<ShowCourtDataState> {
   ApiService _apiService;

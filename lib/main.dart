@@ -66,11 +66,11 @@ import 'package:v_verify/screen/VerificationForms/ReferenceForm/Save/Bloc/refere
 import 'package:v_verify/screen/VerificationForms/ReferenceForm/ShowDetails/Bloc/reference_check_details_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/ReferenceForm/Update/Bloc/Reference_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Bloc/verify_details_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/Bloc/court_verification_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/documents/updateDoc/bloc/court_doc_update_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/documents/uploadDoc/Bloc/court_doc_upload_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/update/Bloc/court_update_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/update/ShowData/bloc/show_court_data_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_save_form_bloc/court_verification_save_form_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/courtVerification/Document/Blocs/court_verification_documents_update_bloc/court_verification_documents_update_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/courtVerification/Document/Blocs/court_verification_documents_upload_bloc/court_verification_documents_upload_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_update_form_bloc/court_verification_update_form_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_show_details_bloc/court_verification_show_details_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_cubit.dart';

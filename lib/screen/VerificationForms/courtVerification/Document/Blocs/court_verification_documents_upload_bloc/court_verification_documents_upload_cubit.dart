@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../../../apiServices/api_services.dart';
-import 'court_doc_upload_state.dart';
+import 'court_verification_documents_upload_state.dart';
 
 class CourtDocUploadCubit extends Cubit<CourtDocUploadState> {
   ApiService _apiService;

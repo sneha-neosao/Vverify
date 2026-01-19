@@ -10,24 +10,25 @@ import 'package:v_verify/commonComponent/screen_size.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/update/ShowData/Model/show_court_data_model.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/update/ShowData/bloc/show_court_data_state.dart';
+import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Models/court_verification_show_details_model.dart';
+import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_show_details_bloc/court_verification_show_details_state.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
-import 'Bloc/court_update_cubit.dart';
-import 'Bloc/court_update_state.dart';
-import 'ShowData/bloc/show_court_data_cubit.dart';
+import '../Blocs/court_verification_update_form_bloc/court_verification_update_form_cubit.dart';
+import '../Blocs/court_verification_update_form_bloc/court_verification_update_form_state.dart';
+import '../Blocs/court_verification_show_details_bloc/court_verification_show_details_cubit.dart';
 
-class CourtVerificationUpdate extends StatefulWidget {
+class CourtVerificationUpdateFormScreen extends StatefulWidget {
   String uid;
 
-  CourtVerificationUpdate({super.key, required this.uid});
+  CourtVerificationUpdateFormScreen({super.key, required this.uid});
 
   @override
-  State<CourtVerificationUpdate> createState() =>
-      _CourtVerificationUpdateState();
+  State<CourtVerificationUpdateFormScreen> createState() =>
+      _CourtVerificationUpdateFormScreenState();
 }
 
-class _CourtVerificationUpdateState extends State<CourtVerificationUpdate> {
+class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpdateFormScreen> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController fatherNameController = TextEditingController();
@@ -78,7 +79,7 @@ class _CourtVerificationUpdateState extends State<CourtVerificationUpdate> {
       lastDate: DateTime(2101), // the latest possible date
     );
     if (picked != null && picked != selectedJoiningDate) {
-      String formattedDate = DateFormat('dd/MM/yyyy').format(picked);
+      String formattedDate = DateFormat('MM/dd/yyyy').format(picked);
 
       //setState(() {
       selectedJoiningDate = picked;
@@ -156,33 +157,24 @@ class _CourtVerificationUpdateState extends State<CourtVerificationUpdate> {
                   const SizedBox(
                     height: 16,
                   ),
-                  form_widget(
-                      maskFormatter: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                      ],
-                      controller: firstNameController
-                        ..text = data.data!.firstName!,
+                  CustomRequiredTextField(
+                      controller: firstNameController..text = data.data!.firstName!,
                       titleText: "First Name",
                       hintText: "Enter First Name",
-                      textInputType: TextInputType.text),
-                  form_widget(
-                      maskFormatter: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                      ],
-                      controller: lastNameController
-                        ..text = data.data!.lastName!,
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
+                      controller: lastNameController..text = data.data!.lastName!,
                       titleText: "Last Name",
-                      hintText: "Enter List Name",
-                      textInputType: TextInputType.text),
-                  form_widget(
-                      maskFormatter: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                      ],
-                      controller: fatherNameController
-                        ..text = data.data!.fatherName!,
+                      hintText: "Enter Last Name",
+                      textInputType: TextInputType.text
+                  ),
+                  CustomRequiredTextField(
+                      controller: fatherNameController..text = data.data!.fatherName!,
                       titleText: "Father Name",
                       hintText: "Enter Father Name",
-                      textInputType: TextInputType.text),
+                      textInputType: TextInputType.text
+                  ),
                   const SizedBox(
                     height: 16,
                   ),
@@ -215,7 +207,7 @@ class _CourtVerificationUpdateState extends State<CourtVerificationUpdate> {
                       ..text = formattedDate.toString(),
                     decoration: InputDecoration(
                       hintStyle: const TextStyle(color: Colors.grey),
-                      hintText: "dd/mm/yyyy",
+                      hintText: "mm/dd/yyyy",
                       suffixIcon: IconButton(
                           icon: const Icon(Icons.calendar_today),
                           onPressed: () => _selectJoiningDate(
@@ -223,55 +215,51 @@ class _CourtVerificationUpdateState extends State<CourtVerificationUpdate> {
                           ),
                     ),
                   ),
-                  form_widget(
+                  CustomRequiredTextField(
                       validator: addressValidator,
                       controller: addressController..text = data.data!.address!,
                       titleText: "Address",
                       hintText: "Enter Address",
-                      textInputType: TextInputType.text),
-                  SizedBox(height: ScreenSize.screenHeight / 6),
+                      textInputType: TextInputType.text
+                  ),
+                  const SizedBox(height: 24),
+                  BlocConsumer<CourtUpdateCubit, CourtUpdateState>(
+                      listener: (context, court) {
+                        if (court is CourtUpdateSuccessState) {
+                          if (court.data["status"] == 200) {
+                            context.pushReplacementNamed("bottomNav");
+                          }
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text(court.data["message"])));
+                        } else if (court is CourtUpdateErrorState) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text(court.message)));
+                        }
+                      }, builder: (context, court) {
+                    return CustomButton(
+                      isLoading: court is CourtUpdateLoadingState,
+                      onTap: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          courtVerificationUpdate();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Please Fill All Fields')));
+                        }
+                      },
+                      text: "SUBMIT",
+                      gradientColors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColorDark
+                      ],
+                    );
+                  })
                 ],
               );
             }
-            return const Center(
-              child: Text("Error..."),
-            );
+            return const SizedBox.shrink();
           })),
         ),
       ),
-      bottomSheet: BlocConsumer<CourtUpdateCubit, CourtUpdateState>(
-          listener: (context, court) {
-        if (court is CourtUpdateSuccessState) {
-          if (court.data["status"] == 200) {
-            context.pushReplacementNamed("bottomNav");
-          }
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(court.data["message"])));
-        } else if (court is CourtUpdateErrorState) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(court.message)));
-        }
-      }, builder: (context, court) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: CustomButton(
-            isLoading: court is CourtUpdateLoadingState,
-            onTap: () {
-              if (_formKey.currentState?.validate() ?? false) {
-                courtVerificationUpdate();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please Fill All Fields')));
-              }
-            },
-            text: "SUBMIT",
-            gradientColors: [
-              Theme.of(context).primaryColor,
-              Theme.of(context).primaryColorDark
-            ],
-          ),
-        );
-      }),
     );
   }
 }

@@ -4,22 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/documents/uploadDoc/Bloc/court_doc_upload_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/courtVerification/Document/Blocs/court_verification_documents_upload_bloc/court_verification_documents_upload_cubit.dart';
 
 import '../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../../common/id.dart';
 import '../../../common/pickphoto.dart';
-import '../../Bloc/court_verification_cubit.dart';
-import 'Bloc/court_doc_upload_state.dart';
+import '../../Form/Blocs/court_verification_save_form_bloc/court_verification_save_form_cubit.dart';
+import '../Blocs/court_verification_documents_upload_bloc/court_verification_documents_upload_state.dart';
 
-class CourtDocUpload extends StatefulWidget {
-  const CourtDocUpload({super.key});
+class CourtDocumentUploadScreen extends StatefulWidget {
+  const CourtDocumentUploadScreen({super.key});
 
   @override
-  State<CourtDocUpload> createState() => _CourtDocUploadState();
+  State<CourtDocumentUploadScreen> createState() => _CourtDocumentUploadScreenState();
 }
 
-class _CourtDocUploadState extends State<CourtDocUpload> {
+class _CourtDocumentUploadScreenState extends State<CourtDocumentUploadScreen> {
   void courtUploadDoc() {
     String token = context.read<TokenCubit>().state;
     String customerId = context.read<IdCubit>().state;

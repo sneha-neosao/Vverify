@@ -52,10 +52,10 @@ import '../screen/VerificationForms/ReferenceForm/DocUpload/UpdateDoc/reference_
 import '../screen/VerificationForms/ReferenceForm/DocUpload/uploadDoc/reference_upload_doc.dart';
 import '../screen/VerificationForms/ReferenceForm/Save/reference_form.dart';
 import '../screen/VerificationForms/ReferenceForm/Update/Reference_form_update.dart';
-import '../screen/VerificationForms/courtVerification/court_verification.dart';
-import '../screen/VerificationForms/courtVerification/documents/updateDoc/court_doc_update.dart';
-import '../screen/VerificationForms/courtVerification/documents/uploadDoc/court_doc_upload.dart';
-import '../screen/VerificationForms/courtVerification/update/court_verification_update.dart';
+import '../screen/VerificationForms/courtVerification/Form/Screens/court_verification_save_form_screen.dart';
+import '../screen/VerificationForms/courtVerification/Document/Screens/court_document_update_form_screen.dart';
+import '../screen/VerificationForms/courtVerification/Document/Screens/court_document_upload_screen.dart';
+import '../screen/VerificationForms/courtVerification/Form/Screens/court_verification_update_form_screen.dart';
 import '../screen/VerificationPending/Pagination/pending_doc_Pagination.dart';
 import '../screen/VerificationPending/verifyRequestUpdate/verify_request_edit_form_new.dart';
 
@@ -155,6 +155,9 @@ class AppRouter {
         },
       ),
 
+
+
+
       /// Education Verification Service related routes
       GoRoute(
         path: '/EducationList/:uid',
@@ -201,6 +204,7 @@ class AppRouter {
           );
         },
       ),
+
 
 
       /// Employment Verification Service related routes
@@ -292,7 +296,6 @@ class AppRouter {
           );
         },
       ),
-
       GoRoute(
         path: '/ApplyCouponScreen',
         name: "ApplyCouponScreen",
@@ -300,6 +303,7 @@ class AppRouter {
           return ApplyCouponScreen();
         },
       ),
+
 
 
       /// KYC Verification Service related routes
@@ -316,6 +320,44 @@ class AppRouter {
         builder: (context, state) {
           final uid = state.pathParameters['uid']!;
           return PanUpdateFormScreen(
+            uid: uid,
+          );
+        },
+      ),
+
+
+
+      /// Court Verification Service related routes
+      GoRoute(
+        path: '/CourtVerificationSaveFormScreen',
+        name: 'CourtVerificationSaveFormScreen',
+        builder: (context, state) {
+          return const CourtVerificationSaveFormScreen();
+        },
+      ),
+      GoRoute(
+        path: '/CourtVerificationUpdateFormScreen/:uid',
+        name: 'CourtVerificationUpdateFormScreen',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid']!;
+          return CourtVerificationUpdateFormScreen(
+            uid: uid,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/CourtDocumentUploadScreen',
+        name: 'CourtDocumentUploadScreen',
+        builder: (context, state) {
+          return const CourtDocumentUploadScreen();
+        },
+      ),
+      GoRoute(
+        path: '/CourtDocumentUpdateFormScreen/:uid',
+        name: 'CourtDocumentUpdateFormScreen',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid']!;
+          return CourtDocumentUpdateFormScreen(
             uid: uid,
           );
         },
@@ -517,13 +559,7 @@ class AppRouter {
           return const GstPanCinScreen();
         },
       ),
-      GoRoute(
-        path: '/CourtVerification',
-        name: 'CourtVerification',
-        builder: (context, state) {
-          return const CourtVerification();
-        },
-      ),
+
       GoRoute(
         path: '/ReferenceUploadDoc',
         name: 'ReferenceUploadDoc',
@@ -531,16 +567,7 @@ class AppRouter {
           return const ReferenceUploadDoc();
         },
       ),
-      GoRoute(
-        path: '/CourtVerificationUpdate/:uid',
-        name: 'CourtVerificationUpdate',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          return CourtVerificationUpdate(
-            uid: uid,
-          );
-        },
-      ),
+
       GoRoute(
         path: '/ReferenceUpdateDoc/:uid',
         name: 'ReferenceUpdateDoc',
@@ -568,16 +595,7 @@ class AppRouter {
           );
         },
       ),
-      GoRoute(
-        path: '/CourtDocUpdate/:uid',
-        name: 'CourtDocUpdate',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          return CourtDocUpdate(
-            uid: uid,
-          );
-        },
-      ),
+
       GoRoute(
         path: '/DrivingDocUpdate/:uid',
         name: 'DrivingDocUpdate',
@@ -590,13 +608,7 @@ class AppRouter {
       ),
 
 
-      GoRoute(
-        path: '/CourtDocUpload',
-        name: 'CourtDocUpload',
-        builder: (context, state) {
-          return const CourtDocUpload();
-        },
-      ),
+
       GoRoute(
         path: '/DriverDocUpload',
         name: 'DriverDocUpload',

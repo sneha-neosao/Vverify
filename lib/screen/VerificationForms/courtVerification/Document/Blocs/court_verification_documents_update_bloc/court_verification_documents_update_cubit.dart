@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../apiServices/api_services.dart';
-import 'court_doc_update_state.dart';
+import 'court_verification_documents_update_state.dart';
 class CourtDocUpdateCubit extends Cubit<CourtDocUpdateState> {
 
   ApiService _apiService;

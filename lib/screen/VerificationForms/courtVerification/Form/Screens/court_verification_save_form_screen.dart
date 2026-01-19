@@ -9,18 +9,21 @@ import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/commonComponent/screen_size.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
+import 'package:v_verify/screen/VerificationForms/common/validator.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
-import 'Bloc/court_verification_cubit.dart';
-import 'Bloc/court_verification_state.dart';
+import '../../../../../widgets/custom_not_required_text_field.dart';
+import '../Blocs/court_verification_save_form_bloc/court_verification_save_form_cubit.dart';
+import '../Blocs/court_verification_save_form_bloc/court_verification_save_form_state.dart';
 
-class CourtVerification extends StatefulWidget {
-  const CourtVerification({super.key});
+class CourtVerificationSaveFormScreen extends StatefulWidget {
+  const CourtVerificationSaveFormScreen({super.key});
 
   @override
-  State<CourtVerification> createState() => _CourtVerificationState();
+  State<CourtVerificationSaveFormScreen> createState() => _CourtVerificationSaveFormScreenState();
 }
 
-class _CourtVerificationState extends State<CourtVerification> {
+class _CourtVerificationSaveFormScreenState extends State<CourtVerificationSaveFormScreen> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController fatherNameController = TextEditingController();
@@ -40,6 +43,17 @@ class _CourtVerificationState extends State<CourtVerification> {
   void courtVerification() async {
     String token = context.read<TokenCubit>().state;
     String customerId = context.read<IdCubit>().state;
+
+    print("Court Verification Payload:");
+    print("customer_id: $customerId");
+    print("token: $token"); print("request_id: $requestId");
+    print("serviceRequestId: $serviceRequestId");
+    print("first_name: ${firstNameController.text.trim()}");
+    print("last_name: ${lastNameController.text.trim()}");
+    print("father_name: ${fatherNameController.text.trim()}");
+    print("dob: ${birthDateController.text.trim()}");
+    print("address: ${addressController.text.trim()}");
+
     context.read<CourtVerificationCubit>().courtVerificationForm(
         customer_id: customerId,
         token: token,
@@ -64,7 +78,7 @@ class _CourtVerificationState extends State<CourtVerification> {
       lastDate: DateTime.now(), // the latest possible date
     );
     if (picked != null && picked != selectedJoiningDate) {
-      String formattedDate = DateFormat('dd/MM/yyyy').format(picked);
+      String formattedDate = DateFormat('MM/dd/yyyy').format(picked);
 
       setState(() {
         selectedJoiningDate = picked;
@@ -123,7 +137,7 @@ class _CourtVerificationState extends State<CourtVerification> {
                         ListTile(
                           splashColor: Colors.transparent,
                           onTap: () {
-                            context.pushReplacementNamed("CourtDocUpload");
+                            context.pushReplacementNamed("CourtDocumentUploadScreen");
 
                             context
                                 .read<FormUploadCourtCubit>()
@@ -147,30 +161,24 @@ class _CourtVerificationState extends State<CourtVerification> {
                     );
                   }),
                 ),
-                form_widget(
-                    maskFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                    ],
+                CustomRequiredTextField(
                     controller: firstNameController,
                     titleText: "First Name",
                     hintText: "Enter First Name",
-                    textInputType: TextInputType.text),
-                form_widget(
-                    maskFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                    ],
+                    textInputType: TextInputType.text
+                ),
+                CustomRequiredTextField(
                     controller: lastNameController,
                     titleText: "Last Name",
-                    hintText: "Enter List Name",
-                    textInputType: TextInputType.text),
-                form_widget(
-                    maskFormatter: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                    ],
+                    hintText: "Enter Last Name",
+                    textInputType: TextInputType.text
+                ),
+                CustomRequiredTextField(
                     controller: fatherNameController,
                     titleText: "Father Name",
                     hintText: "Enter Father Name",
-                    textInputType: TextInputType.text),
+                    textInputType: TextInputType.text
+                ),
                 const SizedBox(
                   height: 16,
                 ),
@@ -197,7 +205,7 @@ class _CourtVerificationState extends State<CourtVerification> {
                   inputFormatters: [maskFormatter],
                   controller: birthDateController,
                   decoration: InputDecoration(
-                    hintText: "dd/mm/yyyy",
+                    hintText: "mm/dd/yyyy",
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.calendar_today),
                       onPressed: () => _selectJoiningDate(
@@ -205,13 +213,14 @@ class _CourtVerificationState extends State<CourtVerification> {
                     ),
                   ),
                 ),
-                form_widget(
-                    // validator: addressValidator,
+                CustomRequiredTextField(
+                    validator: addressValidator,
                     controller: addressController,
                     titleText: "Address",
                     hintText: "Enter Address",
-                    textInputType: TextInputType.text),
-                SizedBox(height: ScreenSize.screenHeight / 10),
+                    textInputType: TextInputType.text
+                ),
+                const SizedBox(height: 24),
                 BlocConsumer<CourtVerificationCubit, CourtVerificationState>(
                     listener: (context, court) {
                   if (court is CourtVerificationErrorState) {

@@ -436,6 +436,7 @@ class ApiService {
   }
 
 
+
   /// Education Verification
   Future<Response> educationList({
     required String token,
@@ -600,6 +601,7 @@ class ApiService {
       throw Exception('Failed to fetch educationDocumentList: $e');
     }
   }
+
 
 
   /// Employment Verification
@@ -774,6 +776,8 @@ class ApiService {
       throw Exception('Failed to fetch employmentDocumentList: $e');
     }
   }
+
+
 
   ///  Address Verification
   Future<Response> addressList({
@@ -954,6 +958,247 @@ class ApiService {
       throw Exception('Failed to fetch addressDocumentList: $e');
     }
   }
+
+
+
+  /// KYC (PAN) Legal Verification
+  Future<Response> panNumberSave(
+      {required String token,
+        required String serviceRequestId,
+        required String requestId,
+        required String customer_id,
+        required String panNumber}) async {
+    try {
+      Map<String, dynamic> data = {
+        "customer_id": customer_id,
+        "request_id": requestId,
+        "service_request_id": serviceRequestId,
+        "pan_number": panNumber,
+      };
+
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/pan/store', queryParameters: data);
+      // log('panNumberSave Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in panNumberSave: $e');
+      throw Exception('Failed to fetch panNumberSave: $e');
+    }
+  }
+
+  Future<Response> panNumberShowData({
+    required String token,
+    required String uid,
+    required String request_id,
+    required String service_request_id,
+    required String customer_id,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "customer_id": customer_id
+    });
+    print(formData.fields);
+    print(token);
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/pan/show/$uid', data: formData);
+      // log('panNumberSave Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in panNumberShowData: $e');
+      throw Exception('Failed to fetch panNumberShowData: $e');
+    }
+  }
+
+  Future<Response> panNumberUpdate(
+      {required String token,
+        required String serviceRequestId,
+        required String requestId,
+        required String customer_id,
+        required String panNumber}) async {
+    try {
+      Map<String, dynamic> data = {
+        "customer_id": customer_id,
+        "request_id": requestId,
+        "service_request_id": serviceRequestId,
+        "pan_number": panNumber,
+      };
+
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/pan/update', queryParameters: data);
+      // log('panNumberUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in panNumberUpdate: $e');
+      throw Exception('Failed to fetch panNumberUpdate: $e');
+    }
+  }
+
+
+
+  /// Court Legal Verification
+  Future<Response> courtVerification({
+    required String customer_id,
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required String first_name,
+    required String last_name,
+    required String father_name,
+    required String dob,
+    required String address,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "first_name": first_name,
+      "last_name": last_name,
+      "father_name": father_name,
+      "dob": dob,
+      "address": address,
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/court/form/store', data: formData);
+      // log('courtVerification Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in courtVerification: $e');
+      throw Exception('Failed to fetch courtVerification: $e');
+    }
+  }
+
+  Future<Response> courtVerificationUpdate({
+    required String token,
+    required String customer_id,
+    required String request_id,
+    required String service_request_id,
+    required String first_name,
+    required String last_name,
+    required String father_name,
+    required String dob,
+    required String address,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "first_name": first_name,
+      "last_name": last_name,
+      "father_name": father_name,
+      "dob": dob,
+      "address": address,
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/court/form/update', data: formData);
+      log('courtVerificationUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in courtVerificationUpdate: $e');
+      throw Exception('Failed to fetch courtVerificationUpdate: $e');
+    }
+  }
+
+  Future<Response> courtVerificationDocUpload({
+    required String customer_id,
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required File aadhaar_document,
+    required File pan_document,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "aadhaar_document": await MultipartFile.fromFile(
+        aadhaar_document.path,
+        filename: aadhaar_document.path.split('/').last, // Use the file name
+      ),
+      "pan_document": await MultipartFile.fromFile(
+        pan_document.path,
+        filename: pan_document.path.split('/').last, // Use the file name
+      ),
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/court/document/store', data: formData);
+      // log('courtVerificationDocUpload Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in courtVerificationDocUpload: $e');
+      throw Exception('Failed to fetch courtVerificationDocUpload: $e');
+    }
+  }
+
+  Future<Response> courtVerificationDocUpdate({
+    required String customer_id,
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required File aadhaar_document,
+    required File pan_document,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "aadhaar_document": aadhaar_document.path.isEmpty
+          ? null
+          : await MultipartFile.fromFile(
+        aadhaar_document.path,
+        filename:
+        aadhaar_document.path.split('/').last, // Use the file name
+      ),
+      "pan_document": pan_document.path.isEmpty
+          ? null
+          : await MultipartFile.fromFile(
+        pan_document.path,
+        filename: pan_document.path.split('/').last, // Use the file name
+      ),
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/court/document/update', data: formData);
+      // log('courtVerificationDocUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in courtVerificationDocUpdate: $e');
+      throw Exception('Failed to fetch courtVerificationDocUpdate: $e');
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1346,80 +1591,7 @@ class ApiService {
     }
   }
 
-  Future<Response> panNumberSave(
-      {required String token,
-      required String serviceRequestId,
-      required String requestId,
-      required String customer_id,
-      required String panNumber}) async {
-    try {
-      Map<String, dynamic> data = {
-        "customer_id": customer_id,
-        "request_id": requestId,
-        "service_request_id": serviceRequestId,
-        "pan_number": panNumber,
-      };
 
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/pan/store', queryParameters: data);
-      // log('panNumberSave Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in panNumberSave: $e');
-      throw Exception('Failed to fetch panNumberSave: $e');
-    }
-  }
-
-  Future<Response> panNumberShowData({
-    required String token,
-    required String uid,
-    required String request_id,
-    required String service_request_id,
-    required String customer_id,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "customer_id": customer_id
-    });
-    print(formData.fields);
-    print(token);
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/pan/show/$uid', data: formData);
-      // log('panNumberSave Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in panNumberShowData: $e');
-      throw Exception('Failed to fetch panNumberShowData: $e');
-    }
-  }
-
-  Future<Response> panNumberUpdate(
-      {required String token,
-      required String serviceRequestId,
-      required String requestId,
-      required String customer_id,
-      required String panNumber}) async {
-    try {
-      Map<String, dynamic> data = {
-        "customer_id": customer_id,
-        "request_id": requestId,
-        "service_request_id": serviceRequestId,
-        "pan_number": panNumber,
-      };
-
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/pan/update', queryParameters: data);
-      // log('panNumberUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in panNumberUpdate: $e');
-      throw Exception('Failed to fetch panNumberUpdate: $e');
-    }
-  }
 
   Future<Response> AadhaarVerifyOtp(
       {required String token,
@@ -2150,38 +2322,7 @@ class ApiService {
   //   }
   // }
 
-  Future<Response> courtVerification({
-    required String customer_id,
-    required String token,
-    required String request_id,
-    required String service_request_id,
-    required String first_name,
-    required String last_name,
-    required String father_name,
-    required String dob,
-    required String address,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "first_name": first_name,
-      "last_name": last_name,
-      "father_name": father_name,
-      "dob": dob,
-      "address": address,
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/court/form/store', data: formData);
-      // log('courtVerification Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in courtVerification: $e');
-      throw Exception('Failed to fetch courtVerification: $e');
-    }
-  }
+
 
   Future<Response> courtShowData(
       {required String token, required String uid}) async {
@@ -2196,38 +2337,7 @@ class ApiService {
     }
   }
 
-  Future<Response> courtVerificationUpdate({
-    required String token,
-    required String customer_id,
-    required String request_id,
-    required String service_request_id,
-    required String first_name,
-    required String last_name,
-    required String father_name,
-    required String dob,
-    required String address,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "first_name": first_name,
-      "last_name": last_name,
-      "father_name": father_name,
-      "dob": dob,
-      "address": address,
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/court/form/update', data: formData);
-      // log('courtVerificationUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in courtVerificationUpdate: $e');
-      throw Exception('Failed to fetch courtVerificationUpdate: $e');
-    }
-  }
+
 
   Future<Response> referenceCheckDocUpload({
     required String token,
@@ -2463,77 +2573,6 @@ class ApiService {
     } catch (e) {
       // log('Error in gstPanCinDocUpdate: $e');
       throw Exception('Failed to fetch gstPanCinDocUpdate: $e');
-    }
-  }
-
-  Future<Response> courtVerificationDocUpload({
-    required String customer_id,
-    required String token,
-    required String request_id,
-    required String service_request_id,
-    required File aadhaar_document,
-    required File pan_document,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "aadhaar_document": await MultipartFile.fromFile(
-        aadhaar_document.path,
-        filename: aadhaar_document.path.split('/').last, // Use the file name
-      ),
-      "pan_document": await MultipartFile.fromFile(
-        pan_document.path,
-        filename: pan_document.path.split('/').last, // Use the file name
-      ),
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/court/document/store', data: formData);
-      // log('courtVerificationDocUpload Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in courtVerificationDocUpload: $e');
-      throw Exception('Failed to fetch courtVerificationDocUpload: $e');
-    }
-  }
-
-  Future<Response> courtVerificationDocUpdate({
-    required String customer_id,
-    required String token,
-    required String request_id,
-    required String service_request_id,
-    required File aadhaar_document,
-    required File pan_document,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "aadhaar_document": aadhaar_document.path.isEmpty
-          ? null
-          : await MultipartFile.fromFile(
-              aadhaar_document.path,
-              filename:
-                  aadhaar_document.path.split('/').last, // Use the file name
-            ),
-      "pan_document": pan_document.path.isEmpty
-          ? null
-          : await MultipartFile.fromFile(
-              pan_document.path,
-              filename: pan_document.path.split('/').last, // Use the file name
-            ),
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/court/document/update', data: formData);
-      // log('courtVerificationDocUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in courtVerificationDocUpdate: $e');
-      throw Exception('Failed to fetch courtVerificationDocUpdate: $e');
     }
   }
 

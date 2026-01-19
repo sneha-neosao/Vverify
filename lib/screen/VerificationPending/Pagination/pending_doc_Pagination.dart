@@ -122,7 +122,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         context.pushNamed("GstPanCinScreen");
         break;
       case "court-legal-verification":
-        context.pushNamed("CourtVerification");
+        context.pushNamed("CourtVerificationSaveFormScreen");
         break;
     }
   }
@@ -200,10 +200,10 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
 
       case "court-legal-verification":
         data[index].services![servicesIndex].dataPreference == "form"
-            ? context.pushNamed("CourtVerificationUpdate", pathParameters: {
+            ? context.pushNamed("CourtVerificationUpdateFormScreen", pathParameters: {
                 "uid": data[index].services![servicesIndex].uid.toString()
               })
-            : context.pushNamed("CourtDocUpdate", pathParameters: {
+            : context.pushNamed("CourtDocumentUpdateFormScreen", pathParameters: {
                 "uid": data[index].services![servicesIndex].uid.toString()
               });
         break;
@@ -229,11 +229,10 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("VVerification Pending",
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge!
-                      .copyWith(fontSize: 28)),
+              Text(
+                  "VVerification Pending",
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 28)
+              ),
               isLoading && data.isEmpty
                   ? Expanded(
                       child: ListView.builder(
@@ -250,7 +249,9 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius:
-                                            BorderRadius.circular(12))),
+                                            BorderRadius.circular(12)
+                                    )
+                                ),
                               ),
                             );
                           }),
@@ -294,14 +295,14 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                       status = rawStatus; // fallback for other values
                                     }
 
-                                    return Card(
+                                  return Card(
                                   color: Theme.of(context).cardColor,
                                   child: Column(
                                     children: [
                                       ListTile(
                                       onTap: () {
-                                    context.read<IsPressedCubit>().isPressed(index);
-                                    },
+                                          context.read<IsPressedCubit>().isPressed(index);
+                                      },
                                       tileColor: Colors.orangeAccent,
                                       shape: const RoundedRectangleBorder(
                                         borderRadius: BorderRadius.only(
@@ -322,14 +323,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                   "${data[index].first_name} ${data[index].middle_name} ${data[index].last_name}",
                                                   maxLines: 2,
                                                   softWrap: true,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall!
-                                                      .copyWith(
-                                                    color: Colors.black,
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold,),
                                                 ),
                                               ),
 
@@ -339,8 +333,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                   context.pushNamed(
                                                     "VerifyRequestEditFormNew",
                                                     pathParameters: {
-                                                      'request_id':
-                                                      data[index].requestId!.toString(),
+                                                      'request_id': data[index].requestId!.toString(),
                                                       'uuid': data[index].uuid.toString(),
                                                     },
                                                   );
@@ -397,74 +390,48 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                           ),
                                         ],
                                       )
-                                          : Text(
-                                        data[index].entity!.entityName.toString(),
-                                      ),
+                                          : Text(data[index].entity!.entityName.toString(),),
                                     ),
                                       isPressed == index
                                           ? ListView.builder(
                                               physics:
                                                   const NeverScrollableScrollPhysics(),
                                               shrinkWrap: true,
-                                              itemCount:
-                                                  data[index].services!.length,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int servicesIndex) {
+                                              itemCount: data[index].services!.length,
+                                              itemBuilder: (BuildContext context, int servicesIndex) {
+
+                                                final rawServiceStatus = data[index].services![servicesIndex].status?.toLowerCase() ?? "";
+                                                String serviceStatus;
+                                                print("verification service status : ${rawServiceStatus}");
+
+                                                if (rawServiceStatus.isEmpty || rawServiceStatus == "-" || rawServiceStatus == "" || rawServiceStatus == "NA") {
+                                                  serviceStatus = "pending";
+                                                } else if (rawServiceStatus == "discrepancy" || rawServiceStatus == "rejected" || rawServiceStatus == "failed" ) {
+                                                  serviceStatus = "discrepancy";
+                                                } else if (rawServiceStatus == "verified" || rawServiceStatus == "clear") {
+                                                  serviceStatus = "verified";
+                                                } else {
+                                                  serviceStatus = rawServiceStatus; // fallback for other values
+                                                }
+
                                                 return Column(
                                                   children: [
                                                     ListTile(
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 8,
-                                                                vertical: 4),
+                                                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                                         onTap: () {
-                                                          serviceRequestId = data[
-                                                                  index]
-                                                              .services![
-                                                                  servicesIndex]
-                                                              .serviceRequestId
-                                                              .toString();
+                                                          serviceRequestId = data[index].services![servicesIndex].serviceRequestId.toString();
 
-                                                          requestId =
-                                                              data[index]
-                                                                  .requestId
-                                                                  .toString();
+                                                          requestId = data[index].requestId.toString();
 
-                                                          if (data[index]
-                                                                  .detailsUpdated ==
-                                                              0) {
-                                                            context.pushNamed(
-                                                                "verifyRequestUpdateNew",
-                                                                pathParameters: {
-                                                                  'uuid': data[
-                                                                  index]
-                                                                      .uuid
-                                                                      .toString()
-                                                                });
-                                                          } else if (data[index]
-                                                                  .detailsUpdated ==
-                                                              1) {
-                                                            if (data[index]
-                                                                    .services![
-                                                                        servicesIndex]
-                                                                    .status ==
-                                                                "pending") {
-                                                              if (data[index]
-                                                                      .services![
-                                                                          servicesIndex]
-                                                                      .serviceTitle ==
-                                                                  "Employment Verification") {
+                                                          if (data[index].detailsUpdated == 0) {
+                                                            context.pushNamed("verifyRequestUpdateNew", pathParameters: {'uuid': data[index].uuid.toString()});
+                                                          } else if (data[index].detailsUpdated == 1) {
+                                                            if (data[index].services![servicesIndex].status == "pending") {
+                                                              if (data[index].services![servicesIndex].serviceTitle == "Employment Verification") {
                                                                 context.pushNamed("EmployDataList",pathParameters: {
                                                                   'uid': data[index].case_uuid.toString()}
                                                                 );
-                                                              } else if (data[
-                                                                          index]
-                                                                      .services![
-                                                                          servicesIndex]
-                                                                      .serviceTitle ==
-                                                                  "Education Verification") {
+                                                              } else if (data[index].services![servicesIndex].serviceTitle == "Education Verification") {
                                                                 print("case_uuid at pending doc: ${data[index].case_uuid.toString()}");
                                                                 context.pushNamed("EducationList",pathParameters: {
                                                                   'uid': data[index].case_uuid.toString()
@@ -475,58 +442,16 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                   'uid': data[index].case_uuid.toString()
                                                                 });
                                                               } else {
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(const SnackBar(
-                                                                        content:
-                                                                            Text("Please wait your application under process")));
+                                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait your application under process")));
                                                               }
-                                                            } else if (data[
-                                                                        index]
-                                                                    .services![
-                                                                        servicesIndex]
-                                                                    .status ==
-                                                                "verified") {
-                                                              ScaffoldMessenger
-                                                                      .of(
-                                                                          context)
-                                                                  .showSnackBar(
-                                                                      const SnackBar(
-                                                                          content:
-                                                                              Text("Your application already verified")));
-                                                            } else if (data[
-                                                                        index]
-                                                                    .services![
-                                                                        servicesIndex]
-                                                                    .status ==
-                                                                "rejected") {
-                                                              secondCheckCase(
-                                                                  data: data,
-                                                                  context:
-                                                                      context,
-                                                                  index: index,
-                                                                  servicesIndex:
-                                                                      servicesIndex);
-                                                            } else if (data[
-                                                                        index]
-                                                                    .services![
-                                                                        servicesIndex]
-                                                                    .status ==
-                                                                "failed") {
-                                                              secondCheckCase(
-                                                                  data: data,
-                                                                  context:
-                                                                      context,
-                                                                  index: index,
-                                                                  servicesIndex:
-                                                                      servicesIndex);
+                                                            } else if (data[index].services![servicesIndex].status == "verified") {
+                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your application already verified")));
+                                                            } else if (data[index].services![servicesIndex].status == "rejected") {
+                                                              secondCheckCase(data: data, context: context,index: index, servicesIndex: servicesIndex);
+                                                            } else if (data[index].services![servicesIndex].status == "failed") {
+                                                              secondCheckCase(data: data, context: context, index: index, servicesIndex: servicesIndex);
                                                             } else {
-                                                              checkCase(
-                                                                title: data[index].services![servicesIndex].serviceNavigate.toString(),
-                                                                index: index,
-                                                                context: context,
-                                                              );
-
+                                                              checkCase(title: data[index].services![servicesIndex].serviceNavigate.toString(), index: index, context: context,);
                                                             }
                                                           }
                                                         },
@@ -534,29 +459,21 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                           "$imageUrl${data[index].services![servicesIndex].serviceIcon}",
                                                           width: 30,
                                                         ),
-                                                        title: Text(
-                                                          data[index]
-                                                              .services![
-                                                                  servicesIndex]
-                                                              .serviceTitle!
-                                                              .toUpperCase(),
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodySmall,
+                                                        title: Text(data[index].services![servicesIndex].serviceTitle!.toUpperCase(),
+                                                          style: Theme.of(context).textTheme.bodySmall,
                                                         ),
                                                         subtitle: Row(
                                                           children: [
                                                             Icon(
-                                                              status.toLowerCase() == "verified"
+                                                              serviceStatus.toLowerCase() == "verified"
                                                                   ? Icons.verified
-                                                                  : status.toLowerCase() == "discrepancy"
+                                                                  : serviceStatus.toLowerCase() == "discrepancy"
                                                                   ? Icons.not_interested
                                                                   : Icons.schedule,
                                                               color:
-                                                              status.toLowerCase() == "verified"
+                                                              serviceStatus.toLowerCase() == "verified"
                                                                   ? Colors.green
-                                                                  : status.toLowerCase() == "discrepancy"
+                                                                  : serviceStatus.toLowerCase() == "discrepancy"
                                                                   ? Colors.red
                                                                   : Colors.orangeAccent,
                                                               size: 14,
@@ -565,9 +482,9 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                               width: 4,
                                                             ),
                                                             Text(
-                                                                status.toLowerCase() == "verified"
+                                                                serviceStatus.toLowerCase() == "verified"
                                                                   ? "Verified"
-                                                                  : status.toLowerCase() == "discrepancy"
+                                                                  : serviceStatus.toLowerCase() == "discrepancy"
                                                                   ? "Discrepancy"
                                                                   : "Pending",
                                                                 style: Theme.of(
@@ -577,25 +494,16 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                     .copyWith(
                                                                     fontSize:
                                                                     14,
-                                                                    color: status.toLowerCase() == "verified"
+                                                                    color: serviceStatus.toLowerCase() == "verified"
                                                                         ? Colors.green
-                                                                        : status.toLowerCase() == "discrepancy"
+                                                                        : serviceStatus.toLowerCase() == "discrepancy"
                                                                         ? Colors.red
                                                                         : Colors.orangeAccent
                                                                 )
                                                             ),
                                                           ],
                                                         ),
-                                                        trailing: data[index]
-                                                                        .services![
-                                                                            servicesIndex]
-                                                                        .status ==
-                                                                    "failed" ||
-                                                                data[index]
-                                                                        .services![
-                                                                            servicesIndex]
-                                                                        .status ==
-                                                                    "rejected"
+                                                        trailing: data[index].services![servicesIndex].status == "failed" || data[index].services![servicesIndex].status == "rejected"
                                                             ? TextButton(
                                                                 onPressed: null,
                                                                 child: Text(
@@ -605,42 +513,17 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                       .textTheme
                                                                       .bodySmall,
                                                                 ))
-                                                            :
-                                                            // data[index]
-                                                            //                 .services![servicesIndex]
-                                                            //                 .status ==
-                                                            //             "pending"
-                                                            //         ? TextButton(
-                                                            //             onPressed:
-                                                            //                 null,
-                                                            //             child: Text(
-                                                            //               "Wait For Verified >",
-                                                            //               style: Theme.of(
-                                                            //                       context)
-                                                            //                   .textTheme
-                                                            //                   .bodySmall,
-                                                            //             ))
-                                                            //         :
-                                                            data[index]
-                                                                        .services![
-                                                                            servicesIndex]
-                                                                        .status ==
-                                                                    "pending"
+                                                            : data[index].services![servicesIndex].status == "pending"
                                                                 ? const SizedBox()
                                                                 : TextButton(
-                                                                    onPressed:
-                                                                        null,
+                                                                    onPressed: null,
                                                                     child: Text(
                                                                       "ADD DETAILS >",
-                                                                      style: Theme.of(
-                                                                              context)
-                                                                          .textTheme
-                                                                          .bodySmall,
-                                                                    ))),
-                                                    data[index]
-                                                                .services!
-                                                                .length ==
-                                                            1
+                                                                      style: Theme.of(context).textTheme.bodySmall,
+                                                                    )
+                                                        )
+                                                    ),
+                                                    data[index].services!.length == 1
                                                         ? const SizedBox()
                                                         : const Divider(),
                                                   ],

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../apiServices/api_services.dart';
-import 'court_verification_state.dart';
+import '../../../../../../../apiServices/api_services.dart';
+import 'court_verification_save_form_state.dart';
 
 class CourtVerificationCubit extends Cubit<CourtVerificationState> {
   ApiService _apiService;

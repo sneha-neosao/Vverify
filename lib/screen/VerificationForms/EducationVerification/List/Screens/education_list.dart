@@ -363,7 +363,7 @@ class _EducationListState extends State<EducationList> {
                                             print('education_uuid: ${data.data![index].education_uuid}');
 
                                             if (data.data![index].v_status ==
-                                                "") {
+                                                "" ) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(const SnackBar(
                                                       content: Text(

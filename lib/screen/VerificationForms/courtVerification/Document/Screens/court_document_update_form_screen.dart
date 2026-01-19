@@ -4,27 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/documents/uploadDoc/Bloc/court_doc_upload_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/courtVerification/Document/Blocs/court_verification_documents_upload_bloc/court_verification_documents_upload_cubit.dart';
 
 import '../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../../common/id.dart';
 import '../../../common/pickphoto.dart';
-import '../../update/ShowData/Model/show_court_data_model.dart';
-import '../../update/ShowData/bloc/show_court_data_cubit.dart';
-import '../../update/ShowData/bloc/show_court_data_state.dart';
-import 'bloc/court_doc_update_cubit.dart';
-import 'bloc/court_doc_update_state.dart';
+import '../../Form/Models/court_verification_show_details_model.dart';
+import '../../Form/Blocs/court_verification_show_details_bloc/court_verification_show_details_cubit.dart';
+import '../../Form/Blocs/court_verification_show_details_bloc/court_verification_show_details_state.dart';
+import '../Blocs/court_verification_documents_update_bloc/court_verification_documents_update_cubit.dart';
+import '../Blocs/court_verification_documents_update_bloc/court_verification_documents_update_state.dart';
 
-class CourtDocUpdate extends StatefulWidget {
+class CourtDocumentUpdateFormScreen extends StatefulWidget {
   String uid;
 
-  CourtDocUpdate({super.key, required this.uid});
+  CourtDocumentUpdateFormScreen({super.key, required this.uid});
 
   @override
-  State<CourtDocUpdate> createState() => _CourtDocUpdateState();
+  State<CourtDocumentUpdateFormScreen> createState() => _CourtDocumentUpdateFormScreenState();
 }
 
-class _CourtDocUpdateState extends State<CourtDocUpdate> {
+class _CourtDocumentUpdateFormScreenState extends State<CourtDocumentUpdateFormScreen> {
   @override
   void initState() {
     courtDocumentsShowData();

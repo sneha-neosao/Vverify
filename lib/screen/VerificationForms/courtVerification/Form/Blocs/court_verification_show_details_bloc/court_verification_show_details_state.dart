@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../Model/show_court_data_model.dart';
+import '../../Models/court_verification_show_details_model.dart';
 
 class ShowCourtDataState extends Equatable {
   @override

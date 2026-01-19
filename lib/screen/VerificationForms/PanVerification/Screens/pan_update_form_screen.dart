@@ -55,9 +55,6 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
             if (showData is PanVerificationShowSuccessState) {
               PanVerificationShowModel data = showData.panVerificationShowModel;
               panVerificationController.text = data.data!.panNumber.toString();
-              // rejection_reason = data.data!.reason;
-              // setState(() {
-              // });
             }
           }, builder: (context, panShowData) {
             return Form(
@@ -80,24 +77,6 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                     "Let's Verify PAN Card",
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.orange),
                   ),
-                  // Text(
-                  //   "Rejected Reason",
-                  //   style: Theme.of(context)
-                  //       .textTheme
-                  //       .bodyLarge!
-                  //       .copyWith(color: Colors.red),
-                  // ),
-                  // const SizedBox(
-                  //   height: 4,
-                  // ),
-                  // Text(
-                  //   rejection_reason ?? "",
-                  //   style: Theme.of(context)
-                  //       .textTheme
-                  //       .bodySmall!
-                  //       .copyWith(color: Colors.red),
-                  // ),
-
                   const SizedBox(
                     height: 16,
                   ),
@@ -143,10 +122,7 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                                     panNumber: panVerificationController.text
                                         .toUpperCase());
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text("Please validate PAN number")));
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please validate PAN number")));
                           }
                         },
                         text: "SUBMIT",

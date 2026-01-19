@@ -47,7 +47,7 @@ void checkCase({required String title, String? uuid,required BuildContext contex
       context.pushNamed("GstPanCinScreen");
       break;
     case "Court Legal Verification":
-      context.pushNamed("CourtVerification");
+      context.pushNamed("CourtVerificationSaveFormScreen");
       break;
   }
 }
@@ -123,10 +123,10 @@ void secondCheckCase(
 
     case "Court Legal Verification":
       data.data![index].services![servicesIndex].dataPreference == "form"
-          ? context.pushNamed("CourtVerificationUpdate", pathParameters: {
+          ? context.pushNamed("CourtVerificationUpdateFormScreen", pathParameters: {
               "uid": data.data![index].services![servicesIndex].uid.toString()
             })
-          : context.pushNamed("CourtDocUpdate", pathParameters: {
+          : context.pushNamed("CourtDocumentUpdateFormScreen", pathParameters: {
               "uid": data.data![index].services![servicesIndex].uid.toString()
             });
       break;
@@ -342,8 +342,24 @@ class _PendingDocState extends State<PendingDoc> {
                                             physics: const NeverScrollableScrollPhysics(),
                                             shrinkWrap: true,
                                             itemCount: data.data![index].services!.length,
-                                            itemBuilder: (BuildContext context,
-                                                int servicesIndex) {
+                                            itemBuilder: (BuildContext context, int servicesIndex) {
+
+                                              final rawServiceStatus = data.data![index].services![servicesIndex].status?.toLowerCase() ?? "";
+                                              String serviceStatus;
+                                              print("verification service status : ${rawServiceStatus}");
+
+                                              if (rawServiceStatus.isEmpty || rawServiceStatus == "-" || rawServiceStatus == "" || rawServiceStatus == "NA") {
+                                                serviceStatus = "pending";
+                                              } else if (rawStatus == "discrepancy") {
+                                                serviceStatus = "discrepancy";
+                                              } else if (rawStatus == "verified" || rawStatus == "clear") {
+                                                serviceStatus = "verified";
+                                              } else if (rawStatus == "rejected") {
+                                                serviceStatus = "rejected";
+                                              }else {
+                                                serviceStatus = rawServiceStatus; // fallback for other values
+                                              }
+
                                               return Column(
                                                 children: [
                                                   ListTile(
@@ -429,15 +445,15 @@ class _PendingDocState extends State<PendingDoc> {
                                                     subtitle: Row(
                                                       children: [
                                                         Icon(
-                                                          status.toLowerCase() == "verified"
+                                                          serviceStatus.toLowerCase() == "verified"
                                                               ? Icons.verified
-                                                              : status.toLowerCase() == "discrepancy"
+                                                              : serviceStatus.toLowerCase() == "discrepancy"
                                                               ? Icons.not_interested
                                                               : Icons.schedule,
                                                           color:
-                                                          status.toLowerCase() == "verified"
+                                                          serviceStatus.toLowerCase() == "verified"
                                                               ? Colors.green
-                                                              : status.toLowerCase() == "discrepancy"
+                                                              : serviceStatus.toLowerCase() == "discrepancy"
                                                               ? Colors.red
                                                               : Colors.orangeAccent,
                                                           size: 14,
@@ -446,9 +462,9 @@ class _PendingDocState extends State<PendingDoc> {
                                                           width: 4,
                                                         ),
                                                         Text(
-                                                            status.toLowerCase() == "verified"
+                                                            serviceStatus.toLowerCase() == "verified"
                                                                 ? "Verified"
-                                                                : status.toLowerCase() == "discrepancy"
+                                                                : serviceStatus.toLowerCase() == "discrepancy"
                                                                 ? "Discrepancy"
                                                                 : "Pending",
                                                             style: Theme.of(
@@ -458,9 +474,9 @@ class _PendingDocState extends State<PendingDoc> {
                                                                 .copyWith(
                                                                 fontSize:
                                                                 14,
-                                                                color: status.toLowerCase() == "verified"
+                                                                color: serviceStatus.toLowerCase() == "verified"
                                                                     ? Colors.green
-                                                                    : status.toLowerCase() == "discrepancy"
+                                                                    : serviceStatus.toLowerCase() == "discrepancy"
                                                                     ? Colors.red
                                                                     : Colors.orangeAccent
                                                             )
