@@ -6,8 +6,8 @@ import 'package:v_verify/screen/Home%20screen/home_page.dart';
 import 'package:v_verify/screen/Login-Screen/login_screen.dart';
 import 'package:v_verify/screen/Order%20Details/order_details.dart';
 import 'package:v_verify/screen/Payment%20Successful/payment_successful.dart';
-import 'package:v_verify/screen/ServicesAndPrice/apply_coupon_screen.dart';
-import 'package:v_verify/screen/ServicesAndPrice/services_and_price.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Screens/apply_coupon_screen.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Screens/services_and_price_screen.dart';
 import 'package:v_verify/screen/SplashScreen/SplashScreen.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Screens/address_documnet_upload_screen.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Screens/address_list.dart';
@@ -297,10 +297,12 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/ApplyCouponScreen',
+        path: '/ApplyCouponScreen/:subtotal/:entityId',
         name: "ApplyCouponScreen",
         builder: (context, state) {
-          return ApplyCouponScreen();
+          final subtotal = state.pathParameters['subtotal'] ?? "";
+          final entityId = state.pathParameters['entityId'] ?? "";
+          return ApplyCouponScreen(subTotal: subtotal,entity_id: entityId,);
         },
       ),
 

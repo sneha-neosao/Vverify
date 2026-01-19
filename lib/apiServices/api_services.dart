@@ -2654,9 +2654,21 @@ class ApiService {
     }
   }
 
-
-
-
-
-
+  Future<Response> applyCoupon({
+    required String token,
+    required String customer_id,
+    required String subtotal,
+    required String coupon_code
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.post('calculate/amount',
+        data: { "customer_id": customer_id, "subtotal": subtotal, "coupon_code": coupon_code, },);
+      log('apply coupon Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in apply coupon: $e');
+      throw Exception('Failed to fetch employShowData: $e');
+    }
+  }
 }

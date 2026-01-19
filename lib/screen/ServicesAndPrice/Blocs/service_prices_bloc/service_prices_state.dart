@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../model/servicePrice_model.dart';
+import '../../Models/service_prices_model.dart';
 
 class ServicePriceState extends Equatable {
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-import 'package:v_verify/screen/ServicesAndPrice/bloc_checkout/checkout_state.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_state.dart';
 
 class CheckoutCubit extends Cubit<CheckOutState> {
   ApiService _apiService;

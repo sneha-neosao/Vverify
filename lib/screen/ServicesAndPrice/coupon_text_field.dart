@@ -33,14 +33,6 @@ class CouponTextField extends StatelessWidget {
         const SizedBox(
           height: 16,
         ),
-        Text(titleText,
-            style: Theme.of(context)
-            .textTheme
-            .bodySmall!
-            .copyWith(fontWeight: FontWeight.w700,fontSize: 16)),
-        const SizedBox(
-          height: 16,
-        ),
         TextFormField(
             textInputAction: TextInputAction.next,
             onFieldSubmitted: (_) {

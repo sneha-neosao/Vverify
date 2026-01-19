@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-import 'package:v_verify/screen/ServicesAndPrice/bloc/servicePrice_state.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/service_prices_bloc/service_prices_state.dart';
 
-import '../model/servicePrice_model.dart';
+import '../../Models/service_prices_model.dart';
 
 class ServicePriceCubit extends Cubit<ServicePriceState> {
   ApiService _apiService;
