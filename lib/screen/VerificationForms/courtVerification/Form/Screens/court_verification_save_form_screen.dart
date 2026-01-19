@@ -200,6 +200,7 @@ class _CourtVerificationSaveFormScreenState extends State<CourtVerificationSaveF
                   height: 8,
                 ),
                 TextFormField(
+                  validator: validateBirthDate,
                   style: Theme.of(context).textTheme.bodySmall,
                   keyboardType: TextInputType.number,
                   inputFormatters: [maskFormatter],

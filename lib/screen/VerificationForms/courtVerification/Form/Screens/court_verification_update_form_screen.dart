@@ -54,6 +54,15 @@ class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpd
   void courtVerificationUpdate() async {
     String token = context.read<TokenCubit>().state;
     String customerId = context.read<IdCubit>().state;
+    print("Court Verification Payload:");
+    print("customer_id: $customerId");
+    print("token: $token"); print("request_id: $requestId");
+    print("serviceRequestId: $serviceRequestId");
+    print("first_name: ${firstNameController.text.trim()}");
+    print("last_name: ${lastNameController.text.trim()}");
+    print("father_name: ${fatherNameController.text.trim()}");
+    print("dob: ${birthDateController.text.trim()}");
+    print("address: ${addressController.text.trim()}");
     context.read<CourtUpdateCubit>().courtVerificationUpdateForm(
         customer_id: customerId,
         token: token,
@@ -120,9 +129,8 @@ class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpd
             }
             if (showData is ShowCourtDataSuccessState) {
               ShowCourtDataModel data = showData.showCourtDataModel;
-              DateTime tempDate =
-                  DateFormat("yyyy-MM-dd").parse(data.data!.dob.toString());
-              String formattedDate = DateFormat('dd/MM/yyyy').format(tempDate);
+              DateTime tempDate = DateFormat("yyyy-MM-dd").parse(data.data!.dob.toString());
+              String formattedDate = DateFormat('MM/dd/yyyy').format(tempDate);
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

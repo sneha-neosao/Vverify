@@ -10,7 +10,7 @@ String? cannotBeEmpty(String? value) {
 
 String? addressValidator(String? value) {
   if (value == null || value.isEmpty) {
-    return null;
+    return 'Address is required';
   }
   if (value.length <= 10) {
     return 'Please enter more than 10 characters';
@@ -53,6 +53,14 @@ String? validateDate(String? value) {
     return 'Please enter a date';
   } else if (!dateRegExp.hasMatch(value)) {
     return 'Please enter a valid date.';
+  }
+  return null;
+}
+
+String? validateBirthDate(String? value) {
+
+  if (value == null || value.isEmpty) {
+    return 'Date is required';
   }
   return null;
 }

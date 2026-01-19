@@ -280,7 +280,7 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                             hintText: "Enter Address Line 1",
                             textInputType: TextInputType.text
                         ),
-                        CustomRequiredTextField(
+                        CustomNotRequiredTextField(
                             controller: isSameAddress ? currentLine2AddressController : permanentLine2AddressController,
                             titleText: "Address Line 2",
                             hintText: "Enter Address Line 2",

@@ -147,9 +147,9 @@ class _ReferenceFormState extends State<ReferenceForm> {
                 ),
                 Text(
                   "Person One Details",
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Theme.of(context).primaryColorDark, fontSize: 16),
                 ),
-                const Divider(),
                 form_widget(
                   maskFormatter: [
                     FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
@@ -181,9 +181,9 @@ class _ReferenceFormState extends State<ReferenceForm> {
                 ),
                 Text(
                   "Person Two Details",
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Theme.of(context).primaryColorDark, fontSize: 16),
                 ),
-                const Divider(),
                 form_widget(
                   maskFormatter: [
                     FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
