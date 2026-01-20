@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../model/reference_doc_show_data_model.dart';
+import '../../Models/reference_doc_show_data_model.dart';
 
 class ReferenceDocShowDataState extends Equatable {
   @override

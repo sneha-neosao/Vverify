@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/Save/Bloc/reference_form_state.dart';
+import 'package:v_verify/screen/VerificationForms/ReferenceForm/Form/Blocs/reference_save_form_bloc/reference_save_form_state.dart';
 
-import '../Model/Reference_model.dart';
+import '../../Models/Reference_save_form_model.dart';
 
 class ReferenceFormCubit extends Cubit<ReferenceVerificationState> {
   ApiService _apiService;

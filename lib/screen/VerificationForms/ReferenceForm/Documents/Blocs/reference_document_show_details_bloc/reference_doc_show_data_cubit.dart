@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/DocUpload/UpdateDoc/ShowData/Bloc/reference_doc_show_data_state.dart';
+import 'package:v_verify/screen/VerificationForms/ReferenceForm/Documents/Blocs/reference_document_show_details_bloc/reference_doc_show_data_state.dart';
 
-import '../model/reference_doc_show_data_model.dart';
+import '../../Models/reference_doc_show_data_model.dart';
 
 class ReferenceDocShowDataCubit extends Cubit<ReferenceDocShowDataState> {
   ApiService _apiService;

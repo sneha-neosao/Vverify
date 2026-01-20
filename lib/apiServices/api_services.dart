@@ -19,8 +19,8 @@ import '../screen/VerificationForms/PoliceVerification/NonMumbai/Forms/model/non
 import '../screen/VerificationForms/PoliceVerification/NonMumbai/Update/model/nonMumbai_model.dart';
 import '../screen/VerificationForms/PoliceVerification/NonMumbai/UpdateDocument/model/documents_update_model.dart';
 import '../screen/VerificationForms/PoliceVerification/NonMumbai/UploadDocuments/Model/documents_upload_model.dart';
-import '../screen/VerificationForms/ReferenceForm/Save/Model/Reference_model.dart';
-import '../screen/VerificationForms/ReferenceForm/Update/Model/Reference_model.dart';
+import '../screen/VerificationForms/ReferenceForm/Form/Models/Reference_save_form_model.dart';
+import '../screen/VerificationForms/ReferenceForm/Form/Models/Reference_update_form_model.dart';
 import '../screen/VerificationPending/model/pendingDoc_model.dart';
 
 class ApiService {

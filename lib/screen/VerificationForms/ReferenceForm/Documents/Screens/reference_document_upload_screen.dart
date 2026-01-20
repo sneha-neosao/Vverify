@@ -9,9 +9,9 @@ import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 
 import '../../../common/pickphoto.dart';
-import '../../Save/Bloc/reference_form_cubit.dart';
-import 'Bloc/reference_upload_doc_cubit.dart';
-import 'Bloc/reference_upload_doc_state.dart';
+import '../../Form/Blocs/reference_save_form_bloc/reference_save_form_cubit.dart';
+import '../Blocs/reference_document_upload_bloc/reference_upload_doc_cubit.dart';
+import '../Blocs/reference_document_upload_bloc/reference_upload_doc_state.dart';
 
 class ReferenceUploadDoc extends StatefulWidget {
   const ReferenceUploadDoc({super.key});
@@ -61,7 +61,7 @@ class _ReferenceUploadDocState extends State<ReferenceUploadDoc> {
                     ListTile(
                       splashColor: Colors.transparent,
                       onTap: () {
-                        context.pushReplacementNamed("ReferenceForm");
+                        context.pushReplacementNamed("ReferenceSaveFormScreen");
 
                         context
                             .read<FormUploadReferenceCubit>()

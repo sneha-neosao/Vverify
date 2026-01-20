@@ -100,7 +100,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         context.pushNamed("PanSaveFormScreen");
         break;
       case "reference-check-verification":
-        context.pushNamed("ReferenceForm");
+        context.pushNamed("ReferenceSaveFormScreen");
         break;
       case "name-address-verifcation":
         context.pushNamed("AddressList",pathParameters: {'uid': data[index].case_uuid.toString()},
@@ -162,7 +162,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         break;
       case "reference-check-verification":
         data[index].services![servicesIndex].dataPreference == "form"
-            ? context.pushNamed("ReferenceFormUpdate", pathParameters: {
+            ? context.pushNamed("ReferenceUpdateFormScreen", pathParameters: {
                 'uid': data[index].services![servicesIndex].uid.toString()
               })
             : context.pushNamed("ReferenceUpdateDoc", pathParameters: {
@@ -373,7 +373,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                               const SizedBox(width: 4),
                                               Text(
                                                 status.toLowerCase() == "verified"
-                                                    ? "Verified"
+                                                    ? "Clear"
                                                     : status.toLowerCase() == "discrepancy" || status.toLowerCase() == "rejected"
                                                     ? "Discrepancy"
                                                     : "Pending",

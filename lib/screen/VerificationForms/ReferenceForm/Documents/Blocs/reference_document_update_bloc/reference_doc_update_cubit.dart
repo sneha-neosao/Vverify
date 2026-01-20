@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/DocUpload/UpdateDoc/Bloc/reference_doc_update_state.dart';
+import 'package:v_verify/screen/VerificationForms/ReferenceForm/Documents/Blocs/reference_document_update_bloc/reference_doc_update_state.dart';
 
 class ReferenceDocUpdateCubit extends Cubit<ReferenceDocUpdateState> {
   ApiService _apiService;

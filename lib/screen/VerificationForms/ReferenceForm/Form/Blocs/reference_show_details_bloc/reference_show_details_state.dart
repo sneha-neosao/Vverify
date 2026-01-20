@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/ShowDetails/Model/reference_check_details_model.dart';
+import 'package:v_verify/screen/VerificationForms/ReferenceForm/Form/Models/reference_show_details_model.dart';
 import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Model/verify_details_model.dart';
 
 class ReferenceCheckDetailsState extends Equatable {

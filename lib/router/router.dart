@@ -48,10 +48,10 @@ import '../screen/VerificationForms/PoliceVerification/NonMumbai/Forms/NonMumbai
 import '../screen/VerificationForms/PoliceVerification/NonMumbai/Update/NonMumbaiPoliceVerificationForm1Update.dart';
 import '../screen/VerificationForms/PoliceVerification/NonMumbai/UpdateDocument/update_documents_non_mumbai.dart';
 import '../screen/VerificationForms/PoliceVerification/NonMumbai/UploadDocuments/upload_documents_nonMumbai.dart';
-import '../screen/VerificationForms/ReferenceForm/DocUpload/UpdateDoc/reference_doc_update.dart';
-import '../screen/VerificationForms/ReferenceForm/DocUpload/uploadDoc/reference_upload_doc.dart';
-import '../screen/VerificationForms/ReferenceForm/Save/reference_form.dart';
-import '../screen/VerificationForms/ReferenceForm/Update/Reference_form_update.dart';
+import '../screen/VerificationForms/ReferenceForm/Documents/Screens/reference_document_update_screen.dart';
+import '../screen/VerificationForms/ReferenceForm/Documents/Screens/reference_document_upload_screen.dart';
+import '../screen/VerificationForms/ReferenceForm/Form/Screens/reference_save_form_screen.dart';
+import '../screen/VerificationForms/ReferenceForm/Form/Screens/Reference_update_form_screen.dart';
 import '../screen/VerificationForms/courtVerification/Form/Screens/court_verification_save_form_screen.dart';
 import '../screen/VerificationForms/courtVerification/Document/Screens/court_document_update_form_screen.dart';
 import '../screen/VerificationForms/courtVerification/Document/Screens/court_document_upload_screen.dart';
@@ -367,6 +367,34 @@ class AppRouter {
 
 
 
+      /// Reference Check Verification Service related routes
+      GoRoute(
+        path: '/ReferenceSaveFormScreen',
+        name: "ReferenceSaveFormScreen",
+        builder: (context, state) {
+          return const ReferenceSaveFormScreen();
+        },
+      ),
+      GoRoute(
+        path: '/ReferenceUpdateFormScreen/:uid',
+        name: 'ReferenceUpdateFormScreen',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid']!;
+          return ReferenceUpdateFormScreen(
+            uid: uid,
+          );
+        },
+      ),
+
+
+
+
+
+
+
+
+
+
       GoRoute(
         path: '/EditProfile/:user_type',
         name: "edit_profile",
@@ -453,13 +481,7 @@ class AppRouter {
           return AadhaarGetOtp();
         },
       ),
-      GoRoute(
-        path: '/ReferenceForm',
-        name: "ReferenceForm",
-        builder: (context, state) {
-          return const ReferenceForm();
-        },
-      ),
+
 
       GoRoute(
         path: '/PendingDoc',
@@ -475,16 +497,7 @@ class AppRouter {
           return const ProfilePage();
         },
       ),
-      GoRoute(
-        path: '/ReferenceFormUpdate/:uid',
-        name: 'ReferenceFormUpdate',
-        builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          return ReferenceFormUpdate(
-            uid: uid,
-          );
-        },
-      ),
+
       GoRoute(
         path: '/MumbaiPoliceVerificationUpdateForm1/:uid',
         name: 'MumbaiPoliceVerificationUpdateForm1',

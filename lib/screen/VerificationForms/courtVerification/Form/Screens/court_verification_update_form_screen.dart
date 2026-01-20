@@ -88,7 +88,7 @@ class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpd
       lastDate: DateTime(2101), // the latest possible date
     );
     if (picked != null && picked != selectedJoiningDate) {
-      String formattedDate = DateFormat('MM/dd/yyyy').format(picked);
+      String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
 
       //setState(() {
       selectedJoiningDate = picked;
@@ -130,7 +130,7 @@ class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpd
             if (showData is ShowCourtDataSuccessState) {
               ShowCourtDataModel data = showData.showCourtDataModel;
               DateTime tempDate = DateFormat("yyyy-MM-dd").parse(data.data!.dob.toString());
-              String formattedDate = DateFormat('MM/dd/yyyy').format(tempDate);
+              String formattedDate = DateFormat('dd-MM-yyyy').format(tempDate);
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +146,7 @@ class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpd
                     height: 16,
                   ),
                   Text(
-                    "Rejected Reason",
+                    "Court Legal Verification Remark:",
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!
@@ -215,7 +215,7 @@ class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpd
                       ..text = formattedDate.toString(),
                     decoration: InputDecoration(
                       hintStyle: const TextStyle(color: Colors.grey),
-                      hintText: "mm/dd/yyyy",
+                      hintText: "DD-MM-YYYY",
                       suffixIcon: IconButton(
                           icon: const Icon(Icons.calendar_today),
                           onPressed: () => _selectJoiningDate(

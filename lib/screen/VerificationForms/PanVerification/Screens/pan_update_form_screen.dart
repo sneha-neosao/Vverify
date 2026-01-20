@@ -50,92 +50,122 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                 service_request_id: serviceRequestId!,
                 customer_id: customerId),
           child:
-              BlocConsumer<PanVerificationShowCubit, PanVerificationShowState>(
-                  listener: (context, showData) {
-            if (showData is PanVerificationShowSuccessState) {
-              PanVerificationShowModel data = showData.panVerificationShowModel;
-              panVerificationController.text = data.data!.panNumber.toString();
-            }
-          }, builder: (context, panShowData) {
-            return Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "PAN Card Verification",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(color: Theme.of(context).primaryColorDark),
-                  ),
-
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Text(
-                    "Let's Verify PAN Card",
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.orange),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  CustomRequiredTextField(
-                      validator: validatePAN,
-                      // maskFormatter: [panMaskFormatter],
-                      controller: panVerificationController,
-                      titleText: "Tenant's PAN Number",
-                      hintText: "Enter Tenant's PAN Number",
-                      textInputType: TextInputType.text
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  BlocProvider(
-                    create: (_) => PanVerificationUpdateBloc(ApiService()),
-                    child: BlocConsumer<PanVerificationUpdateBloc,
-                            PanVerificationUpdateState>(
-                        listener: (context, panNumber) {
-                      if (panNumber is PanVerificationUpdateSuccessState) {
-                        if (panNumber.data["status"] == 200) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(panNumber.data["message"])));
-                          context.pushReplacementNamed("bottomNav");
-                        }
-                      } else if (panNumber is PanVerificationUpdateErrorState) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(panNumber.message)));
-                      }
-                    }, builder: (context, panNumber) {
-                      return CustomButton(
-                        isLoading:
-                            panNumber is PanVerificationUpdateLoadingState,
-                        onTap: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            context
-                                .read<PanVerificationUpdateBloc>()
-                                .panCardNumberUpdate(
-                                    customer_id: customerId,
-                                    requestId: requestId!,
-                                    token: token,
-                                    serviceRequestId: serviceRequestId!,
-                                    panNumber: panVerificationController.text
-                                        .toUpperCase());
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please validate PAN number")));
-                          }
-                        },
-                        text: "SUBMIT",
-                        gradientColors: [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColorDark
-                        ],
+              BlocBuilder<PanVerificationShowCubit, PanVerificationShowState>(
+                  builder: (context, panShowData) {
+                    if (panShowData is PanVerificationShowLoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
                       );
-                    }),
-                  )
-                ],
-              ),
-            );
+                    } else if (panShowData is PanVerificationShowErrorState) {
+                      return Center(
+                        child: Text(panShowData.message),
+                      );
+                    } else if (panShowData is PanVerificationShowSuccessState) {
+                      PanVerificationShowModel data = panShowData.panVerificationShowModel;
+                      panVerificationController.text = data.data!.panNumber.toString();
+                      rejection_reason = data.data!.reason!;
+
+                      return Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "PAN Card Verification",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(color: Theme.of(context).primaryColorDark),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            Text(
+                              "PAN Verification Remark:",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(color: Colors.red),
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              rejection_reason!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!,
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              "Let's Verify PAN Card",
+                              style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.orange),
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            CustomRequiredTextField(
+                                validator: validatePAN,
+                                // maskFormatter: [panMaskFormatter],
+                                controller: panVerificationController,
+                                titleText: "Tenant's PAN Number",
+                                hintText: "Enter Tenant's PAN Number",
+                                textInputType: TextInputType.text
+                            ),
+                            const SizedBox(
+                              height: 24,
+                            ),
+                            BlocProvider(
+                              create: (_) => PanVerificationUpdateBloc(ApiService()),
+                              child: BlocConsumer<PanVerificationUpdateBloc,
+                                  PanVerificationUpdateState>(
+                                  listener: (context, panNumber) {
+                                    if (panNumber is PanVerificationUpdateSuccessState) {
+                                      if (panNumber.data["status"] == 200) {
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                            content: Text(panNumber.data["message"])));
+                                        context.pushReplacementNamed("bottomNav");
+                                      }
+                                    } else if (panNumber is PanVerificationUpdateErrorState) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text(panNumber.message)));
+                                    }
+                                  }, builder: (context, panNumber) {
+                                return CustomButton(
+                                  isLoading:
+                                  panNumber is PanVerificationUpdateLoadingState,
+                                  onTap: () {
+                                    if (_formKey.currentState?.validate() ?? false) {
+                                      context
+                                          .read<PanVerificationUpdateBloc>()
+                                          .panCardNumberUpdate(
+                                          customer_id: customerId,
+                                          requestId: requestId!,
+                                          token: token,
+                                          serviceRequestId: serviceRequestId!,
+                                          panNumber: panVerificationController.text
+                                              .toUpperCase());
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please validate PAN number")));
+                                    }
+                                  },
+                                  text: "SUBMIT",
+                                  gradientColors: [
+                                    Theme.of(context).primaryColor,
+                                    Theme.of(context).primaryColorDark
+                                  ],
+                                );
+                              }),
+                            )
+                          ],
+                        ),
+                      );
+                    }
+                    else {
+                      return SizedBox.shrink();
+                    }
           }),
         ),
       ),

@@ -392,9 +392,9 @@ class _AddressListState extends State<AddressList> {
                                                           color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].currentAddressLine1?.trim().isEmpty ?? true
+                                                      data.data![index].permanentAddressLine1?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].currentAddressLine1!,
+                                                          : data.data![index].permanentAddressLine1!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,
@@ -417,9 +417,9 @@ class _AddressListState extends State<AddressList> {
                                                           color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].currentAddressLine2?.trim().isEmpty ?? true
+                                                      data.data![index].permanentAddressLine2?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].currentAddressLine2!,
+                                                          : data.data![index].permanentAddressLine2!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,
@@ -442,9 +442,9 @@ class _AddressListState extends State<AddressList> {
                                                           color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].currentAddressCity?.trim().isEmpty ?? true
+                                                      data.data![index].permanentAddressCity?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].currentAddressCity!,
+                                                          : data.data![index].permanentAddressCity!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,
@@ -467,9 +467,9 @@ class _AddressListState extends State<AddressList> {
                                                           color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].currentAddressState?.trim().isEmpty ?? true
+                                                      data.data![index].permanentAddressState?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].currentAddressState!,
+                                                          : data.data![index].permanentAddressState!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,
@@ -492,9 +492,9 @@ class _AddressListState extends State<AddressList> {
                                                           color: Colors.grey),
                                                     ),
                                                     Text(
-                                                      data.data![index].currentAddressPostalCode?.trim().isEmpty ?? true
+                                                      data.data![index].permanentAddressPostalCode?.trim().isEmpty ?? true
                                                           ? "NA"
-                                                          : data.data![index].currentAddressPostalCode!,
+                                                          : data.data![index].permanentAddressPostalCode!,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodySmall,

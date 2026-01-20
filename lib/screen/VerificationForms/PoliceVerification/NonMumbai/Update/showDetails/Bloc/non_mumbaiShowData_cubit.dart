@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/ShowDetails/Bloc/reference_check_deatils_state.dart';
+import 'package:v_verify/screen/VerificationForms/ReferenceForm/Form/Blocs/reference_show_details_bloc/reference_show_details_state.dart';
 
 import '../Model/Non_MumbaiShowData_model.dart';
 import 'non_mumbaiShowData_state.dart';

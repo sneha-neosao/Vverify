@@ -3,7 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/DocUpload/uploadDoc/Bloc/reference_upload_doc_state.dart';
+import 'package:v_verify/screen/VerificationForms/ReferenceForm/Documents/Blocs/reference_document_upload_bloc/reference_upload_doc_state.dart';
 
 class ReferenceUploadDocCubit extends Cubit<ReferenceUploadDocState> {
   ApiService _apiService;

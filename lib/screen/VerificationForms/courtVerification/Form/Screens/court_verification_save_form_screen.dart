@@ -78,7 +78,7 @@ class _CourtVerificationSaveFormScreenState extends State<CourtVerificationSaveF
       lastDate: DateTime.now(), // the latest possible date
     );
     if (picked != null && picked != selectedJoiningDate) {
-      String formattedDate = DateFormat('MM/dd/yyyy').format(picked);
+      String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
 
       setState(() {
         selectedJoiningDate = picked;
@@ -206,7 +206,7 @@ class _CourtVerificationSaveFormScreenState extends State<CourtVerificationSaveF
                   inputFormatters: [maskFormatter],
                   controller: birthDateController,
                   decoration: InputDecoration(
-                    hintText: "mm/dd/yyyy",
+                    hintText: "DD-MM-YYYY",
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.calendar_today),
                       onPressed: () => _selectJoiningDate(

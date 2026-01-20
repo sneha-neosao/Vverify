@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 
-import '../Model/Reference_model.dart';
-import 'Reference_update_state.dart';
+import '../../Models/Reference_update_form_model.dart';
+import 'Reference_update_form_state.dart';
 
 class ReferenceUpdateFormCubit extends Cubit<ReferenceUpdateState> {
   ApiService _apiService;

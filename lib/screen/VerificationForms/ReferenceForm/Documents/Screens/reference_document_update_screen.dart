@@ -5,15 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/DocUpload/UpdateDoc/ShowData/model/reference_doc_show_data_model.dart';
+import 'package:v_verify/screen/VerificationForms/ReferenceForm/Documents/Models/reference_doc_show_data_model.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 
 import '../../../common/pickphoto.dart';
-import '../uploadDoc/Bloc/reference_upload_doc_cubit.dart';
-import 'Bloc/reference_doc_update_cubit.dart';
-import 'Bloc/reference_doc_update_state.dart';
-import 'ShowData/Bloc/reference_doc_show_data_cubit.dart';
-import 'ShowData/Bloc/reference_doc_show_data_state.dart';
+import '../Blocs/reference_document_upload_bloc/reference_upload_doc_cubit.dart';
+import '../Blocs/reference_document_update_bloc/reference_doc_update_cubit.dart';
+import '../Blocs/reference_document_update_bloc/reference_doc_update_state.dart';
+import '../Blocs/reference_document_show_details_bloc/reference_doc_show_data_cubit.dart';
+import '../Blocs/reference_document_show_details_bloc/reference_doc_show_data_state.dart';
 
 class ReferenceUpdateDoc extends StatefulWidget {
   String uid;

@@ -26,7 +26,7 @@ void checkCase({required String title, String? uuid,required BuildContext contex
       context.pushNamed("AadhaarGetOtp");
       break;
     case "Reference Check":
-      context.pushNamed("ReferenceForm");
+      context.pushNamed("ReferenceSaveFormScreen");
       break;
     case "Fullname and address verification":
       context.pushNamed("AddressList",pathParameters: {'uid': uuid!},
@@ -86,7 +86,7 @@ void secondCheckCase(
       break;
     case "Reference Check":
       data.data![index].services![servicesIndex].dataPreference == "form"
-          ? context.pushNamed("ReferenceFormUpdate", pathParameters: {
+          ? context.pushNamed("ReferenceUpdateFormScreen", pathParameters: {
               'uid': data.data![index].services![servicesIndex].uid.toString()
             })
           : context.pushNamed("ReferenceUpdateDoc", pathParameters: {
@@ -318,7 +318,7 @@ class _PendingDocState extends State<PendingDoc> {
                                               const SizedBox(width: 4),
                                               Text(
                                                 status.toLowerCase() == "verified"
-                                                    ? "Verified"
+                                                    ? "Clear"
                                                     : status.toLowerCase() == "discrepancy"
                                                     ? "Discrepancy"
                                                     : "Pending",
