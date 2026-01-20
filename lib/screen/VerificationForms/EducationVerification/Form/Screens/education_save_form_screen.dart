@@ -225,7 +225,7 @@ class _EducationSaveFormScreenState extends State<EducationSaveFormScreen> {
                       if (education.data["status"] == 200) {
                         educationUniversityBoards = null;
                         educationSchoolBoards = null;
-                        context.pushNamed("AddressList",pathParameters: {
+                        context.pushNamed("EducationList",pathParameters: {
                           'uid': widget.Case_uuid
                         });
                       }

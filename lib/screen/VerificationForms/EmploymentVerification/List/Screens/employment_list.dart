@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/commonComponent/dottedBorder.dart';
@@ -65,6 +66,13 @@ Future<void> pickFile() async {
   void dispose() {
     super.dispose();
   }
+
+Future<void> _launchURL(String url) async {
+  final Uri uri = Uri.parse(url);
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+    throw Exception('Could not launch $url');
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -396,6 +404,35 @@ Future<void> pickFile() async {
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 8,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Artefacts",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                        color: Colors.grey),
+                                                  ),
+                                                  data.data![index].artefact_img?.trim().isEmpty ?? true
+                                                      ? const Text("NA")
+                                                      : InkWell(
+                                                    onTap: () => _launchURL(data.data![index].artefact_img!),
+                                                    child: Text(
+                                                      data.data![index].artefact_img!,
+                                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                                        color: Colors.blue,
+                                                        decoration: TextDecoration.underline,
+                                                      ),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
