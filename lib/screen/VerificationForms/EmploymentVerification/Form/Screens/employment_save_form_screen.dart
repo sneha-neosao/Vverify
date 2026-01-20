@@ -239,6 +239,8 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
                         onChanged: (bool? value) {
                           setState(() {
                             isChecked = value ?? false;
+
+                            if (isChecked) { leaveDateController.clear(); }
                           }); },
                         activeColor: Colors.orange, // fill color when checked
                         checkColor: Colors.white, // tick mark color

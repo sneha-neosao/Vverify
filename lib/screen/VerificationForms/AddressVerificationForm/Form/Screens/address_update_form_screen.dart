@@ -176,7 +176,7 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                               .copyWith(color: Theme.of(context).primaryColorDark),
                         ),
                         Text(
-                          "Rejected Reason",
+                          "Current Address Verification Remark:",
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge!
@@ -190,6 +190,16 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall!
+                              .copyWith(color: Colors.red),
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          "Permanent Address Verification Remark:",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
                               .copyWith(color: Colors.red),
                         ),
                         const SizedBox(
@@ -334,6 +344,8 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                               onChanged: (bool? value) {
                                 setState(() {
                                   isChecked = value ?? false;
+
+                                  if (isChecked) { residenceToDateController.clear(); }
                                 }); },
                               activeColor: Colors.orange, // fill color when checked
                               checkColor: Colors.white, // tick mark color

@@ -153,17 +153,30 @@ class _AddressListState extends State<AddressList> {
                         shrinkWrap: true,
                         itemCount: data.data!.length,
                         itemBuilder: (context, index) {
-                          final rawStatus = data.data![index].vStatus ?? "";
-                          String status;
+                          final currentAddressRawStatus = data.data![index].currentAddressVStatus ?? "";
+                          String currentAddressStatus;
 
-                          if (rawStatus.isEmpty || rawStatus == "-" || rawStatus == "") {
-                            status = "pending";
-                          } else if (rawStatus == "discrepancy") {
-                            status = "discrepancy";
-                          } else if (rawStatus == "verified" || rawStatus == "clear") {
-                            status = "verified";
+                          if (currentAddressRawStatus.isEmpty || currentAddressRawStatus == "-" || currentAddressRawStatus == "") {
+                            currentAddressStatus = "pending";
+                          } else if (currentAddressRawStatus == "discrepancy") {
+                            currentAddressStatus = "discrepancy";
+                          } else if (currentAddressRawStatus == "verified" || currentAddressRawStatus == "clear") {
+                            currentAddressStatus = "verified";
                           } else {
-                            status = rawStatus; // fallback for other values
+                            currentAddressStatus = currentAddressRawStatus; // fallback for other values
+                          }
+
+                          final permanentAddressRawStatus = data.data![index].permanentAddressVStatus ?? "";
+                          String permanentAddressStatus;
+
+                          if (permanentAddressRawStatus.isEmpty || permanentAddressRawStatus == "-" || permanentAddressRawStatus == "") {
+                            permanentAddressStatus = "pending";
+                          } else if (permanentAddressRawStatus == "discrepancy") {
+                            permanentAddressStatus = "discrepancy";
+                          } else if (permanentAddressRawStatus == "verified" || permanentAddressRawStatus == "clear") {
+                            permanentAddressStatus = "verified";
+                          } else {
+                            permanentAddressStatus = permanentAddressRawStatus; // fallback for other values
                           }
 
                           return Padding(
@@ -180,18 +193,18 @@ class _AddressListState extends State<AddressList> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                                status.toLowerCase() == "verified"
+                                                currentAddressStatus.toLowerCase() == "verified"
                                                     ? "Verified"
-                                                    : status.toLowerCase() == "discrepancy"
+                                                    : currentAddressStatus.toLowerCase() == "discrepancy"
                                                     ? "Discrepancy" : "Verification Pending",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodySmall!
                                                     .copyWith(
                                                     fontSize: 14,
-                                                    color: status.toLowerCase() == "verified"
+                                                    color: currentAddressStatus.toLowerCase() == "verified"
                                                         ? Colors.green
-                                                        :status.toLowerCase() == "discrepancy"
+                                                        :currentAddressStatus.toLowerCase() == "discrepancy"
                                                         ? Colors.red
                                                         : Colors.orange
                                                 )
@@ -333,6 +346,27 @@ class _AddressListState extends State<AddressList> {
                                                           .bodySmall,
                                                     ),
                                                   ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Text(
+                                                    permanentAddressStatus.toLowerCase() == "verified"
+                                                        ? "Verified"
+                                                        : permanentAddressStatus.toLowerCase() == "discrepancy"
+                                                        ? "Discrepancy" : "Verification Pending",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                        fontSize: 14,
+                                                        color: permanentAddressStatus.toLowerCase() == "verified"
+                                                            ? Colors.green
+                                                            :permanentAddressStatus.toLowerCase() == "discrepancy"
+                                                            ? Colors.red
+                                                            : Colors.orange
+                                                    )
+
                                                 ),
                                                 const SizedBox(
                                                   height: 8,
@@ -517,7 +551,7 @@ class _AddressListState extends State<AddressList> {
                                                     ),
                                                     Text(
                                                       data.data![index].residingToDate?.trim().isEmpty ?? true
-                                                          ? "NA"
+                                                          ? "Till Date"
                                                           : data.data![index].residingToDate!,
                                                       style: Theme.of(context)
                                                           .textTheme

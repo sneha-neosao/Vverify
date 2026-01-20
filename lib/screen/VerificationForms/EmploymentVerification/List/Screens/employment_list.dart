@@ -266,7 +266,7 @@ Future<void> pickFile() async {
                                                   ),
                                                   Text(
                                                     data.data![index].employed_to?.trim().isEmpty ?? true
-                                                        ? "NA"
+                                                        ? "Till Date"
                                                         : data.data![index].employed_to!,
                                                     style: Theme.of(context)
                                                         .textTheme

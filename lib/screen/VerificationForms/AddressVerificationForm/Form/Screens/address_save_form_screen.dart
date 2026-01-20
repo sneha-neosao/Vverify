@@ -261,6 +261,8 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
                         onChanged: (bool? value) {
                           setState(() {
                             isChecked = value ?? false;
+
+                            if (isChecked) { residenceToDateController.clear(); }
                           }); },
                         activeColor: Colors.orange, // fill color when checked
                         checkColor: Colors.white, // tick mark color

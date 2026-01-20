@@ -167,7 +167,7 @@ class _EducationUpdateFormScreenState extends State<EducationUpdateFormScreen> {
                         height: 16,
                       ),
                       Text(
-                        "Rejected Reason:",
+                        "Education Verification Remark:",
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge!

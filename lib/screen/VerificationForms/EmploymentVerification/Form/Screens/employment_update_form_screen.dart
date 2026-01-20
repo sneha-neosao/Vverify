@@ -219,6 +219,23 @@ class _EmploymentUpdateFormScreenState
                                 color: Theme.of(context).primaryColorDark),
                       ),
                       Text(
+                        "Employment Verification Remark:",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(color: Colors.red),
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        detailsData.data!.verification_remark!,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(color: Colors.red),
+                      ),
+                      Text(
                         "Employment Details",
                         style: Theme.of(context)
                             .textTheme
@@ -314,6 +331,8 @@ class _EmploymentUpdateFormScreenState
                             onChanged: (bool? value) {
                               setState(() {
                                 isChecked = value ?? false;
+
+                                if (isChecked) { leaveDateController.clear(); }
                               });
                             },
                             activeColor:
