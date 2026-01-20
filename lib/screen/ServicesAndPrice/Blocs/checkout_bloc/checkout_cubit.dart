@@ -14,6 +14,7 @@ class CheckoutCubit extends Cubit<CheckOutState> {
     required String payment_gateway,
     required String payment_mode,
     required int quantity,
+    required String coupon_code,
     required List<Map<String, dynamic>> items,
   }) async {
     emit(CheckOutLoadingState());
@@ -25,6 +26,7 @@ class CheckoutCubit extends Cubit<CheckOutState> {
           payment_gateway: payment_gateway,
           payment_mode: payment_mode,
           quantity: quantity,
+          coupon_code: coupon_code,
           items: items);
       if (response.data != null && response.data.containsKey("status")) {
         // final CheckoutModel checkoutModel =

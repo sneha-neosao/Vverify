@@ -285,13 +285,11 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
 
                                     if (rawStatus.isEmpty || rawStatus == "-" || rawStatus == "") {
                                       status = "pending";
-                                    } else if (rawStatus == "discrepancy") {
+                                    } else if (rawStatus == "discrepancy" || rawStatus == "rejected") {
                                       status = "discrepancy";
                                     } else if (rawStatus == "verified" || rawStatus == "clear") {
                                       status = "verified";
-                                    } else if (rawStatus == "rejected") {
-                                      status = "rejected";
-                                    }else {
+                                    } else {
                                       status = rawStatus; // fallback for other values
                                     }
 

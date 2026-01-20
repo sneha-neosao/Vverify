@@ -21,13 +21,13 @@ class ApplyCouponModel {
   factory ApplyCouponModel.fromJson(Map<String, dynamic> json) => ApplyCouponModel(
     status: json["status"],
     message: json["message"],
-    result: json["transaction"] == null ? null : ApplyCouponResult.fromJson(json["transaction"]),
+    result: json["result"] == null ? null : ApplyCouponResult.fromJson(json["result"]),
   );
 
   Map<String, dynamic> toJson() => {
     "status": status,
     "message": message,
-    "transaction": result?.toJson(),
+    "result": result?.toJson(),
   };
 }
 
@@ -44,20 +44,22 @@ class ApplyCouponResult {
     this.couponDetails,
   });
 
-  factory ApplyCouponResult.fromJson(Map<String, dynamic> json) => ApplyCouponResult(
-    subtotal: json["subtotal"],
-    discountApplied: json["discountApplied"],
-    finalAmount: json["finalAmount"],
-    couponDetails: json["couponDetails"]
-  );
+  factory ApplyCouponResult.fromJson(Map<String, dynamic> json) =>
+      ApplyCouponResult(
+        subtotal: json["subtotal"],
+        discountApplied: json["discountApplied"],
+        finalAmount: json["finalAmount"],
+        couponDetails: json["couponDetails"] == null
+            ? null
+            : CouponDetails.fromJson(json["couponDetails"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "subtotal": subtotal,
     "discountApplied": discountApplied,
     "finalAmount": finalAmount,
-    "couponDetails": couponDetails
+    "couponDetails": couponDetails?.toJson(),
   };
-  
 }
 
 class CouponDetails {

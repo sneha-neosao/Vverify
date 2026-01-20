@@ -198,6 +198,7 @@ class ApiService {
     required String payment_gateway,
     required String payment_mode,
     required int quantity,
+    required String coupon_code,
     required List<Map<String, dynamic>> items,
   }) async {
     Map<String, dynamic> data = {
@@ -207,6 +208,7 @@ class ApiService {
       "payment_mode": payment_mode,
       "quantity": quantity,
       "items": items,
+      "coupon_code": coupon_code
     };
 
     try {
