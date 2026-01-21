@@ -302,6 +302,23 @@ class ApiService {
     }
   }
 
+  Future<Response> getCheckOutStatus({
+    required String token,
+    required String payment_order_id,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+        'transaction/check/order/status?payment_order_id=$payment_order_id',
+      );
+      log('getCheckOutStatus Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in getCheckOutStatus: $e');
+      throw Exception('Failed to fetch getCheckOutStatus: $e');
+    }
+  }
+
   /// Verification Request
   Future<Response> verifyRequestList({
     required String token,
@@ -445,7 +462,20 @@ class ApiService {
       throw Exception('Failed to fetch verifyRequestUpdate: $e');
     }
   }
-
+  Future<Response> VerifyDetailsView({
+    required String token,
+    required String request_id,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify-request/$request_id/show');
+      // log('VerifyDetailsView Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in VerifyDetailsView: $e');
+      throw Exception('Failed to fetch VerifyDetailsView: $e');
+    }
+  }
 
 
   /// Education Verification
@@ -1210,143 +1240,448 @@ class ApiService {
 
 
 
+  /// Reference Check Verification
+  Future<Response> ReferenceVerification(
+      {required String customer_id,
+        required String token,
+        required ReferenceModel referenceModel}) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": referenceModel.request_id,
+      "service_request_id": referenceModel.service_request_id,
+      "person_name_1": referenceModel.person_name_one,
+      "person_mobile_number_1": referenceModel.person_mobile_number_one,
+      "person_relation_1": referenceModel.person_relation_one,
+      "person_name_2": referenceModel.person_name_two,
+      "person_mobile_number_2": referenceModel.person_mobile_number_two,
+      "person_relation_2": referenceModel.person_relation_two,
+    });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  Future<Response> tenantNonMumbaiForm(
-      {required String token,
-      required String customer_id,
-      required NonMumbaiModel nonMumbai}) async {
     try {
-      FormData formData = FormData.fromMap({
-        "customer_id": customer_id,
-        "request_id": nonMumbai.request_id,
-        "service_request_id": nonMumbai.service_request_id,
-        "tenant_name": nonMumbai.tenant_name,
-        "tenant_address": nonMumbai.tenant_address,
-        "tenant_city": nonMumbai.tenant_city,
-        "tenant_state": nonMumbai.tenant_state,
-        "tenant_postal_code": nonMumbai.tenant_postal_code,
-        "tenant_identity_proof_doc_type":
-            nonMumbai.tenant_identity_proof_doc_type,
-        "tenant_identity_proof_no": nonMumbai.tenant_identity_proof_no,
-        "tenant_identification_mark": nonMumbai.tenant_identification_mark,
-        "tenant_dob": nonMumbai.tenant_dob,
-        "tenant_birth_place": nonMumbai.tenant_birth_place,
-        "tenant_age": nonMumbai.tenant_age,
-        "tenant_is_employed": nonMumbai.tenant_is_employed,
-        "tenant_employed_year": nonMumbai.tenant_employed_year,
-        "tenant_employed_month": nonMumbai.tenant_employed_month,
-        "tenant_employer_or_company": nonMumbai.tenant_employer_or_company,
-        "tenant_fathers_name": nonMumbai.tenant_fathers_name,
-        "tenant_fathers_address": nonMumbai.tenant_fathers_address,
-        "tenant_fathers_occupation": nonMumbai.tenant_fathers_occupation,
-        "tenant_contact_one_full_name": nonMumbai.tenant_contact_one_full_name,
-        "tenant_contact_one_address": nonMumbai.tenant_contact_one_address,
-        "tenant_contact_two_full_name": nonMumbai.tenant_contact_two_full_name,
-        "tenant_contact_two_address": nonMumbai.tenant_contact_two_address,
-        "tenant_has_criminal_offenses": nonMumbai.tenant_has_criminal_offenses,
-        nonMumbai.tenant_crno_section.isEmpty ? "" : "tenant_crno_section":
-            nonMumbai.tenant_crno_section,
-        "tenant_whether_arrested": nonMumbai.tenant_whether_arrested,
-        nonMumbai.tenant_present_case_status.isEmpty
-                ? ""
-                : "tenant_present_case_status":
-            nonMumbai.tenant_present_case_status,
-        "tenant_earlier_residential_place":
-            nonMumbai.tenant_earlier_residential_place,
-        "tenant_earlier_residential_months":
-            nonMumbai.tenant_earlier_residential_months,
-        "tenant_earlier_residential_years":
-            nonMumbai.tenant_earlier_residential_years,
-        "tenant_earlier_residential_jurisdiction_of_police_station":
-            nonMumbai.tenant_earlier_residential_jurisdiction_of_police_station,
-        "tenant_present_address_duration_years":
-            nonMumbai.tenant_present_address_duration_years,
-        "tenant_present_address_duration_months":
-            nonMumbai.tenant_present_address_duration_months,
-        "tenant_jurisdiction_of_police_station":
-            nonMumbai.tenant_jurisdiction_of_police_station,
-        "tenant_present_resendential_place":
-            nonMumbai.tenant_present_resendential_place,
-        "tenant_signature_place": nonMumbai.tenant_signature_place,
-        "tenant_signature_date": nonMumbai.tenant_signature_date,
-        "tenant_photo": await MultipartFile.fromFile(
-          nonMumbai.tenant_photo.path,
-          filename:
-              nonMumbai.tenant_photo.path.split('/').last, // Use the file name
-        ),
-        "tenant_signature": await MultipartFile.fromFile(
-          nonMumbai.tenant_signature.path,
-          filename: nonMumbai.tenant_signature.path
-              .split('/')
-              .last, // Use the file name
-        ),
-        "tenant_identity_proof_doc": await MultipartFile.fromFile(
-          nonMumbai.tenant_identity_proof_doc.path,
-          filename: nonMumbai.tenant_identity_proof_doc.path
-              .split('/')
-              .last, // Use the file name
-        ),
-        "tenant_letter_from_employer":
-            nonMumbai.tenant_letter_from_employer!.path.isEmpty
-                ? null
-                : await MultipartFile.fromFile(
-                    nonMumbai.tenant_letter_from_employer!.path,
-                    filename: nonMumbai.tenant_letter_from_employer!.path
-                        .split('/')
-                        .last, // Use the file name
-                  ),
-      });
-
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-          await _dio.post('verify/police/non-mumbai/form/save', data: formData);
-      // log('tenantNonMumbaiForm Response: ${response.data}');
+      await _dio.post('verify/reference/form/store', data: formData);
+      // log('ReferenceVerification Response: ${response.data}');
       return response;
     } catch (e) {
-      // log('Error in tenantNonMumbaiForm: $e');
-      throw Exception('Failed to fetch tenantNonMumbaiForm: $e');
+      // log('Error in ReferenceVerification: $e');
+      throw Exception('Failed to fetch ReferenceVerification: $e');
     }
   }
 
+  Future<Response> ReferenceVerificationUpdate(
+      {required String token,
+        required String customer_id,
+        required ReferenceUpdateModel referenceUpdateModel}) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": referenceUpdateModel.request_id,
+      "service_request_id": referenceUpdateModel.service_request_id,
+      "person_name_1": referenceUpdateModel.person_name_one,
+      "person_mobile_number_1": referenceUpdateModel.person_mobile_number_one,
+      "person_relation_1": referenceUpdateModel.person_relation_one,
+      "person_name_2": referenceUpdateModel.person_name_two,
+      "person_mobile_number_2": referenceUpdateModel.person_mobile_number_two,
+      "person_relation_2": referenceUpdateModel.person_relation_two,
+    });
+
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/reference/form/update', data: formData);
+      // log('verifyRequestUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in verifyRequestUpdate:$e');
+      throw Exception('Failed to fetch verifyRequestUpdate: $e');
+    }
+  }
+
+  Future<Response> ReferenceCheckDetailsView({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/reference/show/$uid');
+      // log('ReferenceCheckDetailsView Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in ReferenceCheckDetailsView: $e');
+      throw Exception('Failed to fetch ReferenceCheckDetailsView: $e');
+    }
+  }
+
+  Future<Response> referenceCheckDocUpload({
+    required String token,
+    required String customer_id,
+    required String request_id,
+    required String service_request_id,
+    required File data_document,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "data_document": await MultipartFile.fromFile(
+        data_document.path,
+        filename: data_document.path.split('/').last, // Use the file name
+      ),
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/reference/document/store', data: formData);
+      // log('referenceCheckDocUpload Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in referenceCheckDocUpload: $e');
+      throw Exception('Failed to fetch referenceCheckDocUpload: $e');
+    }
+  }
+
+  Future<Response> referenceCheckDocShowData(
+      {required String token, required String uid}) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/reference/show/$uid');
+      // log('referenceCheckDocShowData Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in referenceCheckDocShowData: $e');
+      throw Exception('Failed to fetch referenceCheckDocShowData: $e');
+    }
+  }
+
+  Future<Response> referenceCheckDocUpdate({
+    required String token,
+    required String customer_id,
+    required String request_id,
+    required String service_request_id,
+    required File data_document,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "data_document": data_document.path.isEmpty
+          ? null
+          : await MultipartFile.fromFile(
+        data_document.path,
+        filename: data_document.path.split('/').last, // Use the file name
+      ),
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/reference/document/update', data: formData);
+      // log('referenceCheckDocUpload Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in referenceCheckDocUpload: $e');
+      throw Exception('Failed to fetch referenceCheckDocUpload: $e');
+    }
+  }
+
+
+
+  /// Driving License Verification
+  Future<Response> drivingLicenceSave({
+    required String customer_id,
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required String driver_licence_number,
+    required String dob,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "driver_licence_number": driver_licence_number,
+      "dob": dob,
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/driver-licence/form/store', data: formData);
+      // log('drivingLicenceSave Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in drivingLicenceSave: $e');
+      throw Exception('Failed to fetch drivingLicenceSave: $e');
+    }
+  }
+
+  Future<Response> drivingLicenceUpdate({
+    required String token,
+    required String customer_id,
+    required String request_id,
+    required String service_request_id,
+    required String driver_licence_number,
+    required String dob,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "request_id": request_id,
+      "customer_id": customer_id,
+      "service_request_id": service_request_id,
+      "driver_licence_number": driver_licence_number,
+      "dob": dob,
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/driver-licence/form/update', data: formData);
+      // log('drivingLicenceSave Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in drivingLicenceSave: $e');
+      throw Exception('Failed to fetch drivingLicenceSave: $e');
+    }
+  }
+
+  Future<Response> drivingLicenceShowData({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/driver-licence/show/$uid');
+      // log('drivingLicenceShowData Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in drivingLicenceShowData: $e');
+      throw Exception('Failed to fetch drivingLicenceShowData: $e');
+    }
+  }
+
+  Future<Response> drivingDocUpload({
+    required String customer_id,
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required File data_document,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "data_document": await MultipartFile.fromFile(
+        data_document.path,
+        filename: data_document.path.split('/').last, // Use the file name
+      ),
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.post('verify/driver-licence/document/store',
+          data: formData);
+      // log('drivingDocUpload Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in drivingDocUpload: $e');
+      throw Exception('Failed to fetch drivingDocUpload: $e');
+    }
+  }
+
+  Future<Response> drivingDocUpdate({
+    required String customer_id,
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required File data_document,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "data_document": data_document.path.isEmpty
+          ? null
+          : await MultipartFile.fromFile(
+        data_document.path,
+        filename: data_document.path.split('/').last, // Use the file name
+      ),
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.post('verify/driver-licence/document/update',
+          data: formData);
+      // log('drivingDocUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in drivingDocUpdate: $e');
+      throw Exception('Failed to fetch drivingDocUpdate: $e');
+    }
+  }
+
+
+
+  /// GST CIN PAN Verification
+  Future<Response> gstPanCinSave({
+    required String customer_id,
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required String gst_number,
+    required String pan_number,
+    required String cin_number,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "gst_number": gst_number,
+      "pan_number": pan_number,
+      "cin_number": cin_number,
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/gst-pan-cin/form/store', data: formData);
+      // log('gstPanCinSave Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in gstPanCinSave: $e');
+      throw Exception('Failed to fetch gstPanCinSave: $e');
+    }
+  }
+
+  Future<Response> gstPanCinUpdate({
+    required String customer_id,
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required String gst_number,
+    required String pan_number,
+    required String cin_number,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "gst_number": gst_number,
+      "pan_number": pan_number,
+      "cin_number": cin_number,
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/gst-pan-cin/form/update', data: formData);
+      // log('gstPanCinUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in gstPanCinUpdate: $e');
+      throw Exception('Failed to fetch gstPanCinUpdate: $e');
+    }
+  }
+  Future<Response> gstPanCinShowData({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/gst-pan-cin/show/$uid');
+      // log('gstPanCinShowData Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in gstPanCinShowData: $e');
+      throw Exception('Failed to fetch gstPanCinShowData: $e');
+    }
+  }
+  Future<Response> gstPanCinDocUpload({
+    required String customer_id,
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required File gst_document,
+    required File pan_document,
+    required File cin_document,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "gst_document": gst_document.path.isEmpty
+          ? null
+          : await MultipartFile.fromFile(
+        gst_document.path,
+        filename: gst_document.path.split('/').last, // Use the file name
+      ),
+      "pan_document": pan_document.path.isEmpty
+          ? null
+          : await MultipartFile.fromFile(
+        pan_document.path,
+        filename: pan_document.path.split('/').last, // Use the file name
+      ),
+      "cin_document": cin_document.path.isEmpty
+          ? null
+          : await MultipartFile.fromFile(
+        cin_document.path,
+        filename: cin_document.path.split('/').last, // Use the file name
+      ),
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/gst-pan-cin/document/store', data: formData);
+      // log('gstPanCinDocUpload Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in gstPanCinDocUpload: $e');
+      throw Exception('Failed to fetch gstPanCinDocUpload: $e');
+    }
+  }
+
+  Future<Response> gstPanCinDocUpdate({
+    required String customer_id,
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required File gst_document,
+    required File pan_document,
+    required File cin_document,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "gst_document": gst_document.path.isEmpty
+          ? null
+          : await MultipartFile.fromFile(
+        gst_document.path,
+        filename: gst_document.path.split('/').last, // Use the file name
+      ),
+      "pan_document": pan_document.path.isEmpty
+          ? null
+          : await MultipartFile.fromFile(
+        pan_document.path,
+        filename: pan_document.path.split('/').last, // Use the file name
+      ),
+      "cin_document": cin_document.path.isEmpty
+          ? null
+          : await MultipartFile.fromFile(
+        cin_document.path,
+        filename: cin_document.path.split('/').last, // Use the file name
+      ),
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/gst-pan-cin/document/update', data: formData);
+      // log('gstPanCinDocUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in gstPanCinDocUpdate: $e');
+      throw Exception('Failed to fetch gstPanCinDocUpdate: $e');
+    }
+  }
+
+
+
+  /// Police Verification (Mumbai)
   Future<Response> tenantMumbaiForm(
       {required String customerId,
-      required String token,
-      required MumbaiModel mumbaiModel}) async {
+        required String token,
+        required MumbaiModel mumbaiModel}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       FormData formData = FormData.fromMap({
@@ -1373,13 +1708,13 @@ class ApiService {
         "tenant_state": mumbaiModel.tenant_state,
         "tenant_postal_code": mumbaiModel.tenant_postal_code,
         "tenant_identity_proof_doc_type":
-            mumbaiModel.tenant_identity_proof_doc_type,
+        mumbaiModel.tenant_identity_proof_doc_type,
         "tenant_identity_proof_no": mumbaiModel.tenant_identity_proof_no,
         "tenant_co_resident_males_no": mumbaiModel.tenant_co_resident_males_no,
         "tenant_co_resident_females_no":
-            mumbaiModel.tenant_co_resident_females_no,
+        mumbaiModel.tenant_co_resident_females_no,
         "tenant_co_resident_children_no":
-            mumbaiModel.tenant_co_resident_children_no,
+        mumbaiModel.tenant_co_resident_children_no,
         "tenant_work_phone": mumbaiModel.tenant_work_phone,
         "tenant_work_email": mumbaiModel.tenant_work_email,
         "tenant_occupation": mumbaiModel.tenant_occupation,
@@ -1388,17 +1723,17 @@ class ApiService {
         "tenant_work_state": mumbaiModel.tenant_work_state,
         "tenant_work_postal_code": mumbaiModel.tenant_work_postal_code,
         "tenant_contact_one_full_name":
-            mumbaiModel.tenant_contact_one_full_name,
+        mumbaiModel.tenant_contact_one_full_name,
         "tenant_contact_one_phone": mumbaiModel.tenant_contact_one_phone,
         "tenant_contact_two_full_name":
-            mumbaiModel.tenant_contact_two_full_name,
+        mumbaiModel.tenant_contact_two_full_name,
         "tenant_contact_two_phone": mumbaiModel.tenant_contact_two_phone,
         "agent_name": mumbaiModel.agent_name,
         "agent_details": mumbaiModel.agent_details,
         "owner_photo": await MultipartFile.fromFile(
           mumbaiModel.owner_photo.path,
           filename:
-              mumbaiModel.owner_photo.path.split('/').last, // Use the file name
+          mumbaiModel.owner_photo.path.split('/').last, // Use the file name
         ),
         "tenant_photo": await MultipartFile.fromFile(
           mumbaiModel.tenant_photo.path,
@@ -1422,7 +1757,7 @@ class ApiService {
       });
 
       final response =
-          await _dio.post('verify/police/mumbai/form/save', data: formData);
+      await _dio.post('verify/police/mumbai/form/save', data: formData);
       // log('tenantMumbaiForm Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1431,11 +1766,492 @@ class ApiService {
     }
   }
 
+  Future<Response> tenantMumbaiFormUpdate(
+      {required String token,
+        required String customer_id,
+        required MumbaiUpdateModel mumbaiUpdateModel}) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      FormData formData = FormData.fromMap({
+        "customer_id": customer_id,
+        "request_id": mumbaiUpdateModel.request_id,
+        "service_request_id": mumbaiUpdateModel.service_request_id,
+        "police_station_id": mumbaiUpdateModel.police_station_id,
+        "rented_address": mumbaiUpdateModel.rented_address,
+        "rented_city": mumbaiUpdateModel.rented_city,
+        "rented_state": mumbaiUpdateModel.rented_state,
+        "rented_postal_code": mumbaiUpdateModel.rented_postal_code,
+        'agreement_start_date': mumbaiUpdateModel.agreement_start_date,
+        "agreement_end_date": mumbaiUpdateModel.agreement_end_date,
+        "owner_full_name": mumbaiUpdateModel.owner_full_name,
+        "owner_mob_no": mumbaiUpdateModel.owner_mob_no,
+        "owner_email": mumbaiUpdateModel.owner_email,
+        "owner_address": mumbaiUpdateModel.owner_address,
+        "owner_city_district": mumbaiUpdateModel.owner_city_district,
+        "owner_state": mumbaiUpdateModel.owner_state,
+        "owner_postal_code": mumbaiUpdateModel.owner_postal_code,
+        "tenant_name": mumbaiUpdateModel.tenant_name,
+        "tenant_address": mumbaiUpdateModel.tenant_address,
+        "tenant_city": mumbaiUpdateModel.tenant_city,
+        "tenant_state": mumbaiUpdateModel.tenant_state,
+        "tenant_postal_code": mumbaiUpdateModel.tenant_postal_code,
+        "tenant_identity_proof_doc_type":
+        mumbaiUpdateModel.tenant_identity_proof_doc_type,
+        "tenant_identity_proof_no": mumbaiUpdateModel.tenant_identity_proof_no,
+        "tenant_co_resident_males_no":
+        mumbaiUpdateModel.tenant_co_resident_males_no,
+        "tenant_co_resident_females_no":
+        mumbaiUpdateModel.tenant_co_resident_females_no,
+        "tenant_co_resident_children_no":
+        mumbaiUpdateModel.tenant_co_resident_children_no,
+        "tenant_work_phone": mumbaiUpdateModel.tenant_work_phone,
+        "tenant_work_email": mumbaiUpdateModel.tenant_work_email,
+        "tenant_occupation": mumbaiUpdateModel.tenant_occupation,
+        "tenant_work_place_address":
+        mumbaiUpdateModel.tenant_work_place_address,
+        "tenant_work_city": mumbaiUpdateModel.tenant_work_city,
+        "tenant_work_state": mumbaiUpdateModel.tenant_work_state,
+        "tenant_work_postal_code": mumbaiUpdateModel.tenant_work_postal_code,
+        "tenant_contact_one_full_name":
+        mumbaiUpdateModel.tenant_contact_one_full_name,
+        "tenant_contact_one_phone": mumbaiUpdateModel.tenant_contact_one_phone,
+        "tenant_contact_two_full_name":
+        mumbaiUpdateModel.tenant_contact_two_full_name,
+        "tenant_contact_two_phone": mumbaiUpdateModel.tenant_contact_two_phone,
+        "agent_name": mumbaiUpdateModel.agent_name,
+        "agent_details": mumbaiUpdateModel.agent_details,
+        "owner_photo": mumbaiUpdateModel.owner_photo.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          mumbaiUpdateModel.owner_photo.path,
+          filename: mumbaiUpdateModel.owner_photo.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_photo": mumbaiUpdateModel.tenant_photo.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          mumbaiUpdateModel.tenant_photo.path,
+          filename: mumbaiUpdateModel.tenant_photo.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_identity_proof_doc":
+        mumbaiUpdateModel.tenant_identity_proof_doc.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          mumbaiUpdateModel.tenant_identity_proof_doc.path,
+          filename: mumbaiUpdateModel.tenant_identity_proof_doc.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_signature": mumbaiUpdateModel.tenant_signature.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          mumbaiUpdateModel.tenant_signature.path,
+          filename: mumbaiUpdateModel.tenant_signature.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "city_id": mumbaiUpdateModel.city_id
+      });
+
+      final response =
+      await _dio.post('verify/police/mumbai/form/update', data: formData);
+      // log('tenantMumbaiFormUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in tenantMumbaiForm: $e');
+      throw Exception('Failed to fetch tenantMumbaiFormUpdate: $e');
+    }
+  }
+
+  Future<Response> mumbaiShowData({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/police/mumbai/$uid');
+      // log('mumbaiShowData Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in mumbaiShowData: $e');
+      throw Exception('Failed to fetch mumbaiShowData: $e');
+    }
+  }
+
+  Future<Response> tenantMumbaiUploadDocuments(
+      {required String customer_id,
+        required String token,
+        required UploadDocumentsMumbaiModel uploadDocumentsMumbaiModel}) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+
+      FormData formData = FormData.fromMap({
+        "customer_id": customer_id,
+        "request_id": uploadDocumentsMumbaiModel.request_id,
+        "service_request_id": uploadDocumentsMumbaiModel.service_request_id,
+        "police_station_id": uploadDocumentsMumbaiModel.police_station_id,
+        "tenant_photo": await MultipartFile.fromFile(
+          uploadDocumentsMumbaiModel.tenant_photo.path,
+          filename: uploadDocumentsMumbaiModel.tenant_photo.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_signature": await MultipartFile.fromFile(
+          uploadDocumentsMumbaiModel.tenant_signature.path,
+          filename: uploadDocumentsMumbaiModel.tenant_signature.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_identity_proof_doc": await MultipartFile.fromFile(
+          uploadDocumentsMumbaiModel.tenant_identity_proof_doc.path,
+          filename: uploadDocumentsMumbaiModel.tenant_identity_proof_doc.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "owner_photo": await MultipartFile.fromFile(
+          uploadDocumentsMumbaiModel.owner_photo.path,
+          filename: uploadDocumentsMumbaiModel.owner_photo.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "data_document": await MultipartFile.fromFile(
+          uploadDocumentsMumbaiModel.data_document.path,
+          filename: uploadDocumentsMumbaiModel.data_document.path
+              .split('/')
+              .last, // Use the file name
+        )
+      });
+
+      final response =
+      await _dio.post('verify/police/mumbai/document/save', data: formData);
+      // log('tenantMumbaiUploadDocuments Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in tenantMumbaiUploadDocuments: $e');
+      throw Exception('Failed to fetch tenantMumbaiUploadDocuments: $e');
+    }
+  }
+
+  Future<Response> tenantMumbaiUpdateDocuments(
+      {required String token,
+        required String customer_id,
+        required UpdateDocumentsMumbaiModel updateDocumentsMumbaiModel}) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+
+      FormData formData = FormData.fromMap({
+        "customer_id": customer_id,
+        "request_id": updateDocumentsMumbaiModel.request_id,
+        "service_request_id": updateDocumentsMumbaiModel.service_request_id,
+        "police_station_id": updateDocumentsMumbaiModel.police_station_id,
+        "tenant_photo": updateDocumentsMumbaiModel.tenant_photo.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          updateDocumentsMumbaiModel.tenant_photo.path,
+          filename: updateDocumentsMumbaiModel.tenant_photo.path
+              .split('/')
+              .last, // Use the file nameupdateDocumentsMumbaiModel
+        ),
+        "tenant_signature":
+        updateDocumentsMumbaiModel.tenant_signature.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          updateDocumentsMumbaiModel.tenant_signature.path,
+          filename: updateDocumentsMumbaiModel.tenant_signature.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_identity_proof_doc":
+        updateDocumentsMumbaiModel.tenant_identity_proof_doc.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          updateDocumentsMumbaiModel.tenant_identity_proof_doc.path,
+          filename: updateDocumentsMumbaiModel
+              .tenant_identity_proof_doc.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "owner_photo": updateDocumentsMumbaiModel.owner_photo.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          updateDocumentsMumbaiModel.owner_photo.path,
+          filename: updateDocumentsMumbaiModel.owner_photo.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "data_document": updateDocumentsMumbaiModel.data_document.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          updateDocumentsMumbaiModel.data_document.path,
+          filename: updateDocumentsMumbaiModel.data_document.path
+              .split('/')
+              .last, // Use the file name
+        )
+      });
+
+      final response = await _dio.post('verify/police/mumbai/document/update',
+          data: formData);
+      // log('tenantMumbaiUploadDocuments Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in tenantMumbaiUploadDocuments: $e');
+      throw Exception('Failed to fetch tenantMumbaiUploadDocuments: $e');
+    }
+  }
+
+  Future<Response> mumbaiDocumentShowData({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/police/mumbai/$uid');
+      // log('mumbaiDocumentShowData Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in mumbaiDocumentShowData: $e');
+      throw Exception('Failed to fetch mumbaiDocumentShowData: $e');
+    }
+  }
+
+
+  /// Police Verification (Non Mumbai)
+  Future<Response> tenantNonMumbaiForm(
+      {required String token,
+        required String customer_id,
+        required NonMumbaiModel nonMumbai}) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "customer_id": customer_id,
+        "request_id": nonMumbai.request_id,
+        "service_request_id": nonMumbai.service_request_id,
+        "tenant_name": nonMumbai.tenant_name,
+        "tenant_address": nonMumbai.tenant_address,
+        "tenant_city": nonMumbai.tenant_city,
+        "tenant_state": nonMumbai.tenant_state,
+        "tenant_postal_code": nonMumbai.tenant_postal_code,
+        "tenant_identity_proof_doc_type":
+        nonMumbai.tenant_identity_proof_doc_type,
+        "tenant_identity_proof_no": nonMumbai.tenant_identity_proof_no,
+        "tenant_identification_mark": nonMumbai.tenant_identification_mark,
+        "tenant_dob": nonMumbai.tenant_dob,
+        "tenant_birth_place": nonMumbai.tenant_birth_place,
+        "tenant_age": nonMumbai.tenant_age,
+        "tenant_is_employed": nonMumbai.tenant_is_employed,
+        "tenant_employed_year": nonMumbai.tenant_employed_year,
+        "tenant_employed_month": nonMumbai.tenant_employed_month,
+        "tenant_employer_or_company": nonMumbai.tenant_employer_or_company,
+        "tenant_fathers_name": nonMumbai.tenant_fathers_name,
+        "tenant_fathers_address": nonMumbai.tenant_fathers_address,
+        "tenant_fathers_occupation": nonMumbai.tenant_fathers_occupation,
+        "tenant_contact_one_full_name": nonMumbai.tenant_contact_one_full_name,
+        "tenant_contact_one_address": nonMumbai.tenant_contact_one_address,
+        "tenant_contact_two_full_name": nonMumbai.tenant_contact_two_full_name,
+        "tenant_contact_two_address": nonMumbai.tenant_contact_two_address,
+        "tenant_has_criminal_offenses": nonMumbai.tenant_has_criminal_offenses,
+        nonMumbai.tenant_crno_section.isEmpty ? "" : "tenant_crno_section":
+        nonMumbai.tenant_crno_section,
+        "tenant_whether_arrested": nonMumbai.tenant_whether_arrested,
+        nonMumbai.tenant_present_case_status.isEmpty
+            ? ""
+            : "tenant_present_case_status":
+        nonMumbai.tenant_present_case_status,
+        "tenant_earlier_residential_place":
+        nonMumbai.tenant_earlier_residential_place,
+        "tenant_earlier_residential_months":
+        nonMumbai.tenant_earlier_residential_months,
+        "tenant_earlier_residential_years":
+        nonMumbai.tenant_earlier_residential_years,
+        "tenant_earlier_residential_jurisdiction_of_police_station":
+        nonMumbai.tenant_earlier_residential_jurisdiction_of_police_station,
+        "tenant_present_address_duration_years":
+        nonMumbai.tenant_present_address_duration_years,
+        "tenant_present_address_duration_months":
+        nonMumbai.tenant_present_address_duration_months,
+        "tenant_jurisdiction_of_police_station":
+        nonMumbai.tenant_jurisdiction_of_police_station,
+        "tenant_present_resendential_place":
+        nonMumbai.tenant_present_resendential_place,
+        "tenant_signature_place": nonMumbai.tenant_signature_place,
+        "tenant_signature_date": nonMumbai.tenant_signature_date,
+        "tenant_photo": await MultipartFile.fromFile(
+          nonMumbai.tenant_photo.path,
+          filename:
+          nonMumbai.tenant_photo.path.split('/').last, // Use the file name
+        ),
+        "tenant_signature": await MultipartFile.fromFile(
+          nonMumbai.tenant_signature.path,
+          filename: nonMumbai.tenant_signature.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_identity_proof_doc": await MultipartFile.fromFile(
+          nonMumbai.tenant_identity_proof_doc.path,
+          filename: nonMumbai.tenant_identity_proof_doc.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_letter_from_employer":
+        nonMumbai.tenant_letter_from_employer!.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          nonMumbai.tenant_letter_from_employer!.path,
+          filename: nonMumbai.tenant_letter_from_employer!.path
+              .split('/')
+              .last, // Use the file name
+        ),
+      });
+
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =
+      await _dio.post('verify/police/non-mumbai/form/save', data: formData);
+      // log('tenantNonMumbaiForm Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in tenantNonMumbaiForm: $e');
+      throw Exception('Failed to fetch tenantNonMumbaiForm: $e');
+    }
+  }
+
+  Future<Response> tenantNonMumbaiFormUpdate(
+      {required String token,
+        required String customer_id,
+        required NonMumbaiUpdateModel nonMumbaiUpdateModel}) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "customer_id": customer_id,
+        "request_id": nonMumbaiUpdateModel.request_id,
+        "service_request_id": nonMumbaiUpdateModel.service_request_id,
+        "tenant_name": nonMumbaiUpdateModel.tenant_name,
+        "tenant_address": nonMumbaiUpdateModel.tenant_address,
+        "tenant_city": nonMumbaiUpdateModel.tenant_city,
+        "tenant_state": nonMumbaiUpdateModel.tenant_state,
+        "tenant_postal_code": nonMumbaiUpdateModel.tenant_postal_code,
+        "tenant_identity_proof_doc_type":
+        nonMumbaiUpdateModel.tenant_identity_proof_doc_type,
+        "tenant_identity_proof_no":
+        nonMumbaiUpdateModel.tenant_identity_proof_no,
+        "tenant_identification_mark":
+        nonMumbaiUpdateModel.tenant_identification_mark,
+        "tenant_dob": nonMumbaiUpdateModel.tenant_dob,
+        "tenant_birth_place": nonMumbaiUpdateModel.tenant_birth_place,
+        "tenant_age": nonMumbaiUpdateModel.tenant_age,
+        "tenant_is_employed": nonMumbaiUpdateModel.tenant_is_employed,
+        "tenant_employed_year": nonMumbaiUpdateModel.tenant_employed_year,
+        "tenant_employed_month": nonMumbaiUpdateModel.tenant_employed_month,
+        "tenant_employer_or_company":
+        nonMumbaiUpdateModel.tenant_employer_or_company,
+        "tenant_fathers_name": nonMumbaiUpdateModel.tenant_fathers_name,
+        "tenant_fathers_address": nonMumbaiUpdateModel.tenant_fathers_address,
+        "tenant_fathers_occupation":
+        nonMumbaiUpdateModel.tenant_fathers_occupation,
+        "tenant_contact_one_full_name":
+        nonMumbaiUpdateModel.tenant_contact_one_full_name,
+        "tenant_contact_one_address":
+        nonMumbaiUpdateModel.tenant_contact_one_address,
+        "tenant_contact_two_full_name":
+        nonMumbaiUpdateModel.tenant_contact_two_full_name,
+        "tenant_contact_two_address":
+        nonMumbaiUpdateModel.tenant_contact_two_address,
+        "tenant_has_criminal_offenses":
+        nonMumbaiUpdateModel.tenant_has_criminal_offenses,
+        nonMumbaiUpdateModel.tenant_crno_section.isEmpty
+            ? ""
+            : "tenant_crno_section": nonMumbaiUpdateModel.tenant_crno_section,
+        "tenant_whether_arrested": nonMumbaiUpdateModel.tenant_whether_arrested,
+        nonMumbaiUpdateModel.tenant_present_case_status.isEmpty
+            ? ""
+            : "tenant_present_case_status":
+        nonMumbaiUpdateModel.tenant_present_case_status,
+        "tenant_earlier_residential_place":
+        nonMumbaiUpdateModel.tenant_earlier_residential_place,
+        "tenant_earlier_residential_months":
+        nonMumbaiUpdateModel.tenant_earlier_residential_months,
+        "tenant_earlier_residential_years":
+        nonMumbaiUpdateModel.tenant_earlier_residential_years,
+        "tenant_earlier_residential_jurisdiction_of_police_station":
+        nonMumbaiUpdateModel
+            .tenant_earlier_residential_jurisdiction_of_police_station,
+        "tenant_present_address_duration_years":
+        nonMumbaiUpdateModel.tenant_present_address_duration_years,
+        "tenant_present_address_duration_months":
+        nonMumbaiUpdateModel.tenant_present_address_duration_months,
+        "tenant_jurisdiction_of_police_station":
+        nonMumbaiUpdateModel.tenant_jurisdiction_of_police_station,
+        "tenant_present_resendential_place":
+        nonMumbaiUpdateModel.tenant_present_resendential_place,
+        "tenant_signature_place": nonMumbaiUpdateModel.tenant_signature_place,
+        "tenant_signature_date": nonMumbaiUpdateModel.tenant_signature_date,
+        "tenant_photo": nonMumbaiUpdateModel.tenant_photo.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          nonMumbaiUpdateModel.tenant_photo.path,
+          filename: nonMumbaiUpdateModel.tenant_photo.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_signature": nonMumbaiUpdateModel.tenant_signature.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          nonMumbaiUpdateModel.tenant_signature.path,
+          filename: nonMumbaiUpdateModel.tenant_signature.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_identity_proof_doc": nonMumbaiUpdateModel
+            .tenant_identity_proof_doc.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          nonMumbaiUpdateModel.tenant_identity_proof_doc.path,
+          filename: nonMumbaiUpdateModel.tenant_identity_proof_doc.path
+              .split('/')
+              .last, // Use the file name
+        ),
+        "tenant_letter_from_employer": nonMumbaiUpdateModel
+            .tenant_letter_from_employer!.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          nonMumbaiUpdateModel.tenant_letter_from_employer!.path,
+          filename: nonMumbaiUpdateModel.tenant_letter_from_employer!.path
+              .split('/')
+              .last, // Use the file name
+        ),
+      });
+
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.post('verify/police/non-mumbai/form/update',
+          data: formData);
+      // log('tenantNonMumbaiFormUpdate Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in tenantNonMumbaiFormUpdate: $e');
+      throw Exception('Failed to fetch tenantNonMumbaiFormUpdate: $e');
+    }
+  }
+
+  Future<Response> nonMumbaiShowData({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/police/non-mumbai/$uid');
+      // log('mumbaiShowData Response: ${response.data}');
+      return response;
+    } catch (e) {
+      // log('Error in mumbaiShowData: $e');
+      throw Exception('Failed to fetch mumbaiShowData: $e');
+    }
+  }
+
   Future<Response> tenantNonMumbaiUploadDocuments(
       {required String token,
-      required String customer_id,
-      required UploadDocumentsNonMumbaiModel
-          uploadDocumentsNonMumbaiModel}) async {
+        required String customer_id,
+        required UploadDocumentsNonMumbaiModel
+        uploadDocumentsNonMumbaiModel}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
 
@@ -1485,117 +2301,125 @@ class ApiService {
       throw Exception('Failed to fetch tenantNonMumbaiUploadDocuments: $e');
     }
   }
-
-  Future<Response> tenantMumbaiUploadDocuments(
-      {required String customer_id,
-      required String token,
-      required UploadDocumentsMumbaiModel uploadDocumentsMumbaiModel}) async {
+  Future<Response> tenantNonMumbaiUpdateDocuments(
+      {required String token,
+        required String customer_id,
+        required UpdateDocumentsNonMumbaiModel
+        updateDocumentsNonMumbaiModel}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
 
       FormData formData = FormData.fromMap({
         "customer_id": customer_id,
-        "request_id": uploadDocumentsMumbaiModel.request_id,
-        "service_request_id": uploadDocumentsMumbaiModel.service_request_id,
-        "police_station_id": uploadDocumentsMumbaiModel.police_station_id,
-        "tenant_photo": await MultipartFile.fromFile(
-          uploadDocumentsMumbaiModel.tenant_photo.path,
-          filename: uploadDocumentsMumbaiModel.tenant_photo.path
+        "request_id": updateDocumentsNonMumbaiModel.request_id,
+        "service_request_id": updateDocumentsNonMumbaiModel.service_request_id,
+        "tenant_photo": updateDocumentsNonMumbaiModel.tenant_photo.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          updateDocumentsNonMumbaiModel.tenant_photo.path,
+          filename: updateDocumentsNonMumbaiModel.tenant_photo.path
               .split('/')
               .last, // Use the file name
         ),
-        "tenant_signature": await MultipartFile.fromFile(
-          uploadDocumentsMumbaiModel.tenant_signature.path,
-          filename: uploadDocumentsMumbaiModel.tenant_signature.path
+        "tenant_signature": updateDocumentsNonMumbaiModel
+            .tenant_signature.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          updateDocumentsNonMumbaiModel.tenant_signature.path,
+          filename: updateDocumentsNonMumbaiModel.tenant_signature.path
               .split('/')
               .last, // Use the file name
         ),
-        "tenant_identity_proof_doc": await MultipartFile.fromFile(
-          uploadDocumentsMumbaiModel.tenant_identity_proof_doc.path,
-          filename: uploadDocumentsMumbaiModel.tenant_identity_proof_doc.path
+        "tenant_identity_proof_doc": updateDocumentsNonMumbaiModel
+            .tenant_identity_proof_doc.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          updateDocumentsNonMumbaiModel.tenant_identity_proof_doc.path,
+          filename: updateDocumentsNonMumbaiModel
+              .tenant_identity_proof_doc.path
               .split('/')
               .last, // Use the file name
         ),
-        "owner_photo": await MultipartFile.fromFile(
-          uploadDocumentsMumbaiModel.owner_photo.path,
-          filename: uploadDocumentsMumbaiModel.owner_photo.path
+        "tenant_letter_from_employer": updateDocumentsNonMumbaiModel
+            .tenant_letter_from_employer.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          updateDocumentsNonMumbaiModel.tenant_letter_from_employer.path,
+          filename: updateDocumentsNonMumbaiModel
+              .tenant_letter_from_employer.path
               .split('/')
               .last, // Use the file name
         ),
-        "data_document": await MultipartFile.fromFile(
-          uploadDocumentsMumbaiModel.data_document.path,
-          filename: uploadDocumentsMumbaiModel.data_document.path
+        "data_document":
+        updateDocumentsNonMumbaiModel.data_document.path.isEmpty
+            ? null
+            : await MultipartFile.fromFile(
+          updateDocumentsNonMumbaiModel.data_document.path,
+          filename: updateDocumentsNonMumbaiModel.data_document.path
               .split('/')
               .last, // Use the file name
         )
       });
 
-      final response =
-          await _dio.post('verify/police/mumbai/document/save', data: formData);
-      // log('tenantMumbaiUploadDocuments Response: ${response.data}');
+      final response = await _dio
+          .post('verify/police/non-mumbai/document/update', data: formData);
+      // log('tenantNonMumbaiUpdateDocuments Response: ${response.data}');
       return response;
     } catch (e) {
-      // log('Error in tenantMumbaiUploadDocuments: $e');
-      throw Exception('Failed to fetch tenantMumbaiUploadDocuments: $e');
+      // log('Error in tenantNonMumbaiUpdateDocuments: $e');
+      throw Exception('Failed to fetch tenantNonMumbaiUpdateDocuments: $e');
     }
   }
 
-
-  Future<Response> ReferenceVerification(
-      {required String customer_id,
-      required String token,
-      required ReferenceModel referenceModel}) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": referenceModel.request_id,
-      "service_request_id": referenceModel.service_request_id,
-      "person_name_1": referenceModel.person_name_one,
-      "person_mobile_number_1": referenceModel.person_mobile_number_one,
-      "person_relation_1": referenceModel.person_relation_one,
-      "person_name_2": referenceModel.person_name_two,
-      "person_mobile_number_2": referenceModel.person_mobile_number_two,
-      "person_relation_2": referenceModel.person_relation_two,
-    });
-
+  Future<Response> nonMumbaiDocumentShowData({
+    required String token,
+    required String uid,
+  }) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/reference/form/store', data: formData);
-      // log('ReferenceVerification Response: ${response.data}');
+      final response = await _dio.get('verify/police/non-mumbai/$uid');
+      // log('nonMumbaiDocumentShowData Response: ${response.data}');
       return response;
     } catch (e) {
-      // log('Error in ReferenceVerification: $e');
-      throw Exception('Failed to fetch ReferenceVerification: $e');
+      // log('Error in nonMumbaiDocumentShowData: $e');
+      throw Exception('Failed to fetch nonMumbaiDocumentShowData: $e');
     }
   }
 
-  Future<Response> ReferenceVerificationUpdate(
-      {required String token,
-      required String customer_id,
-      required ReferenceUpdateModel referenceUpdateModel}) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": referenceUpdateModel.request_id,
-      "service_request_id": referenceUpdateModel.service_request_id,
-      "person_name_1": referenceUpdateModel.person_name_one,
-      "person_mobile_number_1": referenceUpdateModel.person_mobile_number_one,
-      "person_relation_1": referenceUpdateModel.person_relation_one,
-      "person_name_2": referenceUpdateModel.person_name_two,
-      "person_mobile_number_2": referenceUpdateModel.person_mobile_number_two,
-      "person_relation_2": referenceUpdateModel.person_relation_two,
-    });
 
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/reference/form/update', data: formData);
-      // log('verifyRequestUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in verifyRequestUpdate:$e');
-      throw Exception('Failed to fetch verifyRequestUpdate: $e');
-    }
-  }
+
+  /// Police Verification
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   Future<Response> AadhaarGetOtp(
       {required String token,
@@ -1654,281 +2478,6 @@ class ApiService {
 
 
 
-  Future<Response> VerifyDetailsView({
-    required String token,
-    required String request_id,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify-request/$request_id/show');
-      // log('VerifyDetailsView Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in VerifyDetailsView: $e');
-      throw Exception('Failed to fetch VerifyDetailsView: $e');
-    }
-  }
-
-  Future<Response> ReferenceCheckDetailsView({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/reference/show/$uid');
-      // log('ReferenceCheckDetailsView Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in ReferenceCheckDetailsView: $e');
-      throw Exception('Failed to fetch ReferenceCheckDetailsView: $e');
-    }
-  }
-
-  Future<Response> mumbaiShowData({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/police/mumbai/$uid');
-      // log('mumbaiShowData Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in mumbaiShowData: $e');
-      throw Exception('Failed to fetch mumbaiShowData: $e');
-    }
-  }
-
-  Future<Response> tenantMumbaiFormUpdate(
-      {required String token,
-      required String customer_id,
-      required MumbaiUpdateModel mumbaiUpdateModel}) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      FormData formData = FormData.fromMap({
-        "customer_id": customer_id,
-        "request_id": mumbaiUpdateModel.request_id,
-        "service_request_id": mumbaiUpdateModel.service_request_id,
-        "police_station_id": mumbaiUpdateModel.police_station_id,
-        "rented_address": mumbaiUpdateModel.rented_address,
-        "rented_city": mumbaiUpdateModel.rented_city,
-        "rented_state": mumbaiUpdateModel.rented_state,
-        "rented_postal_code": mumbaiUpdateModel.rented_postal_code,
-        'agreement_start_date': mumbaiUpdateModel.agreement_start_date,
-        "agreement_end_date": mumbaiUpdateModel.agreement_end_date,
-        "owner_full_name": mumbaiUpdateModel.owner_full_name,
-        "owner_mob_no": mumbaiUpdateModel.owner_mob_no,
-        "owner_email": mumbaiUpdateModel.owner_email,
-        "owner_address": mumbaiUpdateModel.owner_address,
-        "owner_city_district": mumbaiUpdateModel.owner_city_district,
-        "owner_state": mumbaiUpdateModel.owner_state,
-        "owner_postal_code": mumbaiUpdateModel.owner_postal_code,
-        "tenant_name": mumbaiUpdateModel.tenant_name,
-        "tenant_address": mumbaiUpdateModel.tenant_address,
-        "tenant_city": mumbaiUpdateModel.tenant_city,
-        "tenant_state": mumbaiUpdateModel.tenant_state,
-        "tenant_postal_code": mumbaiUpdateModel.tenant_postal_code,
-        "tenant_identity_proof_doc_type":
-            mumbaiUpdateModel.tenant_identity_proof_doc_type,
-        "tenant_identity_proof_no": mumbaiUpdateModel.tenant_identity_proof_no,
-        "tenant_co_resident_males_no":
-            mumbaiUpdateModel.tenant_co_resident_males_no,
-        "tenant_co_resident_females_no":
-            mumbaiUpdateModel.tenant_co_resident_females_no,
-        "tenant_co_resident_children_no":
-            mumbaiUpdateModel.tenant_co_resident_children_no,
-        "tenant_work_phone": mumbaiUpdateModel.tenant_work_phone,
-        "tenant_work_email": mumbaiUpdateModel.tenant_work_email,
-        "tenant_occupation": mumbaiUpdateModel.tenant_occupation,
-        "tenant_work_place_address":
-            mumbaiUpdateModel.tenant_work_place_address,
-        "tenant_work_city": mumbaiUpdateModel.tenant_work_city,
-        "tenant_work_state": mumbaiUpdateModel.tenant_work_state,
-        "tenant_work_postal_code": mumbaiUpdateModel.tenant_work_postal_code,
-        "tenant_contact_one_full_name":
-            mumbaiUpdateModel.tenant_contact_one_full_name,
-        "tenant_contact_one_phone": mumbaiUpdateModel.tenant_contact_one_phone,
-        "tenant_contact_two_full_name":
-            mumbaiUpdateModel.tenant_contact_two_full_name,
-        "tenant_contact_two_phone": mumbaiUpdateModel.tenant_contact_two_phone,
-        "agent_name": mumbaiUpdateModel.agent_name,
-        "agent_details": mumbaiUpdateModel.agent_details,
-        "owner_photo": mumbaiUpdateModel.owner_photo.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                mumbaiUpdateModel.owner_photo.path,
-                filename: mumbaiUpdateModel.owner_photo.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "tenant_photo": mumbaiUpdateModel.tenant_photo.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                mumbaiUpdateModel.tenant_photo.path,
-                filename: mumbaiUpdateModel.tenant_photo.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "tenant_identity_proof_doc":
-            mumbaiUpdateModel.tenant_identity_proof_doc.path.isEmpty
-                ? null
-                : await MultipartFile.fromFile(
-                    mumbaiUpdateModel.tenant_identity_proof_doc.path,
-                    filename: mumbaiUpdateModel.tenant_identity_proof_doc.path
-                        .split('/')
-                        .last, // Use the file name
-                  ),
-        "tenant_signature": mumbaiUpdateModel.tenant_signature.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                mumbaiUpdateModel.tenant_signature.path,
-                filename: mumbaiUpdateModel.tenant_signature.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "city_id": mumbaiUpdateModel.city_id
-      });
-
-      final response =
-          await _dio.post('verify/police/mumbai/form/update', data: formData);
-      // log('tenantMumbaiFormUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in tenantMumbaiForm: $e');
-      throw Exception('Failed to fetch tenantMumbaiFormUpdate: $e');
-    }
-  }
-
-  Future<Response> nonMumbaiShowData({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/police/non-mumbai/$uid');
-      // log('mumbaiShowData Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in mumbaiShowData: $e');
-      throw Exception('Failed to fetch mumbaiShowData: $e');
-    }
-  }
-
-  Future<Response> tenantNonMumbaiFormUpdate(
-      {required String token,
-      required String customer_id,
-      required NonMumbaiUpdateModel nonMumbaiUpdateModel}) async {
-    try {
-      FormData formData = FormData.fromMap({
-        "customer_id": customer_id,
-        "request_id": nonMumbaiUpdateModel.request_id,
-        "service_request_id": nonMumbaiUpdateModel.service_request_id,
-        "tenant_name": nonMumbaiUpdateModel.tenant_name,
-        "tenant_address": nonMumbaiUpdateModel.tenant_address,
-        "tenant_city": nonMumbaiUpdateModel.tenant_city,
-        "tenant_state": nonMumbaiUpdateModel.tenant_state,
-        "tenant_postal_code": nonMumbaiUpdateModel.tenant_postal_code,
-        "tenant_identity_proof_doc_type":
-            nonMumbaiUpdateModel.tenant_identity_proof_doc_type,
-        "tenant_identity_proof_no":
-            nonMumbaiUpdateModel.tenant_identity_proof_no,
-        "tenant_identification_mark":
-            nonMumbaiUpdateModel.tenant_identification_mark,
-        "tenant_dob": nonMumbaiUpdateModel.tenant_dob,
-        "tenant_birth_place": nonMumbaiUpdateModel.tenant_birth_place,
-        "tenant_age": nonMumbaiUpdateModel.tenant_age,
-        "tenant_is_employed": nonMumbaiUpdateModel.tenant_is_employed,
-        "tenant_employed_year": nonMumbaiUpdateModel.tenant_employed_year,
-        "tenant_employed_month": nonMumbaiUpdateModel.tenant_employed_month,
-        "tenant_employer_or_company":
-            nonMumbaiUpdateModel.tenant_employer_or_company,
-        "tenant_fathers_name": nonMumbaiUpdateModel.tenant_fathers_name,
-        "tenant_fathers_address": nonMumbaiUpdateModel.tenant_fathers_address,
-        "tenant_fathers_occupation":
-            nonMumbaiUpdateModel.tenant_fathers_occupation,
-        "tenant_contact_one_full_name":
-            nonMumbaiUpdateModel.tenant_contact_one_full_name,
-        "tenant_contact_one_address":
-            nonMumbaiUpdateModel.tenant_contact_one_address,
-        "tenant_contact_two_full_name":
-            nonMumbaiUpdateModel.tenant_contact_two_full_name,
-        "tenant_contact_two_address":
-            nonMumbaiUpdateModel.tenant_contact_two_address,
-        "tenant_has_criminal_offenses":
-            nonMumbaiUpdateModel.tenant_has_criminal_offenses,
-        nonMumbaiUpdateModel.tenant_crno_section.isEmpty
-            ? ""
-            : "tenant_crno_section": nonMumbaiUpdateModel.tenant_crno_section,
-        "tenant_whether_arrested": nonMumbaiUpdateModel.tenant_whether_arrested,
-        nonMumbaiUpdateModel.tenant_present_case_status.isEmpty
-                ? ""
-                : "tenant_present_case_status":
-            nonMumbaiUpdateModel.tenant_present_case_status,
-        "tenant_earlier_residential_place":
-            nonMumbaiUpdateModel.tenant_earlier_residential_place,
-        "tenant_earlier_residential_months":
-            nonMumbaiUpdateModel.tenant_earlier_residential_months,
-        "tenant_earlier_residential_years":
-            nonMumbaiUpdateModel.tenant_earlier_residential_years,
-        "tenant_earlier_residential_jurisdiction_of_police_station":
-            nonMumbaiUpdateModel
-                .tenant_earlier_residential_jurisdiction_of_police_station,
-        "tenant_present_address_duration_years":
-            nonMumbaiUpdateModel.tenant_present_address_duration_years,
-        "tenant_present_address_duration_months":
-            nonMumbaiUpdateModel.tenant_present_address_duration_months,
-        "tenant_jurisdiction_of_police_station":
-            nonMumbaiUpdateModel.tenant_jurisdiction_of_police_station,
-        "tenant_present_resendential_place":
-            nonMumbaiUpdateModel.tenant_present_resendential_place,
-        "tenant_signature_place": nonMumbaiUpdateModel.tenant_signature_place,
-        "tenant_signature_date": nonMumbaiUpdateModel.tenant_signature_date,
-        "tenant_photo": nonMumbaiUpdateModel.tenant_photo.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                nonMumbaiUpdateModel.tenant_photo.path,
-                filename: nonMumbaiUpdateModel.tenant_photo.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "tenant_signature": nonMumbaiUpdateModel.tenant_signature.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                nonMumbaiUpdateModel.tenant_signature.path,
-                filename: nonMumbaiUpdateModel.tenant_signature.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "tenant_identity_proof_doc": nonMumbaiUpdateModel
-                .tenant_identity_proof_doc.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                nonMumbaiUpdateModel.tenant_identity_proof_doc.path,
-                filename: nonMumbaiUpdateModel.tenant_identity_proof_doc.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "tenant_letter_from_employer": nonMumbaiUpdateModel
-                .tenant_letter_from_employer!.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                nonMumbaiUpdateModel.tenant_letter_from_employer!.path,
-                filename: nonMumbaiUpdateModel.tenant_letter_from_employer!.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-      });
-
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.post('verify/police/non-mumbai/form/update',
-          data: formData);
-      // log('tenantNonMumbaiFormUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in tenantNonMumbaiFormUpdate: $e');
-      throw Exception('Failed to fetch tenantNonMumbaiFormUpdate: $e');
-    }
-  }
 
 
 
@@ -1940,172 +2489,21 @@ class ApiService {
 
 
 
-  Future<Response> tenantNonMumbaiUpdateDocuments(
-      {required String token,
-      required String customer_id,
-      required UpdateDocumentsNonMumbaiModel
-          updateDocumentsNonMumbaiModel}) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
 
-      FormData formData = FormData.fromMap({
-        "customer_id": customer_id,
-        "request_id": updateDocumentsNonMumbaiModel.request_id,
-        "service_request_id": updateDocumentsNonMumbaiModel.service_request_id,
-        "tenant_photo": updateDocumentsNonMumbaiModel.tenant_photo.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                updateDocumentsNonMumbaiModel.tenant_photo.path,
-                filename: updateDocumentsNonMumbaiModel.tenant_photo.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "tenant_signature": updateDocumentsNonMumbaiModel
-                .tenant_signature.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                updateDocumentsNonMumbaiModel.tenant_signature.path,
-                filename: updateDocumentsNonMumbaiModel.tenant_signature.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "tenant_identity_proof_doc": updateDocumentsNonMumbaiModel
-                .tenant_identity_proof_doc.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                updateDocumentsNonMumbaiModel.tenant_identity_proof_doc.path,
-                filename: updateDocumentsNonMumbaiModel
-                    .tenant_identity_proof_doc.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "tenant_letter_from_employer": updateDocumentsNonMumbaiModel
-                .tenant_letter_from_employer.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                updateDocumentsNonMumbaiModel.tenant_letter_from_employer.path,
-                filename: updateDocumentsNonMumbaiModel
-                    .tenant_letter_from_employer.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "data_document":
-            updateDocumentsNonMumbaiModel.data_document.path.isEmpty
-                ? null
-                : await MultipartFile.fromFile(
-                    updateDocumentsNonMumbaiModel.data_document.path,
-                    filename: updateDocumentsNonMumbaiModel.data_document.path
-                        .split('/')
-                        .last, // Use the file name
-                  )
-      });
 
-      final response = await _dio
-          .post('verify/police/non-mumbai/document/update', data: formData);
-      // log('tenantNonMumbaiUpdateDocuments Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in tenantNonMumbaiUpdateDocuments: $e');
-      throw Exception('Failed to fetch tenantNonMumbaiUpdateDocuments: $e');
-    }
-  }
 
-  Future<Response> nonMumbaiDocumentShowData({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/police/non-mumbai/$uid');
-      // log('nonMumbaiDocumentShowData Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in nonMumbaiDocumentShowData: $e');
-      throw Exception('Failed to fetch nonMumbaiDocumentShowData: $e');
-    }
-  }
 
-  Future<Response> mumbaiDocumentShowData({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/police/mumbai/$uid');
-      // log('mumbaiDocumentShowData Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in mumbaiDocumentShowData: $e');
-      throw Exception('Failed to fetch mumbaiDocumentShowData: $e');
-    }
-  }
 
-  Future<Response> tenantMumbaiUpdateDocuments(
-      {required String token,
-      required String customer_id,
-      required UpdateDocumentsMumbaiModel updateDocumentsMumbaiModel}) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
 
-      FormData formData = FormData.fromMap({
-        "customer_id": customer_id,
-        "request_id": updateDocumentsMumbaiModel.request_id,
-        "service_request_id": updateDocumentsMumbaiModel.service_request_id,
-        "police_station_id": updateDocumentsMumbaiModel.police_station_id,
-        "tenant_photo": updateDocumentsMumbaiModel.tenant_photo.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                updateDocumentsMumbaiModel.tenant_photo.path,
-                filename: updateDocumentsMumbaiModel.tenant_photo.path
-                    .split('/')
-                    .last, // Use the file nameupdateDocumentsMumbaiModel
-              ),
-        "tenant_signature":
-            updateDocumentsMumbaiModel.tenant_signature.path.isEmpty
-                ? null
-                : await MultipartFile.fromFile(
-                    updateDocumentsMumbaiModel.tenant_signature.path,
-                    filename: updateDocumentsMumbaiModel.tenant_signature.path
-                        .split('/')
-                        .last, // Use the file name
-                  ),
-        "tenant_identity_proof_doc":
-            updateDocumentsMumbaiModel.tenant_identity_proof_doc.path.isEmpty
-                ? null
-                : await MultipartFile.fromFile(
-                    updateDocumentsMumbaiModel.tenant_identity_proof_doc.path,
-                    filename: updateDocumentsMumbaiModel
-                        .tenant_identity_proof_doc.path
-                        .split('/')
-                        .last, // Use the file name
-                  ),
-        "owner_photo": updateDocumentsMumbaiModel.owner_photo.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                updateDocumentsMumbaiModel.owner_photo.path,
-                filename: updateDocumentsMumbaiModel.owner_photo.path
-                    .split('/')
-                    .last, // Use the file name
-              ),
-        "data_document": updateDocumentsMumbaiModel.data_document.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-                updateDocumentsMumbaiModel.data_document.path,
-                filename: updateDocumentsMumbaiModel.data_document.path
-                    .split('/')
-                    .last, // Use the file name
-              )
-      });
 
-      final response = await _dio.post('verify/police/mumbai/document/update',
-          data: formData);
-      // log('tenantMumbaiUploadDocuments Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in tenantMumbaiUploadDocuments: $e');
-      throw Exception('Failed to fetch tenantMumbaiUploadDocuments: $e');
-    }
-  }
+
+
+
+
+
+
+
+
 
 
 
@@ -2139,147 +2537,9 @@ class ApiService {
 
 
 
-  Future<Response> drivingLicenceSave({
-    required String customer_id,
-    required String token,
-    required String request_id,
-    required String service_request_id,
-    required String driver_licence_number,
-    required String dob,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "driver_licence_number": driver_licence_number,
-      "dob": dob,
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/driver-licence/form/store', data: formData);
-      // log('drivingLicenceSave Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in drivingLicenceSave: $e');
-      throw Exception('Failed to fetch drivingLicenceSave: $e');
-    }
-  }
 
-  Future<Response> drivingLicenceShowData({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/driver-licence/show/$uid');
-      // log('drivingLicenceShowData Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in drivingLicenceShowData: $e');
-      throw Exception('Failed to fetch drivingLicenceShowData: $e');
-    }
-  }
 
-  Future<Response> drivingLicenceUpdate({
-    required String token,
-    required String customer_id,
-    required String request_id,
-    required String service_request_id,
-    required String driver_licence_number,
-    required String dob,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "request_id": request_id,
-      "customer_id": customer_id,
-      "service_request_id": service_request_id,
-      "driver_licence_number": driver_licence_number,
-      "dob": dob,
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/driver-licence/form/update', data: formData);
-      // log('drivingLicenceSave Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in drivingLicenceSave: $e');
-      throw Exception('Failed to fetch drivingLicenceSave: $e');
-    }
-  }
 
-  Future<Response> gstPanCinSave({
-    required String customer_id,
-    required String token,
-    required String request_id,
-    required String service_request_id,
-    required String gst_number,
-    required String pan_number,
-    required String cin_number,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "gst_number": gst_number,
-      "pan_number": pan_number,
-      "cin_number": cin_number,
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/gst-pan-cin/form/store', data: formData);
-      // log('gstPanCinSave Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in gstPanCinSave: $e');
-      throw Exception('Failed to fetch gstPanCinSave: $e');
-    }
-  }
-
-  Future<Response> gstPanCinShowData({
-    required String token,
-    required String uid,
-  }) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/gst-pan-cin/show/$uid');
-      // log('gstPanCinShowData Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in gstPanCinShowData: $e');
-      throw Exception('Failed to fetch gstPanCinShowData: $e');
-    }
-  }
-
-  Future<Response> gstPanCinUpdate({
-    required String customer_id,
-    required String token,
-    required String request_id,
-    required String service_request_id,
-    required String gst_number,
-    required String pan_number,
-    required String cin_number,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "gst_number": gst_number,
-      "pan_number": pan_number,
-      "cin_number": cin_number,
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/gst-pan-cin/form/update', data: formData);
-      // log('gstPanCinUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in gstPanCinUpdate: $e');
-      throw Exception('Failed to fetch gstPanCinUpdate: $e');
-    }
-  }
 
   Future<Response> policeStationCityId({
     required String token,
@@ -2370,76 +2630,6 @@ class ApiService {
 
 
 
-  Future<Response> referenceCheckDocUpload({
-    required String token,
-    required String customer_id,
-    required String request_id,
-    required String service_request_id,
-    required File data_document,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "data_document": await MultipartFile.fromFile(
-        data_document.path,
-        filename: data_document.path.split('/').last, // Use the file name
-      ),
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/reference/document/store', data: formData);
-      // log('referenceCheckDocUpload Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in referenceCheckDocUpload: $e');
-      throw Exception('Failed to fetch referenceCheckDocUpload: $e');
-    }
-  }
-
-  Future<Response> referenceCheckDocShowData(
-      {required String token, required String uid}) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/reference/show/$uid');
-      // log('referenceCheckDocShowData Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in referenceCheckDocShowData: $e');
-      throw Exception('Failed to fetch referenceCheckDocShowData: $e');
-    }
-  }
-
-  Future<Response> referenceCheckDocUpdate({
-    required String token,
-    required String customer_id,
-    required String request_id,
-    required String service_request_id,
-    required File data_document,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "data_document": data_document.path.isEmpty
-          ? null
-          : await MultipartFile.fromFile(
-              data_document.path,
-              filename: data_document.path.split('/').last, // Use the file name
-            ),
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/reference/document/update', data: formData);
-      // log('referenceCheckDocUpload Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in referenceCheckDocUpload: $e');
-      throw Exception('Failed to fetch referenceCheckDocUpload: $e');
-    }
-  }
 
   Future<Response> nameAddressDocUpload({
     required String customer_id,
@@ -2519,151 +2709,9 @@ class ApiService {
     }
   }
 
-  Future<Response> gstPanCinDocUpload({
-    required String customer_id,
-    required String token,
-    required String request_id,
-    required String service_request_id,
-    required File gst_document,
-    required File pan_document,
-    required File cin_document,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "gst_document": gst_document.path.isEmpty
-          ? null
-          : await MultipartFile.fromFile(
-              gst_document.path,
-              filename: gst_document.path.split('/').last, // Use the file name
-            ),
-      "pan_document": pan_document.path.isEmpty
-          ? null
-          : await MultipartFile.fromFile(
-              pan_document.path,
-              filename: pan_document.path.split('/').last, // Use the file name
-            ),
-      "cin_document": cin_document.path.isEmpty
-          ? null
-          : await MultipartFile.fromFile(
-              cin_document.path,
-              filename: cin_document.path.split('/').last, // Use the file name
-            ),
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/gst-pan-cin/document/store', data: formData);
-      // log('gstPanCinDocUpload Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in gstPanCinDocUpload: $e');
-      throw Exception('Failed to fetch gstPanCinDocUpload: $e');
-    }
-  }
 
-  Future<Response> gstPanCinDocUpdate({
-    required String customer_id,
-    required String token,
-    required String request_id,
-    required String service_request_id,
-    required File gst_document,
-    required File pan_document,
-    required File cin_document,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "gst_document": gst_document.path.isEmpty
-          ? null
-          : await MultipartFile.fromFile(
-              gst_document.path,
-              filename: gst_document.path.split('/').last, // Use the file name
-            ),
-      "pan_document": pan_document.path.isEmpty
-          ? null
-          : await MultipartFile.fromFile(
-              pan_document.path,
-              filename: pan_document.path.split('/').last, // Use the file name
-            ),
-      "cin_document": cin_document.path.isEmpty
-          ? null
-          : await MultipartFile.fromFile(
-              cin_document.path,
-              filename: cin_document.path.split('/').last, // Use the file name
-            ),
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/gst-pan-cin/document/update', data: formData);
-      // log('gstPanCinDocUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in gstPanCinDocUpdate: $e');
-      throw Exception('Failed to fetch gstPanCinDocUpdate: $e');
-    }
-  }
 
-  Future<Response> drivingDocUpload({
-    required String customer_id,
-    required String token,
-    required String request_id,
-    required String service_request_id,
-    required File data_document,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "data_document": await MultipartFile.fromFile(
-        data_document.path,
-        filename: data_document.path.split('/').last, // Use the file name
-      ),
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.post('verify/driver-licence/document/store',
-          data: formData);
-      // log('drivingDocUpload Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in drivingDocUpload: $e');
-      throw Exception('Failed to fetch drivingDocUpload: $e');
-    }
-  }
 
-  Future<Response> drivingDocUpdate({
-    required String customer_id,
-    required String token,
-    required String request_id,
-    required String service_request_id,
-    required File data_document,
-  }) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "data_document": data_document.path.isEmpty
-          ? null
-          : await MultipartFile.fromFile(
-              data_document.path,
-              filename: data_document.path.split('/').last, // Use the file name
-            ),
-    });
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.post('verify/driver-licence/document/update',
-          data: formData);
-      // log('drivingDocUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in drivingDocUpdate: $e');
-      throw Exception('Failed to fetch drivingDocUpdate: $e');
-    }
-  }
 
   Future<Response> userAgreeCondition(
       {required String token,

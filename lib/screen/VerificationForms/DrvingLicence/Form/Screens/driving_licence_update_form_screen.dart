@@ -5,25 +5,24 @@ import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
+import 'package:v_verify/screen/VerificationForms/DrvingLicence/Update/Bloc/driving_licence_update_form_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/DrvingLicence/Update/Bloc/driving_licence_update_form_state.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
+import '../../ShowData/Bloc/driving_licence_showData_state.dart';
+import '../../ShowData/Bloc/drving_licence_shwodata_cubit.dart';
+import '../../ShowData/driving_licence_show_data_model.dart';
 
-import '../ShowData/Bloc/driving_licence_showData_state.dart';
-import '../ShowData/Bloc/drving_licence_shwodata_cubit.dart';
-import '../ShowData/driving_licence_show_data_model.dart';
-import 'Bloc/driving_licence_update_cubit.dart';
-import 'Bloc/driving_licence_update_state.dart';
-
-class DrivingLicenceUpdate extends StatefulWidget {
+class DrivingLicenceUpdateFormScreen extends StatefulWidget {
   String uid;
 
-  DrivingLicenceUpdate({super.key, required this.uid});
+  DrivingLicenceUpdateFormScreen({super.key, required this.uid});
 
   @override
-  State<DrivingLicenceUpdate> createState() => _DrivingLicenceUpdateState();
+  State<DrivingLicenceUpdateFormScreen> createState() => _DrivingLicenceUpdateFormScreenState();
 }
 
-class _DrivingLicenceUpdateState extends State<DrivingLicenceUpdate> {
+class _DrivingLicenceUpdateFormScreenState extends State<DrivingLicenceUpdateFormScreen> {
   @override
   void initState() {
     drivingLicenceShowDataLoad();

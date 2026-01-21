@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-
-import 'driving_licence_update_state.dart';
+import 'package:v_verify/screen/VerificationForms/DrvingLicence/Update/Bloc/driving_licence_update_form_state.dart';
 
 class DrivingLicenceUpdateCubit extends Cubit<DrivingLicenceUpdateState> {
   ApiService _apiService;

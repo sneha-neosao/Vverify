@@ -11,6 +11,7 @@ import 'package:v_verify/screen/ServicesAndPrice/Screens/services_and_price_scre
 import 'package:v_verify/screen/SplashScreen/SplashScreen.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Screens/address_documnet_upload_screen.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Screens/address_list.dart';
+import 'package:v_verify/screen/VerificationForms/DrvingLicence/Form/Screens/driving_licence_save_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Screens/education_update_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Screens/employment_document_upload_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Screens/employment_save_form_screen.dart';
@@ -29,8 +30,7 @@ import '../screen/VerificationForms/AddressVerificationForm/Form/Screens/address
 import '../screen/VerificationForms/AddressVerificationForm/Form/Screens/address_update_form_screen.dart';
 import '../screen/VerificationForms/DrvingLicence/Document/update/driving_doc_update.dart';
 import '../screen/VerificationForms/DrvingLicence/Document/upload/driver_doc_upload.dart';
-import '../screen/VerificationForms/DrvingLicence/Update/driving_licence_update.dart';
-import '../screen/VerificationForms/DrvingLicence/driving_licence.dart';
+import '../screen/VerificationForms/DrvingLicence/Form/Screens/driving_licence_update_form_screen.dart';
 import '../screen/VerificationForms/EducationVerification/List/Screens/education_list.dart';
 import '../screen/VerificationForms/EducationVerification/Documents/Screens/education_document_upload_screen.dart';
 import '../screen/VerificationForms/EducationVerification/Form/Screens/education_save_form_screen.dart';
@@ -540,19 +540,19 @@ class AppRouter {
       ),
 
       GoRoute(
-        path: '/DrivingLicence',
-        name: 'DrivingLicence',
+        path: '/DrivingLicenceSaveFormScreen',
+        name: 'DrivingLicenceSaveFormScreen',
         builder: (context, state) {
-          return const DrivingLicence();
+          return const DrivingLicenceSaveFormScreen();
         },
       ),
 
       GoRoute(
-        path: '/DrivingLicenceUpdate/:uid',
-        name: 'DrivingLicenceUpdate',
+        path: '/DrivingLicenceUpdateFormScreen/:uid',
+        name: 'DrivingLicenceUpdateFormScreen',
         builder: (context, state) {
           final uid = state.pathParameters['uid']!;
-          return DrivingLicenceUpdate(
+          return DrivingLicenceUpdateFormScreen(
             uid: uid,
           );
         },

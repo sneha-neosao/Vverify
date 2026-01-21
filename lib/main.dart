@@ -19,6 +19,7 @@ import 'package:v_verify/screen/ProfileScreen/bloc/profile_cubit.dart';
 import 'package:v_verify/screen/PushNotification/Bloc/push_notification_cubit.dart';
 import 'package:v_verify/screen/PushNotification/push_notification.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_cubit.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/chechout_status_checking_bloc/checkout_status_checking_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/service_prices_bloc/service_prices_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarGetOtp/Bloc/aadhaar_verification_cubit.dart';
@@ -32,7 +33,7 @@ import 'package:v_verify/screen/VerificationForms/DrvingLicence/Bloc/driving_lic
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/update/Bloc/driving_doc_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/upload/bloc/driver_doc_upload_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/ShowData/Bloc/drving_licence_shwodata_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/DrvingLicence/Update/Bloc/driving_licence_update_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/DrvingLicence/Update/Bloc/driving_licence_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_list_bloc/education_doc_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/List/Blocs/education_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Blocs/education_show_details_bloc/education_show_details_cubit.dart';
@@ -325,6 +326,8 @@ class MyApp extends StatelessWidget {
             create: (_) => AddressDocumentListCubit(ApiService())),
         BlocProvider<ApplyCouponCubit>(
             create: (_) => ApplyCouponCubit(ApiService())),
+        BlocProvider<CheckOutStatusCheckingCubit>(
+            create: (_) => CheckOutStatusCheckingCubit(ApiService())),
       ],
       child: Builder(builder: (context) {
         return Sizer(builder: (BuildContext, Orientation, ScreenType) {

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Models/checkout_model.dart';
 
 class CheckOutState extends Equatable {
   @override
@@ -10,18 +11,12 @@ class CheckOutInitialState extends CheckOutState {}
 class CheckOutLoadingState extends CheckOutState {}
 
 class CheckOutSuccessState extends CheckOutState {
-  // final CheckoutModel checkoutModel;
-  //
-  // CheckOutSuccessState(this.checkoutModel);
-  //
-  // @override
-  // List<Object?> get props => [checkoutModel];
+  final CheckoutModel checkoutModel;
 
-  final String success;
-  CheckOutSuccessState(this.success);
-@override
-List<Object?> get props => [success];
+  CheckOutSuccessState(this.checkoutModel);
 
+  @override
+  List<Object?> get props => [checkoutModel];
 }
 
 class CheckOutErrorState extends CheckOutState {

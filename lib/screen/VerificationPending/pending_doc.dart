@@ -41,7 +41,7 @@ void checkCase({required String title, String? uuid,required BuildContext contex
       );
       break;
     case "Driving License":
-      context.pushNamed("DrivingLicence");
+      context.pushNamed("DrivingLicenceSaveFormScreen");
       break;
     case "GST CIN PAN Verification":
       context.pushNamed("GstPanCinScreen");

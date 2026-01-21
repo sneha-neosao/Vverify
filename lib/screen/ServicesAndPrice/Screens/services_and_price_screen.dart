@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_state.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/chechout_status_checking_bloc/checkout_status_checking_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_state.dart';
 import 'package:v_verify/screen/ServicesAndPrice/coupon_text_field.dart';
+import 'package:v_verify/services/phonepe_payment_gateway_service.dart';
 import '../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../../commonComponent/custom_button.dart';
 import '../../../commonComponent/screen_size.dart';
@@ -31,6 +34,7 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
   List<Map<String, dynamic>> addList = [];
   List<Map<String, dynamic>> checkoutList = [];
   final TextEditingController couponController = TextEditingController();
+  late PhonePeService phonePeService;
 
   bool isCouponApplied = false;
   bool isCouponSuccess = false;
@@ -50,6 +54,13 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
   void initState() {
     getServices();
     super.initState();
+    // Initialize PhonePeService
+    phonePeService = PhonePeService();
+
+    // Initialize SDK
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await phonePeService.initializeSDK();
+    });
   }
 
   void getServices() {
@@ -346,14 +357,56 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
             ServicePriceModel data = servicePrice.servicePriceModel;
 
             return BlocConsumer<CheckoutCubit, CheckOutState>(
-              listener: (context, checkout) {
+              listener: (context, checkout) async {
                 if (checkout is CheckOutSuccessState) {
-                  context.pushReplacementNamed("payment_success");
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("payment successfully done")));
+
+                  final paymentOrderId = checkout.checkoutModel.transaction!.txnId!;
+                  final orderId = checkout.checkoutModel.transaction!.paymentData!.orderId!;
+                  final token = checkout.checkoutModel.transaction!.paymentData!.token!;
+                  final amount = checkout.checkoutModel.finalTotal;
+
+                  // Convert amount from int? to double
+                  final doubleAmount = amount?.toDouble();
+
+                  print('Starting PhonePe Payment:');
+                  print('Order ID: $orderId');
+                  print('Token: ${token}');
+                  print('Amount: ₹$doubleAmount');
+
+                  // Call instance method (not static)
+                  final response = await phonePeService.startTransaction(
+                    orderId: orderId,
+                    token: token,
+                    appSchema: 'vverify', // Your app URL scheme
+                    // amount: doubleAmount ?? 0.0, // Pass as double
+                  );
+
+                  // Handle the response
+                  phonePeService.handlePaymentResponse(
+                    response,
+                    context,
+                        (isSuccess) {
+                      if (isSuccess) {
+                        final String token = context.read<TokenCubit>().state;
+                        context.read<CheckOutStatusCheckingCubit>().checkoutStatusChecking(
+                            token: token, payment_order_id: paymentOrderId);
+                        // Navigate to success screen
+                        context.pushReplacementNamed("payment_success");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Payment successful"))
+                        );
+                      } else {
+                        // Handle payment failure
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Payment failed. Please try again."))
+                        );
+                      }
+                    },
+                  );
                 } else if (checkout is CheckOutErrorState) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(checkout.errorMessage)));
+                      SnackBar(content: Text(checkout.errorMessage))
+                  );
                 }
               },
               builder: (context, checkout) {

@@ -116,7 +116,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         });
         break;
       case "driving-licence-verification":
-        context.pushNamed("DrivingLicence");
+        context.pushNamed("DrivingLicenceSaveFormScreen");
         break;
       case "gst-cin-pan-verification":
         context.pushNamed("GstPanCinScreen");
@@ -181,7 +181,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         break;
       case "driving-licence-verification":
         data[index].services![servicesIndex].dataPreference == "form"
-            ? context.pushNamed("DrivingLicenceUpdate", pathParameters: {
+            ? context.pushNamed("DrivingLicenceUpdateFormScreen", pathParameters: {
                 "uid": data[index].services![servicesIndex].uid.toString()
               })
             : context.pushNamed("DrivingDocUpdate", pathParameters: {
