@@ -145,7 +145,10 @@ class ApiService {
     required String userType
   }) async {
     try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'action_from': 'androidApp'
+      };
       FormData formData = FormData.fromMap({
         'customerId': customerId,
         'firstName': firstName,
@@ -342,7 +345,10 @@ class ApiService {
       "status": status
     };
 
-    _dio.options.headers['Authorization'] = 'Bearer $token';
+    _dio.options.headers = {
+      'Authorization': 'Bearer $token',
+      'action_from': 'androidApp'
+    };
     final response =
     await _dio.get('verify-request/list', queryParameters: data);
 
@@ -388,7 +394,10 @@ class ApiService {
     };
 
     try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'action_from': 'androidApp'
+      };
       final response =
       await _dio.put('verify-request/entity/update', queryParameters: data);
       // log('verifyRequestUpdate Response: ${response.data}');
@@ -475,7 +484,10 @@ class ApiService {
         "case_uuid": educationSaveFormModel.case_uuid
       });
       print("education ${formData.fields}");
-      _dio.options.headers['Authorization'] = 'Bearer $token';
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'action_from': 'androidApp'
+      };
       final response =
       await _dio.post('verify/education/form/save', data: formData);
       // log('EducationFormSave Response: ${response.data}');
@@ -506,7 +518,10 @@ class ApiService {
         "education_uuid": educationUpdateFormModel.education_uuid
       });
 
-      _dio.options.headers['Authorization'] = 'Bearer $token';
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'action_from': 'androidApp'
+      };
       final response =
       await _dio.post('verify/education/form/update', data: formData);
       // log('EducationFormUpdate Response: ${response.data}');
@@ -562,11 +577,11 @@ class ApiService {
         data: formData,
         options: Options(
           headers: {
-            "Authorization": "Bearer $token",
+            'Authorization': 'Bearer $token',
+            'action_from': 'androidApp'
           },
         ),
       );
-
       // log("=== EducationDocsUpload Response ===");
       // log("Status: ${response.statusCode}");
       // log("Data: ${response.data}");
@@ -646,7 +661,10 @@ class ApiService {
 
       print("employSave ${formData.fields}");
 
-      _dio.options.headers['Authorization'] = 'Bearer $token';
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'action_from': 'androidApp'
+      };
       final response =
       await _dio.post('verify/employment/form/save', data: formData);
       // log('EmploymentSaveDoc Response: ${response.data}');
@@ -681,7 +699,10 @@ class ApiService {
 
       print("employSave ${formData.fields}");
 
-      _dio.options.headers['Authorization'] = 'Bearer $token';
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'action_from': 'androidApp'
+      };
       final response =
       await _dio.post('verify/employment/form/update', data: formData);
       // log('employmentUpdateForm Response: ${response.data}');
@@ -737,7 +758,8 @@ class ApiService {
         data: formData,
         options: Options(
           headers: {
-            "Authorization": "Bearer $token",
+            'Authorization': 'Bearer $token',
+            'action_from': 'androidApp'
           },
         ),
       );
@@ -825,7 +847,10 @@ class ApiService {
     });
 
     try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'action_from': 'androidApp'
+      };
       final response =
       await _dio.post('verify/address/form/save', data: formData);
       // log('NameAddressStoreVerification Response: ${response.data}');
@@ -863,7 +888,10 @@ class ApiService {
       "uid": nameAddressVerificationUpdateModel.uid,
     });
     try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'action_from': 'androidApp'
+      };
       final response =
       await _dio.post('verify/address/form/update', data: formData);
       // log('NameAddressUpdate Response: ${response.data}');
@@ -919,7 +947,8 @@ class ApiService {
         data: formData,
         options: Options(
           headers: {
-            "Authorization": "Bearer $token",
+            'Authorization': 'Bearer $token',
+            'action_from': 'androidApp'
           },
         ),
       );
