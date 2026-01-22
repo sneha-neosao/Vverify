@@ -9,6 +9,7 @@ import 'package:v_verify/screen/VerificationForms/DrvingLicence/Form/Blocs/drivi
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Form/Blocs/driving_licence_update_bloc/driving_licence_update_form_state.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 import '../Blocs/driving_licence_show_details_bloc/driving_licence_show_details_state.dart';
 import '../Blocs/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
 import '../Models/driving_licence_show_details_model.dart';
@@ -124,7 +125,7 @@ class _DrivingLicenceUpdateFormScreenState extends State<DrivingLicenceUpdateFor
                                 color: Theme.of(context).primaryColorDark),
                       ),
                       Text(
-                        "Rejected Reason",
+                        "Driving Licence Verification Remark:",
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge!
@@ -143,7 +144,7 @@ class _DrivingLicenceUpdateFormScreenState extends State<DrivingLicenceUpdateFor
                       const SizedBox(
                         height: 16,
                       ),
-                      form_widget(
+                      CustomRequiredTextField(
                           maskFormatter: [drivingMask],
                           controller: drivingLicenceController
                             ..text = data.data!.driverLicenceNumber!,

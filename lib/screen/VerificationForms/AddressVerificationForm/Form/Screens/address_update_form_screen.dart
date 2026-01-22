@@ -332,6 +332,7 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                             textInputType: TextInputType.text
                         ),
                         CustomNotRequiredTextField(
+                            enabled: !isChecked,
                             controller: residenceToDateController,
                             titleText: "Residing To",
                             hintText: "Enter Residing To",
@@ -373,9 +374,9 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                                   });
                                 }
                               } else if (updateData
-                              is NameAddressVerificationUpdateSuccessState) {
+                              is NameAddressVerificationUpdateErrorState) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(updateData.data["message"])));
+                                    SnackBar(content: Text(updateData.message)));
                               }
                             }, builder: (context, updateData) {
                           return CustomButton(

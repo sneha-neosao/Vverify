@@ -69,7 +69,7 @@ String? validatePinCode(String? value) {
   RegExp dateRegExp = RegExp(r'^\d{6}$');
 
   if (value == null || value.isEmpty) {
-    return 'Please enter pin code';
+    return 'Pin Code is required';
   } else if (!dateRegExp.hasMatch(value)) {
     return 'Please enter a valid pin code.';
   }
@@ -158,6 +158,16 @@ String? validatePinCodeNotRequired(String? value) {
   return null;
 }
 
+String? validateDrivingLicence(String? value) {
+  RegExp regExp = RegExp(r'^[a-zA-Z]{2}\d{2}\s?\d{11}');
+
+  if (value == null || value.isEmpty) {
+    return 'Driving Licence Number is required';
+  } else if (!regExp.hasMatch(value)) {
+    return 'Please enter a valid driving licence number';
+  }
+  return null;
+}
 
 String? validateNONotRequired(String? value) {
   RegExp dateRegExp = RegExp(r'^\d{1}$');
@@ -167,6 +177,46 @@ String? validateNONotRequired(String? value) {
   } else if (!dateRegExp.hasMatch(value)) {
     return 'Please enter a valid number.';
   }
+  return null;
+}
+
+String? validateGst(String? value) {
+  if (value != null && value.isNotEmpty) {
+    final gstRegex = RegExp(
+      r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$',
+      caseSensitive: false,
+    );
+
+    if (!gstRegex.hasMatch(value)) {
+      return 'Please enter a valid GST number.';
+    }
+  }
+  return null;
+}
+
+String? validatePan(String? value) {
+  // Check if the field is not empty and then validate
+  if (value != null && value.isNotEmpty) {
+    // Example validation: check if it's a valid email
+    if (!RegExp(r"^[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}$").hasMatch(value)) {
+      return 'Please enter a valid PAN number';
+    }
+  }
+  // Return null if valid or empty (valid for non-required fields)
+  return null;
+}
+
+String? validateCin(String? value) {
+  // Check if the field is not empty and then validate
+  if (value != null && value.isNotEmpty) {
+    // Example validation: check if it's a valid email
+    if (!RegExp(
+        r"^[a-zA-Z]{1}[0-9]{5}[a-zA-Z]{2}[0-9]{4}[a-zA-Z]{3}[0-9]{6}$")
+        .hasMatch(value)) {
+      return 'Please enter a valid CIN number.';
+    }
+  }
+  // Return null if valid or empty (valid for non-required fields)
   return null;
 }
 

@@ -249,6 +249,7 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
                       textInputType: TextInputType.text
                   ),
                   CustomNotRequiredTextField(
+                      enabled: !isChecked,
                       controller: residenceToDateController,
                       titleText: "Residing To",
                       hintText: "Enter Residing To",

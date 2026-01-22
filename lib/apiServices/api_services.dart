@@ -883,10 +883,10 @@ class ApiService {
       };
       final response =
       await _dio.post('verify/address/form/save', data: formData);
-      // log('NameAddressStoreVerification Response: ${response.data}');
+      log('NameAddressStoreVerification Response: ${response.data}');
       return response;
     } catch (e) {
-      // log('Error in NameAddressStoreVerification: $e');
+      log('Error in NameAddressStoreVerification: $e');
       throw Exception('Failed to fetch NameAddressStoreVerification: $e');
     }
   }
@@ -924,10 +924,10 @@ class ApiService {
       };
       final response =
       await _dio.post('verify/address/form/update', data: formData);
-      // log('NameAddressUpdate Response: ${response.data}');
+      log('NameAddressUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      // log('Error in NameAddressUpdate: $e');
+      log('Error in NameAddressUpdate: $e');
       throw Exception('Failed to fetch NameAddressUpdate: $e');
     }
   }

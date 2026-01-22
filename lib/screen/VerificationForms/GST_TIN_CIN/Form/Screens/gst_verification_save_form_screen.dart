@@ -6,6 +6,7 @@ import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Form/Blocs/gst_verification_save_form_bloc/gst_verification_save_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
+import 'package:v_verify/screen/VerificationForms/common/validator.dart';
 
 import '../Blocs/gst_verification_save_form_bloc/gst_verification_save_form_state.dart';
 
@@ -40,45 +41,6 @@ class _GstVerificationSaveFormScreenState extends State<GstVerificationSaveFormS
         gst_number: gstNumberController.text.toUpperCase(),
         pan_number: panNumberController.text.toUpperCase(),
         cin_number: cinNumberController.text.toUpperCase());
-  }
-
-  String? validatePan(String? value) {
-    // Check if the field is not empty and then validate
-    if (value != null && value.isNotEmpty) {
-      // Example validation: check if it's a valid email
-      if (!RegExp(r"^[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}$").hasMatch(value)) {
-        return 'Please enter a valid PAN number';
-      }
-    }
-    // Return null if valid or empty (valid for non-required fields)
-    return null;
-  }
-
-  String? validateGst(String? value) {
-    // Check if the field is not empty and then validate
-    if (value != null && value.isNotEmpty) {
-      // Example validation: check if it's a valid email
-      if (!RegExp(r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$')
-          .hasMatch(value)) {
-        return 'Please enter a valid GST number.';
-      }
-    }
-    // Return null if valid or empty (valid for non-required fields)
-    return null;
-  }
-
-  String? validateCin(String? value) {
-    // Check if the field is not empty and then validate
-    if (value != null && value.isNotEmpty) {
-      // Example validation: check if it's a valid email
-      if (!RegExp(
-              r"^[a-zA-Z]{1}[0-9]{5}[a-zA-Z]{2}[0-9]{4}[a-zA-Z]{3}[0-9]{6}$")
-          .hasMatch(value)) {
-        return 'Please enter a valid CIN number.';
-      }
-    }
-    // Return null if valid or empty (valid for non-required fields)
-    return null;
   }
 
   final _formKey = GlobalKey<FormState>();

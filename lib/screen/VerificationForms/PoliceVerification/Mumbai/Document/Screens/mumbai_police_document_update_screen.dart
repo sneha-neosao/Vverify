@@ -100,7 +100,7 @@ class _MumbaiDocUpdateState extends State<MumbaiDocUpdate> {
                   height: 16,
                 ),
                 Text(
-                  "Rejected Reason",
+                  "Mumbai Police Verification Remark:",
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!

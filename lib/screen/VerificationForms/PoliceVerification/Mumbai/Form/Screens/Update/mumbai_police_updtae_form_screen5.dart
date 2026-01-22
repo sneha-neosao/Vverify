@@ -9,6 +9,7 @@ import 'package:v_verify/screen/VerificationForms/PoliceVerification/Mumbai/Form
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Mumbai/Form/Models/mumbai_police_show_details_model.dart';
 import 'package:v_verify/screen/VerificationForms/common/pickphoto.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../../../../../../commonComponent/custom_button.dart';
@@ -129,186 +130,188 @@ class _MumbaiPoliceVerificationForm5State
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 50),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: BlocBuilder<MumbaiShowDataCubit, MumbaiShowDataState>(
-                builder: (context, mumbaiDataShow) {
-              if (mumbaiDataShow is MumbaiShowDataLoadingState) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (mumbaiDataShow is MumbaiShowDataErrorState) {
-                return Center(child: Text(mumbaiDataShow.message));
-              } else if (mumbaiDataShow is MumbaiShowDataSuccessState) {
-                MumbaiShowDataModel data = mumbaiDataShow.mumbaiShowDataModel;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Person Knowing Tenant's",
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: Theme.of(context).primaryColorDark,
-                          ),
-                    ),
-                    form_widget(
-                      maskFormatter: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                      ],
-                      textInputType: TextInputType.text,
-                      controller: mumbaiTextController
-                          .person1NamePersonKnowingMumbaiController,
-                      titleText: 'Person 1 Name',
-                      hintText: "Enter Person 1 Name",
-                    ),
-                    form_widget(
-                      validator: validateMobile,
-                      textInputType: TextInputType.number,
-                      controller: mumbaiTextController
-                          .person1MobileNoPersonKnowingMumbaiController,
-                      titleText: 'Contact Number 1',
-                      hintText: "Enter Contact Number 1",
-                    ),
-                    form_widget(
-                      textInputType: TextInputType.text,
-                      controller: mumbaiTextController
-                          .person2NamePersonKnowingMumbaiController,
-                      titleText: 'Person 2 Name',
-                      hintText: "Enter Person 2 Name",
-                    ),
-                    form_widget(
-                      validator: validateMobile,
-                      textInputType: TextInputType.number,
-                      controller: mumbaiTextController
-                          .person2MobileNOPersonKnowingMumbaiController,
-                      titleText: 'Contact Number 2',
-                      hintText: "Enter Contact Number 2",
-                    ),
-                    form_widget(
-                      textInputType: TextInputType.text,
-                      controller: mumbaiTextController
-                          .agentNamePersonKnowingMumbaiController,
-                      titleText: 'Agent Name',
-                      hintText: "Enter Agent Name",
-                    ),
-                    form_widget(
-                      textInputType: TextInputType.text,
-                      controller: mumbaiTextController
-                          .agentDetailsPersonKnowingMumbaiController,
-                      titleText: 'Agent Details',
-                      hintText: "Enter Agent Details",
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    BlocBuilder<TenantCompanyLetterImage, File>(
-                        builder: (context, letterImage) {
-                      return PickPhotoUpdate(
-                        widthSize: double.infinity,
-                        onPressedPickImage: () {
-                          context
-                              .read<TenantCompanyLetterImage>()
-                              .pickFile()
-                              .then((_) {
-                            context.pop();
-                          });
-                        },
-                        onPressedTakePhoto: () {
-                          context
-                              .read<TenantCompanyLetterImage>()
-                              .pickImageFromCamera()
-                              .then((_) {
-                            context.pop();
-                          });
-                        },
-                        title: "Tenant's Signature Photo",
-                        image: letterImage,
-                        uploadImage: data.data!.tenantSignature!,
-                        mainTitle: "Tenant's Signature Photo",
-                      );
-                    }),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomButton(
-                            height: 45,
-                            onTap: () {
-                              FocusManager.instance.primaryFocus?.unfocus();
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: BlocBuilder<MumbaiShowDataCubit, MumbaiShowDataState>(
+                  builder: (context, mumbaiDataShow) {
+                if (mumbaiDataShow is MumbaiShowDataLoadingState) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (mumbaiDataShow is MumbaiShowDataErrorState) {
+                  return Center(child: Text(mumbaiDataShow.message));
+                } else if (mumbaiDataShow is MumbaiShowDataSuccessState) {
+                  MumbaiShowDataModel data = mumbaiDataShow.mumbaiShowDataModel;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Person Knowing Tenant's",
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                              color: Theme.of(context).primaryColorDark,
+                            ),
+                      ),
+                      CustomRequiredTextField(
+                        maskFormatter: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                        ],
+                        textInputType: TextInputType.text,
+                        controller: mumbaiTextController
+                            .person1NamePersonKnowingMumbaiController,
+                        titleText: 'Person 1 Name',
+                        hintText: "Enter Person 1 Name",
+                      ),
+                      CustomRequiredTextField(
+                        validator: validateMobile,
+                        textInputType: TextInputType.number,
+                        controller: mumbaiTextController
+                            .person1MobileNoPersonKnowingMumbaiController,
+                        titleText: 'Contact Number 1',
+                        hintText: "Enter Contact Number 1",
+                      ),
+                      CustomRequiredTextField(
+                        textInputType: TextInputType.text,
+                        controller: mumbaiTextController
+                            .person2NamePersonKnowingMumbaiController,
+                        titleText: 'Person 2 Name',
+                        hintText: "Enter Person 2 Name",
+                      ),
+                      CustomRequiredTextField(
+                        validator: validateMobile,
+                        textInputType: TextInputType.number,
+                        controller: mumbaiTextController
+                            .person2MobileNOPersonKnowingMumbaiController,
+                        titleText: 'Contact Number 2',
+                        hintText: "Enter Contact Number 2",
+                      ),
+                      CustomRequiredTextField(
+                        textInputType: TextInputType.text,
+                        controller: mumbaiTextController
+                            .agentNamePersonKnowingMumbaiController,
+                        titleText: 'Agent Name',
+                        hintText: "Enter Agent Name",
+                      ),
+                      CustomRequiredTextField(
+                        textInputType: TextInputType.text,
+                        controller: mumbaiTextController
+                            .agentDetailsPersonKnowingMumbaiController,
+                        titleText: 'Agent Details',
+                        hintText: "Enter Agent Details",
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      BlocBuilder<TenantCompanyLetterImage, File>(
+                          builder: (context, letterImage) {
+                        return PickPhotoUpdate(
+                          widthSize: double.infinity,
+                          onPressedPickImage: () {
+                            context
+                                .read<TenantCompanyLetterImage>()
+                                .pickFile()
+                                .then((_) {
                               context.pop();
-                            },
-                            text: "PREV",
-                            gradientColors: [
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).primaryColorDark,
-                            ],
+                            });
+                          },
+                          onPressedTakePhoto: () {
+                            context
+                                .read<TenantCompanyLetterImage>()
+                                .pickImageFromCamera()
+                                .then((_) {
+                              context.pop();
+                            });
+                          },
+                          title: "Tenant's Signature Photo",
+                          image: letterImage,
+                          uploadImage: data.data!.tenantSignature!,
+                          mainTitle: "Tenant's Signature Photo",
+                        );
+                      }),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomButton(
+                              height: 45,
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                context.pop();
+                              },
+                              text: "PREV",
+                              gradientColors: [
+                                Theme.of(context).primaryColor,
+                                Theme.of(context).primaryColorDark,
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Expanded(
-                          child: BlocConsumer<MumbaiPoliceUpdateFromCubit,
-                                  MumbaiPoliceUpdateFormState>(
-                              listener: (context, mumbaiUpdateForm) {
-                            if (mumbaiUpdateForm
-                                is MumbaiPoliceUpdateFormSuccessState) {
-                              if (mumbaiUpdateForm.data["status"] == 200) {
-                                context.pushReplacementNamed("bottomNav");
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Expanded(
+                            child: BlocConsumer<MumbaiPoliceUpdateFromCubit,
+                                    MumbaiPoliceUpdateFormState>(
+                                listener: (context, mumbaiUpdateForm) {
+                              if (mumbaiUpdateForm
+                                  is MumbaiPoliceUpdateFormSuccessState) {
+                                if (mumbaiUpdateForm.data["status"] == 200) {
+                                  context.pushReplacementNamed("bottomNav");
+                                }
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            mumbaiUpdateForm.data["message"])));
+                              } else if (mumbaiUpdateForm
+                                  is MumbaiPoliceUpdateFormErrorState) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(mumbaiUpdateForm.message)));
                               }
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          mumbaiUpdateForm.data["message"])));
-                            } else if (mumbaiUpdateForm
-                                is MumbaiPoliceUpdateFormErrorState) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(mumbaiUpdateForm.message)));
-                            }
-                          }, builder: (context, mumbaiUpdateForm) {
-                            return CustomButton(
-                                isLoading: mumbaiUpdateForm
-                                    is MumbaiPoliceUpdateFormLoadingState,
-                                height: 45,
-                                onTap: () {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  if (_formKey.currentState?.validate() ??
-                                      false) {
-                                    mumbaiUpdateFormData(
-                                        idProof: data
-                                            .data!.tenantIdentityProofDocType!,
-                                        id: data.data!.policeStationId!,
-                                        city_id: data.data!.city_id!);
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Please fill all fields')));
-                                  }
-                                },
-                                text: "SUBMIT",
-                                gradientColors: [
-                                  Theme.of(context).primaryColor,
-                                  Theme.of(context).primaryColorDark,
-                                ]);
-                          }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    )
-                  ],
+                            }, builder: (context, mumbaiUpdateForm) {
+                              return CustomButton(
+                                  isLoading: mumbaiUpdateForm
+                                      is MumbaiPoliceUpdateFormLoadingState,
+                                  height: 45,
+                                  onTap: () {
+                                    FocusManager.instance.primaryFocus?.unfocus();
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
+                                      mumbaiUpdateFormData(
+                                          idProof: data
+                                              .data!.tenantIdentityProofDocType!,
+                                          id: data.data!.policeStationId!,
+                                          city_id: data.data!.city_id!);
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'Please fill all fields')));
+                                    }
+                                  },
+                                  text: "SUBMIT",
+                                  gradientColors: [
+                                    Theme.of(context).primaryColor,
+                                    Theme.of(context).primaryColorDark,
+                                  ]);
+                            }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      )
+                    ],
+                  );
+                }
+                return const Center(
+                  child: Text("Error..."),
                 );
-              }
-              return const Center(
-                child: Text("Error..."),
-              );
-            }),
+              }),
+            ),
           ),
         ),
       ),

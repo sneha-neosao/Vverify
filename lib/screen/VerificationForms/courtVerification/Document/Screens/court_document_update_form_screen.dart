@@ -88,7 +88,7 @@ class _CourtDocumentUpdateFormScreenState extends State<CourtDocumentUpdateFormS
                   height: 16,
                 ),
                 Text(
-                  "Rejected Reason",
+                  "Court Legal Verification Remark:",
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!

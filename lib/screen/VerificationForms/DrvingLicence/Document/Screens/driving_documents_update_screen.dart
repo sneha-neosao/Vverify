@@ -83,7 +83,7 @@ class _DrivingDocUpdateState extends State<DrivingDocUpdate> {
                   height: 16,
                 ),
                 Text(
-                  "Rejected Reason",
+                  "Driving Licence Verification Remark:",
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge!

@@ -80,7 +80,7 @@ class _ReferenceUpdateDocState extends State<ReferenceUpdateDoc> {
                         .copyWith(color: Theme.of(context).primaryColorDark),
                   ),
                   Text(
-                    "Rejected Reason",
+                    "Reference Check Verification Remark:",
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!

@@ -5,6 +5,7 @@ import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
+import 'package:v_verify/screen/VerificationForms/common/validator.dart';
 
 import '../Blocs/gst_verification_update_form_bloc/gst_verification_update_form_cubit.dart';
 import '../Blocs/gst_verification_update_form_bloc/gst_verification_update_form_state.dart';
@@ -62,45 +63,6 @@ class _GstVerificationUpdateFormScreenState extends State<GstVerificationUpdateF
 
   final _formKey = GlobalKey<FormState>();
 
-  String? validatePan(String? value) {
-    // Check if the field is not empty and then validate
-    if (value != null && value.isNotEmpty) {
-      // Example validation: check if it's a valid email
-      if (!RegExp(r"^[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}$").hasMatch(value)) {
-        return 'Please enter a valid PAN number';
-      }
-    }
-    // Return null if valid or empty (valid for non-required fields)
-    return null;
-  }
-
-  String? validateGst(String? value) {
-    // Check if the field is not empty and then validate
-    if (value != null && value.isNotEmpty) {
-      // Example validation: check if it's a valid email
-      if (!RegExp(r"^[0-9]{2}[0-9a-zA-Z]{10}[0-9]{1}[a-zA_Z]{1}[a-zA-Z]{1}$")
-          .hasMatch(value)) {
-        return 'Please enter a valid GST number.';
-      }
-    }
-    // Return null if valid or empty (valid for non-required fields)
-    return null;
-  }
-
-  String? validateCin(String? value) {
-    // Check if the field is not empty and then validate
-    if (value != null && value.isNotEmpty) {
-      // Example validation: check if it's a valid email
-      if (!RegExp(
-              r"^[a-zA-Z]{1}[0-9]{5}[a-zA-Z]{2}[0-9]{4}[a-zA-Z]{3}[0-9]{6}$")
-          .hasMatch(value)) {
-        return 'Please enter a valid CIN number.';
-      }
-    }
-    // Return null if valid or empty (valid for non-required fields)
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +94,7 @@ class _GstVerificationUpdateFormScreenState extends State<GstVerificationUpdateF
                           .copyWith(color: Theme.of(context).primaryColorDark),
                     ),
                     Text(
-                      "Rejected Reason",
+                      "GST PAN CIN Verification Remark:",
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge!

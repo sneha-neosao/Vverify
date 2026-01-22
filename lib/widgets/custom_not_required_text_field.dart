@@ -8,6 +8,7 @@ class CustomNotRequiredTextField extends StatelessWidget {
         required this.titleText,
         required this.hintText,
         required this.textInputType,
+        this.enabled=true,
         this.readOnly=false,
         this.validator,
         this.maskFormatter});
@@ -19,6 +20,7 @@ class CustomNotRequiredTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final List<TextInputFormatter>? maskFormatter;
   final bool readOnly;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,7 @@ class CustomNotRequiredTextField extends StatelessWidget {
           height: 4,
         ),
         TextFormField(
+            enabled: enabled,
             textInputAction: TextInputAction.next,
             onFieldSubmitted: (_) {
               FocusScope.of(context).nextFocus();

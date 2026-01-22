@@ -7,6 +7,8 @@ import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
+import 'package:v_verify/screen/VerificationForms/common/validator.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../Blocs/driving_licence_save_form_bloc/driving_licence_save_form_bloc.dart';
 import '../Blocs/driving_licence_save_form_bloc/driving_licence_save_form_state.dart';
@@ -54,7 +56,7 @@ class _DrivingLicenceSaveFormScreenState extends State<DrivingLicenceSaveFormScr
       lastDate: date18YearsAgo, // the latest possible date
     );
     if (picked != null && picked != selectedJoiningDate) {
-      String formattedDate = DateFormat('dd/MM/yyyy').format(picked);
+      String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
       setState(() {
         selectedJoiningDate = picked;
         //dobController.text = "${selectedJoiningDate.toLocal()}".split(' ')[0];
@@ -67,6 +69,15 @@ class _DrivingLicenceSaveFormScreenState extends State<DrivingLicenceSaveFormScr
     print(drivingLicenceController.text.toUpperCase());
     String token = context.read<TokenCubit>().state;
     String customerId = context.read<IdCubit>().state;
+
+    debugPrint('🚀 Driving Licence API Request');
+    debugPrint('customer_id: $customerId');
+    debugPrint('token: $token');
+    debugPrint('request_id: $requestId');
+    debugPrint('service_request_id: $serviceRequestId');
+    debugPrint('driver_licence_number: ${drivingLicenceController.text.toUpperCase()}');
+    debugPrint('dob: ${dateOfBirthController.text}');
+
     context.read<DrivingLicenceBloc>().drivingLicenceSaveData(
         customer_id: customerId,
         token: token,
@@ -74,18 +85,6 @@ class _DrivingLicenceSaveFormScreenState extends State<DrivingLicenceSaveFormScr
         service_request_id: serviceRequestId!,
         driver_licence_number: drivingLicenceController.text.toUpperCase(),
         dob: dateOfBirthController.text);
-  }
-
-  // email Validator Function
-  String? validateDrivingLicence(String? value) {
-    RegExp regExp = RegExp(r'^[a-zA-Z]{2}\d{2}\s?\d{11}');
-
-    if (value == null || value.isEmpty) {
-      return 'Please enter a email';
-    } else if (!regExp.hasMatch(value)) {
-      return 'Please enter a valid driving licence number';
-    }
-    return null;
   }
 
   @override
@@ -156,7 +155,7 @@ class _DrivingLicenceSaveFormScreenState extends State<DrivingLicenceSaveFormScr
                     );
                   }),
                 ),
-                form_widget(
+                CustomRequiredTextField(
                     maskFormatter: [drivingMask],
                     validator: validateDrivingLicence,
                     controller: drivingLicenceController..text.toUpperCase(),
@@ -186,7 +185,7 @@ class _DrivingLicenceSaveFormScreenState extends State<DrivingLicenceSaveFormScr
                 TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter birth date';
+                      return 'Date of Birth is required';
                     }
                     return null;
                   },
@@ -195,7 +194,7 @@ class _DrivingLicenceSaveFormScreenState extends State<DrivingLicenceSaveFormScr
                   inputFormatters: [maskFormatter],
                   controller: dateOfBirthController,
                   decoration: InputDecoration(
-                    hintText: "DD/MM/YYYY",
+                    hintText: "DD-MM-YYYY",
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.calendar_today),
                       onPressed: () => _selectDobDate(

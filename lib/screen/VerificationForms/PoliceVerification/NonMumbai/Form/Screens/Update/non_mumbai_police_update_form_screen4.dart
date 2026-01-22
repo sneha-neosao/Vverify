@@ -12,6 +12,7 @@ import 'package:v_verify/screen/VerificationForms/PoliceVerification/NonMumbai/F
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/NonMumbai/Form/Models/non_mumbai_show_details_model.dart';
 import 'package:v_verify/screen/VerificationForms/common/pickphoto.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
+import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../../../../../../commonComponent/custom_button.dart';
@@ -139,255 +140,257 @@ class _NonMumbaiPoliceUpdateFormScreen4State
         mask: '####-##-##', filter: {"#": RegExp(r'[0-9]')});
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 50),
-          child: Form(
-            key: _formKey,
-            child: BlocBuilder<NonMumbaiShowDataCubit, NonMumbaiShowDataState>(
-                builder: (context, nonMumbaiShowData) {
-              if (nonMumbaiShowData is NonMumbaiShowDataLoadingState) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (nonMumbaiShowData is NonMumbaiShowDataErrorState) {
-                return Center(
-                  child: Text(nonMumbaiShowData.message),
-                );
-              } else if (nonMumbaiShowData is NonMumbaiShowDataSuccessState) {
-                NonMumbaiShowDataModel data =
-                    nonMumbaiShowData.nonMumbaiShowDataModel;
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Tenant's Details",
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: Theme.of(context).primaryColorDark,
-                          fontSize: 18),
-                    ),
-                    form_widget(
-                        validator: addressValidator,
-                        textInputType: TextInputType.text,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+            child: Form(
+              key: _formKey,
+              child: BlocBuilder<NonMumbaiShowDataCubit, NonMumbaiShowDataState>(
+                  builder: (context, nonMumbaiShowData) {
+                if (nonMumbaiShowData is NonMumbaiShowDataLoadingState) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (nonMumbaiShowData is NonMumbaiShowDataErrorState) {
+                  return Center(
+                    child: Text(nonMumbaiShowData.message),
+                  );
+                } else if (nonMumbaiShowData is NonMumbaiShowDataSuccessState) {
+                  NonMumbaiShowDataModel data =
+                      nonMumbaiShowData.nonMumbaiShowDataModel;
+        
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Tenant's Details",
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            color: Theme.of(context).primaryColorDark,
+                            fontSize: 18),
+                      ),
+                      CustomRequiredTextField(
+                          validator: addressValidator,
+                          textInputType: TextInputType.text,
+                          controller: nonMumbaiTextController
+                              .residentialPoliceStationController4,
+                          titleText:
+                              "Tenant's Present Residential Police Station",
+                          hintText: "Enter Residential Police Station"),
+                      // form_widget(
+                      //     validator: addressValidator,
+                      //     textInputType: TextInputType.text,
+                      //     controller: nonMumbaiTextController
+                      //         .tenantPresentResidentialPlace,
+                      //     titleText: "Tenant's Present Residential Place",
+                      //     hintText: "Enter Present Residential Place"),
+                      CustomRequiredTextField(
+                          maskFormatter: [
+                            LengthLimitingTextInputFormatter(3),
+                            FilteringTextInputFormatter.digitsOnly,
+                            // allows only digits 0–9
+                          ],
+                          textInputType: TextInputType.number,
+                          controller: nonMumbaiTextController
+                              .presentResidentialYearsController,
+                          titleText: "Tenant's Present Residential Years",
+                          hintText: "Enter Years"),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      CustomRequiredTextField(
+                          maskFormatter: [
+                            LengthLimitingTextInputFormatter(2),
+                            FilteringTextInputFormatter.digitsOnly,
+                            // allows only digits 0–9
+                          ],
+                          textInputType: TextInputType.number,
+                          controller: nonMumbaiTextController
+                              .presentResidentialMonthController,
+                          titleText: "Tenant's Present Residential Months",
+                          hintText: "Enter Months"),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      RichText(
+                          text: TextSpan(
+                              text: "Tenant's Signature Date",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontWeight: FontWeight.w700),
+                              children: [
+                            TextSpan(
+                              text: " * ",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.red),
+                            ),
+                          ])),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      TextFormField(
+                        readOnly: true,
+                        validator: validateDate,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [maskFormatter],
                         controller: nonMumbaiTextController
-                            .residentialPoliceStationController4,
-                        titleText:
-                            "Tenant's Present Residential Police Station",
-                        hintText: "Enter Residential Police Station"),
-                    // form_widget(
-                    //     validator: addressValidator,
-                    //     textInputType: TextInputType.text,
-                    //     controller: nonMumbaiTextController
-                    //         .tenantPresentResidentialPlace,
-                    //     titleText: "Tenant's Present Residential Place",
-                    //     hintText: "Enter Present Residential Place"),
-                    form_widget(
-                        maskFormatter: [
-                          LengthLimitingTextInputFormatter(3),
-                          FilteringTextInputFormatter.digitsOnly,
-                          // allows only digits 0–9
-                        ],
-                        textInputType: TextInputType.number,
-                        controller: nonMumbaiTextController
-                            .presentResidentialYearsController,
-                        titleText: "Tenant's Present Residential Years",
-                        hintText: "Enter Years"),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    form_widget(
-                        maskFormatter: [
-                          LengthLimitingTextInputFormatter(2),
-                          FilteringTextInputFormatter.digitsOnly,
-                          // allows only digits 0–9
-                        ],
-                        textInputType: TextInputType.number,
-                        controller: nonMumbaiTextController
-                            .presentResidentialMonthController,
-                        titleText: "Tenant's Present Residential Months",
-                        hintText: "Enter Months"),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    RichText(
-                        text: TextSpan(
-                            text: "Tenant's Signature Date",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(fontWeight: FontWeight.w700),
-                            children: [
-                          TextSpan(
-                            text: " * ",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.red),
+                            .tenantsSignatureDateController,
+                        decoration: InputDecoration(
+                          hintText: "YYYY-MM-DD",
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.calendar_today),
+                            onPressed: () => _selectStartDate(
+                                context), // Open date picker when icon is pressed
                           ),
-                        ])),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    TextFormField(
-                      readOnly: true,
-                      validator: validateDate,
-                      style: Theme.of(context).textTheme.bodySmall,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [maskFormatter],
-                      controller: nonMumbaiTextController
-                          .tenantsSignatureDateController,
-                      decoration: InputDecoration(
-                        hintText: "YYYY-MM-DD",
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.calendar_today),
-                          onPressed: () => _selectStartDate(
-                              context), // Open date picker when icon is pressed
                         ),
                       ),
-                    ),
-                    form_widget(
-                        validator: addressValidator,
-                        textInputType: TextInputType.text,
-                        controller:
-                            nonMumbaiTextController.signaturePlaceController,
-                        titleText: "Tenant's Signature Place",
-                        hintText: "Enter Tenant's Signature Place"),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    BlocBuilder<NonMumbaiSignaturePhotoCubit, File>(
-                        builder: (context, signaturePhoto) {
-                      return PickPhotoUpdate(
-                        isSign: true,
-                        addSign: () {
-                          context
-                              .read<NonMumbaiSignaturePhotoCubit>()
-                              .addSignature(context, _signaturePadKey)
-                              .then((_) {
-                            try {
-                              // Deleting the image file from local storage
-                              File(signaturePhoto.path).delete().then((_) {});
-                              // Show confirmation message
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Image deleted!')));
-                              // Pop the screen after deletion
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Failed to delete image')));
-                            }
-                          });
-                        },
-                        widthSize: double.infinity,
-                        onPressedPickImage: () {
-                          context
-                              .read<NonMumbaiSignaturePhotoCubit>()
-                              .pickFile()
-                              .then((_) {
-                            context.pop();
-                          });
-                        },
-                        onPressedTakePhoto: () {
-                          context
-                              .read<NonMumbaiSignaturePhotoCubit>()
-                              .pickImageFromCamera()
-                              .then((_) {
-                            context.pop();
-                          });
-                        },
-                        title: 'pick Signature Photo',
-                        image: signImage != null ? signImage! : signaturePhoto,
-                        mainTitle: "Tenant's Signature Photo",
-                        uploadImage: data.data!.tenantSignature!,
-                      );
-                    }),
-                    const SizedBox(
-                      height: 24,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomButton(
-                            height: 45,
-                            onTap: () {
-                              FocusManager.instance.primaryFocus?.unfocus();
-
-                              Navigator.pop(context); // no value
-                            },
-                            text: "PREV",
-                            gradientColors: [
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).primaryColorDark,
-                            ],
+                      CustomRequiredTextField(
+                          validator: addressValidator,
+                          textInputType: TextInputType.text,
+                          controller:
+                              nonMumbaiTextController.signaturePlaceController,
+                          titleText: "Tenant's Signature Place",
+                          hintText: "Enter Tenant's Signature Place"),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      BlocBuilder<NonMumbaiSignaturePhotoCubit, File>(
+                          builder: (context, signaturePhoto) {
+                        return PickPhotoUpdate(
+                          isSign: true,
+                          addSign: () {
+                            context
+                                .read<NonMumbaiSignaturePhotoCubit>()
+                                .addSignature(context, _signaturePadKey)
+                                .then((_) {
+                              try {
+                                // Deleting the image file from local storage
+                                File(signaturePhoto.path).delete().then((_) {});
+                                // Show confirmation message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Image deleted!')));
+                                // Pop the screen after deletion
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Failed to delete image')));
+                              }
+                            });
+                          },
+                          widthSize: double.infinity,
+                          onPressedPickImage: () {
+                            context
+                                .read<NonMumbaiSignaturePhotoCubit>()
+                                .pickFile()
+                                .then((_) {
+                              context.pop();
+                            });
+                          },
+                          onPressedTakePhoto: () {
+                            context
+                                .read<NonMumbaiSignaturePhotoCubit>()
+                                .pickImageFromCamera()
+                                .then((_) {
+                              context.pop();
+                            });
+                          },
+                          title: 'pick Signature Photo',
+                          image: signImage != null ? signImage! : signaturePhoto,
+                          mainTitle: "Tenant's Signature Photo",
+                          uploadImage: data.data!.tenantSignature!,
+                        );
+                      }),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomButton(
+                              height: 45,
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+        
+                                Navigator.pop(context); // no value
+                              },
+                              text: "PREV",
+                              gradientColors: [
+                                Theme.of(context).primaryColor,
+                                Theme.of(context).primaryColorDark,
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Expanded(
-                          child: BlocConsumer<NonMumbaiPoliceVerificationCubit,
-                                  NonMumbaiPoliceVerificationState>(
-                              listener: (context, nonMumbaiFrom) {
-                            if (nonMumbaiFrom
-                                is NonMumbaiPoliceVerificationSuccessState) {
-                              if (nonMumbaiFrom.data["status"] == 200) {
-                                context.pushReplacementNamed("bottomNav");
-                                pickImageClear();
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Expanded(
+                            child: BlocConsumer<NonMumbaiPoliceVerificationCubit,
+                                    NonMumbaiPoliceVerificationState>(
+                                listener: (context, nonMumbaiFrom) {
+                              if (nonMumbaiFrom
+                                  is NonMumbaiPoliceVerificationSuccessState) {
+                                if (nonMumbaiFrom.data["status"] == 200) {
+                                  context.pushReplacementNamed("bottomNav");
+                                  pickImageClear();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              nonMumbaiFrom.data["message"])));
+                                }
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                        content: Text(
-                                            nonMumbaiFrom.data["message"])));
+                                        content:
+                                            Text(nonMumbaiFrom.data["message"])));
+                              } else if (nonMumbaiFrom
+                                  is NonMumbaiPoliceVerificationErrorState) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(nonMumbaiFrom.message)));
                               }
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content:
-                                          Text(nonMumbaiFrom.data["message"])));
-                            } else if (nonMumbaiFrom
-                                is NonMumbaiPoliceVerificationErrorState) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(nonMumbaiFrom.message)));
-                            }
-                          }, builder: (context, nonMumbaiFrom) {
-                            return CustomButton(
-                                isLoading: nonMumbaiFrom
-                                    is NonMumbaiPoliceVerificationLoadingState,
-                                height: 45,
-                                onTap: () async {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  if (_formKey.currentState?.validate() ??
-                                      false) {
-                                    nonMumbaiFormData(
-                                        idProof: data
-                                            .data!.tenantIdentityProofDocType!);
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Please Fill All Fields')));
-                                  }
-                                },
-                                text: "SUBMIT",
-                                gradientColors: [
-                                  Theme.of(context).primaryColor,
-                                  Theme.of(context).primaryColorDark,
-                                ]);
-                          }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16)
-                  ],
+                            }, builder: (context, nonMumbaiFrom) {
+                              return CustomButton(
+                                  isLoading: nonMumbaiFrom
+                                      is NonMumbaiPoliceVerificationLoadingState,
+                                  height: 45,
+                                  onTap: () async {
+                                    FocusManager.instance.primaryFocus?.unfocus();
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
+                                      nonMumbaiFormData(
+                                          idProof: data
+                                              .data!.tenantIdentityProofDocType!);
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'Please Fill All Fields')));
+                                    }
+                                  },
+                                  text: "SUBMIT",
+                                  gradientColors: [
+                                    Theme.of(context).primaryColor,
+                                    Theme.of(context).primaryColorDark,
+                                  ]);
+                            }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16)
+                    ],
+                  );
+                }
+                return const Center(
+                  child: Text("Error..."),
                 );
-              }
-              return const Center(
-                child: Text("Error..."),
-              );
-            }),
+              }),
+            ),
           ),
         ),
       ),
