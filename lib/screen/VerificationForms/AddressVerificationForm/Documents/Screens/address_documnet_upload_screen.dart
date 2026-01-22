@@ -70,7 +70,7 @@ class _AddressDocumentUploadState extends State<AddressDocumentUpload> {
                     return PickMultiplePhoto(
                       widthSize: double.infinity,
                       title: "Select Documents",
-                      mainTitle: "Upload Certificate/Marksheet/Document",
+                      mainTitle: "Upload Certificate/Marksheet/Documents",
                       onPressedPickImage: () {
                         context.read<AddressDocsFileCubit>().pickMultipleFiles().then((_) {
                           context.pop();
@@ -131,7 +131,7 @@ class _AddressDocumentUploadState extends State<AddressDocumentUpload> {
                       if (context.read<AddressDocsFileCubit>().state.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text(
-                                "Please Upload Certificate/Marksheet/Document")));
+                                "Please Upload Certificate/Marksheet/Documents")));
                       } else {
                         educationUploadDocData();
                       }
@@ -145,7 +145,7 @@ class _AddressDocumentUploadState extends State<AddressDocumentUpload> {
                 }),
                 const SizedBox(height: 16),
                 Text(
-                  "Address Document List",
+                  "Address Documents List",
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!
@@ -194,13 +194,13 @@ class _AddressDocumentUploadState extends State<AddressDocumentUpload> {
                               final pathParam = uri.queryParameters['path'];
 
                               if (pathParam == null || pathParam.isEmpty) {
-                                return 'Document';
+                                return 'Documents';
                               }
 
                               // Extract filename from that path
                               return pathParam.split('/').last;
                             } catch (e) {
-                              return 'Document';
+                              return 'Documents';
                             }
                           }
                           return ListTile(

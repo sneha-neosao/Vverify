@@ -106,8 +106,8 @@ class _ReferenceUpdateDocState extends State<ReferenceUpdateDoc> {
                       builder: (context, identityProof) {
                     return PickPhotoUpdate(
                       widthSize: double.infinity,
-                      mainTitle: "Upload Document",
-                      title: "Upload Document",
+                      mainTitle: "Upload Documents",
+                      title: "Upload Documents",
                       onPressedPickImage: () {
                         context.pop();
                         context.read<ReferenceCheckUploadDoc>().pickFile();

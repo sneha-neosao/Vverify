@@ -8,6 +8,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_state.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/chechout_status_checking_bloc/checkout_status_checking_cubit.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/chechout_status_checking_bloc/checkout_status_checking_state.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_state.dart';
 import 'package:v_verify/screen/ServicesAndPrice/coupon_text_field.dart';
@@ -356,481 +357,492 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
           } else if (servicePrice is ServicePriceSuccess) {
             ServicePriceModel data = servicePrice.servicePriceModel;
 
-            return BlocConsumer<CheckoutCubit, CheckOutState>(
-              listener: (context, checkout) async {
-                if (checkout is CheckOutSuccessState) {
-
-                  final paymentOrderId = checkout.checkoutModel.transaction!.txnId!;
-                  final orderId = checkout.checkoutModel.transaction!.paymentData!.orderId!;
-                  final token = checkout.checkoutModel.transaction!.paymentData!.token!;
-                  final amount = checkout.checkoutModel.finalTotal;
-
-                  // Convert amount from int? to double
-                  final doubleAmount = amount?.toDouble();
-
-                  print('Starting PhonePe Payment:');
-                  print('Order ID: $orderId');
-                  print('Token: ${token}');
-                  print('Amount: ₹$doubleAmount');
-
-                  // Call instance method (not static)
-                  final response = await phonePeService.startTransaction(
-                    orderId: orderId,
-                    token: token,
-                    appSchema: 'vverify', // Your app URL scheme
-                    // amount: doubleAmount ?? 0.0, // Pass as double
-                  );
-
-                  // Handle the response
-                  phonePeService.handlePaymentResponse(
-                    response,
-                    context,
-                        (isSuccess) {
-                      if (isSuccess) {
-                        final String token = context.read<TokenCubit>().state;
-                        context.read<CheckOutStatusCheckingCubit>().checkoutStatusChecking(
-                            token: token, payment_order_id: paymentOrderId);
-                        // Navigate to success screen
-                        context.pushReplacementNamed("payment_success");
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Payment successful"))
-                        );
-                      } else {
-                        // Handle payment failure
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Payment failed. Please try again."))
-                        );
-                      }
-                    },
-                  );
-                } else if (checkout is CheckOutErrorState) {
+            return BlocListener<CheckOutStatusCheckingCubit,CheckoutStatusCheckingState>(
+              listener: (context,statusState){
+                if (statusState is CheckoutStatusCheckingErrorState){
                   ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(checkout.errorMessage))
+                      SnackBar(content: Text(statusState.message))
+                  );
+                }
+                if(statusState is CheckoutStatusCheckingSuccessState){
+                  // Navigate to success screen
+                  context.pushReplacementNamed("payment_success");
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Payment successful"))
                   );
                 }
               },
-              builder: (context, checkout) {
-                return SafeArea(
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
+              child: BlocConsumer<CheckoutCubit, CheckOutState>(
+                listener: (context, checkout) async {
+                  if (checkout is CheckOutSuccessState) {
+
+                    final paymentOrderId = checkout.checkoutModel.transaction!.txnId!;
+                    final orderId = checkout.checkoutModel.transaction!.paymentData!.orderId!;
+                    final token = checkout.checkoutModel.transaction!.paymentData!.token!;
+                    final amount = checkout.checkoutModel.finalTotal;
+
+                    // Convert amount from int? to double
+                    final doubleAmount = amount?.toDouble();
+
+                    print('Starting PhonePe Payment:');
+                    print('Order ID: $orderId');
+                    print('Token: ${token}');
+                    print('Amount: ₹$doubleAmount');
+
+                    // Call instance method (not static)
+                    final response = await phonePeService.startTransaction(
+                      orderId: orderId,
+                      token: token,
+                      appSchema: 'vverify', // Your app URL scheme
+                      // amount: doubleAmount ?? 0.0, // Pass as double
+                    );
+
+                    // Handle the response
+                    phonePeService.handlePaymentResponse(
+                      response,
+                      context,
+                          (isSuccess) {
+                        if (isSuccess) {
+                          final String token = context.read<TokenCubit>().state;
+                          context.read<CheckOutStatusCheckingCubit>().checkoutStatusChecking(
+                              token: token, payment_order_id: paymentOrderId);
+                        } else {
+                          // Handle payment failure
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Payment failed. Please try again."))
+                          );
+                        }
+                      },
+                    );
+                  } else if (checkout is CheckOutErrorState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(checkout.errorMessage))
+                    );
+                  }
+                },
+                builder: (context, checkout) {
+                  return SafeArea(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 3,
+                            blurRadius: 3,
+                          )
+                        ],
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 3,
-                          blurRadius: 3,
-                        )
-                      ],
-                    ),
-                    height: ScreenSize.screenHeight / 7,
-                    width: double.infinity,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 22.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'No. of Tenants: $tenantsCount',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    showModalBottomSheet<void>(
-                                      isScrollControlled: true,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return StatefulBuilder(
-                                          builder: (BuildContext context,
-                                              StateSetter setStateSheet) {
-                                            // Calculate initial height
-                                            double calculateHeight() {
-                                              if (addList.length == 1)
-                                                return ScreenSize.screenHeight / 2;
-                                              if (addList.length == 2)
-                                                return ScreenSize.screenHeight /
-                                                    1.8;
-                                              if (addList.length == 3)
-                                                return ScreenSize.screenHeight /
-                                                    1.6;
-                                              if (addList.length > 3)
-                                                return ScreenSize.screenHeight /
-                                                    1.5;
-                                              return ScreenSize.screenHeight / 2.3;
-                                            }
-                            
-                                            return Container(
-                                              color: Theme.of(context)
-                                                  .scaffoldBackgroundColor,
-                                              height: calculateHeight(),
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                  bottom:
-                                                  MediaQuery.of(context)
-                                                      .viewInsets
-                                                      .bottom,
-                                                ),
-                                                child: SingleChildScrollView(
-                                                  physics:
-                                                  const AlwaysScrollableScrollPhysics(),
-                                                  child: Padding(
-                                                    padding:
-                                                    const EdgeInsets.all(16.0),
-                                                    child: SafeArea(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                        children: [
-                                                          Center(
-                                                            child: Container(
-                                                              width: 60,
-                                                              height: 6,
+                      height: ScreenSize.screenHeight / 7,
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 22.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'No. of Tenants: $tenantsCount',
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      showModalBottomSheet<void>(
+                                        isScrollControlled: true,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return StatefulBuilder(
+                                            builder: (BuildContext context,
+                                                StateSetter setStateSheet) {
+                                              // Calculate initial height
+                                              double calculateHeight() {
+                                                if (addList.length == 1)
+                                                  return ScreenSize.screenHeight / 2;
+                                                if (addList.length == 2)
+                                                  return ScreenSize.screenHeight /
+                                                      1.8;
+                                                if (addList.length == 3)
+                                                  return ScreenSize.screenHeight /
+                                                      1.6;
+                                                if (addList.length > 3)
+                                                  return ScreenSize.screenHeight /
+                                                      1.5;
+                                                return ScreenSize.screenHeight / 2.3;
+                                              }
+
+                                              return Container(
+                                                color: Theme.of(context)
+                                                    .scaffoldBackgroundColor,
+                                                height: calculateHeight(),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                    bottom:
+                                                    MediaQuery.of(context)
+                                                        .viewInsets
+                                                        .bottom,
+                                                  ),
+                                                  child: SingleChildScrollView(
+                                                    physics:
+                                                    const AlwaysScrollableScrollPhysics(),
+                                                    child: Padding(
+                                                      padding:
+                                                      const EdgeInsets.all(16.0),
+                                                      child: SafeArea(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                          children: [
+                                                            Center(
+                                                              child: Container(
+                                                                width: 60,
+                                                                height: 6,
+                                                                decoration:
+                                                                BoxDecoration(
+                                                                  color: Colors.grey,
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      16),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              "Price Breakup",
+                                                              style: Theme.of(context)
+                                                                  .textTheme
+                                                                  .titleLarge!
+                                                                  .copyWith(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w700,
+                                                                fontSize: 16,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 16),
+                                                            Container(
+                                                              padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
                                                               decoration:
                                                               BoxDecoration(
-                                                                color: Colors.grey,
                                                                 borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                    16),
+                                                                    12),
+                                                                color: Theme.of(
+                                                                    context)
+                                                                    .cardColor,
+                                                              ),
+                                                              child: Column(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    height:
+                                                                    addList.length >
+                                                                        3
+                                                                        ? ScreenSize
+                                                                        .screenHeight /
+                                                                        4
+                                                                        : null,
+                                                                    child: ListView
+                                                                        .builder(
+                                                                      itemCount:
+                                                                      addList
+                                                                          .length,
+                                                                      shrinkWrap:
+                                                                      true,
+                                                                      physics:
+                                                                      const NeverScrollableScrollPhysics(),
+                                                                      itemBuilder:
+                                                                          (BuildContext
+                                                                      context,
+                                                                          int
+                                                                          index) {
+                                                                        return ListTile(
+                                                                          contentPadding:
+                                                                          const EdgeInsets
+                                                                              .all(
+                                                                              0),
+                                                                          visualDensity:
+                                                                          const VisualDensity(
+                                                                            horizontal:
+                                                                            0,
+                                                                            vertical:
+                                                                            -4,
+                                                                          ),
+                                                                          title: Text(
+                                                                            "${data.data![addList[index]["index"]].serviceTitle}",
+                                                                            style: Theme.of(context)
+                                                                                .textTheme
+                                                                                .bodySmall,
+                                                                          ),
+                                                                          subtitle:
+                                                                          Text(
+                                                                            "₹${double.parse(data.data![addList[index]["index"]].servicePrice.toString()).toStringAsFixed(0)} X $tenantsCount",
+                                                                            style: Theme.of(context)
+                                                                                .textTheme
+                                                                                .bodySmall,
+                                                                          ),
+                                                                          trailing:
+                                                                          Text(
+                                                                            "₹${(double.parse(data.data![addList[index]["index"]].servicePrice!) * tenantsCount).toStringAsFixed(0)}",
+                                                                            style: Theme.of(context)
+                                                                                .textTheme
+                                                                                .bodySmall,
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                  // Coupon UI Section
+                                                                  _buildCouponUI(
+                                                                    context,
+                                                                    setStateSheet,
+                                                                    data,
+                                                                    tenantsCount,
+                                                                  ),
+                                                                  // Show original subtotal and discount separately for clarity
+                                                                  if (isCouponSuccess && actualDiscount > 0)
+                                                                    Column(
+                                                                      children: [
+                                                                        // Original Subtotal
+                                                                        ListTile(
+                                                                          contentPadding: const EdgeInsets.all(0),
+                                                                          visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                                                                          title: Text(
+                                                                            "Original Sub Total",
+                                                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                                                              fontSize: 14,
+                                                                              decoration: TextDecoration.lineThrough,
+                                                                              color: Colors.grey,
+                                                                            ),
+                                                                          ),
+                                                                          trailing: Text(
+                                                                            "₹${subtotal.toStringAsFixed(2)}",
+                                                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                                                              fontSize: 14,
+                                                                              decoration: TextDecoration.lineThrough,
+                                                                              color: Colors.grey,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Discount Applied
+                                                                        ListTile(
+                                                                          contentPadding: const EdgeInsets.all(0),
+                                                                          visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                                                                          title: Text(
+                                                                            "Discount Applied",
+                                                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                                                              fontSize: 14,
+                                                                              color: Colors.green.shade700,
+                                                                            ),
+                                                                          ),
+                                                                          trailing: Text(
+                                                                            "-₹${actualDiscount.toStringAsFixed(2)}",
+                                                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                                                              fontSize: 14,
+                                                                              color: Colors.green.shade700,
+                                                                              fontWeight: FontWeight.w600,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  // Subtotal (with discount applied if any)
+                                                                  ListTile(
+                                                                    contentPadding:
+                                                                    const EdgeInsets
+                                                                        .all(0),
+                                                                    visualDensity:
+                                                                    const VisualDensity(
+                                                                      horizontal: 0,
+                                                                      vertical: -4,
+                                                                    ),
+                                                                    title: Text(
+                                                                      isCouponSuccess ? "Discounted Sub Total" : "Sub Total",
+                                                                      style: Theme.of(
+                                                                          context)
+                                                                          .textTheme
+                                                                          .bodyLarge!
+                                                                          .copyWith(
+                                                                          fontSize:
+                                                                          14),
+                                                                    ),
+                                                                    trailing: Text(
+                                                                      "₹${discountedSubtotal.toStringAsFixed(2)}",
+                                                                      style: Theme.of(
+                                                                          context)
+                                                                          .textTheme
+                                                                          .bodyLarge!
+                                                                          .copyWith(
+                                                                          fontSize:
+                                                                          14),
+                                                                    ),
+                                                                  ),
+                                                                  // GST
+                                                                  ListTile(
+                                                                    contentPadding:
+                                                                    const EdgeInsets
+                                                                        .all(0),
+                                                                    visualDensity:
+                                                                    const VisualDensity(
+                                                                      horizontal: 0,
+                                                                      vertical: -4,
+                                                                    ),
+                                                                    title: Text(
+                                                                      "GST Charge 18%",
+                                                                      style: Theme.of(
+                                                                          context)
+                                                                          .textTheme
+                                                                          .bodyLarge!
+                                                                          .copyWith(
+                                                                          fontSize:
+                                                                          14),
+                                                                    ),
+                                                                    trailing: Text(
+                                                                      "₹${gst.toStringAsFixed(2)}",
+                                                                      style: Theme.of(
+                                                                          context)
+                                                                          .textTheme
+                                                                          .bodyLarge!
+                                                                          .copyWith(
+                                                                          fontSize:
+                                                                          14),
+                                                                    ),
+                                                                  ),
+                                                                  // Grand Total
+                                                                  ListTile(
+                                                                    contentPadding:
+                                                                    const EdgeInsets
+                                                                        .all(0),
+                                                                    visualDensity:
+                                                                    const VisualDensity(
+                                                                      horizontal: 0,
+                                                                      vertical: -4,
+                                                                    ),
+                                                                    title: Text(
+                                                                      "Grand Total",
+                                                                      style: Theme.of(
+                                                                          context)
+                                                                          .textTheme
+                                                                          .bodyLarge,
+                                                                    ),
+                                                                    trailing: Text(
+                                                                      "₹${grandTotal.toStringAsFixed(2)}",
+                                                                      style: Theme.of(
+                                                                          context)
+                                                                          .textTheme
+                                                                          .bodyLarge,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
-                                                          ),
-                                                          Text(
-                                                            "Price Breakup",
-                                                            style: Theme.of(context)
-                                                                .textTheme
-                                                                .titleLarge!
-                                                                .copyWith(
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .w700,
-                                                              fontSize: 16,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 16),
-                                                          Container(
-                                                            padding:
-                                                            const EdgeInsets
-                                                                .all(8),
-                                                            decoration:
-                                                            BoxDecoration(
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  12),
-                                                              color: Theme.of(
-                                                                  context)
-                                                                  .cardColor,
-                                                            ),
-                                                            child: Column(
-                                                              children: [
-                                                                SizedBox(
-                                                                  height:
-                                                                  addList.length >
-                                                                      3
-                                                                      ? ScreenSize
-                                                                      .screenHeight /
-                                                                      4
-                                                                      : null,
-                                                                  child: ListView
-                                                                      .builder(
-                                                                    itemCount:
-                                                                    addList
-                                                                        .length,
-                                                                    shrinkWrap:
-                                                                    true,
-                                                                    physics:
-                                                                    const NeverScrollableScrollPhysics(),
-                                                                    itemBuilder:
-                                                                        (BuildContext
-                                                                    context,
-                                                                        int
-                                                                        index) {
-                                                                      return ListTile(
-                                                                        contentPadding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            0),
-                                                                        visualDensity:
-                                                                        const VisualDensity(
-                                                                          horizontal:
-                                                                          0,
-                                                                          vertical:
-                                                                          -4,
-                                                                        ),
-                                                                        title: Text(
-                                                                          "${data.data![addList[index]["index"]].serviceTitle}",
-                                                                          style: Theme.of(context)
-                                                                              .textTheme
-                                                                              .bodySmall,
-                                                                        ),
-                                                                        subtitle:
-                                                                        Text(
-                                                                          "₹${double.parse(data.data![addList[index]["index"]].servicePrice.toString()).toStringAsFixed(0)} X $tenantsCount",
-                                                                          style: Theme.of(context)
-                                                                              .textTheme
-                                                                              .bodySmall,
-                                                                        ),
-                                                                        trailing:
-                                                                        Text(
-                                                                          "₹${(double.parse(data.data![addList[index]["index"]].servicePrice!) * tenantsCount).toStringAsFixed(0)}",
-                                                                          style: Theme.of(context)
-                                                                              .textTheme
-                                                                              .bodySmall,
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                                // Coupon UI Section
-                                                                _buildCouponUI(
-                                                                  context,
-                                                                  setStateSheet,
-                                                                  data,
-                                                                  tenantsCount,
-                                                                ),
-                                                                // Show original subtotal and discount separately for clarity
-                                                                if (isCouponSuccess && actualDiscount > 0)
-                                                                  Column(
-                                                                    children: [
-                                                                      // Original Subtotal
-                                                                      ListTile(
-                                                                        contentPadding: const EdgeInsets.all(0),
-                                                                        visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                                                                        title: Text(
-                                                                          "Original Sub Total",
-                                                                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                                            fontSize: 14,
-                                                                            decoration: TextDecoration.lineThrough,
-                                                                            color: Colors.grey,
-                                                                          ),
-                                                                        ),
-                                                                        trailing: Text(
-                                                                          "₹${subtotal.toStringAsFixed(2)}",
-                                                                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                                            fontSize: 14,
-                                                                            decoration: TextDecoration.lineThrough,
-                                                                            color: Colors.grey,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      // Discount Applied
-                                                                      ListTile(
-                                                                        contentPadding: const EdgeInsets.all(0),
-                                                                        visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                                                                        title: Text(
-                                                                          "Discount Applied",
-                                                                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                                            fontSize: 14,
-                                                                            color: Colors.green.shade700,
-                                                                          ),
-                                                                        ),
-                                                                        trailing: Text(
-                                                                          "-₹${actualDiscount.toStringAsFixed(2)}",
-                                                                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                                            fontSize: 14,
-                                                                            color: Colors.green.shade700,
-                                                                            fontWeight: FontWeight.w600,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                // Subtotal (with discount applied if any)
-                                                                ListTile(
-                                                                  contentPadding:
-                                                                  const EdgeInsets
-                                                                      .all(0),
-                                                                  visualDensity:
-                                                                  const VisualDensity(
-                                                                    horizontal: 0,
-                                                                    vertical: -4,
-                                                                  ),
-                                                                  title: Text(
-                                                                    isCouponSuccess ? "Discounted Sub Total" : "Sub Total",
-                                                                    style: Theme.of(
-                                                                        context)
-                                                                        .textTheme
-                                                                        .bodyLarge!
-                                                                        .copyWith(
-                                                                        fontSize:
-                                                                        14),
-                                                                  ),
-                                                                  trailing: Text(
-                                                                    "₹${discountedSubtotal.toStringAsFixed(2)}",
-                                                                    style: Theme.of(
-                                                                        context)
-                                                                        .textTheme
-                                                                        .bodyLarge!
-                                                                        .copyWith(
-                                                                        fontSize:
-                                                                        14),
-                                                                  ),
-                                                                ),
-                                                                // GST
-                                                                ListTile(
-                                                                  contentPadding:
-                                                                  const EdgeInsets
-                                                                      .all(0),
-                                                                  visualDensity:
-                                                                  const VisualDensity(
-                                                                    horizontal: 0,
-                                                                    vertical: -4,
-                                                                  ),
-                                                                  title: Text(
-                                                                    "GST Charge 18%",
-                                                                    style: Theme.of(
-                                                                        context)
-                                                                        .textTheme
-                                                                        .bodyLarge!
-                                                                        .copyWith(
-                                                                        fontSize:
-                                                                        14),
-                                                                  ),
-                                                                  trailing: Text(
-                                                                    "₹${gst.toStringAsFixed(2)}",
-                                                                    style: Theme.of(
-                                                                        context)
-                                                                        .textTheme
-                                                                        .bodyLarge!
-                                                                        .copyWith(
-                                                                        fontSize:
-                                                                        14),
-                                                                  ),
-                                                                ),
-                                                                // Grand Total
-                                                                ListTile(
-                                                                  contentPadding:
-                                                                  const EdgeInsets
-                                                                      .all(0),
-                                                                  visualDensity:
-                                                                  const VisualDensity(
-                                                                    horizontal: 0,
-                                                                    vertical: -4,
-                                                                  ),
-                                                                  title: Text(
-                                                                    "Grand Total",
-                                                                    style: Theme.of(
-                                                                        context)
-                                                                        .textTheme
-                                                                        .bodyLarge,
-                                                                  ),
-                                                                  trailing: Text(
-                                                                    "₹${grandTotal.toStringAsFixed(2)}",
-                                                                    style: Theme.of(
-                                                                        context)
-                                                                        .textTheme
-                                                                        .bodyLarge,
-                                                                  ),
-                                                                ),
+                                                            const SizedBox(
+                                                                height: 16),
+                                                            CustomButton(
+                                                              isLoading: checkout
+                                                              is CheckOutLoadingState,
+                                                              onTap: () {
+                                                                if (checkoutList
+                                                                    .isEmpty) {
+                                                                  ScaffoldMessenger
+                                                                      .of(context)
+                                                                      .showSnackBar(
+                                                                    const SnackBar(
+                                                                      content: Text(
+                                                                          "Please select services"),
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  checkoutTransaction(
+                                                                    payment_gateway:
+                                                                    "Stripe",
+                                                                    payment_mode:
+                                                                    "Credit Card",
+                                                                    quantity:
+                                                                    tenantsCount,
+                                                                    items:
+                                                                    checkoutList,
+                                                                  );
+                                                                }
+                                                              },
+                                                              text:
+                                                              "Pay ₹${grandTotal.toStringAsFixed(0)} /",
+                                                              gradientColors: [
+                                                                Theme.of(context)
+                                                                    .primaryColor,
+                                                                Theme.of(context)
+                                                                    .primaryColorLight,
                                                               ],
                                                             ),
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 16),
-                                                          CustomButton(
-                                                            isLoading: checkout
-                                                            is CheckOutLoadingState,
-                                                            onTap: () {
-                                                              if (checkoutList
-                                                                  .isEmpty) {
-                                                                ScaffoldMessenger
-                                                                    .of(context)
-                                                                    .showSnackBar(
-                                                                  const SnackBar(
-                                                                    content: Text(
-                                                                        "Please select services"),
-                                                                  ),
-                                                                );
-                                                              } else {
-                                                                checkoutTransaction(
-                                                                  payment_gateway:
-                                                                  "Stripe",
-                                                                  payment_mode:
-                                                                  "Credit Card",
-                                                                  quantity:
-                                                                  tenantsCount,
-                                                                  items:
-                                                                  checkoutList,
-                                                                );
-                                                              }
-                                                            },
-                                                            text:
-                                                            "Pay ₹${grandTotal.toStringAsFixed(0)} /",
-                                                            gradientColors: [
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                              Theme.of(context)
-                                                                  .primaryColorLight,
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 16),
-                                                        ],
+                                                            const SizedBox(
+                                                                height: 16),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Text(
-                                    'See price breakout',
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      color:
-                                      Theme.of(context).primaryColorDark,
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Text(
+                                      'See price breakout',
+                                      style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        color:
+                                        Theme.of(context).primaryColorDark,
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
+                              ),
+                            ),
+                            CustomButton(
+                              isLoading: checkout is CheckOutLoadingState,
+                              width: ScreenSize.screenWidth / 2.5,
+                              text:
+                              "Pay ₹${grandTotal.toStringAsFixed(0)} /-",
+                              onTap: () {
+                                if (checkoutList.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                          Text("Please select services")));
+                                } else {
+                                  checkoutTransaction(
+                                    payment_gateway: "Stripe",
+                                    payment_mode: "Credit Card",
+                                    quantity: tenantsCount,
+                                    items: checkoutList,
+                                  );
+                                }
+                              },
+                              gradientColors: [
+                                Theme.of(context).primaryColor,
+                                Theme.of(context).primaryColorLight,
                               ],
                             ),
-                          ),
-                          CustomButton(
-                            isLoading: checkout is CheckOutLoadingState,
-                            width: ScreenSize.screenWidth / 2.5,
-                            text:
-                            "Pay ₹${grandTotal.toStringAsFixed(0)} /-",
-                            onTap: () {
-                              if (checkoutList.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content:
-                                        Text("Please select services")));
-                              } else {
-                                checkoutTransaction(
-                                  payment_gateway: "Stripe",
-                                  payment_mode: "Credit Card",
-                                  quantity: tenantsCount,
-                                  items: checkoutList,
-                                );
-                              }
-                            },
-                            gradientColors: [
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).primaryColorLight,
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             );
           }
           return const Center(

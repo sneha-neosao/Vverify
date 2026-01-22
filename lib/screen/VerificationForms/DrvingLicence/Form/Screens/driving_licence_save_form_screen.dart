@@ -8,8 +8,8 @@ import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 
-import '../../Bloc/driving_licence_bloc.dart';
-import '../../Bloc/driving_licence_state.dart';
+import '../Blocs/driving_licence_save_form_bloc/driving_licence_save_form_bloc.dart';
+import '../Blocs/driving_licence_save_form_bloc/driving_licence_save_form_state.dart';
 
 class DrivingLicenceSaveFormScreen extends StatefulWidget {
   const DrivingLicenceSaveFormScreen({super.key});

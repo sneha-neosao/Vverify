@@ -94,7 +94,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
   void checkCase({required String title, required int index, required BuildContext context}) {
     switch (title) {
       case "police-verification":
-        context.pushNamed("nonMumbaiForm");
+        context.pushNamed("NonMumbaiPoliceSaveFormScreen1");
         break;
       case "pan-card-verification":
         context.pushNamed("PanSaveFormScreen");
@@ -119,7 +119,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         context.pushNamed("DrivingLicenceSaveFormScreen");
         break;
       case "gst-cin-pan-verification":
-        context.pushNamed("GstPanCinScreen");
+        context.pushNamed("GstVerificationSaveFormScreen");
         break;
       case "court-legal-verification":
         context.pushNamed("CourtVerificationSaveFormScreen");
@@ -136,7 +136,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
       case "police-verification":
         data[index].services![servicesIndex].policeEntryType == 1
             ? data[index].services![servicesIndex].dataPreference == "form"
-                ? context.pushNamed("MumbaiPoliceVerificationUpdateForm1",
+                ? context.pushNamed("MumbaiPoliceUpdateFormScreen1",
                     pathParameters: {
                         'uid':
                             data[index].services![servicesIndex].uid.toString()
@@ -145,7 +145,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                     'uid': data[index].services![servicesIndex].uid.toString()
                   })
             : data[index].services![servicesIndex].dataPreference == "form"
-                ? context.pushNamed("NonMumbaiPoliceVerificationForm1Update",
+                ? context.pushNamed("NonMumbaiPoliceUpdateFormScreen1",
                     pathParameters: {
                         'uid':
                             data[index].services![servicesIndex].uid.toString()
@@ -190,7 +190,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         break;
       case "gst-cin-pan-verification":
         data[index].services![servicesIndex].dataPreference == "form"
-            ? context.pushNamed("GstPanCinUpdateScreen", pathParameters: {
+            ? context.pushNamed("GstVerificationUpdateFormScreen", pathParameters: {
                 "uid": data[index].services![servicesIndex].uid.toString()
               })
             : context.pushNamed("GstPanCinDocUpdate", pathParameters: {

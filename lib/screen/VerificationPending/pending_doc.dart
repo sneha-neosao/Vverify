@@ -20,7 +20,7 @@ class PendingDoc extends StatefulWidget {
 void checkCase({required String title, String? uuid,required BuildContext context}) {
   switch (title) {
     case "Police Verification":
-      context.pushNamed("nonMumbaiForm");
+      context.pushNamed("NonMumbaiPoliceSaveFormScreen1");
       break;
     case "Aadhaar Verification":
       context.pushNamed("AadhaarGetOtp");
@@ -44,7 +44,7 @@ void checkCase({required String title, String? uuid,required BuildContext contex
       context.pushNamed("DrivingLicenceSaveFormScreen");
       break;
     case "GST CIN PAN Verification":
-      context.pushNamed("GstPanCinScreen");
+      context.pushNamed("GstVerificationSaveFormScreen");
       break;
     case "Court Legal Verification":
       context.pushNamed("CourtVerificationSaveFormScreen");
@@ -61,7 +61,7 @@ void secondCheckCase(
     case "Police Verification":
       data.data![index].services![servicesIndex].policeEntryType == 1
           ? data.data![index].services![servicesIndex].dataPreference == "form"
-              ? context.pushNamed("MumbaiPoliceVerificationUpdateForm1",
+              ? context.pushNamed("MumbaiPoliceUpdateFormScreen1",
                   pathParameters: {
                       'uid': data.data![index].services![servicesIndex].uid
                           .toString()
@@ -71,7 +71,7 @@ void secondCheckCase(
                       data.data![index].services![servicesIndex].uid.toString()
                 })
           : data.data![index].services![servicesIndex].dataPreference == "form"
-              ? context.pushNamed("NonMumbaiPoliceVerificationForm1Update",
+              ? context.pushNamed("NonMumbaiPoliceUpdateFormScreen1",
                   pathParameters: {
                       'uid': data.data![index].services![servicesIndex].uid
                           .toString()
@@ -113,7 +113,7 @@ void secondCheckCase(
       break;
     case "GST CIN PAN Verification":
       data.data![index].services![servicesIndex].dataPreference == "form"
-          ? context.pushNamed("GstPanCinUpdateScreen", pathParameters: {
+          ? context.pushNamed("GstVerificationUpdateFormScreen", pathParameters: {
               "uid": data.data![index].services![servicesIndex].uid.toString()
             })
           : context.pushNamed("GstPanCinDocUpdate", pathParameters: {

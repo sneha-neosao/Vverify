@@ -70,7 +70,7 @@ class _EmploymentDocumentUploadState extends State<EmploymentDocumentUpload> {
                     return PickMultiplePhoto(
                       widthSize: double.infinity,
                       title: "Select Documents",
-                      mainTitle: "Upload Certificate/Marksheet/Document",
+                      mainTitle: "Upload Certificate/Marksheet/Documents",
                       onPressedPickImage: () {
                         context.read<EmploymentDocsFileCubit>().pickMultipleFiles().then((_) {
                           context.pop();
@@ -127,7 +127,7 @@ class _EmploymentDocumentUploadState extends State<EmploymentDocumentUpload> {
                       if (context.read<EmploymentDocsFileCubit>().state.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text(
-                                "Please Upload Certificate/Marksheet/Document")));
+                                "Please Upload Certificate/Marksheet/Documents")));
                       } else {
                         employmentUploadDocData();
                       }
@@ -141,7 +141,7 @@ class _EmploymentDocumentUploadState extends State<EmploymentDocumentUpload> {
                 }),
                 const SizedBox(height: 16),
                 Text(
-                  "Employment Document List",
+                  "Employment Documents List",
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!
@@ -190,13 +190,13 @@ class _EmploymentDocumentUploadState extends State<EmploymentDocumentUpload> {
                               final pathParam = uri.queryParameters['path'];
 
                               if (pathParam == null || pathParam.isEmpty) {
-                                return 'Document';
+                                return 'Documents';
                               }
 
                               // Extract filename from that path
                               return pathParam.split('/').last;
                             } catch (e) {
-                              return 'Document';
+                              return 'Documents';
                             }
                           }
                           return ListTile(
