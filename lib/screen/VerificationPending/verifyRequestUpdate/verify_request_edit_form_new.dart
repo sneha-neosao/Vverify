@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Bloc/verify_details_state.dart';
-import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_state.dart';
 import 'package:v_verify/widgets/custom_not_required_text_field.dart';
@@ -19,8 +18,9 @@ import '../../VerificationForms/common/validator.dart';
 class VerifyRequestEditFormNew extends StatefulWidget {
   final String request_id;
   String uuid;
+  String service_title;
 
-  VerifyRequestEditFormNew({Key? key,required this.request_id, required this.uuid}) : super(key: key);
+  VerifyRequestEditFormNew({Key? key,required this.request_id, required this.uuid, required this.service_title}) : super(key: key);
 
   @override
   State<VerifyRequestEditFormNew> createState() => _VerifyRequestEditFormNewState();
@@ -193,7 +193,7 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Fill User/Tenant Info",
+                        widget.service_title,
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium!
@@ -205,12 +205,12 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                           hintText: "Enter First Name",
                           textInputType: TextInputType.text
                       ),
-                      CustomNotRequiredTextField(
-                          controller: middleNameController,
-                          titleText: "Middle Name",
-                          hintText: "Enter Middle Name",
-                          textInputType: TextInputType.text
-                      ),
+                      // CustomNotRequiredTextField(
+                      //     controller: middleNameController,
+                      //     titleText: "Middle Name",
+                      //     hintText: "Enter Middle Name",
+                      //     textInputType: TextInputType.text
+                      // ),
                       CustomRequiredTextField(
                           controller: lastnameController,
                           titleText: "Last Name",
@@ -231,47 +231,47 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                           hintText: "Enter Email",
                           textInputType: TextInputType.text
                       ),
-                      CustomNotRequiredTextField(
-                          controller: employeeCodeController,
-                          titleText: "Employee Code",
-                          hintText: "Enter Employee Code",
-                          textInputType: TextInputType.text
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      RichText(
-                          text: TextSpan(
-                            text: "Date of Joining",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(fontWeight: FontWeight.w700),
-                          )),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      TextFormField(
-                        readOnly: true,
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Please enter date of joining';
-                        //   }
-                        //   return null;
-                        // },
-                        style: Theme.of(context).textTheme.bodySmall,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [maskFormatter],
-                        controller: joiningController,
-                        decoration: InputDecoration(
-                          hintText: "DD-MM-YYYY",
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.calendar_today),
-                            onPressed: () => _selectJoiningDate(
-                                context), // Open date picker when icon is pressed
-                          ),
-                        ),
-                      ),
+                      // CustomNotRequiredTextField(
+                      //     controller: employeeCodeController,
+                      //     titleText: "Employee Code",
+                      //     hintText: "Enter Employee Code",
+                      //     textInputType: TextInputType.text
+                      // ),
+                      // const SizedBox(
+                      //   height: 16,
+                      // ),
+                      // RichText(
+                      //     text: TextSpan(
+                      //       text: "Date of Joining",
+                      //       style: Theme.of(context)
+                      //           .textTheme
+                      //           .bodySmall!
+                      //           .copyWith(fontWeight: FontWeight.w700),
+                      //     )),
+                      // const SizedBox(
+                      //   height: 8,
+                      // ),
+                      // TextFormField(
+                      //   readOnly: true,
+                      //   // validator: (value) {
+                      //   //   if (value == null || value.isEmpty) {
+                      //   //     return 'Please enter date of joining';
+                      //   //   }
+                      //   //   return null;
+                      //   // },
+                      //   style: Theme.of(context).textTheme.bodySmall,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [maskFormatter],
+                      //   controller: joiningController,
+                      //   decoration: InputDecoration(
+                      //     hintText: "DD-MM-YYYY",
+                      //     suffixIcon: IconButton(
+                      //       icon: const Icon(Icons.calendar_today),
+                      //       onPressed: () => _selectJoiningDate(
+                      //           context), // Open date picker when icon is pressed
+                      //     ),
+                      //   ),
+                      // ),
                       const SizedBox(
                         height: 16,
                       ),
@@ -307,71 +307,71 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-
-                      RichText(
-                          text: TextSpan(
-                            text: "Gender",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(fontWeight: FontWeight.w700),
-                          )),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      SizedBox(
-                        height: 54,
-                        child: Theme(
-                          data: Theme.of(context).copyWith( highlightColor: Colors.black, ),
-                          child: DropdownButtonFormField<String>(
-                            value: genderValues.contains(selectedGender) ? selectedGender : null,
-                            hint: Text(
-                              "Select Gender",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(color: Colors.grey),
-                            ),
-                            onChanged: (String? value) {
-                              setState(() {
-                                selectedGender = value; // stays lowercase
-                              });
-                            },
-                            items: genderValues.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value, // lowercase value
-                                child: Text(
-                                  value[0].toUpperCase() + value.substring(1), // show "Male"
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                              );
-                            }).toList(),
-                            dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-                            decoration: InputDecoration(
-                              contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide:
-                                BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
-                              ),
-                              filled: true,
-                              fillColor: Theme.of(context).scaffoldBackgroundColor,
-                            ),
-                          ),
-                        ),
-                      ),
+                      // const SizedBox(
+                      //   height: 16,
+                      // ),
+                      //
+                      // RichText(
+                      //     text: TextSpan(
+                      //       text: "Gender",
+                      //       style: Theme.of(context)
+                      //           .textTheme
+                      //           .bodySmall!
+                      //           .copyWith(fontWeight: FontWeight.w700),
+                      //     )),
+                      // const SizedBox(
+                      //   height: 4,
+                      // ),
+                      // SizedBox(
+                      //   height: 54,
+                      //   child: Theme(
+                      //     data: Theme.of(context).copyWith( highlightColor: Colors.black, ),
+                      //     child: DropdownButtonFormField<String>(
+                      //       value: genderValues.contains(selectedGender) ? selectedGender : null,
+                      //       hint: Text(
+                      //         "Select Gender",
+                      //         style: Theme.of(context)
+                      //             .textTheme
+                      //             .bodySmall!
+                      //             .copyWith(color: Colors.grey),
+                      //       ),
+                      //       onChanged: (String? value) {
+                      //         setState(() {
+                      //           selectedGender = value; // stays lowercase
+                      //         });
+                      //       },
+                      //       items: genderValues.map((String value) {
+                      //         return DropdownMenuItem<String>(
+                      //           value: value, // lowercase value
+                      //           child: Text(
+                      //             value[0].toUpperCase() + value.substring(1), // show "Male"
+                      //             style: Theme.of(context).textTheme.bodyMedium,
+                      //           ),
+                      //         );
+                      //       }).toList(),
+                      //       dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+                      //       decoration: InputDecoration(
+                      //         contentPadding:
+                      //         const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
+                      //         enabledBorder: OutlineInputBorder(
+                      //           borderRadius: BorderRadius.circular(8),
+                      //           borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                      //         ),
+                      //         focusedBorder: OutlineInputBorder(
+                      //           borderRadius: BorderRadius.circular(8),
+                      //           borderSide:
+                      //           BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                      //         ),
+                      //         border: OutlineInputBorder(
+                      //           borderRadius: BorderRadius.circular(8),
+                      //           borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                      //         ),
+                      //         filled: true,
+                      //         fillColor: Theme.of(context).scaffoldBackgroundColor,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                       const SizedBox(
                         height: 24,
                       ),

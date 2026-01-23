@@ -47,6 +47,7 @@ class ProfileResult {
   String? companyHrNumber;
   String? companyEmail;
   String? companyAddress;
+  String? salutation;
 
   ProfileResult({
     this.id,
@@ -62,7 +63,8 @@ class ProfileResult {
     this.companyHr,
     this.companyHrNumber,
     this.companyEmail,
-    this.companyAddress
+    this.companyAddress,
+    this.salutation
   });
 
   factory ProfileResult.fromJson(Map<String, dynamic> json) => ProfileResult(
@@ -79,7 +81,8 @@ class ProfileResult {
     companyHr: json["contactPersonName"],
     companyHrNumber: json["contactPersonPhone"],
     companyEmail: json["companyEmail"],
-    companyAddress: json["companyAddress"]
+    companyAddress: json["companyAddress"],
+    salutation: json["salutation"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -96,6 +99,7 @@ class ProfileResult {
     "contactPersonName": companyHr,
     "contactPersonPhone": companyHrNumber,
     "companyEmail": companyEmail,
-    "companyAddress": companyAddress
+    "companyAddress": companyAddress,
+    "salutation": salutation
   };
 }

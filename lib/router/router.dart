@@ -203,12 +203,14 @@ class AppRouter {
 
       ///Verification Request related routes
       GoRoute(
-        path: '/verifyRequestUpdateNew/:uuid',
+        path: '/verifyRequestUpdateNew/:uuid/:service_title',
         name: "verifyRequestUpdateNew",
         builder: (context, state) {
           final uuid = state.pathParameters['uuid']!;
+          final service_title = state.pathParameters['service_title']!;
           return VerifyRequestUpdateNew(
             uuid: uuid,
+            service_title: service_title,
           );
         },
       ),
@@ -218,9 +220,11 @@ class AppRouter {
         builder: (context, state) {
           final requestId = state.pathParameters['request_id']!;
           final uuid = state.pathParameters['uuid']!;
+          final service_title = state.pathParameters['service_title']!;
           return VerifyRequestEditFormNew(
               request_id: requestId,
               uuid: uuid,
+            service_title: service_title,
           );
         },
       ),

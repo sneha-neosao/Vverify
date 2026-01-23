@@ -1,18 +1,15 @@
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:v_verify/commonComponent/customTextFiled.dart';
 import 'package:v_verify/screen/Complete-Profile/Bloc/register_cubit.dart';
 import 'package:v_verify/screen/Complete-Profile/Bloc/register_state.dart';
 import 'package:v_verify/screen/Complete-Profile/model/register_model.dart';
-import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
-
+import 'package:v_verify/widgets/custom_salutation_textfield.dart';
 import '../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../commonComponent/custom_button.dart';
 import '../../widgets/custom_not_required_text_field.dart';
@@ -41,6 +38,9 @@ class _CompleteProfileState extends State<CompleteProfile> {
   final TextEditingController companyEmailController = TextEditingController();
   final TextEditingController companyAddressController = TextEditingController();
 
+  String? selectedPrefix = 'Mr.';
+  List<String> prefixValues = <String>[ 'Mr.','Mrs.','Ms.'];
+
   final _formKey = GlobalKey<FormState>();
 
   final ImagePicker _picker = ImagePicker();
@@ -56,7 +56,9 @@ class _CompleteProfileState extends State<CompleteProfile> {
       required String companyHrNumber,
       required String companyEmail,
       required String companyAddress,
-      File? profilePhoto}) async {
+      required String salutation
+      // File? profilePhoto
+      }) async {
     context
         .read<RegisterCubit>()
         .userRegister(
@@ -70,7 +72,8 @@ class _CompleteProfileState extends State<CompleteProfile> {
             companyHrNumber: companyHrNumber,
             companyEmail: companyEmail,
             companyAddress: companyAddress,
-            profilePhoto: profilePhoto
+            salutation: selectedPrefix ?? ""
+            // profilePhoto: profilePhoto
     )
         .then((_) {});
   }
@@ -145,116 +148,114 @@ class _CompleteProfileState extends State<CompleteProfile> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                      child: Text("Complete Profile",
-                          style: Theme.of(context).textTheme.titleMedium)),
+                  Text("Complete Profile",
+                      style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 16),
                   Text(
-                    textAlign: TextAlign.center,
                     "Please complete your profile so we can learn more about you.",
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(
                     height: 32,
                   ),
-                  Center(
-                    child: Text(
-                      "Add Profile Image",
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Center(
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(50),
-                      radius: 50,
-                      onTap: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            backgroundColor: Theme.of(context).primaryColorLight,
-                            title: Text(
-                              'Select Profile Image',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .copyWith(color: Colors.white),
-                            ),
-                            content: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                SizedBox(
-                                  height: 100,
-                                  child: Column(
-                                    children: [
-                                      IconButton(
-                                          onPressed: () {
-                                            _pickImageFromGallery().then((_) {
-                                              context.pop();
-                                            });
-                                          },
-                                          icon: const Icon(
-                                            Icons.photo,
-                                            size: 40,
-                                            color: Colors.white,
-                                          )),
-                                      Text("Pick image",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .copyWith(color: Colors.white))
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 100,
-                                  child: Column(
-                                    children: [
-                                      IconButton(
-                                          onPressed: () {
-                                            _pickImageFromCamera().then((_) {
-                                              context.pop();
-                                            });
-                                          },
-                                          icon: const Icon(
-                                            Icons.camera_alt_outlined,
-                                            size: 40,
-                                            color: Colors.white,
-                                          )),
-                                      Text("Take Photo",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .copyWith(color: Colors.white))
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      child: CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Theme.of(context).primaryColorLight,
-                        backgroundImage:
-                            _image != null ? FileImage(_image!) : null,
-                        child: _image == null
-                            ? const Center(
-                                child: Icon(
-                                Icons.add,
-                                size: 35,
-                              ))
-                            : null,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
+                  // Center(
+                  //   child: Text(
+                  //     "Add Profile Image",
+                  //     style: Theme.of(context).textTheme.bodyLarge,
+                  //   ),
+                  // ),
+                  // const SizedBox(
+                  //   height: 8,
+                  // ),
+                  // Center(
+                  //   child: InkWell(
+                  //     borderRadius: BorderRadius.circular(50),
+                  //     radius: 50,
+                  //     onTap: () {
+                  //       FocusManager.instance.primaryFocus?.unfocus();
+                  //       showDialog<String>(
+                  //         context: context,
+                  //         builder: (BuildContext context) => AlertDialog(
+                  //           backgroundColor: Theme.of(context).primaryColorLight,
+                  //           title: Text(
+                  //             'Select Profile Image',
+                  //             style: Theme.of(context)
+                  //                 .textTheme
+                  //                 .bodyLarge!
+                  //                 .copyWith(color: Colors.white),
+                  //           ),
+                  //           content: Row(
+                  //             mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //             children: [
+                  //               SizedBox(
+                  //                 height: 100,
+                  //                 child: Column(
+                  //                   children: [
+                  //                     IconButton(
+                  //                         onPressed: () {
+                  //                           _pickImageFromGallery().then((_) {
+                  //                             context.pop();
+                  //                           });
+                  //                         },
+                  //                         icon: const Icon(
+                  //                           Icons.photo,
+                  //                           size: 40,
+                  //                           color: Colors.white,
+                  //                         )),
+                  //                     Text("Pick image",
+                  //                         style: Theme.of(context)
+                  //                             .textTheme
+                  //                             .bodySmall!
+                  //                             .copyWith(color: Colors.white))
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //               SizedBox(
+                  //                 height: 100,
+                  //                 child: Column(
+                  //                   children: [
+                  //                     IconButton(
+                  //                         onPressed: () {
+                  //                           _pickImageFromCamera().then((_) {
+                  //                             context.pop();
+                  //                           });
+                  //                         },
+                  //                         icon: const Icon(
+                  //                           Icons.camera_alt_outlined,
+                  //                           size: 40,
+                  //                           color: Colors.white,
+                  //                         )),
+                  //                     Text("Take Photo",
+                  //                         style: Theme.of(context)
+                  //                             .textTheme
+                  //                             .bodySmall!
+                  //                             .copyWith(color: Colors.white))
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //     child: CircleAvatar(
+                  //       radius: 60,
+                  //       backgroundColor: Theme.of(context).primaryColorLight,
+                  //       backgroundImage:
+                  //           _image != null ? FileImage(_image!) : null,
+                  //       child: _image == null
+                  //           ? const Center(
+                  //               child: Icon(
+                  //               Icons.add,
+                  //               size: 35,
+                  //             ))
+                  //           : null,
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(
+                  //   height: 16,
+                  // ),
                   RichText(
                       text: TextSpan(
                           text: "Select your user type",
@@ -357,32 +358,37 @@ class _CompleteProfileState extends State<CompleteProfile> {
                       ),
                     ],
                   ),
-                  CustomRequiredTextField(
-                      controller: firstNameController,
-                      titleText: "First Name",
-                      hintText: "Enter First Name",
-                      textInputType: TextInputType.text
-                  ),
-                  CustomRequiredTextField(
-                      controller: lastNameController,
-                      titleText: "Last Name",
-                      hintText: "Enter Last Name",
-                      textInputType: TextInputType.text
-                  ),
-                  CustomRequiredTextField(
-                      validator: validateMobile,
-                      readOnly: true,
-                      controller: mobileController,
-                      titleText: "Mobile Number",
-                      hintText: "Enter Last Name",
-                      textInputType: TextInputType.text
-                  ),
-                  CustomRequiredTextField(
-                      validator: validateEmail,
-                      controller: emailController,
-                      titleText: "Email Address",
-                      hintText: "Enter Email Address",
-                      textInputType: TextInputType.text
+                  if( broker == false && individual == true)
+                  Column(
+                    children: [
+                      CustomRequiredTextField(
+                          controller: firstNameController,
+                          titleText: "First Name",
+                          hintText: "Enter First Name",
+                          textInputType: TextInputType.text
+                      ),
+                      CustomRequiredTextField(
+                          controller: lastNameController,
+                          titleText: "Last Name",
+                          hintText: "Enter Last Name",
+                          textInputType: TextInputType.text
+                      ),
+                      CustomRequiredTextField(
+                          validator: validateMobile,
+                          readOnly: true,
+                          controller: mobileController,
+                          titleText: "Mobile Number",
+                          hintText: "Enter Last Name",
+                          textInputType: TextInputType.text
+                      ),
+                      CustomRequiredTextField(
+                          validator: validateEmail,
+                          controller: emailController,
+                          titleText: "Email Address",
+                          hintText: "Enter Email Address",
+                          textInputType: TextInputType.text
+                      ),
+                    ],
                   ),
                   if( broker == true && individual == false)
                   Column(
@@ -394,11 +400,85 @@ class _CompleteProfileState extends State<CompleteProfile> {
                           hintText: "Enter Company Name",
                           textInputType: TextInputType.text
                       ),
-                      CustomRequiredTextField(
+                      // const SizedBox(
+                      //   height: 16,
+                      // ),
+                      // RichText(
+                      //     text: TextSpan(
+                      //       text: "Salutation",
+                      //       style: Theme.of(context)
+                      //           .textTheme
+                      //           .bodySmall!
+                      //           .copyWith(fontWeight: FontWeight.w700),
+                      //     )),
+                      // const SizedBox(
+                      //   height: 4,
+                      // ),
+                      // SizedBox(
+                      //   height: 54,
+                      //   child: Theme(
+                      //     data: Theme.of(context).copyWith( highlightColor: Colors.black, ),
+                      //     child: DropdownButtonFormField<String>(
+                      //       value: prefixValues.contains(selectedPrefix) ? selectedPrefix : null,
+                      //       hint: Text(
+                      //         "Select Salutation",
+                      //         style: Theme.of(context)
+                      //             .textTheme
+                      //             .bodySmall!
+                      //             .copyWith(color: Colors.grey),
+                      //       ),
+                      //       onChanged: (String? value) {
+                      //         setState(() {
+                      //           selectedPrefix = value!.toLowerCase();
+                      //         });
+                      //       },
+                      //       items: prefixValues.map((String value) {
+                      //         return DropdownMenuItem<String>(
+                      //           value: value,
+                      //           child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
+                      //         );
+                      //       }).toList(),
+                      //       dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+                      //       decoration: InputDecoration(
+                      //         contentPadding:
+                      //         const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
+                      //         enabledBorder: OutlineInputBorder(
+                      //           borderRadius: BorderRadius.circular(8),
+                      //           borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                      //         ),
+                      //         focusedBorder: OutlineInputBorder(
+                      //           borderRadius: BorderRadius.circular(8),
+                      //           borderSide:
+                      //           BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                      //         ),
+                      //         border: OutlineInputBorder(
+                      //           borderRadius: BorderRadius.circular(8),
+                      //           borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                      //         ),
+                      //         filled: true,
+                      //         fillColor: Theme.of(context).scaffoldBackgroundColor,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // CustomRequiredTextField(
+                      //     controller: companyHrController,
+                      //     titleText: "Company Person / HR Name",
+                      //     hintText: "Enter Person / HR Name",
+                      //     textInputType: TextInputType.text
+                      // ),
+                      CustomSalutationTextField(
                           controller: companyHrController,
                           titleText: "Company Person / HR Name",
                           hintText: "Enter Person / HR Name",
-                          textInputType: TextInputType.text
+                          textInputType: TextInputType.text,
+                          salutations: prefixValues,
+                          selectedSalutation: selectedPrefix,
+                          onSalutationChanged: (value){
+                            setState(() {
+                              selectedPrefix = value!.toLowerCase();
+                            });
+                          }
                       ),
                       CustomRequiredTextField(
                           validator: validateMobile,
@@ -454,7 +534,9 @@ class _CompleteProfileState extends State<CompleteProfile> {
                               companyHrNumber: companyHrNumberController.text,
                               companyEmail: companyEmailController.text,
                               companyAddress: companyAddressController.text,
-                              profilePhoto: _image);
+                              salutation: selectedPrefix!
+                              // profilePhoto: _image
+                          );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(

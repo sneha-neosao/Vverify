@@ -22,7 +22,9 @@ class RegisterCubit extends Cubit<RegisterState> {
       required String companyHrNumber,
       required String companyEmail,
       required String companyAddress,
-       File? profilePhoto}) async {
+      required String salutation,
+       // File? profilePhoto
+      }) async {
     emit(RegisterLoading());
     try {
       final response = await _apiService.userRegister(
@@ -36,7 +38,8 @@ class RegisterCubit extends Cubit<RegisterState> {
           companyHrNumber: companyHrNumber,
           companyEmail: companyEmail,
           companyAddress: companyAddress,
-          profilePhoto: profilePhoto
+          salutation: salutation
+          // profilePhoto: profilePhoto
       );
 
       if (response.data != null && response.data.containsKey("status")) {

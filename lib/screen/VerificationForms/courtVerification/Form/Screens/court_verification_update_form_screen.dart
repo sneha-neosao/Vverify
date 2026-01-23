@@ -12,6 +12,7 @@ import 'package:v_verify/screen/VerificationForms/common/id.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
 import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Models/court_verification_show_details_model.dart';
 import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_show_details_bloc/court_verification_show_details_state.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../Blocs/court_verification_update_form_bloc/court_verification_update_form_cubit.dart';
@@ -177,7 +178,7 @@ class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpd
                       hintText: "Enter Last Name",
                       textInputType: TextInputType.text
                   ),
-                  CustomRequiredTextField(
+                  CustomNotRequiredTextField(
                       controller: fatherNameController..text = data.data!.fatherName!,
                       titleText: "Father Name",
                       hintText: "Enter Father Name",
@@ -194,15 +195,6 @@ class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpd
                               .bodySmall!
                               .copyWith(fontWeight: FontWeight.w700),
                           children: [
-                        TextSpan(
-                          text: " * ",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.red),
-                        ),
                       ])),
                   const SizedBox(
                     height: 8,

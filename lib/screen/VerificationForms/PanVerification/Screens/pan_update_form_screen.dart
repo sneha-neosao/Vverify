@@ -34,6 +34,9 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
   TextEditingController panVerificationController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  String? selectedType;
+  List<String> typeValues = <String>['pan', 'passport', 'driving licence'];
+
   @override
   Widget build(BuildContext context) {
     String token = context.read<TokenCubit>().state;
@@ -64,6 +67,7 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                       PanVerificationShowModel data = panShowData.panVerificationShowModel;
                       panVerificationController.text = data.data!.panNumber.toString();
                       rejection_reason = data.data!.reason!;
+                      selectedType = data.data!.documentType!;
 
                       return Form(
                         key: _formKey,
@@ -71,7 +75,7 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "PAN Card Verification",
+                              "KYC / Identity Verification",
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium!
@@ -81,7 +85,7 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                               height: 16,
                             ),
                             Text(
-                              "PAN Verification Remark:",
+                              "KYC / Identity Verification Remark:",
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge!
@@ -96,24 +100,112 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                                   .textTheme
                                   .bodySmall!,
                             ),
-                            const SizedBox(
-                              height: 4,
+                            const SizedBox(height: 16),
+                            RichText(
+                              text: TextSpan(
+                                text: "Verification Document Type",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(fontWeight: FontWeight.w700),
+                              ),
                             ),
-                            Text(
-                              "Let's Verify PAN Card",
-                              style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.orange),
+                            const SizedBox(height: 4),
+                            SizedBox(
+                              height: 54,
+                              child: Theme(
+                                data: Theme.of(context)
+                                    .copyWith(highlightColor: Colors.black),
+                                child: DropdownButtonFormField<String>(
+                                  value:
+                                  typeValues.contains(selectedType) ? selectedType : null,
+                                  hint: Text(
+                                    "Select Verification Document Type",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith(color: Colors.grey),
+                                  ),
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      selectedType = value;
+                                    });
+                                  },
+                                  items: typeValues.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value[0].toUpperCase() + value.substring(1),
+                                        style: Theme.of(context).textTheme.bodyMedium,
+                                      ),
+                                    );
+                                  }).toList(),
+                                  dropdownColor:
+                                  Theme.of(context).scaffoldBackgroundColor,
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 18.0, vertical: 14.0),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide:
+                                      const BorderSide(color: Colors.grey, width: 1.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                          color: Theme.of(context).canvasColor, width: 1.0),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                          color: Theme.of(context).canvasColor, width: 1.0),
+                                    ),
+                                    filled: true,
+                                    fillColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                  ),
+                                ),
+                              ),
                             ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            CustomRequiredTextField(
+                            const SizedBox(height: 4),
+
+                            if (selectedType == "pan")
+                              CustomRequiredTextField(
                                 validator: validatePAN,
-                                // maskFormatter: [panMaskFormatter],
                                 controller: panVerificationController,
-                                titleText: "Tenant's PAN Number",
-                                hintText: "Enter Tenant's PAN Number",
-                                textInputType: TextInputType.text
-                            ),
+                                titleText: "PAN Number",
+                                hintText: "Enter PAN Number",
+                                textInputType: TextInputType.text,
+                              ),
+
+                            if (selectedType == "passport")
+                              CustomRequiredTextField(
+                                validator: validatePAN,
+                                controller: panVerificationController,
+                                titleText: "Passport Number",
+                                hintText: "Enter Passport Number",
+                                textInputType: TextInputType.text,
+                              ),
+
+                            if (selectedType == "driving licence")
+                              CustomRequiredTextField(
+                                validator: validatePAN,
+                                controller: panVerificationController,
+                                titleText: "Driving Licence Number",
+                                hintText: "Enter Driving Licence Number",
+                                textInputType: TextInputType.text,
+                              ),
+                            // const SizedBox(
+                            //   height: 4,
+                            // ),
+                            // CustomRequiredTextField(
+                            //     validator: validatePAN,
+                            //     // maskFormatter: [panMaskFormatter],
+                            //     controller: panVerificationController,
+                            //     titleText: "Tenant's PAN Number",
+                            //     hintText: "Enter Tenant's PAN Number",
+                            //     textInputType: TextInputType.text
+                            // ),
                             const SizedBox(
                               height: 24,
                             ),

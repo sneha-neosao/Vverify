@@ -71,7 +71,8 @@ class ApiService {
     required String companyHrNumber,
     required String companyEmail,
     required String companyAddress,
-    File? profilePhoto,
+    required String salutation,
+    // File? profilePhoto,
     required String userType,
   }) async {
     FormData formData = FormData.fromMap({
@@ -84,13 +85,14 @@ class ApiService {
       "contactPersonPhone": companyHrNumber,
       "companyEmail": companyEmail,
       "companyAddress": companyAddress,
-      if (profilePhoto != null)
-        "profilePhoto": await MultipartFile.fromFile(
-          profilePhoto.path,
-          filename: profilePhoto.path
-              .split('/')
-              .last, // Use the file name
-        ),
+      "salutation": salutation,
+      // if (profilePhoto != null)
+      //   "profilePhoto": await MultipartFile.fromFile(
+      //     profilePhoto.path,
+      //     filename: profilePhoto.path
+      //         .split('/')
+      //         .last, // Use the file name
+      //   ),
       "userType": userType
     });
     final response = await _dio.post(
@@ -136,13 +138,14 @@ class ApiService {
     required String lastName,
     required String email,
     required String customerId,
-    File? profilePhoto,
+    // File? profilePhoto,
     required String companyName,
     required String contactPersonName,
     required String contactPersonPhone,
     required String companyEmail,
     required String companyAddress,
-    required String userType
+    required String userType,
+    required String salutation,
   }) async {
     try {
       _dio.options.headers = {
@@ -154,19 +157,20 @@ class ApiService {
         'firstName': firstName,
         'lastName': lastName,
         'email': email,
-        if (profilePhoto != null)
-          "profilePhoto": await MultipartFile.fromFile(
-            profilePhoto.path,
-            filename: profilePhoto.path
-                .split('/')
-                .last, // Use the file name
-          ),
+        // if (profilePhoto != null)
+        //   "profilePhoto": await MultipartFile.fromFile(
+        //     profilePhoto.path,
+        //     filename: profilePhoto.path
+        //         .split('/')
+        //         .last, // Use the file name
+        //   ),
         "companyName": companyName,
         "contactPersonName": contactPersonName,
         "contactPersonPhone": contactPersonPhone,
         "companyEmail": companyEmail,
         "companyAddress": companyAddress,
-        "userType": userType
+        "userType": userType,
+        "salutation": salutation
       });
 
       final response = await _dio.post(

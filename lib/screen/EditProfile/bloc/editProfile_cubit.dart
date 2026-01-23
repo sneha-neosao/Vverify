@@ -17,13 +17,14 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       required String lastName,
       required String email,
       required String customerId,
-      File? profilePhoto,
+      // File? profilePhoto,
         required String companyName,
         required String contactPersonName,
         required String contactPersonPhone,
         required String companyEmail,
         required String companyAddress,
-        required String userType
+        required String userType,
+        required String salutation
       }) async {
     emit(EditProfileLoading());
     try {
@@ -31,7 +32,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
           token: token,
           email: email,
           customerId: customerId,
-          profilePhoto: profilePhoto,
+          // profilePhoto: profilePhoto,
           firstName: firstName,
           lastName: lastName,
           companyName: companyName,
@@ -39,7 +40,8 @@ class EditProfileCubit extends Cubit<EditProfileState> {
           contactPersonPhone: contactPersonPhone,
           companyEmail: companyEmail,
           companyAddress: companyAddress,
-          userType: userType
+          userType: userType,
+          salutation: salutation
       );
 
       if (response.data != null) {

@@ -277,9 +277,9 @@ class _PendingDocState extends State<PendingDoc> {
                                                   context.pushNamed(
                                                     "VerifyRequestEditFormNew",
                                                     pathParameters: {
-                                                      'request_id':
-                                                      data.data![index].requestId!.toString(),
+                                                      'request_id': data.data![index].requestId!.toString(),
                                                       'uuid': data.data![index].uuid.toString(),
+                                                      'service_title': data.data![index].entity!.entityName!
                                                     },
                                                   );
                                                 },
@@ -370,11 +370,16 @@ class _PendingDocState extends State<PendingDoc> {
                                                             vertical: 4),
                                                     onTap: () {
                                                       serviceRequestId = data.data![index].services![servicesIndex].serviceRequestId.toString();
-
                                                       requestId = data.data![index].requestId.toString();
 
                                                       if (data.data![index].detailsUpdated == 0) {
-                                                        context.pushNamed("verifyRequestUpdateNew", pathParameters: {'uuid': data.data![index].uuid.toString()});
+                                                        context.pushNamed("verifyRequestUpdateNew",
+                                                            pathParameters:
+                                                            {
+                                                              'uuid': data.data![index].uuid.toString(),
+                                                              'service_title': data.data![index].entity!.entityName!
+                                                            }
+                                                        );
                                                       } else if (data.data![index].detailsUpdated == 1) {
                                                         if (data.data![index].services![servicesIndex].status == "pending") {
                                                           if (data.data![index].services![servicesIndex].serviceTitle == "Employment Verification") {

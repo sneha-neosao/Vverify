@@ -6,13 +6,10 @@ import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
-import 'package:v_verify/commonComponent/screen_size.dart';
-import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
-
-import '../../../../../widgets/custom_not_required_text_field.dart';
 import '../Blocs/court_verification_save_form_bloc/court_verification_save_form_cubit.dart';
 import '../Blocs/court_verification_save_form_bloc/court_verification_save_form_state.dart';
 
@@ -108,59 +105,59 @@ class _CourtVerificationSaveFormScreenState extends State<CourtVerificationSaveF
                       .titleMedium!
                       .copyWith(color: Theme.of(context).primaryColorDark),
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Text("Choose an Option:",
-                    style: Theme.of(context).textTheme.bodySmall),
-                BlocProvider(
-                  create: (_) => FormUploadCourtCubit(),
-                  child: BlocBuilder<FormUploadCourtCubit, bool>(
-                      builder: (context, frmUpload) {
-                    return Column(
-                      children: [
-                        ListTile(
-                          splashColor: Colors.transparent,
-                          onTap: () {
-                            context
-                                .read<FormUploadCourtCubit>()
-                                .formUploadYesNo(yesNo: false);
-                          },
-                          contentPadding: const EdgeInsets.all(0),
-                          leading: Icon(Icons.radio_button_checked,
-                              color: !frmUpload
-                                  ? Theme.of(context).primaryColorLight
-                                  : Theme.of(context).iconTheme.color),
-                          title: Text("Fill the Form Manually",
-                              style: Theme.of(context).textTheme.bodySmall),
-                        ),
-                        ListTile(
-                          splashColor: Colors.transparent,
-                          onTap: () {
-                            context.pushReplacementNamed("CourtDocumentUploadScreen");
-
-                            context
-                                .read<FormUploadCourtCubit>()
-                                .formUploadYesNo(yesNo: false);
-
-                            context
-                                .read<FormUploadCourtCubit>()
-                                .formUploadYesNo(yesNo: true);
-                          },
-                          contentPadding: const EdgeInsets.all(0),
-                          leading: Icon(
-                            Icons.radio_button_checked,
-                            color: frmUpload
-                                ? Theme.of(context).primaryColorLight
-                                : Theme.of(context).iconTheme.color,
-                          ),
-                          title: Text("Upload Documents",
-                              style: Theme.of(context).textTheme.bodySmall),
-                        ),
-                      ],
-                    );
-                  }),
-                ),
+                // const SizedBox(
+                //   height: 16,
+                // ),
+                // Text("Choose an Option:",
+                //     style: Theme.of(context).textTheme.bodySmall),
+                // BlocProvider(
+                //   create: (_) => FormUploadCourtCubit(),
+                //   child: BlocBuilder<FormUploadCourtCubit, bool>(
+                //       builder: (context, frmUpload) {
+                //     return Column(
+                //       children: [
+                //         ListTile(
+                //           splashColor: Colors.transparent,
+                //           onTap: () {
+                //             context
+                //                 .read<FormUploadCourtCubit>()
+                //                 .formUploadYesNo(yesNo: false);
+                //           },
+                //           contentPadding: const EdgeInsets.all(0),
+                //           leading: Icon(Icons.radio_button_checked,
+                //               color: !frmUpload
+                //                   ? Theme.of(context).primaryColorLight
+                //                   : Theme.of(context).iconTheme.color),
+                //           title: Text("Fill the Form Manually",
+                //               style: Theme.of(context).textTheme.bodySmall),
+                //         ),
+                //         ListTile(
+                //           splashColor: Colors.transparent,
+                //           onTap: () {
+                //             context.pushReplacementNamed("CourtDocumentUploadScreen");
+                //
+                //             context
+                //                 .read<FormUploadCourtCubit>()
+                //                 .formUploadYesNo(yesNo: false);
+                //
+                //             context
+                //                 .read<FormUploadCourtCubit>()
+                //                 .formUploadYesNo(yesNo: true);
+                //           },
+                //           contentPadding: const EdgeInsets.all(0),
+                //           leading: Icon(
+                //             Icons.radio_button_checked,
+                //             color: frmUpload
+                //                 ? Theme.of(context).primaryColorLight
+                //                 : Theme.of(context).iconTheme.color,
+                //           ),
+                //           title: Text("Upload Documents",
+                //               style: Theme.of(context).textTheme.bodySmall),
+                //         ),
+                //       ],
+                //     );
+                //   }),
+                // ),
                 CustomRequiredTextField(
                     controller: firstNameController,
                     titleText: "First Name",
@@ -173,7 +170,7 @@ class _CourtVerificationSaveFormScreenState extends State<CourtVerificationSaveF
                     hintText: "Enter Last Name",
                     textInputType: TextInputType.text
                 ),
-                CustomRequiredTextField(
+                CustomNotRequiredTextField(
                     controller: fatherNameController,
                     titleText: "Father Name",
                     hintText: "Enter Father Name",
@@ -190,17 +187,12 @@ class _CourtVerificationSaveFormScreenState extends State<CourtVerificationSaveF
                             .bodySmall!
                             .copyWith(fontWeight: FontWeight.w700),
                         children: [
-                      TextSpan(
-                        text: " * ",
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            fontWeight: FontWeight.w700, color: Colors.red),
-                      ),
                     ])),
                 const SizedBox(
                   height: 8,
                 ),
                 TextFormField(
-                  validator: validateBirthDate,
+                  // validator: validateBirthDate,
                   style: Theme.of(context).textTheme.bodySmall,
                   keyboardType: TextInputType.number,
                   inputFormatters: [maskFormatter],

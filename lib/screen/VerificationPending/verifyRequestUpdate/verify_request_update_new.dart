@@ -8,16 +8,15 @@ import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
 import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
-
 import '../../../commonComponent/bloc/shared_preferences_cubit.dart';
-import '../../VerificationForms/common/form_widget.dart';
 import 'Bloc/verify_request_update_cubit.dart';
 import 'Bloc/verify_request_update_state.dart';
 
 class VerifyRequestUpdateNew extends StatefulWidget {
   String uuid;
+  String service_title;
 
-  VerifyRequestUpdateNew({super.key, required this.uuid});
+  VerifyRequestUpdateNew({super.key, required this.uuid, required this.service_title});
 
   @override
   State<VerifyRequestUpdateNew> createState() => _VerifyRequestUpdateNewState();
@@ -69,17 +68,17 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
       ''');
 
     context.read<VerifyRequestUpdateCubit>().verifyRequestUpdate(
-      token: token,
-      uuid: widget.uuid,
-      phone: phoneController.text.trim(),
-      dob: dobController.text,
-      firstName: firstnameController.text,
-      middleName: middleNameController.text,
-      lastName: lastnameController.text,
-      email: emailController.text,
-      employee_code: employeeCodeController.text,
-      date_of_joining: joiningController.text,
-      gender: selectedGender ?? ""
+        token: token,
+        uuid: widget.uuid,
+        phone: phoneController.text.trim(),
+        dob: dobController.text,
+        firstName: firstnameController.text,
+        middleName: middleNameController.text,
+        lastName: lastnameController.text,
+        email: emailController.text,
+        employee_code: employeeCodeController.text,
+        date_of_joining: joiningController.text,
+        gender: selectedGender ?? ""
     );
   }
 
@@ -152,7 +151,7 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Fill User/Tenant Info",
+                      widget.service_title,
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium!
@@ -164,12 +163,12 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
                         hintText: "Enter First Name",
                         textInputType: TextInputType.text
                     ),
-                    CustomNotRequiredTextField(
-                        controller: middleNameController,
-                        titleText: "Middle Name",
-                        hintText: "Enter Middle Name",
-                        textInputType: TextInputType.text
-                    ),
+                    // CustomNotRequiredTextField(
+                    //     controller: middleNameController,
+                    //     titleText: "Middle Name",
+                    //     hintText: "Enter Middle Name",
+                    //     textInputType: TextInputType.text
+                    // ),
                     CustomRequiredTextField(
                         controller: lastnameController,
                         titleText: "Last Name",
@@ -190,52 +189,52 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
                         hintText: "Enter Email",
                         textInputType: TextInputType.text
                     ),
-                    CustomNotRequiredTextField(
-                        controller: employeeCodeController,
-                        titleText: "Employee Code",
-                        hintText: "Enter Employee Code",
-                        textInputType: TextInputType.text
-                    ),
+                    // CustomNotRequiredTextField(
+                    //     controller: employeeCodeController,
+                    //     titleText: "Employee Code",
+                    //     hintText: "Enter Employee Code",
+                    //     textInputType: TextInputType.text
+                    // ),
+                    // const SizedBox(
+                    //   height: 16,
+                    // ),
+                    // RichText(
+                    //     text: TextSpan(
+                    //         text: "Date of Joining",
+                    //         style: Theme.of(context)
+                    //             .textTheme
+                    //             .bodySmall!
+                    //             .copyWith(fontWeight: FontWeight.w700),
+                    //     )),
+                    // const SizedBox(
+                    //   height: 8,
+                    // ),
+                    // TextFormField(
+                    //   readOnly: true,
+                    //   style: Theme.of(context).textTheme.bodySmall,
+                    //   keyboardType: TextInputType.number,
+                    //   inputFormatters: [maskFormatter],
+                    //   controller: joiningController,
+                    //   decoration: InputDecoration(
+                    //     hintText: "DD-MM-YYYY",
+                    //     suffixIcon: IconButton(
+                    //       icon: const Icon(Icons.calendar_today),
+                    //       onPressed: () => _selectJoiningDate(
+                    //           context), // Open date picker when icon is pressed
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 16,
                     ),
                     RichText(
                         text: TextSpan(
-                            text: "Date of Joining",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(fontWeight: FontWeight.w700),
+                          text: "Date of Birth",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontWeight: FontWeight.w700),
                         )),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    TextFormField(
-                      readOnly: true,
-                      style: Theme.of(context).textTheme.bodySmall,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [maskFormatter],
-                      controller: joiningController,
-                      decoration: InputDecoration(
-                        hintText: "DD-MM-YYYY",
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.calendar_today),
-                          onPressed: () => _selectJoiningDate(
-                              context), // Open date picker when icon is pressed
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    RichText(
-                        text: TextSpan(
-                            text: "Date of Birth",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(fontWeight: FontWeight.w700),
-                            )),
                     const SizedBox(
                       height: 8,
                     ),
@@ -254,68 +253,68 @@ class _VerifyRequestUpdateNewState extends State<VerifyRequestUpdateNew> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-
-                    RichText(
-                        text: TextSpan(
-                            text: "Gender",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(fontWeight: FontWeight.w700),
-                            )),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    SizedBox(
-                      height: 54,
-                      child: Theme(
-                        data: Theme.of(context).copyWith( highlightColor: Colors.black, ),
-                        child: DropdownButtonFormField<String>(
-                          value: genderValues.contains(selectedGender) ? selectedGender : null,
-                          hint: Text(
-                            "Select Gender",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(color: Colors.grey),
-                          ),
-                          onChanged: (String? value) {
-                            setState(() {
-                              selectedGender = value!.toLowerCase();
-                            });
-                          },
-                          items: genderValues.map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
-                            );
-                          }).toList(),
-                          dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-                          decoration: InputDecoration(
-                            contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide:
-                              BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
-                            ),
-                            filled: true,
-                            fillColor: Theme.of(context).scaffoldBackgroundColor,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // const SizedBox(
+                    //   height: 16,
+                    // ),
+                    //
+                    // RichText(
+                    //     text: TextSpan(
+                    //         text: "Gender",
+                    //         style: Theme.of(context)
+                    //             .textTheme
+                    //             .bodySmall!
+                    //             .copyWith(fontWeight: FontWeight.w700),
+                    //         )),
+                    // const SizedBox(
+                    //   height: 4,
+                    // ),
+                    // SizedBox(
+                    //   height: 54,
+                    //   child: Theme(
+                    //     data: Theme.of(context).copyWith( highlightColor: Colors.black, ),
+                    //     child: DropdownButtonFormField<String>(
+                    //       value: genderValues.contains(selectedGender) ? selectedGender : null,
+                    //       hint: Text(
+                    //         "Select Gender",
+                    //         style: Theme.of(context)
+                    //             .textTheme
+                    //             .bodySmall!
+                    //             .copyWith(color: Colors.grey),
+                    //       ),
+                    //       onChanged: (String? value) {
+                    //         setState(() {
+                    //           selectedGender = value!.toLowerCase();
+                    //         });
+                    //       },
+                    //       items: genderValues.map((String value) {
+                    //         return DropdownMenuItem<String>(
+                    //           value: value,
+                    //           child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
+                    //         );
+                    //       }).toList(),
+                    //       dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+                    //       decoration: InputDecoration(
+                    //         contentPadding:
+                    //         const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
+                    //         enabledBorder: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(8),
+                    //           borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                    //         ),
+                    //         focusedBorder: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(8),
+                    //           borderSide:
+                    //           BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                    //         ),
+                    //         border: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(8),
+                    //           borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                    //         ),
+                    //         filled: true,
+                    //         fillColor: Theme.of(context).scaffoldBackgroundColor,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 24,
                     ),

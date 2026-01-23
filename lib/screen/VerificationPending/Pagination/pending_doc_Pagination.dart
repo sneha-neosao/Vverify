@@ -333,6 +333,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                     pathParameters: {
                                                       'request_id': data[index].requestId!.toString(),
                                                       'uuid': data[index].uuid.toString(),
+                                                      'service_title': data[index].entity!.entityName!
                                                     },
                                                   );
                                                 },
@@ -422,7 +423,13 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                           requestId = data[index].requestId.toString();
 
                                                           if (data[index].detailsUpdated == 0) {
-                                                            context.pushNamed("verifyRequestUpdateNew", pathParameters: {'uuid': data[index].uuid.toString()});
+                                                            context.pushNamed("verifyRequestUpdateNew",
+                                                                pathParameters:
+                                                                {
+                                                                  'uuid': data[index].uuid.toString(),
+                                                                  'service_title': data[index].entity!.entityName!
+                                                                }
+                                                                );
                                                           } else if (data[index].detailsUpdated == 1) {
                                                             if (data[index].services![servicesIndex].status == "pending") {
                                                               if (data[index].services![servicesIndex].serviceTitle == "Employment Verification") {

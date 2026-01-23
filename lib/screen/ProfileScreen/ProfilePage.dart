@@ -51,38 +51,38 @@ class _ProfilePageState extends State<ProfilePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Theme.of(context).primaryColorDark,
-                              width: 2),
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        width: 80,
-                        height: 80,
-                        child: CircleAvatar(
-                            radius: 40.0,
-                            backgroundColor: Colors.white,
-                            backgroundImage:
-                                data.profileResult!.profilePhoto!.isEmpty
-                                    ? const AssetImage(
-                                        "assets/images/profile_icon.png")
-                                    : NetworkImage(
-                                        data.profileResult!.profilePhoto!)),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     border: Border.all(
+                      //         color: Theme.of(context).primaryColorDark,
+                      //         width: 2),
+                      //     borderRadius: BorderRadius.circular(100),
+                      //   ),
+                      //   width: 80,
+                      //   height: 80,
+                      //   child: CircleAvatar(
+                      //       radius: 40.0,
+                      //       backgroundColor: Colors.white,
+                      //       backgroundImage:
+                      //           data.profileResult!.profilePhoto!.isEmpty
+                      //               ? const AssetImage(
+                      //                   "assets/images/profile_icon.png")
+                      //               : NetworkImage(
+                      //                   data.profileResult!.profilePhoto!)),
+                      // ),
+                      // const SizedBox(
+                      //   height: 10,
+                      // ),
                       Text(
                         "${data.profileResult!.firstName} ${data.profileResult!.lastName}",
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       Container(
-                        height: 23,
-                        width: 90,
+                        height: 37,
+                        width: 130,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(48),
                           border: Border.all(
@@ -101,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               const Icon(
                                 Icons.person,
-                                size: 16,
+                                size: 30,
                                 color: Color(0xFFF67B3B),
                               ),
                               const SizedBox(width: 5),
@@ -110,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
-                                    .copyWith(fontSize: 10),
+                                    .copyWith(fontSize: 14, fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),
@@ -122,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Text(
                         "+91-${data.profileResult!.mobileNumber}",
                         style: GoogleFonts.outfit(
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0,
                         ),
@@ -130,7 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Text(
                         "${data.profileResult!.email}",
                         style: GoogleFonts.outfit(
-                          fontSize: 16,
+                          fontSize: 18,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0,
                         ),
