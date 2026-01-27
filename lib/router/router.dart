@@ -215,7 +215,7 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/VerifyRequestEditFormNew/:request_id/:uuid',
+        path: '/VerifyRequestEditFormNew/:request_id/:uuid/:service_title',
         name: "VerifyRequestEditFormNew",
         builder: (context, state) {
           final requestId = state.pathParameters['request_id']!;

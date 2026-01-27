@@ -102,7 +102,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
       case "reference-check-verification":
         context.pushNamed("ReferenceSaveFormScreen");
         break;
-      case "name-address-verifcation":
+      case "address-verifcation":
         context.pushNamed("AddressList",pathParameters: {'uid': data[index].case_uuid.toString()},
         );
         break;
@@ -169,7 +169,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                 'uid': data[index].services![servicesIndex].uid.toString()
               });
         break;
-      case "name-address-verifcation":
+      case "address-verifcation":
         data[index].services![servicesIndex].dataPreference == "form"
             ? context.pushNamed("NameAddressVerificationUpdateNew",
                 pathParameters: {
@@ -441,7 +441,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                 context.pushNamed("EducationList",pathParameters: {
                                                                   'uid': data[index].case_uuid.toString()
                                                                 });
-                                                              } else if (data[index].services![servicesIndex].serviceTitle =="Fullname and address verification") {
+                                                              } else if (data[index].services![servicesIndex].serviceTitle =="Address verification") {
                                                                 print("case_uuid at pending doc: ${data[index].case_uuid.toString()}");
                                                                 context.pushNamed("AddressList",pathParameters: {
                                                                   'uid': data[index].case_uuid.toString()

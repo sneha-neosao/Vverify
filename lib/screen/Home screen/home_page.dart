@@ -233,28 +233,31 @@ class _HomeScreenState extends State<HomeScreen> {
                       ProfileModel data = profile.profileModel;
                       return ListTile(
                         contentPadding: const EdgeInsets.all(0),
-                        leading: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Theme.of(context).primaryColorDark,
-                                width: 2),
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          width: 40,
-                          height: 40,
-                          child: CircleAvatar(
-                              radius: 40.0,
-                              backgroundColor: Colors.white,
-                              backgroundImage:
-                                  data.profileResult!.profilePhoto!.isEmpty
-                                      ? const AssetImage(
-                                          "assets/images/profile_icon.png")
-                                      : NetworkImage(
-                                          data.profileResult!.profilePhoto!)),
-                        ),
+                        // leading: Container(
+                        //   decoration: BoxDecoration(
+                        //     border: Border.all(
+                        //         color: Theme.of(context).primaryColorDark,
+                        //         width: 2),
+                        //     borderRadius: BorderRadius.circular(100),
+                        //   ),
+                        //   width: 40,
+                        //   height: 40,
+                        //   child: CircleAvatar(
+                        //       radius: 40.0,
+                        //       backgroundColor: Colors.white,
+                        //       backgroundImage:
+                        //           data.profileResult!.profilePhoto!.isEmpty
+                        //               ? const AssetImage(
+                        //                   "assets/images/profile_icon.png")
+                        //               : NetworkImage(
+                        //                   data.profileResult!.profilePhoto!)),
+                        // ),
                         title: Text(
-                            "Hi ${("${data.profileResult!.firstName} ${data.profileResult!.lastName}").toUpperCase()}",
-                            style: Theme.of(context).textTheme.bodyLarge),
+                          data.profileResult!.userType?.toLowerCase() == "company"
+                              ? "Hi ${data.profileResult!.companyName}"
+                              : "Hi ${(("${data.profileResult!.firstName} ${data.profileResult!.lastName}").toUpperCase())}",
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
                       );
                     }
                     return const Center(

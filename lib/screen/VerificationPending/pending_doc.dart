@@ -28,7 +28,7 @@ void checkCase({required String title, String? uuid,required BuildContext contex
     case "Reference Check":
       context.pushNamed("ReferenceSaveFormScreen");
       break;
-    case "Fullname and address verification":
+    case "Address verification":
       context.pushNamed("AddressList",pathParameters: {'uid': uuid!},
       );
       break;
@@ -93,7 +93,7 @@ void secondCheckCase(
               'uid': data.data![index].services![servicesIndex].uid.toString()
             });
       break;
-    case "Fullname and address verification":
+    case "Address verification":
       data.data![index].services![servicesIndex].dataPreference == "form"
           ? context.pushNamed("NameAddressVerificationUpdateNew", pathParameters: {
               'uid': data.data![index].services![servicesIndex].uid.toString()
@@ -391,7 +391,7 @@ class _PendingDocState extends State<PendingDoc> {
                                                             context.pushNamed("EducationList",pathParameters: {
                                                             'uid': data.data![index].case_uuid.toString()
                                                             });
-                                                          } else if (data.data![index].services![servicesIndex].serviceTitle =="Fullname and address verification") {
+                                                          } else if (data.data![index].services![servicesIndex].serviceTitle =="Address verification") {
                                                             print("case_uuid at pending doc: ${data.data![index].case_uuid.toString()}");
                                                             context.pushNamed("AddressList",pathParameters: {
                                                               'uid': data.data![index].case_uuid.toString()
