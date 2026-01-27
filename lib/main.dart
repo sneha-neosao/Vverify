@@ -74,6 +74,7 @@ import 'package:v_verify/screen/VerificationForms/courtVerification/Document/Blo
 import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_update_form_bloc/court_verification_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_show_details_bloc/court_verification_show_details_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_cubit.dart';
 import 'package:v_verify/theme/theme_cubit.dart';
@@ -328,6 +329,8 @@ class MyApp extends StatelessWidget {
             create: (_) => ApplyCouponCubit(ApiService())),
         BlocProvider<CheckOutStatusCheckingCubit>(
             create: (_) => CheckOutStatusCheckingCubit(ApiService())),
+        BlocProvider<VerifyRequestReportCubit>(
+            create: (_) => VerifyRequestReportCubit(ApiService())),
       ],
       child: Builder(builder: (context) {
         return Sizer(builder: (BuildContext, Orientation, ScreenType) {

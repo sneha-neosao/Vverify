@@ -72,6 +72,8 @@ dependencies:
   url_launcher: ^6.2.5
   dotted_border: ^2.1.0
   phonepe_payment_sdk: ^3.0.2
+  flutter_downloader: ^1.12.0
+
 
 dev_dependencies:
   flutter_test:

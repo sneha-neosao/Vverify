@@ -92,12 +92,25 @@ String? validatePAN(String? value) {
   RegExp panRegExp = RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
 
   if (value == null || value.isEmpty) {
-    return "Tenant's PAN Number is required";
+    return "PAN Number is required";
   } else if (!panRegExp.hasMatch(value)) {
     return 'Please enter a valid PAN number';
   }
   return null;
 }
+
+// Passport Number Validator (Indian Passport Format: 1 letter + 7 digits)
+String? validatePassport(String? value) {
+  RegExp passportRegExp = RegExp(r'^[A-Z]{1}[0-9]{7}$');
+
+  if (value == null || value.isEmpty) {
+    return "Passport Number is required";
+  } else if (!passportRegExp.hasMatch(value)) {
+    return 'Please enter a valid Passport number';
+  }
+  return null;
+}
+
 
 String? addressValidatorNotRequired(String? value) {
   if (value == null || value.isEmpty) {

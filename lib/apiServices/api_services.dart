@@ -495,6 +495,26 @@ class ApiService {
     }
   }
 
+  Future<Response> VerifyRequestReportDownload({
+    required String token,
+    required String case_uuid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+        'verify-request/report/pdf/$case_uuid',
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      log('VerifyDetailsView Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in VerifyDetailsView: $e');
+      throw Exception('Failed to fetch VerifyDetailsView: $e');
+    }
+  }
+
+
 
   /// Education Verification
   Future<Response> educationList({
@@ -1046,13 +1066,18 @@ class ApiService {
         required String serviceRequestId,
         required String requestId,
         required String customer_id,
-        required String panNumber}) async {
+        required String document_type,
+        required String document_number
+        // required String panNumber
+      }) async {
     try {
       Map<String, dynamic> data = {
         "customer_id": customer_id,
         "request_id": requestId,
         "service_request_id": serviceRequestId,
-        "pan_number": panNumber,
+        "document_type": document_type,
+        "document_number": document_number
+        // "pan_number": panNumber,
       };
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
@@ -1069,20 +1094,20 @@ class ApiService {
   Future<Response> panNumberShowData({
     required String token,
     required String uid,
-    required String request_id,
-    required String service_request_id,
-    required String customer_id,
+    // required String request_id,
+    // required String service_request_id,
+    // required String customer_id,
   }) async {
     FormData formData = FormData.fromMap({
-      "request_id": request_id,
-      "service_request_id": service_request_id,
-      "customer_id": customer_id
+      // "request_id": request_id,
+      // "service_request_id": service_request_id,
+      // "customer_id": customer_id
     });
     print(formData.fields);
     print(token);
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/pan/show/$uid', data: formData);
+      final response = await _dio.get('verify/pan/show/$uid', /*data: formData*/);
       // log('panNumberSave Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1096,13 +1121,18 @@ class ApiService {
         required String serviceRequestId,
         required String requestId,
         required String customer_id,
-        required String panNumber}) async {
+        required String document_type,
+        required String document_number
+        // required String panNumber
+      }) async {
     try {
       Map<String, dynamic> data = {
         "customer_id": customer_id,
         "request_id": requestId,
         "service_request_id": serviceRequestId,
-        "pan_number": panNumber,
+        "document_type": document_type,
+        "document_number": document_number
+        // "pan_number": panNumber,
       };
 
       _dio.options.headers['Authorization'] = 'Bearer $token';

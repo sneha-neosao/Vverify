@@ -13,18 +13,19 @@ class PanVerificationShowCubit extends Cubit<PanVerificationShowState> {
   void panCardNumberShow({
     required String token,
     required String uid,
-    required String request_id,
-    required String service_request_id,
-    required String customer_id,
+    // required String request_id,
+    // required String service_request_id,
+    // required String customer_id,
   }) async {
     emit(PanVerificationShowLoadingState());
     try {
       final response = await _apiService.panNumberShowData(
           token: token,
           uid: uid,
-          request_id: request_id,
-          service_request_id: service_request_id,
-          customer_id: customer_id);
+          // request_id: request_id,
+          // service_request_id: service_request_id,
+          // customer_id: customer_id
+      );
 
       if (response.data != null && response.data.containsKey("status")) {
         if (response.data["status"] == 200) {

@@ -15,7 +15,9 @@ class PanVerificationUpdateBloc extends Cubit<PanVerificationUpdateState> {
     required String serviceRequestId,
     required String requestId,
     required String customer_id,
-    required String panNumber,
+    required String document_type,
+    required String document_number
+    // required String panNumber,
   }) async {
     emit(PanVerificationUpdateLoadingState());
     try {
@@ -24,7 +26,9 @@ class PanVerificationUpdateBloc extends Cubit<PanVerificationUpdateState> {
         customer_id: customer_id,
         token: token,
         serviceRequestId: serviceRequestId,
-        panNumber: panNumber,
+        document_type: document_type,
+        document_number: document_number
+        // panNumber: panNumber,
       );
 
       if (response.data != null && response.data.containsKey("status")) {

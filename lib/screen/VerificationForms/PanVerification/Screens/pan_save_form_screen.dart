@@ -30,6 +30,19 @@ class _PanSaveFormScreenState extends State<PanSaveFormScreen> {
   String? selectedType;
   List<String> typeValues = <String>['pan', 'passport', 'driving licence'];
 
+  final Map<String, String> documentTypeMap = {
+    'pan': 'pan',
+    'passport': 'passport',
+    'driving licence': 'drive',
+  };
+
+  late List<String> typeLabels;
+  @override
+  void initState() {
+    super.initState();
+    typeLabels = documentTypeMap.keys.toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     String token = context.read<TokenCubit>().state;
@@ -119,8 +132,7 @@ class _PanSaveFormScreenState extends State<PanSaveFormScreen> {
                             color: Theme.of(context).canvasColor, width: 1.0),
                       ),
                       filled: true,
-                      fillColor:
-                      Theme.of(context).scaffoldBackgroundColor,
+                      fillColor: Theme.of(context).scaffoldBackgroundColor,
                     ),
                   ),
                 ),
@@ -138,7 +150,7 @@ class _PanSaveFormScreenState extends State<PanSaveFormScreen> {
 
               if (selectedType == "passport")
                 CustomRequiredTextField(
-                  validator: validatePAN,
+                  validator: validatePassport,
                   controller: panVerificationController,
                   titleText: "Passport Number",
                   hintText: "Enter Passport Number",
@@ -147,24 +159,12 @@ class _PanSaveFormScreenState extends State<PanSaveFormScreen> {
 
               if (selectedType == "driving licence")
                 CustomRequiredTextField(
-                  validator: validatePAN,
+                  validator: validateDrivingLicence,
                   controller: panVerificationController,
                   titleText: "Driving Licence Number",
                   hintText: "Enter Driving Licence Number",
                   textInputType: TextInputType.text,
                 ),
-
-              // const SizedBox(
-              //   height: 4,
-              // ),
-              // CustomRequiredTextField(
-              //     validator: validatePAN,
-              //     // maskFormatter: [panMaskFormatter],
-              //     controller: panVerificationController,
-              //     titleText: "Tenant's PAN Number",
-              //     hintText: "Enter Tenant's PAN Number",
-              //     textInputType: TextInputType.text
-              // ),
 
               const SizedBox(height: 24),
 
@@ -176,14 +176,11 @@ class _PanSaveFormScreenState extends State<PanSaveFormScreen> {
                     if (panNumber is PanVerificationSaveSuccessState) {
                       if (panNumber.data["status"] == 200) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content:
-                              Text(panNumber.data["message"])),
+                          SnackBar(content: Text(panNumber.data["message"])),
                         );
                         context.pushReplacementNamed("bottomNav");
                       }
-                    } else if (panNumber
-                    is PanVerificationSaveErrorState) {
+                    } else if (panNumber is PanVerificationSaveErrorState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(panNumber.message)),
                       );
@@ -191,27 +188,43 @@ class _PanSaveFormScreenState extends State<PanSaveFormScreen> {
                   },
                   builder: (context, panNumber) {
                     return CustomButton(
-                      isLoading: panNumber
-                      is PanVerificationSaveLoadingState,
+                      isLoading: panNumber is PanVerificationSaveLoadingState,
                       onTap: () {
-                        if (_formKey.currentState?.validate() ??
-                            false) {
-                          context
-                              .read<PanVerificationSaveBloc>()
-                              .panCardNumberSave(
+                        if (_formKey.currentState?.validate() ?? false) {
+                          if (selectedType == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Please select a document type"),
+                              ),
+                            );
+                            return;
+                          }
+
+                          final apiDocType =
+                              documentTypeMap[selectedType!] ?? "";
+                          final docNumber =
+                          panVerificationController.text.trim();
+
+                          // 👇 Debug prints
+                          print("customer_id: $customerId");
+                          print("requestId: $requestId");
+                          print("token: $token");
+                          print("serviceRequestId: $serviceRequestId");
+                          print("document_type: $apiDocType");
+                          print("document_number: $docNumber");
+
+                          context.read<PanVerificationSaveBloc>().panCardNumberSave(
                             customer_id: customerId,
                             requestId: requestId!,
                             token: token,
                             serviceRequestId: serviceRequestId!,
-                            panNumber:
-                            panVerificationController.text
-                                .toUpperCase(),
+                            document_type: apiDocType,
+                            document_number: docNumber,
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content:
-                              Text("Please enter PAN number"),
+                              content: Text("Please enter PAN number"),
                             ),
                           );
                         }

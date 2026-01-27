@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_state.dart';
 
 import '../../../commonComponent/screen_size.dart';
 import '../../VerificationForms/common/id.dart';
@@ -346,6 +348,38 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                   ),
                                                 ),
                                               ),
+
+                                              // BlocBuilder<VerifyRequestReportCubit, VerifyRequestReportState>(
+                                              //   builder: (context, state) {
+                                              //     if (state is VerifyRequestReportLoadingState) {
+                                              //       return const Padding(
+                                              //         padding: EdgeInsets.all(6.0),
+                                              //         child: SizedBox(
+                                              //           height: 16,
+                                              //           width: 16,
+                                              //           child: CircularProgressIndicator(strokeWidth: 2),
+                                              //         ),
+                                              //       );
+                                              //     } else {
+                                              //       return InkWell(
+                                              //         onTap: () {
+                                              //           context.read<VerifyRequestReportCubit>().verifyRequestReport(
+                                              //             token: context.read<TokenCubit>().state,
+                                              //             case_uuid: data[index].case_uuid.toString(),
+                                              //           );
+                                              //         },
+                                              //         child: const Padding(
+                                              //           padding: EdgeInsets.all(6.0),
+                                              //           child: Icon(
+                                              //             Icons.get_app,
+                                              //             color: Colors.black,
+                                              //             size: 16,
+                                              //           ),
+                                              //         ),
+                                              //       );
+                                              //     }
+                                              //   },
+                                              // ),
 
                                               // ⬆⬇ Arrow (ONLY change)
                                               Icon(

@@ -36,6 +36,13 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
 
   String? selectedType;
   List<String> typeValues = <String>['pan', 'passport', 'driving licence'];
+  final Map<String, String> documentTypeMap = { 'pan': 'pan', 'passport': 'passport', 'driving licence': 'drive', };
+  late List<String> typeLabels;
+  @override
+  void initState() {
+    super.initState();
+    typeLabels = documentTypeMap.keys.toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +56,10 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
             ..panCardNumberShow(
                 token: token,
                 uid: widget.uid,
-                request_id: requestId!,
-                service_request_id: serviceRequestId!,
-                customer_id: customerId),
+                // request_id: requestId!,
+                // service_request_id: serviceRequestId!,
+                // customer_id: customerId
+            ),
           child:
               BlocBuilder<PanVerificationShowCubit, PanVerificationShowState>(
                   builder: (context, panShowData) {
@@ -64,10 +72,13 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                         child: Text(panShowData.message),
                       );
                     } else if (panShowData is PanVerificationShowSuccessState) {
+
                       PanVerificationShowModel data = panShowData.panVerificationShowModel;
-                      panVerificationController.text = data.data!.panNumber.toString();
-                      rejection_reason = data.data!.reason!;
-                      selectedType = data.data!.documentType!;
+                      panVerificationController.text = data.data!.document_number ?? "";
+                      rejection_reason = data.data!.reason ?? "";
+                      if (selectedType == null || selectedType!.isEmpty) { selectedType = data.data!.documentType ?? ""; }
+                      // selectedType =  ?? "";
+                      print("selected type according to backend : ${selectedType}");
 
                       return Form(
                         key: _formKey,
@@ -114,11 +125,9 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                             SizedBox(
                               height: 54,
                               child: Theme(
-                                data: Theme.of(context)
-                                    .copyWith(highlightColor: Colors.black),
+                                data: Theme.of(context).copyWith(highlightColor: Colors.white),
                                 child: DropdownButtonFormField<String>(
-                                  value:
-                                  typeValues.contains(selectedType) ? selectedType : null,
+                                  value: typeValues.contains(selectedType) ? selectedType : null,
                                   hint: Text(
                                     "Select Verification Document Type",
                                     style: Theme.of(context)
@@ -129,15 +138,14 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                                   onChanged: (String? value) {
                                     setState(() {
                                       selectedType = value;
+                                      print("selected type on selection: ${selectedType}");
                                     });
-                                  },
+                                    },
                                   items: typeValues.map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
-                                      child: Text(
-                                        value[0].toUpperCase() + value.substring(1),
-                                        style: Theme.of(context).textTheme.bodyMedium,
-                                      ),
+                                      child: Text( value[0].toUpperCase() + value.substring(1),
+                                        style: Theme.of(context).textTheme.bodyMedium, ),
                                     );
                                   }).toList(),
                                   dropdownColor:
@@ -172,7 +180,7 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                             if (selectedType == "pan")
                               CustomRequiredTextField(
                                 validator: validatePAN,
-                                controller: panVerificationController,
+                                controller: panVerificationController..text = data.data!.document_number!,
                                 titleText: "PAN Number",
                                 hintText: "Enter PAN Number",
                                 textInputType: TextInputType.text,
@@ -180,8 +188,8 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
 
                             if (selectedType == "passport")
                               CustomRequiredTextField(
-                                validator: validatePAN,
-                                controller: panVerificationController,
+                                validator: validatePassport,
+                                controller: panVerificationController..text = data.data!.document_number!,
                                 titleText: "Passport Number",
                                 hintText: "Enter Passport Number",
                                 textInputType: TextInputType.text,
@@ -189,8 +197,8 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
 
                             if (selectedType == "driving licence")
                               CustomRequiredTextField(
-                                validator: validatePAN,
-                                controller: panVerificationController,
+                                validator: validateDrivingLicence,
+                                controller: panVerificationController..text = data.data!.document_number!,
                                 titleText: "Driving Licence Number",
                                 hintText: "Enter Driving Licence Number",
                                 textInputType: TextInputType.text,
@@ -230,6 +238,20 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                                   panNumber is PanVerificationUpdateLoadingState,
                                   onTap: () {
                                     if (_formKey.currentState?.validate() ?? false) {
+
+                                      final apiDocType =
+                                          documentTypeMap[selectedType!] ?? "";
+                                      final docNumber =
+                                      panVerificationController.text.trim();
+
+                                      // 👇 Debug prints
+                                      print("customer_id: $customerId");
+                                      print("requestId: $requestId");
+                                      print("token: $token");
+                                      print("serviceRequestId: $serviceRequestId");
+                                      print("document_type: $apiDocType");
+                                      print("document_number: $docNumber");
+
                                       context
                                           .read<PanVerificationUpdateBloc>()
                                           .panCardNumberUpdate(
@@ -237,8 +259,11 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                                           requestId: requestId!,
                                           token: token,
                                           serviceRequestId: serviceRequestId!,
-                                          panNumber: panVerificationController.text
-                                              .toUpperCase());
+                                          document_type: apiDocType,
+                                          document_number: docNumber
+                                      );
+                                          // panNumber: panVerificationController.text
+                                              // .toUpperCase());
                                     } else {
                                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please validate PAN number")));
                                     }

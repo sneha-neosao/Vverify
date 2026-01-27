@@ -293,6 +293,20 @@ class _PendingDocState extends State<PendingDoc> {
                                                 ),
                                               ),
 
+                                              // InkWell(
+                                              //   onTap: () {
+                                              //
+                                              //   },
+                                              //   child: const Padding(
+                                              //     padding: EdgeInsets.all(6.0),
+                                              //     child: Icon(
+                                              //       Icons.get_app,
+                                              //       color: Colors.black,
+                                              //       size: 16,
+                                              //     ),
+                                              //   ),
+                                              // ),
+
                                               // ⬆⬇ Arrow (ONLY change)
                                               Icon(
                                                 isPressed == index
