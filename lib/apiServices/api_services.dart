@@ -85,7 +85,7 @@ class ApiService {
       "contactPersonPhone": companyHrNumber,
       "companyEmail": companyEmail,
       "companyAddress": companyAddress,
-      "salutation": salutation,
+      "contactPersonSalutation": salutation,
       // if (profilePhoto != null)
       //   "profilePhoto": await MultipartFile.fromFile(
       //     profilePhoto.path,
@@ -138,7 +138,6 @@ class ApiService {
     required String lastName,
     required String email,
     required String customerId,
-    // File? profilePhoto,
     required String companyName,
     required String contactPersonName,
     required String contactPersonPhone,
@@ -152,36 +151,51 @@ class ApiService {
         'Authorization': 'Bearer $token',
         'action_from': 'androidApp'
       };
-      FormData formData = FormData.fromMap({
-        'customerId': customerId,
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        // if (profilePhoto != null)
-        //   "profilePhoto": await MultipartFile.fromFile(
-        //     profilePhoto.path,
-        //     filename: profilePhoto.path
-        //         .split('/')
-        //         .last, // Use the file name
-        //   ),
-        "companyName": companyName,
-        "contactPersonName": contactPersonName,
-        "contactPersonPhone": contactPersonPhone,
-        "companyEmail": companyEmail,
-        "companyAddress": companyAddress,
+
+      // 🔎 Build request body conditionally
+      Map<String, dynamic> body = {
+        "customerId": customerId,
         "userType": userType,
-        "salutation": salutation
+      };
+
+      if (userType == "1") {
+        // Individual
+        body.addAll({
+          "firstName": firstName,
+          "lastName": lastName,
+          "email": email,
+        });
+      } else if (userType == "2") {
+        // Company
+        body.addAll({
+          "companyName": companyName,
+          "contactPersonName": contactPersonName,
+          "contactPersonPhone": contactPersonPhone,
+          "companyEmail": companyEmail,
+          "companyAddress": companyAddress,
+          "contactPersonSalutation": salutation,
+        });
+      }
+
+      FormData formData = FormData.fromMap(body);
+
+      // 🔎 Print everything before sending
+      print("---- UpdateProfile Request ----");
+      print("Headers: ${_dio.options.headers}");
+      formData.fields.forEach((field) {
+        print("${field.key}: ${field.value}");
       });
+      print("-------------------------------");
 
       final response = await _dio.post(
         'account/update/profile',
         data: formData,
       );
 
-      // log('UpdateProfile Response: ${response.data}');
+      print("UpdateProfile Response: ${response.data}");
       return response;
     } catch (e) {
-      // log('Error in UpdateProfile: $e');
+      print("Error in UpdateProfile: $e");
       throw Exception('Failed to fetch UpdateProfile: $e');
     }
   }

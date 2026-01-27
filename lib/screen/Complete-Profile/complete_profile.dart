@@ -59,6 +59,18 @@ class _CompleteProfileState extends State<CompleteProfile> {
       required String salutation
       // File? profilePhoto
       }) async {
+    // ✅ Print all values before sending to API print("Sending to API:");
+    print("First Name: $firstName");
+    print("Last Name: $lastName");
+    print("Mobile Number: ${widget.mobileNum}");
+    print("Email: $email");
+    print("User Type: $userType");
+    print("Company Name: $companyName");
+    print("Company HR: $companyHr");
+    print("Company HR Number: $companyHrNumber");
+    print("Company Email: $companyEmail");
+    print("Company Address: $companyAddress");
+    print("Salutation: $salutation");
     context
         .read<RegisterCubit>()
         .userRegister(
@@ -474,9 +486,9 @@ class _CompleteProfileState extends State<CompleteProfile> {
                           textInputType: TextInputType.text,
                           salutations: prefixValues,
                           selectedSalutation: selectedPrefix,
-                          onSalutationChanged: (value){
+                          onSalutationChanged: (value) {
                             setState(() {
-                              selectedPrefix = value!.toLowerCase();
+                              selectedPrefix = value; // keep original casing and dot
                             });
                           }
                       ),

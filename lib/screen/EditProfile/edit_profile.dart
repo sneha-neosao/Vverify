@@ -52,30 +52,47 @@ class _EditProfileState extends State<EditProfile> {
   int? user_type;
   final _formKey = GlobalKey<FormState>();
 
-  void _updateProfile(
-      {required String firstname,
-      required String lastName,
-      required String email,
-      required String customer,
-      File? profilePhoto}) async {
+  void _updateProfile({
+    required String firstname,
+    required String lastName,
+    required String email,
+    required String customer,
+    File? profilePhoto,
+  }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
     final String? id = prefs.getString('id');
+
     if (token!.isNotEmpty) {
+      // 🔎 Print all values before sending
+      print("---- Sending to API ----");
+      print("Token: $token");
+      print("CustomerId: $id");
+      print("First Name: $firstname");
+      print("Last Name: $lastName");
+      print("Email: $email");
+      print("Company Name: ${companyNameController.text}");
+      print("Contact Person Name: ${companyHrController.text}");
+      print("Contact Person Phone: ${companyHrNumberController.text}");
+      print("Company Email: ${companyEmailController.text}");
+      print("Company Address: ${companyAddressController.text}");
+      print("User Type: $user_type");
+      print("Salutation: $selectedPrefix");
+      print("------------------------");
+
       context.read<EditProfileCubit>().editProfile(
         token: token,
         email: email,
         customerId: id!,
-        // profilePhoto: profilePhoto,
-        firstName: firstNameController.text,
-        lastName: lastNameController.text,
+        firstName: firstname,
+        lastName: lastName,
         companyName: companyNameController.text,
         contactPersonName: companyHrController.text,
         contactPersonPhone: companyHrNumberController.text,
         companyEmail: companyEmailController.text,
         companyAddress: companyAddressController.text,
         userType: user_type.toString(),
-        salutation: user_type.toString()
+        salutation: selectedPrefix ?? "", // ✅ send actual salutation
       );
     }
   }
@@ -146,7 +163,8 @@ class _EditProfileState extends State<EditProfile> {
                   } else if (profile is ProfileSuccess) {
                     ProfileResult? data = profile.profileModel.profileResult;
                       user_type = data!.userTypeId!;
-                    selectedPrefix = data.salutation ?? "";
+                      print("salutation: ${data.salutation}");
+                    if (selectedPrefix == null || selectedPrefix!.isEmpty) { selectedPrefix = data.salutation ?? ""; }
                     return Column(
                       children: [
                         // Stack(
@@ -308,15 +326,16 @@ class _EditProfileState extends State<EditProfile> {
                                             textInputType: TextInputType.text
                                         ),
                                         CustomSalutationTextField(
-                                            controller: companyHrController,
+                                            controller: companyHrController..text = data.companyHr!,
                                             titleText: "Company Person / HR Name",
                                             hintText: "Enter Person / HR Name",
                                             textInputType: TextInputType.text,
                                             salutations: prefixValues,
                                             selectedSalutation: selectedPrefix,
-                                            onSalutationChanged: (value){
+                                            onSalutationChanged: (value) {
                                               setState(() {
-                                                selectedPrefix = value!.toLowerCase();
+                                                selectedPrefix = value;
+                                                print("salutation after selection: ${selectedPrefix}");
                                               });
                                             }
                                         ),

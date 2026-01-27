@@ -82,7 +82,7 @@ class ProfileResult {
     companyHrNumber: json["contactPersonPhone"],
     companyEmail: json["companyEmail"],
     companyAddress: json["companyAddress"],
-    salutation: json["salutation"]
+    salutation: json["contactPersonSalutation"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -100,6 +100,6 @@ class ProfileResult {
     "contactPersonPhone": companyHrNumber,
     "companyEmail": companyEmail,
     "companyAddress": companyAddress,
-    "salutation": salutation
+    "contactPersonSalutation": salutation
   };
 }
