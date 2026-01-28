@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/PanVerification/Blocs/pan_save_form_bloc/pan_save_form_state.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Form/Blocs/pan_save_form_bloc/pan_save_form_state.dart';
 
-import '../../../../../apiServices/api_services.dart';
+import '../../../../../../apiServices/api_services.dart';
 
 class PanVerificationSaveBloc extends Cubit<PanVerificationSaveState> {
   ApiService _apiService;
@@ -47,5 +47,13 @@ class PanVerificationSaveBloc extends Cubit<PanVerificationSaveState> {
     } catch (e) {
       emit(PanVerificationSaveErrorState('An error occurred:$e'));
     }
+  }
+}
+
+class FormUploadPanCubit extends Cubit<bool> {
+  FormUploadPanCubit() : super(false);
+
+  void formUploadYesNo({required bool yesNo}) {
+    emit(yesNo);
   }
 }

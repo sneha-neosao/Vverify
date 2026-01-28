@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/PanVerification/Blocs/pan_save_form_bloc/pan_save_form_state.dart';
-import 'package:v_verify/screen/VerificationForms/PanVerification/Blocs/pan_update_form_bloc/pan_update_form_state.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Form/Blocs/pan_save_form_bloc/pan_save_form_state.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Form/Blocs/pan_update_form_bloc/pan_update_form_state.dart';
 
-import '../../../../../apiServices/api_services.dart';
+import '../../../../../../apiServices/api_services.dart';
 
 class PanVerificationUpdateBloc extends Cubit<PanVerificationUpdateState> {
   ApiService _apiService;

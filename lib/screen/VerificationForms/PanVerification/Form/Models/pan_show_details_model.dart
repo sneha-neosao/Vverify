@@ -42,7 +42,8 @@ class Data {
   String? dataPreference;
   String? reason;
   String? documentType;
-  String? document_number;
+  String? documentNumber;
+  List<String>? documents;
 
   Data({
     this.id,
@@ -54,7 +55,8 @@ class Data {
     this.dataPreference,
     this.reason,
     this.documentType,
-    this.document_number
+    this.documentNumber,
+    this.documents,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -67,7 +69,10 @@ class Data {
     dataPreference: json["data_preference"],
     reason: json["reason"],
     documentType: json["document_type"],
-    document_number: json["document_number"]
+    documentNumber: json["document_number"],
+    documents: json["documents"] == null
+        ? []
+        : List<String>.from(json["documents"].map((x) => x)),
   );
 
   Map<String, dynamic> toJson() => {
@@ -80,6 +85,8 @@ class Data {
     "data_preference": dataPreference,
     "reason": reason,
     "document_type": documentType,
-    "document_number": document_number
+    "document_number": documentNumber,
+    "documents": documents,
   };
 }
+

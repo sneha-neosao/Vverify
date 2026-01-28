@@ -199,6 +199,16 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                             .titleMedium!
                             .copyWith(color: Theme.of(context).primaryColorDark),
                       ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        "Note: * Indicates required fields.",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: Colors.grey),
+                      ),
                       CustomRequiredTextField(
                           controller: firstnameController,
                           titleText: "First Name",

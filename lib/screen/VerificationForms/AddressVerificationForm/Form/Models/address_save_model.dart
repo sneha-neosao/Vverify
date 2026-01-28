@@ -8,11 +8,11 @@ class NameAddressVerificationModel {
   final String current_city_id;
   final String current_state;
   final String current_pinCode;
-  final String permanent_address_line_1;
-  final String permanent_address_line_2;
-  final String permanent_city_id;
-  final String permanent_state;
-  final String permanent_pinCode;
+  // final String permanent_address_line_1;
+  // final String permanent_address_line_2;
+  // final String permanent_city_id;
+  // final String permanent_state;
+  // final String permanent_pinCode;
   final String residing_from_date;
   final String residing_to_date;
   final String data_preference;
@@ -27,11 +27,11 @@ class NameAddressVerificationModel {
     required this.current_city_id,
     required this.current_state,
     required this.current_pinCode,
-    required this.permanent_address_line_1,
-    required this.permanent_address_line_2,
-    required this.permanent_city_id,
-    required this.permanent_state,
-    required this.permanent_pinCode,
+    // required this.permanent_address_line_1,
+    // required this.permanent_address_line_2,
+    // required this.permanent_city_id,
+    // required this.permanent_state,
+    // required this.permanent_pinCode,
     required this.residing_from_date,
     required this.residing_to_date,
     required this.data_preference,

@@ -48,6 +48,8 @@ import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Document/Blocs/gst
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Form/Blocs/gst_verification_save_form_bloc/gst_verification_save_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Form/Blocs/gst_verification_update_form_bloc/gst_verification_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Form/Blocs/gst_verification_show_details_bloc/gst_verification_show_details_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Document/Blocs/pan_document_update_bloc/pan_document_update_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Document/Blocs/pan_document_upload_bloc/pan_document_upload_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Common/PoliceStationId/police_station_id_bloc/police_station_id_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Mumbai/Form/Blocs/mumbai_police_verification_update_bloc/mumbai_police_update_form_state.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Mumbai/Form/Blocs/mumbai_police_verification_show_details_bloc/mumbai_police_show_details_cubit.dart';
@@ -331,6 +333,14 @@ class MyApp extends StatelessWidget {
             create: (_) => CheckOutStatusCheckingCubit(ApiService())),
         BlocProvider<VerifyRequestReportCubit>(
             create: (_) => VerifyRequestReportCubit(ApiService())),
+        BlocProvider<PanDocsUploadCubitNew>(
+            create: (_) => PanDocsUploadCubitNew(ApiService())),
+        BlocProvider<PanDocsFileCubit>(
+            create: (_) => PanDocsFileCubit()),
+        BlocProvider<PanDocsUpdateCubitNew>(
+            create: (_) => PanDocsUpdateCubitNew(ApiService())),
+        BlocProvider<PanDocsUpdateFileCubit>(
+            create: (_) => PanDocsUpdateFileCubit()),
       ],
       child: Builder(builder: (context) {
         return Sizer(builder: (BuildContext, Orientation, ScreenType) {

@@ -902,11 +902,11 @@ class ApiService {
       "current_address_city": nameAddressVerificationModel.current_city_id,
       "current_address_state": nameAddressVerificationModel.current_state,
       "current_address_postal_code": nameAddressVerificationModel.current_pinCode,
-      "permanent_address_line_1": nameAddressVerificationModel.permanent_address_line_1,
-      "permanent_address_line_2": nameAddressVerificationModel.permanent_address_line_2,
-      "permanent_address_city": nameAddressVerificationModel.permanent_city_id,
-      "permanent_address_state": nameAddressVerificationModel.permanent_state,
-      "permanent_address_postal_code": nameAddressVerificationModel.permanent_pinCode,
+      // "permanent_address_line_1": nameAddressVerificationModel.permanent_address_line_1,
+      // "permanent_address_line_2": nameAddressVerificationModel.permanent_address_line_2,
+      // "permanent_address_city": nameAddressVerificationModel.permanent_city_id,
+      // "permanent_address_state": nameAddressVerificationModel.permanent_state,
+      // "permanent_address_postal_code": nameAddressVerificationModel.permanent_pinCode,
       "residing_from_date": nameAddressVerificationModel.residing_from_date,
       "residing_to_date": nameAddressVerificationModel.residing_to_date,
       "data_preference": nameAddressVerificationModel.data_preference,
@@ -943,11 +943,11 @@ class ApiService {
       "current_address_city": nameAddressVerificationUpdateModel.current_city_id,
       "current_address_state": nameAddressVerificationUpdateModel.current_state,
       "current_address_postal_code": nameAddressVerificationUpdateModel.current_pinCode,
-      "permanent_address_line_1": nameAddressVerificationUpdateModel.permanent_address_line_1,
-      "permanent_address_line_2": nameAddressVerificationUpdateModel.permanent_address_line_2,
-      "permanent_address_city": nameAddressVerificationUpdateModel.permanent_city_id,
-      "permanent_address_state": nameAddressVerificationUpdateModel.permanent_state,
-      "permanent_address_postal_code": nameAddressVerificationUpdateModel.permanent_pinCode,
+      // "permanent_address_line_1": nameAddressVerificationUpdateModel.permanent_address_line_1,
+      // "permanent_address_line_2": nameAddressVerificationUpdateModel.permanent_address_line_2,
+      // "permanent_address_city": nameAddressVerificationUpdateModel.permanent_city_id,
+      // "permanent_address_state": nameAddressVerificationUpdateModel.permanent_state,
+      // "permanent_address_postal_code": nameAddressVerificationUpdateModel.permanent_pinCode,
       "case_uuid": nameAddressVerificationUpdateModel.case_uuid,
       "address_uuid": nameAddressVerificationUpdateModel.address_uuid,
       "data_preference": nameAddressVerificationUpdateModel.data_preference,
@@ -1082,7 +1082,7 @@ class ApiService {
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/pan/store', queryParameters: data);
+      await _dio.post('verify/pan/form/store', queryParameters: data);
       // log('panNumberSave Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1146,7 +1146,103 @@ class ApiService {
     }
   }
 
+  Future<Response> PanDocsUpload({
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required String customer_id,
+    required List<File> documents,
+  }) async {
+    try {
+      // Build FormData with fields + files
+      final formData = FormData.fromMap({
+        "request_id": request_id,
+        "service_request_id": service_request_id,
+        "customer_id": customer_id,
+        // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
+        for (int i = 0; i < documents.length; i++)
+          "documents[$i]": await MultipartFile.fromFile(documents[i].path,
+          ),
+      });
 
+      // Debug logs
+      log("=== AddressDocsUpload Request ===");
+      log("Files: ${documents.map((d) =>
+      d.path
+          .split('/')
+          .last).toList()}");
+
+      // POST with headers
+      final response = await _dio.post(
+        'verify/pan/document/store',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            // 'action_from': 'androidApp'
+          },
+        ),
+      );
+
+      log("=== AddressDocsUpload Response ===");
+      log("Status: ${response.statusCode}");
+      log("Data: ${response.data}");
+
+      return response;
+    } catch (e) {
+      // log("Error in AddressDocUpload: $e");
+      throw Exception("Failed to upload address documents: $e");
+    }
+  }
+
+  Future<Response> PanDocsUpdate({
+    required String token,
+    required String request_id,
+    required String service_request_id,
+    required String customer_id,
+    required List<File> documents,
+  }) async {
+    try {
+      // Build FormData with fields + files
+      final formData = FormData.fromMap({
+        "request_id": request_id,
+        "service_request_id": service_request_id,
+        "customer_id": customer_id,
+        // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
+        for (int i = 0; i < documents.length; i++)
+          "documents[$i]": await MultipartFile.fromFile(documents[i].path,
+          ),
+      });
+
+      // Debug logs
+      log("=== AddressDocsUpload Request ===");
+      log("Files: ${documents.map((d) =>
+      d.path
+          .split('/')
+          .last).toList()}");
+
+      // POST with headers
+      final response = await _dio.post(
+        'verify/pan/document/store',
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            // 'action_from': 'androidApp'
+          },
+        ),
+      );
+
+      log("=== AddressDocsUpload Response ===");
+      log("Status: ${response.statusCode}");
+      log("Data: ${response.data}");
+
+      return response;
+    } catch (e) {
+      // log("Error in AddressDocUpload: $e");
+      throw Exception("Failed to upload address documents: $e");
+    }
+  }
 
   /// Court Legal Verification
   Future<Response> courtVerification({

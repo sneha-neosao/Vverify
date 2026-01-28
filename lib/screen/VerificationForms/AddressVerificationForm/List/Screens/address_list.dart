@@ -355,160 +355,160 @@ class _AddressListState extends State<AddressList> {
                                                     ),
                                                   ],
                                                 ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ),
-                                                Text(
-                                                    permanentAddressStatus.toLowerCase() == "verified"
-                                                        ? "Verified"
-                                                        : permanentAddressStatus.toLowerCase() == "discrepancy"
-                                                        ? "Discrepancy" : "Verification Pending",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                        fontSize: 14,
-                                                        color: permanentAddressStatus.toLowerCase() == "verified"
-                                                            ? Colors.green
-                                                            :permanentAddressStatus.toLowerCase() == "discrepancy"
-                                                            ? Colors.red
-                                                            : Colors.orange
-                                                    )
-
-                                                ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ),
-                                                Text(
-                                                  "Person's Permanent Address",
-                                                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                                                      color: Theme.of(context).primaryColorDark, fontSize: 16),
-                                                ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Address Line 1",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall!
-                                                          .copyWith(
-                                                          color: Colors.grey),
-                                                    ),
-                                                    Text(
-                                                      data.data![index].permanentAddressLine1?.trim().isEmpty ?? true
-                                                          ? "NA"
-                                                          : data.data![index].permanentAddressLine1!,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall,
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Address Line 2",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall!
-                                                          .copyWith(
-                                                          color: Colors.grey),
-                                                    ),
-                                                    Text(
-                                                      data.data![index].permanentAddressLine2?.trim().isEmpty ?? true
-                                                          ? "NA"
-                                                          : data.data![index].permanentAddressLine2!,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall,
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "City",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall!
-                                                          .copyWith(
-                                                          color: Colors.grey),
-                                                    ),
-                                                    Text(
-                                                      data.data![index].permanentAddressCity?.trim().isEmpty ?? true
-                                                          ? "NA"
-                                                          : data.data![index].permanentAddressCity!,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall,
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "State",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall!
-                                                          .copyWith(
-                                                          color: Colors.grey),
-                                                    ),
-                                                    Text(
-                                                      data.data![index].permanentAddressState?.trim().isEmpty ?? true
-                                                          ? "NA"
-                                                          : data.data![index].permanentAddressState!,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall,
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Postal Code",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall!
-                                                          .copyWith(
-                                                          color: Colors.grey),
-                                                    ),
-                                                    Text(
-                                                      data.data![index].permanentAddressPostalCode?.trim().isEmpty ?? true
-                                                          ? "NA"
-                                                          : data.data![index].permanentAddressPostalCode!,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall,
-                                                    ),
-                                                  ],
-                                                ),
+                                                // const SizedBox(
+                                                //   height: 8,
+                                                // ),
+                                                // Text(
+                                                //     permanentAddressStatus.toLowerCase() == "verified"
+                                                //         ? "Verified"
+                                                //         : permanentAddressStatus.toLowerCase() == "discrepancy"
+                                                //         ? "Discrepancy" : "Verification Pending",
+                                                //     style: Theme.of(context)
+                                                //         .textTheme
+                                                //         .bodySmall!
+                                                //         .copyWith(
+                                                //         fontSize: 14,
+                                                //         color: permanentAddressStatus.toLowerCase() == "verified"
+                                                //             ? Colors.green
+                                                //             :permanentAddressStatus.toLowerCase() == "discrepancy"
+                                                //             ? Colors.red
+                                                //             : Colors.orange
+                                                //     )
+                                                //
+                                                // ),
+                                                // const SizedBox(
+                                                //   height: 8,
+                                                // ),
+                                                // Text(
+                                                //   "Person's Permanent Address",
+                                                //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                                //       color: Theme.of(context).primaryColorDark, fontSize: 16),
+                                                // ),
+                                                // const SizedBox(
+                                                //   height: 8,
+                                                // ),
+                                                // Column(
+                                                //   crossAxisAlignment:
+                                                //   CrossAxisAlignment.start,
+                                                //   children: [
+                                                //     Text(
+                                                //       "Address Line 1",
+                                                //       style: Theme.of(context)
+                                                //           .textTheme
+                                                //           .bodySmall!
+                                                //           .copyWith(
+                                                //           color: Colors.grey),
+                                                //     ),
+                                                //     Text(
+                                                //       data.data![index].permanentAddressLine1?.trim().isEmpty ?? true
+                                                //           ? "NA"
+                                                //           : data.data![index].permanentAddressLine1!,
+                                                //       style: Theme.of(context)
+                                                //           .textTheme
+                                                //           .bodySmall,
+                                                //     ),
+                                                //   ],
+                                                // ),
+                                                // const SizedBox(
+                                                //   height: 8,
+                                                // ),
+                                                // Column(
+                                                //   crossAxisAlignment:
+                                                //   CrossAxisAlignment.start,
+                                                //   children: [
+                                                //     Text(
+                                                //       "Address Line 2",
+                                                //       style: Theme.of(context)
+                                                //           .textTheme
+                                                //           .bodySmall!
+                                                //           .copyWith(
+                                                //           color: Colors.grey),
+                                                //     ),
+                                                //     Text(
+                                                //       data.data![index].permanentAddressLine2?.trim().isEmpty ?? true
+                                                //           ? "NA"
+                                                //           : data.data![index].permanentAddressLine2!,
+                                                //       style: Theme.of(context)
+                                                //           .textTheme
+                                                //           .bodySmall,
+                                                //     ),
+                                                //   ],
+                                                // ),
+                                                // const SizedBox(
+                                                //   height: 8,
+                                                // ),
+                                                // Column(
+                                                //   crossAxisAlignment:
+                                                //   CrossAxisAlignment.start,
+                                                //   children: [
+                                                //     Text(
+                                                //       "City",
+                                                //       style: Theme.of(context)
+                                                //           .textTheme
+                                                //           .bodySmall!
+                                                //           .copyWith(
+                                                //           color: Colors.grey),
+                                                //     ),
+                                                //     Text(
+                                                //       data.data![index].permanentAddressCity?.trim().isEmpty ?? true
+                                                //           ? "NA"
+                                                //           : data.data![index].permanentAddressCity!,
+                                                //       style: Theme.of(context)
+                                                //           .textTheme
+                                                //           .bodySmall,
+                                                //     ),
+                                                //   ],
+                                                // ),
+                                                // const SizedBox(
+                                                //   height: 8,
+                                                // ),
+                                                // Column(
+                                                //   crossAxisAlignment:
+                                                //   CrossAxisAlignment.start,
+                                                //   children: [
+                                                //     Text(
+                                                //       "State",
+                                                //       style: Theme.of(context)
+                                                //           .textTheme
+                                                //           .bodySmall!
+                                                //           .copyWith(
+                                                //           color: Colors.grey),
+                                                //     ),
+                                                //     Text(
+                                                //       data.data![index].permanentAddressState?.trim().isEmpty ?? true
+                                                //           ? "NA"
+                                                //           : data.data![index].permanentAddressState!,
+                                                //       style: Theme.of(context)
+                                                //           .textTheme
+                                                //           .bodySmall,
+                                                //     ),
+                                                //   ],
+                                                // ),
+                                                // const SizedBox(
+                                                //   height: 8,
+                                                // ),
+                                                // Column(
+                                                //   crossAxisAlignment:
+                                                //   CrossAxisAlignment.start,
+                                                //   children: [
+                                                //     Text(
+                                                //       "Postal Code",
+                                                //       style: Theme.of(context)
+                                                //           .textTheme
+                                                //           .bodySmall!
+                                                //           .copyWith(
+                                                //           color: Colors.grey),
+                                                //     ),
+                                                //     Text(
+                                                //       data.data![index].permanentAddressPostalCode?.trim().isEmpty ?? true
+                                                //           ? "NA"
+                                                //           : data.data![index].permanentAddressPostalCode!,
+                                                //       style: Theme.of(context)
+                                                //           .textTheme
+                                                //           .bodySmall,
+                                                //     ),
+                                                //   ],
+                                                // ),
                                                 const SizedBox(
                                                   height: 8,
                                                 ),

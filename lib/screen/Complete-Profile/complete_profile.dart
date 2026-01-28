@@ -59,29 +59,34 @@ class _CompleteProfileState extends State<CompleteProfile> {
       required String salutation
       // File? profilePhoto
       }) async {
+
+    final String mobileNumberToSend = userType == "1" ? widget.mobileNum : "";
+    final String hrNumberToSend = userType == "2" ? widget.mobileNum : companyHrNumber;
+
     // ✅ Print all values before sending to API print("Sending to API:");
     print("First Name: $firstName");
     print("Last Name: $lastName");
-    print("Mobile Number: ${widget.mobileNum}");
+    print("Mobile Number: $mobileNumberToSend");
     print("Email: $email");
     print("User Type: $userType");
     print("Company Name: $companyName");
     print("Company HR: $companyHr");
-    print("Company HR Number: $companyHrNumber");
+    print("Company HR Number: $hrNumberToSend");
     print("Company Email: $companyEmail");
     print("Company Address: $companyAddress");
     print("Salutation: $salutation");
+
     context
         .read<RegisterCubit>()
         .userRegister(
             firstName: firstName,
             lastName: lastName,
-            mobileNumber: widget.mobileNum,
+            mobileNumber: mobileNumberToSend,
             email: email,
             userType: userType,
             companyName: companyName,
             companyHr: companyHr,
-            companyHrNumber: companyHrNumber,
+            companyHrNumber: hrNumberToSend,
             companyEmail: companyEmail,
             companyAddress: companyAddress,
             salutation: selectedPrefix ?? ""
@@ -388,7 +393,7 @@ class _CompleteProfileState extends State<CompleteProfile> {
                       CustomRequiredTextField(
                           validator: validateMobile,
                           readOnly: true,
-                          controller: mobileController,
+                          controller: TextEditingController(text: widget.mobileNum), // bind here
                           titleText: "Mobile Number",
                           hintText: "Enter Last Name",
                           textInputType: TextInputType.text
@@ -494,7 +499,8 @@ class _CompleteProfileState extends State<CompleteProfile> {
                       ),
                       CustomRequiredTextField(
                           validator: validateMobile,
-                          controller: companyHrNumberController,
+                          readOnly: true,
+                          controller: TextEditingController(text: widget.mobileNum), // bind here
                           titleText: "Contact Person / HR Phone",
                           hintText: "Enter Contact Person / HR Phone",
                           textInputType: TextInputType.text

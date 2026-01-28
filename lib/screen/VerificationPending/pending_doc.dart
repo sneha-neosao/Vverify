@@ -46,6 +46,9 @@ void checkCase({required String title, String? uuid,required BuildContext contex
     case "GST CIN PAN Verification":
       context.pushNamed("GstVerificationSaveFormScreen");
       break;
+    case "pan-card-verification":
+      context.pushNamed("PanSaveFormScreen");
+      break;
     case "Court Legal Verification":
       context.pushNamed("CourtVerificationSaveFormScreen");
       break;
@@ -83,6 +86,17 @@ void secondCheckCase(
       break;
     case "Aadhaar Verification":
       context.pushNamed("AadhaarGetOtp");
+      break;
+    case "pan-card-verification":
+      data.data![index].services![servicesIndex].dataPreference == "form"
+          ? context.pushNamed("PanUpdateFormScreen", pathParameters: {
+        'uid': data.data![index].services![servicesIndex].uid.toString()
+      })
+          : context.pushNamed("PanDocumentUpdate",
+          pathParameters: {
+          'uid': data.data![index].services![servicesIndex].uid.toString()
+        }
+      );
       break;
     case "Reference Check":
       data.data![index].services![servicesIndex].dataPreference == "form"

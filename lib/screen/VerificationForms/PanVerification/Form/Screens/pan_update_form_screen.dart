@@ -4,16 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
-import 'package:v_verify/screen/VerificationForms/PanVerification/Blocs/pan_update_form_bloc/pan_update_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/PanVerification/Blocs/pan_show_details_bloc/pan_show_details_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/PanVerification/Blocs/pan_show_details_bloc/pan_show_details_state.dart';
-import 'package:v_verify/screen/VerificationForms/PanVerification/Models/pan_show_details_model.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Form/Blocs/pan_update_form_bloc/pan_update_form_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Form/Blocs/pan_show_details_bloc/pan_show_details_cubit.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Form/Blocs/pan_show_details_bloc/pan_show_details_state.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Form/Models/pan_show_details_model.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
 
-import '../../../../commonComponent/bloc/shared_preferences_cubit.dart';
-import '../../common/form_widget.dart';
-import '../../common/id.dart';
+import '../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
+import '../../../common/form_widget.dart';
+import '../../../common/id.dart';
 import '../Blocs/pan_update_form_bloc/pan_update_form_state.dart';
 
 class PanUpdateFormScreen extends StatefulWidget {
@@ -74,7 +74,7 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                     } else if (panShowData is PanVerificationShowSuccessState) {
 
                       PanVerificationShowModel data = panShowData.panVerificationShowModel;
-                      panVerificationController.text = data.data!.document_number ?? "";
+                      panVerificationController.text = data.data!.documentNumber ?? "";
                       rejection_reason = data.data!.reason ?? "";
                       if (selectedType == null || selectedType!.isEmpty) { selectedType = data.data!.documentType ?? ""; }
                       // selectedType =  ?? "";
@@ -96,7 +96,7 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                               height: 16,
                             ),
                             Text(
-                              "KYC / Identity Verification Remark:",
+                              "Verification Remark:",
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge!
@@ -111,16 +111,39 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                                   .textTheme
                                   .bodySmall!,
                             ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            Text(
+                              "Note: * Indicates required fields.",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(color: Colors.grey),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            Text(
+                              "Identity Details",
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  color: Theme.of(context).primaryColorDark, fontSize: 16),
+                            ),
                             const SizedBox(height: 16),
                             RichText(
-                              text: TextSpan(
-                                text: "Verification Document Type",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(fontWeight: FontWeight.w700),
-                              ),
-                            ),
+                                text: TextSpan(
+                                    text: "Verification Document Type",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith(fontWeight: FontWeight.w700),
+                                    children: [
+                                      TextSpan(
+                                        text: " * ",
+                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                            fontWeight: FontWeight.w700, color: Colors.red),
+                                      ),
+                                    ])),
                             const SizedBox(height: 4),
                             SizedBox(
                               height: 54,
@@ -180,7 +203,7 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                             if (selectedType == "pan")
                               CustomRequiredTextField(
                                 validator: validatePAN,
-                                controller: panVerificationController..text = data.data!.document_number!,
+                                controller: panVerificationController..text = data.data!.documentNumber!,
                                 titleText: "PAN Number",
                                 hintText: "Enter PAN Number",
                                 textInputType: TextInputType.text,
@@ -189,7 +212,7 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                             if (selectedType == "passport")
                               CustomRequiredTextField(
                                 validator: validatePassport,
-                                controller: panVerificationController..text = data.data!.document_number!,
+                                controller: panVerificationController..text = data.data!.documentNumber!,
                                 titleText: "Passport Number",
                                 hintText: "Enter Passport Number",
                                 textInputType: TextInputType.text,
@@ -198,7 +221,7 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                             if (selectedType == "driving licence")
                               CustomRequiredTextField(
                                 validator: validateDrivingLicence,
-                                controller: panVerificationController..text = data.data!.document_number!,
+                                controller: panVerificationController..text = data.data!.documentNumber!,
                                 titleText: "Driving Licence Number",
                                 hintText: "Enter Driving Licence Number",
                                 textInputType: TextInputType.text,

@@ -158,9 +158,15 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                   });
         break;
       case "pan-card-verification":
-        context.pushNamed("PanUpdateFormScreen", pathParameters: {
+        data[index].services![servicesIndex].dataPreference == "form"
+        ? context.pushNamed("PanUpdateFormScreen", pathParameters: {
           'uid': data[index].services![servicesIndex].uid.toString()
-        });
+        })
+        : context.pushNamed("PanDocumentUpdate",
+            pathParameters: {
+          'uid': data[index].services![servicesIndex].uid.toString()
+        }
+        );
         break;
       case "reference-check-verification":
         data[index].services![servicesIndex].dataPreference == "form"

@@ -17,6 +17,8 @@ import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documen
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Screens/employment_save_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Screens/employment_update_form_screen.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/List/Screens/employment_list.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Document/Screens/pan_document_update_screen.dart';
+import 'package:v_verify/screen/VerificationForms/PanVerification/Document/Screens/pan_document_upload_screen.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/verify_request_update_new.dart';
 import '../screen/Add Signature/add_signature.dart';
 import '../screen/OTP_Verify-Screen/otp_verify_screen.dart';
@@ -38,8 +40,8 @@ import '../screen/VerificationForms/GST_TIN_CIN/Document/Screens/gst_document_up
 import '../screen/VerificationForms/GST_TIN_CIN/Document/Screens/gst_document_upload_screen.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Form/Screens/gst_verification_save_form_screen.dart';
 import '../screen/VerificationForms/GST_TIN_CIN/Form/Screens/gst_verification_update_form_screen.dart';
-import '../screen/VerificationForms/PanVerification/Screens/pan_save_form_screen.dart';
-import '../screen/VerificationForms/PanVerification/Screens/pan_update_form_screen.dart';
+import '../screen/VerificationForms/PanVerification/Form/Screens/pan_save_form_screen.dart';
+import '../screen/VerificationForms/PanVerification/Form/Screens/pan_update_form_screen.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/Form/Screens/Update/mumbai_police_update_form_screen1.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/Document/Screens/mumbai_police_document_upload_screen.dart';
 import '../screen/VerificationForms/PoliceVerification/Mumbai/Form/Screens/Save/mumbai_police_save_form_screen1.dart';
@@ -400,7 +402,23 @@ class AppRouter {
           );
         },
       ),
-
+      GoRoute(
+        path: '/PanDocumentUpload',
+        name: 'PanDocumentUpload',
+        builder: (context, state) {
+          return const PanDocumentUpload();
+        },
+      ),
+      GoRoute(
+        path: '/PanDocumentUpdate/:uid',
+        name: 'PanDocumentUpdate',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid']!;
+          return PanDocumentUpdate(
+            uid: uid,
+          );
+        },
+      ),
 
 
       /// Court Verification Service related routes

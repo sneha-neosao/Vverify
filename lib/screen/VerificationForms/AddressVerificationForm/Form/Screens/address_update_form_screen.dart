@@ -34,11 +34,11 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
   TextEditingController currentCityAddressController = TextEditingController();
   TextEditingController currentStateAddressController = TextEditingController();
   TextEditingController currentPinCodeController = TextEditingController();
-  TextEditingController permanentLine1AddressController = TextEditingController();
-  TextEditingController permanentLine2AddressController = TextEditingController();
-  TextEditingController permanentCityAddressController = TextEditingController();
-  TextEditingController permanentStateAddressController = TextEditingController();
-  TextEditingController permanentPinCodeController = TextEditingController();
+  // TextEditingController permanentLine1AddressController = TextEditingController();
+  // TextEditingController permanentLine2AddressController = TextEditingController();
+  // TextEditingController permanentCityAddressController = TextEditingController();
+  // TextEditingController permanentStateAddressController = TextEditingController();
+  // TextEditingController permanentPinCodeController = TextEditingController();
   TextEditingController residenceFromDateController = TextEditingController();
   TextEditingController residenceToDateController = TextEditingController();
 
@@ -54,11 +54,11 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
     currentLine2AddressController.dispose();
     currentStateAddressController.dispose();
     currentPinCodeController.dispose();
-    permanentLine1AddressController.dispose();
-    permanentLine2AddressController.dispose();
-    permanentCityAddressController.dispose();
-    permanentStateAddressController.dispose();
-    permanentPinCodeController.dispose();
+    // permanentLine1AddressController.dispose();
+    // permanentLine2AddressController.dispose();
+    // permanentCityAddressController.dispose();
+    // permanentStateAddressController.dispose();
+    // permanentPinCodeController.dispose();
     super.dispose();
   }
 
@@ -76,11 +76,11 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
     print('current_city_id: ${currentCityAddressController.text}');
     print('current_state: ${currentStateAddressController.text}');
     print('current_pinCode: ${currentPinCodeController.text}');
-    print('permanent_address_line_1: ${isSameAddress ? currentLine1AddressController.text : permanentLine1AddressController.text}');
-    print('permanent_address_line_2: ${isSameAddress ? currentLine2AddressController.text : permanentLine2AddressController.text}');
-    print('permanent_city_id: ${isSameAddress ? currentCityAddressController.text : permanentCityAddressController.text}');
-    print('permanent_state: ${isSameAddress ? currentStateAddressController.text : permanentStateAddressController.text}');
-    print('permanent_pinCode: ${isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text}');
+    // print('permanent_address_line_1: ${isSameAddress ? currentLine1AddressController.text : permanentLine1AddressController.text}');
+    // print('permanent_address_line_2: ${isSameAddress ? currentLine2AddressController.text : permanentLine2AddressController.text}');
+    // print('permanent_city_id: ${isSameAddress ? currentCityAddressController.text : permanentCityAddressController.text}');
+    // print('permanent_state: ${isSameAddress ? currentStateAddressController.text : permanentStateAddressController.text}');
+    // print('permanent_pinCode: ${isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text}');
     print('residing_from_date: ${residenceFromDateController.text}');
     print('residing_to_date: ${residenceToDateController.text}');
     print('data_preference: form');
@@ -100,11 +100,11 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
             current_city_id: currentCityAddressController.text,
             current_state: currentStateAddressController.text,
             current_pinCode: currentPinCodeController.text,
-            permanent_address_line_1: isSameAddress ? currentLine1AddressController.text : permanentLine1AddressController.text,
-            permanent_address_line_2: isSameAddress ? currentLine2AddressController.text : permanentLine2AddressController.text,
-            permanent_city_id: isSameAddress ? currentCityAddressController.text : permanentCityAddressController.text,
-            permanent_state: isSameAddress ? currentStateAddressController.text : permanentStateAddressController.text,
-            permanent_pinCode: isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text,
+            // permanent_address_line_1: isSameAddress ? currentLine1AddressController.text : permanentLine1AddressController.text,
+            // permanent_address_line_2: isSameAddress ? currentLine2AddressController.text : permanentLine2AddressController.text,
+            // permanent_city_id: isSameAddress ? currentCityAddressController.text : permanentCityAddressController.text,
+            // permanent_state: isSameAddress ? currentStateAddressController.text : permanentStateAddressController.text,
+            // permanent_pinCode: isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text,
             case_uuid: widget.case_uuid,
             address_uuid: widget.address_uuid,
             data_preference: "form",
@@ -141,11 +141,11 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                   currentCityAddressController.text = data.data!.current_address_city ?? "";
                   currentStateAddressController.text = data.data!.current_address_state ?? "";
                   currentPinCodeController.text = data.data!.current_address_postal_code ?? "";
-                  permanentLine1AddressController.text = data.data!.permanent_address_line_1 ?? "";
-                  permanentLine2AddressController.text = data.data!.permanent_address_line_2 ?? "";
-                  permanentCityAddressController.text = data.data!.permanent_address_city ?? "";
-                  permanentStateAddressController.text = data.data!.permanent_address_state ?? "";
-                  permanentPinCodeController.text = data.data!.permanent_address_postal_code ?? "";
+                  // permanentLine1AddressController.text = data.data!.permanent_address_line_1 ?? "";
+                  // permanentLine2AddressController.text = data.data!.permanent_address_line_2 ?? "";
+                  // permanentCityAddressController.text = data.data!.permanent_address_city ?? "";
+                  // permanentStateAddressController.text = data.data!.permanent_address_state ?? "";
+                  // permanentPinCodeController.text = data.data!.permanent_address_postal_code ?? "";
                   residenceFromDateController.text = data.data!.residing_from_date ?? "";
                   residenceToDateController.text = data.data!.residing_to_date ?? "";
                   // ✅ Checkbox logic
@@ -175,8 +175,11 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                               .titleMedium!
                               .copyWith(color: Theme.of(context).primaryColorDark),
                         ),
+                        const SizedBox(
+                          height: 16,
+                        ),
                         Text(
-                          "Current Address Verification Remark:",
+                          "Address Verification Remark:",
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge!
@@ -192,31 +195,44 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                               .bodySmall!
                               .copyWith(color: Colors.red),
                         ),
+                        // const SizedBox(
+                        //   height: 4,
+                        // ),
+                        // Text(
+                        //   "Permanent Address Verification Remark:",
+                        //   style: Theme.of(context)
+                        //       .textTheme
+                        //       .bodyLarge!
+                        //       .copyWith(color: Colors.red),
+                        // ),
+                        // const SizedBox(
+                        //   height: 4,
+                        // ),
+                        // Text(
+                        //   data.data!.permanent_address_verification_remark!,
+                        //   style: Theme.of(context)
+                        //       .textTheme
+                        //       .bodySmall!
+                        //       .copyWith(color: Colors.red),
+                        // ),
                         const SizedBox(
-                          height: 4,
+                          height: 16,
                         ),
+                        // const SizedBox(
+                        //   height: 4,
+                        // ),
                         Text(
-                          "Permanent Address Verification Remark:",
+                          "Note: * Indicates required fields.",
                           style: Theme.of(context)
                               .textTheme
-                              .bodyLarge!
-                              .copyWith(color: Colors.red),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        Text(
-                          data.data!.permanent_address_verification_remark!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(color: Colors.red),
+                              .bodyMedium!
+                              .copyWith(color: Colors.grey),
                         ),
                         const SizedBox(
                           height: 16,
                         ),
                         Text(
-                          "Person's Current Address",
+                          "Person's Address",
                           style: Theme.of(context).textTheme.titleMedium!.copyWith(
                               color: Theme.of(context).primaryColorDark, fontSize: 16),
                         ),
@@ -253,67 +269,67 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                             hintText: "Enter Postal Code",
                             textInputType: TextInputType.text
                         ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Text(
-                          "Person's Permanent Address",
-                          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                              color: Theme.of(context).primaryColorDark, fontSize: 16),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: isSameAddress,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  isSameAddress = value ?? false;
-                                }); },
-                              activeColor: Colors.orange, // fill color when checked
-                              checkColor: Colors.white, // tick mark color
-                            ),
-                            Text(
-                              "Same as Current Address",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontWeight: FontWeight.w700),
-                            ),
-                          ],
-                        ),
-                        CustomRequiredTextField(
-                            controller: isSameAddress ? currentLine1AddressController : permanentLine1AddressController,
-                            titleText: "Address Line 1",
-                            hintText: "Enter Address Line 1",
-                            textInputType: TextInputType.text
-                        ),
-                        CustomNotRequiredTextField(
-                            controller: isSameAddress ? currentLine2AddressController : permanentLine2AddressController,
-                            titleText: "Address Line 2",
-                            hintText: "Enter Address Line 2",
-                            textInputType: TextInputType.text
-                        ),
-                        CustomRequiredTextField(
-                            controller: isSameAddress ? currentCityAddressController : permanentCityAddressController,
-                            titleText: "City",
-                            hintText: "Enter City",
-                            textInputType: TextInputType.text
-                        ),
-                        CustomRequiredTextField(
-                            controller: isSameAddress ? currentStateAddressController : permanentStateAddressController,
-                            titleText: "State",
-                            hintText: "Enter State",
-                            textInputType: TextInputType.text
-                        ),
-                        CustomRequiredTextField(
-                            controller: isSameAddress ? currentPinCodeController : permanentPinCodeController,
-                            titleText: "Postal Code",
-                            hintText: "Enter Postal Code",
-                            textInputType: TextInputType.text
-                        ),
+                        // const SizedBox(
+                        //   height: 16,
+                        // ),
+                        // Text(
+                        //   "Person's Permanent Address",
+                        //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        //       color: Theme.of(context).primaryColorDark, fontSize: 16),
+                        // ),
+                        // const SizedBox(
+                        //   height: 16,
+                        // ),
+                        // Row(
+                        //   children: [
+                        //     Checkbox(
+                        //       value: isSameAddress,
+                        //       onChanged: (bool? value) {
+                        //         setState(() {
+                        //           isSameAddress = value ?? false;
+                        //         }); },
+                        //       activeColor: Colors.orange, // fill color when checked
+                        //       checkColor: Colors.white, // tick mark color
+                        //     ),
+                        //     Text(
+                        //       "Same as Current Address",
+                        //       style: Theme.of(context)
+                        //           .textTheme
+                        //           .bodySmall!
+                        //           .copyWith(fontWeight: FontWeight.w700),
+                        //     ),
+                        //   ],
+                        // ),
+                        // CustomRequiredTextField(
+                        //     controller: isSameAddress ? currentLine1AddressController : permanentLine1AddressController,
+                        //     titleText: "Address Line 1",
+                        //     hintText: "Enter Address Line 1",
+                        //     textInputType: TextInputType.text
+                        // ),
+                        // CustomNotRequiredTextField(
+                        //     controller: isSameAddress ? currentLine2AddressController : permanentLine2AddressController,
+                        //     titleText: "Address Line 2",
+                        //     hintText: "Enter Address Line 2",
+                        //     textInputType: TextInputType.text
+                        // ),
+                        // CustomRequiredTextField(
+                        //     controller: isSameAddress ? currentCityAddressController : permanentCityAddressController,
+                        //     titleText: "City",
+                        //     hintText: "Enter City",
+                        //     textInputType: TextInputType.text
+                        // ),
+                        // CustomRequiredTextField(
+                        //     controller: isSameAddress ? currentStateAddressController : permanentStateAddressController,
+                        //     titleText: "State",
+                        //     hintText: "Enter State",
+                        //     textInputType: TextInputType.text
+                        // ),
+                        // CustomRequiredTextField(
+                        //     controller: isSameAddress ? currentPinCodeController : permanentPinCodeController,
+                        //     titleText: "Postal Code",
+                        //     hintText: "Enter Postal Code",
+                        //     textInputType: TextInputType.text
+                        // ),
                         const SizedBox(
                           height: 16,
                         ),
