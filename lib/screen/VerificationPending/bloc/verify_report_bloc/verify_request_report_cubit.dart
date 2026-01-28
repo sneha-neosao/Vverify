@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Model/verify_details_model.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_state.dart';
@@ -11,7 +12,7 @@ class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
 
   VerifyRequestReportCubit(this._apiService) : super(VerifyRequestReportInitialState());
 
-  void verifyRequestReport({
+  Future<void> verifyRequestReport({  // <-- change here
     required String token,
     required String case_uuid,
   }) async {
@@ -22,23 +23,15 @@ class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
         case_uuid: case_uuid,
       );
 
-      // If the API returns raw PDF bytes
       if (response.data is List<int>) {
         final pdfBytes = response.data as List<int>;
 
-        // Save to Downloads folder
-        final downloadsDir = Directory('/storage/emulated/0/Download');
-        final file = File('${downloadsDir.path}/report_$case_uuid.pdf');
+        final downloadsDir = await getExternalStorageDirectory(); // safer than hardcoding
+        final file = File('${downloadsDir!.path}/report_$case_uuid.pdf');
         await file.writeAsBytes(pdfBytes);
 
-        // Enqueue with Download Manager
-        await FlutterDownloader.enqueue(
-          url: file.path,
-          savedDir: downloadsDir.path,
-          fileName: 'report_$case_uuid.pdf',
-          showNotification: true,
-          openFileFromNotification: true,
-        );
+// Now open the file using FileProvider
+//         OpenFilex.open(file.path); // use open_filex package
 
         emit(VerifyRequestReportDownloadedState(file.path));
       } else {
@@ -48,5 +41,5 @@ class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
       emit(VerifyRequestReportErrorState('An error occurred: $e'));
     }
   }
-
 }
+

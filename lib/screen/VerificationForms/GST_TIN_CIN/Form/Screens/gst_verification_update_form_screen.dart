@@ -93,8 +93,11 @@ class _GstVerificationUpdateFormScreenState extends State<GstVerificationUpdateF
                           .titleMedium!
                           .copyWith(color: Theme.of(context).primaryColorDark),
                     ),
+                    const SizedBox(
+                      height: 16,
+                    ),
                     Text(
-                      "GST PAN CIN Verification Remark:",
+                      "Verification Remark:",
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge!
@@ -107,12 +110,27 @@ class _GstVerificationUpdateFormScreenState extends State<GstVerificationUpdateF
                       data.data!.reason!,
                       style: Theme.of(context)
                           .textTheme
-                          .bodySmall!
-                          .copyWith(color: Colors.red),
+                          .bodySmall!,
                     ),
                     const SizedBox(
                       height: 16,
                     ),
+                    Text(
+                      "Note: * Indicates required fields.",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Colors.grey),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Text(
+                      "GST PAN CIN Details",
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Theme.of(context).primaryColorDark, fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
                     const Text(
                         "Note : At least one of GST, PAN, or CIN required"),
                     const SizedBox(

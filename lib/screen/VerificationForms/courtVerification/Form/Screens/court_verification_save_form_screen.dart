@@ -105,9 +105,23 @@ class _CourtVerificationSaveFormScreenState extends State<CourtVerificationSaveF
                       .titleMedium!
                       .copyWith(color: Theme.of(context).primaryColorDark),
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  "Note: * Indicates required fields.",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: Colors.grey),
+                ),
                 const SizedBox(
                   height: 16,
                 ),
+                Text(
+                  "Court Legal Details",
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Theme.of(context).primaryColorDark, fontSize: 16),
+                ),
+                const SizedBox(height: 16),
                 Text("Choose an Option:",
                     style: Theme.of(context).textTheme.bodySmall),
                 BlocProvider(

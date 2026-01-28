@@ -167,7 +167,7 @@ class _EducationUpdateFormScreenState extends State<EducationUpdateFormScreen> {
                         height: 16,
                       ),
                       Text(
-                        "Education Verification Remark:",
+                        "Verification Remark:",
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge!
@@ -177,22 +177,30 @@ class _EducationUpdateFormScreenState extends State<EducationUpdateFormScreen> {
                         height: 4,
                       ),
                       Text(
-                        descrepancy_reason ?? "NA",
+                        detailsData.data!.verificationRemark!,
                         style: Theme.of(context)
                             .textTheme
                             .bodySmall!,
                       ),
                       const SizedBox(
-                        height: 4,
+                        height: 16,
                       ),
                       Text(
-                        "Educational Details",
+                        "Note: * Indicates required fields.",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: Colors.grey),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        "Education Details",
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
                             color: Theme.of(context).primaryColorDark, fontSize: 16),
                       ),
-                      const SizedBox(
-                        height: 12,
-                      ),
+                      const SizedBox(height: 16),
                       Text(
                         "Note : Fill all required fields.",
                         style: Theme.of(context)

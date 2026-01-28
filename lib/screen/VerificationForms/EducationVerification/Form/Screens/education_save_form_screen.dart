@@ -109,24 +109,23 @@ class _EducationSaveFormScreenState extends State<EducationSaveFormScreen> {
                         .titleMedium!
                         .copyWith(color: Theme.of(context).primaryColorDark),
                   ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Note: * Indicates required fields.",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.grey),
+                  ),
                   const SizedBox(
                     height: 16,
                   ),
                   Text(
-                    "Educational Details",
+                    "Education Details",
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: Theme.of(context).primaryColorDark, fontSize: 16),
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text(
-                    "Note : Fill all the required fields.",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(fontSize: 12, color: Colors.grey),
-                  ),
+                  const SizedBox(height: 16),
                   CustomRequiredTextField(
                       controller: educationTextControllerNew.educationUniversityNameController,
                       titleText: "Name Of University",

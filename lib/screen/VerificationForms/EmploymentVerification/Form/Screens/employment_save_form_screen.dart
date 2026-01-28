@@ -147,6 +147,14 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
                         .titleMedium!
                         .copyWith(color: Theme.of(context).primaryColorDark),
                   ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Note: * Indicates required fields.",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.grey),
+                  ),
                   const SizedBox(
                     height: 16,
                   ),
@@ -155,6 +163,7 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: Theme.of(context).primaryColorDark, fontSize: 16),
                   ),
+                  const SizedBox(height: 16),
                   CustomRequiredTextField(
                       controller: employmentTextControllerNew.employmentEmployerNameController,
                       titleText: "Employer Name",

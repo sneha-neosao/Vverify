@@ -29,6 +29,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
   // Initialize the ScrollController
   late ScrollController _scrollController;
 
+  Set<int> loadingIndexes = {};
+
   @override
   void initState() {
     super.initState();
@@ -348,46 +350,48 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                 child: const Padding(
                                                   padding: EdgeInsets.all(6.0),
                                                   child: Icon(
-                                                    Icons.mode_edit,
+                                                    Icons.border_color_outlined,
                                                     color: Colors.black,
-                                                    size: 16,
+                                                    size: 18,
                                                   ),
                                                 ),
                                               ),
 
-                                              // BlocBuilder<VerifyRequestReportCubit, VerifyRequestReportState>(
-                                              //   builder: (context, state) {
-                                              //     if (state is VerifyRequestReportLoadingState) {
-                                              //       return const Padding(
-                                              //         padding: EdgeInsets.all(6.0),
-                                              //         child: SizedBox(
-                                              //           height: 16,
-                                              //           width: 16,
-                                              //           child: CircularProgressIndicator(strokeWidth: 2),
-                                              //         ),
-                                              //       );
-                                              //     } else {
-                                              //       return InkWell(
-                                              //         onTap: () {
-                                              //           context.read<VerifyRequestReportCubit>().verifyRequestReport(
-                                              //             token: context.read<TokenCubit>().state,
-                                              //             case_uuid: data[index].case_uuid.toString(),
-                                              //           );
-                                              //         },
-                                              //         child: const Padding(
-                                              //           padding: EdgeInsets.all(6.0),
-                                              //           child: Icon(
-                                              //             Icons.get_app,
-                                              //             color: Colors.black,
-                                              //             size: 16,
-                                              //           ),
-                                              //         ),
-                                              //       );
-                                              //     }
-                                              //   },
-                                              // ),
+                                              BlocBuilder<VerifyRequestReportCubit, VerifyRequestReportState>(
+                                                builder: (context, state) {
+                                                  return InkWell(
+                                                    onTap: () async {
+                                                      setState(() {
+                                                        loadingIndexes.add(index);
+                                                      });
 
-                                              // ⬆⬇ Arrow (ONLY change)
+                                                      await context.read<VerifyRequestReportCubit>().verifyRequestReport(
+                                                        token: context.read<TokenCubit>().state,
+                                                        case_uuid: data[index].case_uuid.toString(),
+                                                      );
+
+                                                      setState(() {
+                                                        loadingIndexes.remove(index);
+                                                      });
+                                                    },
+                                                    child: loadingIndexes.contains(index)
+                                                        ? const Padding(
+                                                      padding: EdgeInsets.all(6.0),
+                                                      child: SizedBox(
+                                                        height: 16,
+                                                        width: 16,
+                                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                                      ),
+                                                    )
+                                                        : const Padding(
+                                                      padding: EdgeInsets.all(6.0),
+                                                      child: Icon(Icons.get_app, color: Colors.black, size: 22),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+
+                                    // ⬆⬇ Arrow (ONLY change)
                                               Icon(
                                                 isPressed == index
                                                     ? Icons.keyboard_arrow_up

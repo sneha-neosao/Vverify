@@ -7,6 +7,7 @@ import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/ReferenceForm/Form/Models/Reference_save_form_model.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../common/form_widget.dart';
@@ -180,21 +181,21 @@ class _ReferenceSaveFormScreenState extends State<ReferenceSaveFormScreen> {
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: Theme.of(context).primaryColorDark, fontSize: 16),
                   ),
-                  CustomRequiredTextField(
+                  CustomNotRequiredTextField(
                       controller: person2NameController,
                       titleText: "Person Two Name",
                       hintText: "Enter Person Two Name",
                       textInputType: TextInputType.text
                   ),
-                  CustomRequiredTextField(
+                  CustomNotRequiredTextField(
                       maskFormatter: [mobileMaskFormatter],
-                      validator: validateMobile,
+                      validator: validateMobileNotRequired,
                       controller: person2MobileNoController,
                       titleText: "Person Two Mobile No",
                       hintText: "Enter Person Two Mobile No",
                       textInputType: TextInputType.text
                   ),
-                  CustomRequiredTextField(
+                  CustomNotRequiredTextField(
                       controller: person2RelationController,
                       titleText: "Person Two Relation",
                       hintText: "Enter Person Two Relation",

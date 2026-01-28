@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:v_verify/screen/VerificationForms/common/url.dart';
+import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_state.dart';
 import '../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../commonComponent/screen_size.dart';
 import '../VerificationForms/common/id.dart';
@@ -148,12 +150,13 @@ void secondCheckCase(
 }
 
 class _PendingDocState extends State<PendingDoc> {
+  Set<int> loadingIndexes = {};
+
   @override
   void initState() {
     pendingDoc();
     super.initState();
   }
-
 
   void pendingDoc() {
     final String token = context.read<TokenCubit>().state;
@@ -307,19 +310,39 @@ class _PendingDocState extends State<PendingDoc> {
                                                 ),
                                               ),
 
-                                              // InkWell(
-                                              //   onTap: () {
-                                              //
-                                              //   },
-                                              //   child: const Padding(
-                                              //     padding: EdgeInsets.all(6.0),
-                                              //     child: Icon(
-                                              //       Icons.get_app,
-                                              //       color: Colors.black,
-                                              //       size: 16,
-                                              //     ),
-                                              //   ),
-                                              // ),
+                                              BlocBuilder<VerifyRequestReportCubit, VerifyRequestReportState>(
+                                                builder: (context, state) {
+                                                  return InkWell(
+                                                    onTap: () async {
+                                                      setState(() {
+                                                        loadingIndexes.add(index);
+                                                      });
+
+                                                      await context.read<VerifyRequestReportCubit>().verifyRequestReport(
+                                                        token: context.read<TokenCubit>().state,
+                                                        case_uuid: data.data![index].case_uuid.toString(),
+                                                      );
+
+                                                      setState(() {
+                                                        loadingIndexes.remove(index);
+                                                      });
+                                                    },
+                                                    child: loadingIndexes.contains(index)
+                                                        ? const Padding(
+                                                      padding: EdgeInsets.all(6.0),
+                                                      child: SizedBox(
+                                                        height: 16,
+                                                        width: 16,
+                                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                                      ),
+                                                    )
+                                                        : const Padding(
+                                                      padding: EdgeInsets.all(6.0),
+                                                      child: Icon(Icons.get_app, color: Colors.black, size: 16),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
 
                                               // ⬆⬇ Arrow (ONLY change)
                                               Icon(

@@ -6,6 +6,7 @@ import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 import 'package:v_verify/screen/VerificationForms/common/validator.dart';
+import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../common/form_widget.dart';
@@ -169,21 +170,21 @@ class _ReferenceUpdateFormScreenState extends State<ReferenceUpdateFormScreen> {
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
                             color: Theme.of(context).primaryColorDark, fontSize: 16),
                       ),
-                      CustomRequiredTextField(
+                      CustomNotRequiredTextField(
                           controller: person2NameController..text = data.data!.personName2.toString(),
                           titleText: "Person Two Name",
                           hintText: "Enter Person Two Name",
                           textInputType: TextInputType.text
                       ),
-                      CustomRequiredTextField(
+                      CustomNotRequiredTextField(
                           maskFormatter: [mobileMaskFormatter],
-                          validator: validateMobile,
+                          validator: validateMobileNotRequired,
                           controller: person2MobileController..text = data.data!.personMobileNumber2.toString(),
                           titleText: "Person Two Mobile No",
                           hintText: "Enter Person Two Mobile No",
                           textInputType: TextInputType.text
                       ),
-                      CustomRequiredTextField(
+                      CustomNotRequiredTextField(
                           controller: person2RelationController..text = data.data!.personRelation2.toString(),
                           titleText: "Person Two Relation",
                           hintText: "Enter Person Two Relation",

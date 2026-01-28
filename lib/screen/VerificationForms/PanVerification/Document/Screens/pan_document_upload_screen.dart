@@ -67,14 +67,6 @@ class _PanDocumentUploadState extends State<PanDocumentUpload> {
                       .titleMedium!
                       .copyWith(color: Theme.of(context).primaryColorDark),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  "Note: * Indicates required fields.",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: Colors.grey),
-                ),
                 const SizedBox(
                   height: 16,
                 ),

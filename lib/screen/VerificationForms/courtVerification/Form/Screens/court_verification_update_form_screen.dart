@@ -147,7 +147,7 @@ class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpd
                     height: 16,
                   ),
                   Text(
-                    "Court Legal Verification Remark:",
+                    "Verification Remark:",
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!
@@ -160,12 +160,27 @@ class _CourtVerificationUpdateFormScreenState extends State<CourtVerificationUpd
                     data.data!.reason!,
                     style: Theme.of(context)
                         .textTheme
-                        .bodySmall!
-                        .copyWith(color: Colors.red),
+                        .bodySmall!,
                   ),
                   const SizedBox(
                     height: 16,
                   ),
+                  Text(
+                    "Note: * Indicates required fields.",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.grey),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Text(
+                    "Court Legal Details",
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Theme.of(context).primaryColorDark, fontSize: 16),
+                  ),
+                  const SizedBox(height: 16),
                   CustomRequiredTextField(
                       controller: firstNameController..text = data.data!.firstName!,
                       titleText: "First Name",
