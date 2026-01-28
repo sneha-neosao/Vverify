@@ -274,7 +274,7 @@ class ApiService {
     }
   }
 
-  Future<List<history>> tranFetchData({
+  Future<List<History>> tranFetchData({
     required String token,
     required int customer_id,
     required int page,
@@ -295,8 +295,8 @@ class ApiService {
     if (response.data["status"] == 200) {
       // debugPrint("tranList ${response.data}", wrapWidth: 1024);
       // Assuming the API returns a list of items as data
-      List<history> items = (response.data['data'] as List)
-          .map((itemJson) => history.fromJson(itemJson))
+      List<History> items = (response.data['data'] as List)
+          .map((itemJson) => History.fromJson(itemJson))
           .toList();
 
       return items;

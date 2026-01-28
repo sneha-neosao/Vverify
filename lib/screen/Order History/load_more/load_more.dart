@@ -16,7 +16,7 @@ class OrderHistory extends StatefulWidget {
 
 class _OrderHistoryState extends State<OrderHistory> {
   ApiService apiClient = ApiService();
-  List<history> data = [];
+  List<History> data = [];
   bool isLoading = false;
   bool hasMore = true;
   int currentPage = 1;
@@ -82,7 +82,7 @@ class _OrderHistoryState extends State<OrderHistory> {
     super.dispose();
   }
 
-  Widget _buildListItem(history item) {
+  Widget _buildListItem(History item) {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () {
@@ -127,8 +127,9 @@ class _OrderHistoryState extends State<OrderHistory> {
                   contentPadding: const EdgeInsets.all(0),
                   visualDensity:
                       const VisualDensity(horizontal: 0, vertical: -4),
-                  leading: Image.asset("assets/images/key.png", width: 40),
-                  title: Text("Tenant",
+                  leading: Image.network(item.entity!.entityIcon!, width: 40),
+                  title: Text(
+                      item.entityName!,
                       style: Theme.of(context).textTheme.bodyLarge!),
                   subtitle: Text(
                     item.services!.length > 1
