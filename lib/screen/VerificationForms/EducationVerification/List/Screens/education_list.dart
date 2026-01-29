@@ -143,6 +143,13 @@ class _EducationListState extends State<EducationList> {
               const SizedBox(
                 height: 16,
               ),
+              Text(
+                "Note: * Upload documents or fill out the form below to complete verification.",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(color: Colors.grey),
+              ),
               BlocBuilder<EducationListCubit, EducationListState>(
                   builder: (context, educationList) {
                 if (educationList is EducationListLoadingState) {

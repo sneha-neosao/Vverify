@@ -143,6 +143,13 @@ class _AddressListState extends State<AddressList> {
               const SizedBox(
                 height: 16,
               ),
+              Text(
+                "Note: * Upload documents or fill out the form below to complete verification.",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(color: Colors.grey),
+              ),
               BlocBuilder<AddressListCubit, AddressDataListState>(
                   builder: (context, addressList) {
                 if (addressList is AddressDataListLoadingState) {

@@ -137,6 +137,13 @@ Future<void> _launchURL(String url) async {
             const SizedBox(
               height: 16,
             ),
+            Text(
+              "Note: * Upload documents or fill out the form below to complete verification.",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(color: Colors.grey),
+            ),
             BlocBuilder<EmployDataListCubit, EmployDataListState>(
                 builder: (context, employList) {
               if (employList is EmployDataListLoadingState) {
