@@ -76,7 +76,12 @@ class _PanUpdateFormScreenState extends State<PanUpdateFormScreen> {
                       PanVerificationShowModel data = panShowData.panVerificationShowModel;
                       panVerificationController.text = data.data!.documentNumber ?? "";
                       rejection_reason = data.data!.reason ?? "";
-                      if (selectedType == null || selectedType!.isEmpty) { selectedType = data.data!.documentType ?? ""; }
+                      if (selectedType == null || selectedType!.isEmpty) {
+                        selectedType = data.data!.documentType ?? "";
+                        if (selectedType == "drive") {
+                          selectedType = "driving licence";
+                        }
+                      }
                       // selectedType =  ?? "";
                       print("selected type according to backend : ${selectedType}");
 

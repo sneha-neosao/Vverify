@@ -6,13 +6,13 @@ import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/veri
 import 'dart:io';
 import 'package:flutter_downloader/flutter_downloader.dart';
 
-
 class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
   ApiService _apiService;
 
   VerifyRequestReportCubit(this._apiService) : super(VerifyRequestReportInitialState());
 
-  Future<void> verifyRequestReport({  // <-- change here
+
+  Future<void> verifyRequestReport({
     required String token,
     required String case_uuid,
   }) async {
@@ -26,12 +26,22 @@ class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
       if (response.data is List<int>) {
         final pdfBytes = response.data as List<int>;
 
-        final downloadsDir = await getExternalStorageDirectory(); // safer than hardcoding
-        final file = File('${downloadsDir!.path}/report_$case_uuid.pdf');
+        final downloadsDir = Directory('/storage/emulated/0/Download'); // public Downloads
+        final filePath = '${downloadsDir.path}/report_$case_uuid.pdf';
+        final file = File(filePath);
         await file.writeAsBytes(pdfBytes);
 
-// Now open the file using FileProvider
-//         OpenFilex.open(file.path); // use open_filex package
+        // ✅ Trigger system download notification
+        // await FlutterDownloader.enqueue(
+        //   url: 'https://vverifyadmin.neosao.co.in/api/v1/verify-request/report/pdf/$case_uuid',
+        //   savedDir: '/storage/emulated/0/Download',
+        //   fileName: 'report_$case_uuid.pdf',
+        //   showNotification: true,
+        //   openFileFromNotification: true,
+        //   headers: {
+        //     'Authorization': 'Bearer $token',   // ✅ include your token
+        //   },
+        // );
 
         emit(VerifyRequestReportDownloadedState(file.path));
       } else {

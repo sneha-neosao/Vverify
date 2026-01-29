@@ -1137,11 +1137,11 @@ class ApiService {
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/pan/update', queryParameters: data);
-      // log('panNumberUpdate Response: ${response.data}');
+      await _dio.post('verify/pan/form/update', queryParameters: data);
+      log('panNumberUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      // log('Error in panNumberUpdate: $e');
+      log('Error in panNumberUpdate: $e');
       throw Exception('Failed to fetch panNumberUpdate: $e');
     }
   }

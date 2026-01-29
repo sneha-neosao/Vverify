@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/blinking_widget.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_state.dart';
 
@@ -335,6 +336,42 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                 ),
                                               ),
 
+
+                                              if(status.toLowerCase() != "pending")
+                                                BlocBuilder<VerifyRequestReportCubit, VerifyRequestReportState>(
+                                                  builder: (context, state) {
+                                                    return InkWell(
+                                                      onTap: () async {
+                                                        setState(() {
+                                                          loadingIndexes.add(index);
+                                                        });
+
+                                                        await context.read<VerifyRequestReportCubit>().verifyRequestReport(
+                                                          token: context.read<TokenCubit>().state,
+                                                          case_uuid: data[index].uuid.toString(),
+                                                        );
+
+                                                        setState(() {
+                                                          loadingIndexes.remove(index);
+                                                        });
+                                                      },
+                                                      child: loadingIndexes.contains(index)
+                                                          ? const Padding(
+                                                        padding: EdgeInsets.all(6.0),
+                                                        child: SizedBox(
+                                                          height: 16,
+                                                          width: 16,
+                                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                                        ),
+                                                      )
+                                                          : const Padding(
+                                                        padding: EdgeInsets.all(6.0),
+                                                        child: Icon(Icons.get_app, color: Colors.black, size: 22),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+
                                               // ✏️ Edit icon (unchanged)
                                               InkWell(
                                                 onTap: () {
@@ -357,40 +394,6 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                 ),
                                               ),
 
-                                              BlocBuilder<VerifyRequestReportCubit, VerifyRequestReportState>(
-                                                builder: (context, state) {
-                                                  return InkWell(
-                                                    onTap: () async {
-                                                      setState(() {
-                                                        loadingIndexes.add(index);
-                                                      });
-
-                                                      await context.read<VerifyRequestReportCubit>().verifyRequestReport(
-                                                        token: context.read<TokenCubit>().state,
-                                                        case_uuid: data[index].case_uuid.toString(),
-                                                      );
-
-                                                      setState(() {
-                                                        loadingIndexes.remove(index);
-                                                      });
-                                                    },
-                                                    child: loadingIndexes.contains(index)
-                                                        ? const Padding(
-                                                      padding: EdgeInsets.all(6.0),
-                                                      child: SizedBox(
-                                                        height: 16,
-                                                        width: 16,
-                                                        child: CircularProgressIndicator(strokeWidth: 2),
-                                                      ),
-                                                    )
-                                                        : const Padding(
-                                                      padding: EdgeInsets.all(6.0),
-                                                      child: Icon(Icons.get_app, color: Colors.black, size: 22),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-
                                     // ⬆⬇ Arrow (ONLY change)
                                               Icon(
                                                 isPressed == index
@@ -401,15 +404,17 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                             ],
                                           ),
 
-                                          // ✅ Status row (unchanged)
-                                          Row(
+                                          status.toLowerCase() == "discrepancy" ?
+                                          BlinkingStatus( icon: Icons.not_interested, text: "Discrepancy", color: Colors.black, ) :
+                                              Row(
                                             children: [
                                               Icon(
                                                 status.toLowerCase() == "verified"
                                                     ? Icons.verified
-                                                    : status.toLowerCase() == "discrepancy"
-                                                    ? Icons.not_interested
                                                     : Icons.schedule,
+                                                    // : status.toLowerCase() == "discrepancy"
+                                                    // ? Icons.not_interested
+                                                    // : Icons.schedule,
                                                 color: Colors.black,
                                                 size: 14,
                                               ),
@@ -417,9 +422,10 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                               Text(
                                                 status.toLowerCase() == "verified"
                                                     ? "Clear"
-                                                    : status.toLowerCase() == "discrepancy" || status.toLowerCase() == "rejected"
-                                                    ? "Discrepancy"
                                                     : "Pending",
+                                                    // : status.toLowerCase() == "discrepancy" || status.toLowerCase() == "rejected"
+                                                    // ? "Discrepancy"
+                                                    // : "Pending",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodySmall!
@@ -431,6 +437,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                               ),
                                             ],
                                           ),
+                                          // ✅ Status row (unchanged)
+
                                         ],
                                       )
                                           : Text(data[index].entity!.entityName.toString(),),
@@ -511,20 +519,24 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                         title: Text(data[index].services![servicesIndex].serviceTitle!.toUpperCase(),
                                                           style: Theme.of(context).textTheme.bodySmall,
                                                         ),
-                                                        subtitle: Row(
+                                                        subtitle: serviceStatus.toLowerCase() == "discrepancy" ?
+                                                        BlinkingStatus( icon: Icons.not_interested, text: "Discrepancy", color: Colors.red, ) :
+                                                        Row(
                                                           children: [
                                                             Icon(
                                                               serviceStatus.toLowerCase() == "verified"
                                                                   ? Icons.verified
-                                                                  : serviceStatus.toLowerCase() == "discrepancy"
-                                                                  ? Icons.not_interested
                                                                   : Icons.schedule,
+                                                                  // : serviceStatus.toLowerCase() == "discrepancy"
+                                                                  // ? Icons.not_interested
+                                                                  // : Icons.schedule,
                                                               color:
                                                               serviceStatus.toLowerCase() == "verified"
                                                                   ? Colors.green
-                                                                  : serviceStatus.toLowerCase() == "discrepancy"
-                                                                  ? Colors.red
                                                                   : Colors.orangeAccent,
+                                                                  // : serviceStatus.toLowerCase() == "discrepancy"
+                                                                  // ? Colors.red
+                                                                  // : Colors.orangeAccent,
                                                               size: 14,
                                                             ),
                                                             const SizedBox(
@@ -533,9 +545,10 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                             Text(
                                                                 serviceStatus.toLowerCase() == "verified"
                                                                   ? "Verified"
-                                                                  : serviceStatus.toLowerCase() == "discrepancy"
-                                                                  ? "Discrepancy"
                                                                   : "Pending",
+                                                                  // : serviceStatus.toLowerCase() == "discrepancy"
+                                                                  // ? "Discrepancy"
+                                                                  // : "Pending",
                                                                 style: Theme.of(
                                                                     context)
                                                                     .textTheme
@@ -545,9 +558,10 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                     14,
                                                                     color: serviceStatus.toLowerCase() == "verified"
                                                                         ? Colors.green
-                                                                        : serviceStatus.toLowerCase() == "discrepancy"
-                                                                        ? Colors.red
                                                                         : Colors.orangeAccent
+                                                                        // : serviceStatus.toLowerCase() == "discrepancy"
+                                                                        // ? Colors.red
+                                                                        // : Colors.orangeAccent
                                                                 )
                                                             ),
                                                           ],
