@@ -74,7 +74,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       //   height: 10,
                       // ),
                       Text(
-                        "${data.profileResult!.firstName} ${data.profileResult!.lastName}",
+                        data.profileResult!.userType == "1"
+                            ? "${data.profileResult!.firstName} ${data.profileResult!.lastName}"  // show mobile if userType == 1
+                            : "${data.profileResult!.companyName}",
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       const SizedBox(
@@ -120,7 +122,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 10,
                       ),
                       Text(
-                        "+91-${data.profileResult!.mobileNumber}",
+                        data.profileResult!.userType == "1"
+                            ? "+91-${data.profileResult!.mobileNumber}"   // show mobile if userType == 1
+                            : "+91-${data.profileResult!.companyHrNumber}",          // show HR number if userType == 2
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -128,7 +132,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       Text(
-                        "${data.profileResult!.email}",
+                        data.profileResult!.userType == "1"
+                            ? "${data.profileResult!.email}"  // show mobile if userType == 1
+                            : "${data.profileResult!.companyEmail}",
                         style: GoogleFonts.outfit(
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
@@ -236,6 +242,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           await prefs.remove('userType');
                           await prefs.remove('token').then((_) {
                             selectedIndex = 0;
+                            // Print the token after removal to verify
+                            String? token = prefs.getString('token');
+                            print('Token after removal: $token');
                             context.go('/login');
                           });
                         },

@@ -20,7 +20,10 @@
         android:label="VVERIFY"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:backupAgent="false">
         <activity
 
             android:name=".MainActivity"

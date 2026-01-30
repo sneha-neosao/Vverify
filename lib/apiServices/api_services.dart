@@ -435,10 +435,10 @@ class ApiService {
       };
       final response =
       await _dio.put('verify-request/entity/update', queryParameters: data);
-      // log('verifyRequestUpdate Response: ${response.data}');
+      log('verifyRequestUpdate Response: ${response.data}');
       return response;
     } catch (e) {
-      // log('Error in verifyRequestUpdate: $e');
+      log('Error in verifyRequestUpdate: $e');
       throw Exception('Failed to fetch verifyRequestUpdate: $e');
     }
   }
