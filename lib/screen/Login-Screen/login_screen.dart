@@ -64,10 +64,14 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset(
-                    "assets/images/logo.png",
-                    width: ScreenSize.screenWidth * 0.4,
-                    height: ScreenSize.screenHeight * 0.2,
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical:ScreenSize.screenHeight * 0.04),
+                    child: Image.asset(
+                      "assets/images/full_logo.png",
+                      width: ScreenSize.screenWidth * 0.70,
+                      height: ScreenSize.screenHeight * 0.12,
+                      fit: BoxFit.fill,
+                    ),
                   ),
                   Image.asset(
                     "assets/images/login_page_logo.png",
@@ -75,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: ScreenSize.screenHeight * 0.25,
                   ),
                   Text(
-                    "Let's VVerify!!",
+                    "Let's Verify!!",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Text(
@@ -117,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   }),
                   const SizedBox(height: 34),
                   Text(
-                    "By proceeding, I accept Vverify’s",
+                    "By proceeding, I accept Pehchaan360’s",
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   RichText(

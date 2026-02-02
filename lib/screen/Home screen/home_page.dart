@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               context.pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text("Welcome to VVerify")));
+                                      content: Text("Welcome to Pehchaan360")));
                             }
                           } else if (agree is UserTermsConditionErrorState) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -265,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }),
                   Text(
-                    "Whom do you want to VVerify?",
+                    "Whom do you want to Verify?",
                     style: GoogleFonts.outfit(
                       textStyle: Theme.of(context).textTheme.titleLarge,
                     ),

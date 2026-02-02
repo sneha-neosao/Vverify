@@ -39,8 +39,8 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
   // TextEditingController permanentCityAddressController = TextEditingController();
   // TextEditingController permanentStateAddressController = TextEditingController();
   // TextEditingController permanentPinCodeController = TextEditingController();
-  TextEditingController residenceFromDateController = TextEditingController();
-  TextEditingController residenceToDateController = TextEditingController();
+  // TextEditingController residenceFromDateController = TextEditingController();
+  // TextEditingController residenceToDateController = TextEditingController();
 
   @override
   void initState() {
@@ -81,8 +81,8 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
     // print('permanent_city_id: ${isSameAddress ? currentCityAddressController.text : permanentCityAddressController.text}');
     // print('permanent_state: ${isSameAddress ? currentStateAddressController.text : permanentStateAddressController.text}');
     // print('permanent_pinCode: ${isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text}');
-    print('residing_from_date: ${residenceFromDateController.text}');
-    print('residing_to_date: ${residenceToDateController.text}');
+    // print('residing_from_date: ${residenceFromDateController.text}');
+    // print('residing_to_date: ${residenceToDateController.text}');
     print('data_preference: form');
     print('case_uuid: ${widget.case_uuid}');
     print('till_date: ${isChecked == true ? 1 : null}');
@@ -108,9 +108,9 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
             case_uuid: widget.case_uuid,
             address_uuid: widget.address_uuid,
             data_preference: "form",
-            residing_from_date: residenceFromDateController.text,
-            residing_to_date: residenceToDateController.text,
-            till_date: isChecked == true ? 1 : null,
+            // residing_from_date: residenceFromDateController.text,
+            // residing_to_date: residenceToDateController.text,
+            // till_date: isChecked == true ? 1 : null,
             uid: widget.uid
         )
     );
@@ -146,12 +146,12 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                   // permanentCityAddressController.text = data.data!.permanent_address_city ?? "";
                   // permanentStateAddressController.text = data.data!.permanent_address_state ?? "";
                   // permanentPinCodeController.text = data.data!.permanent_address_postal_code ?? "";
-                  residenceFromDateController.text = data.data!.residing_from_date ?? "";
-                  residenceToDateController.text = data.data!.residing_to_date ?? "";
+                  // residenceFromDateController.text = data.data!.residing_from_date ?? "";
+                  // residenceToDateController.text = data.data!.residing_to_date ?? "";
                   // ✅ Checkbox logic
-                  isChecked = (data.data!.residing_to_date == null ||
-                      data.data!.residing_to_date!.isEmpty);
-                  setState(() {});
+                  // isChecked = (data.data!.residing_to_date == null ||
+                  //     data.data!.residing_to_date!.isEmpty);
+                  // setState(() {});
                 }
               },
                 builder: (context, showData) {
@@ -330,52 +330,52 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
                         //     hintText: "Enter Postal Code",
                         //     textInputType: TextInputType.text
                         // ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Text(
-                          "Residing Period",
-                          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                              color: Theme.of(context).primaryColorDark, fontSize: 16),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        CustomRequiredTextField(
-                            controller: residenceFromDateController,
-                            titleText: "Residing From",
-                            hintText: "Enter Residing From",
-                            textInputType: TextInputType.text
-                        ),
-                        CustomNotRequiredTextField(
-                            enabled: !isChecked,
-                            controller: residenceToDateController,
-                            titleText: "Residing To",
-                            hintText: "Enter Residing To",
-                            textInputType: TextInputType.text
-                        ),
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: isChecked,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  isChecked = value ?? false;
-
-                                  if (isChecked) { residenceToDateController.clear(); }
-                                }); },
-                              activeColor: Colors.orange, // fill color when checked
-                              checkColor: Colors.white, // tick mark color
-                            ),
-                            Text(
-                              "Till Date",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontWeight: FontWeight.w700),
-                            ),
-                          ],
-                        ),
+                        // const SizedBox(
+                        //   height: 16,
+                        // ),
+                        // Text(
+                        //   "Residing Period",
+                        //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        //       color: Theme.of(context).primaryColorDark, fontSize: 16),
+                        // ),
+                        // const SizedBox(
+                        //   height: 16,
+                        // ),
+                        // CustomRequiredTextField(
+                        //     controller: residenceFromDateController,
+                        //     titleText: "Residing From",
+                        //     hintText: "Enter Residing From",
+                        //     textInputType: TextInputType.text
+                        // ),
+                        // CustomNotRequiredTextField(
+                        //     enabled: !isChecked,
+                        //     controller: residenceToDateController,
+                        //     titleText: "Residing To",
+                        //     hintText: "Enter Residing To",
+                        //     textInputType: TextInputType.text
+                        // ),
+                        // Row(
+                        //   children: [
+                        //     Checkbox(
+                        //       value: isChecked,
+                        //       onChanged: (bool? value) {
+                        //         setState(() {
+                        //           isChecked = value ?? false;
+                        //
+                        //           if (isChecked) { residenceToDateController.clear(); }
+                        //         }); },
+                        //       activeColor: Colors.orange, // fill color when checked
+                        //       checkColor: Colors.white, // tick mark color
+                        //     ),
+                        //     Text(
+                        //       "Till Date",
+                        //       style: Theme.of(context)
+                        //           .textTheme
+                        //           .bodySmall!
+                        //           .copyWith(fontWeight: FontWeight.w700),
+                        //     ),
+                        //   ],
+                        // ),
                         const SizedBox(
                           height: 24,
                         ),

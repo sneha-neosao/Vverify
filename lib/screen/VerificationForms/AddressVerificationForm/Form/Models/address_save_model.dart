@@ -13,11 +13,11 @@ class NameAddressVerificationModel {
   // final String permanent_city_id;
   // final String permanent_state;
   // final String permanent_pinCode;
-  final String residing_from_date;
-  final String residing_to_date;
+  // final String residing_from_date;
+  // final String residing_to_date;
   final String data_preference;
   final String case_uuid;
-  final dynamic till_date;
+  // final dynamic till_date;
 
   NameAddressVerificationModel({
     required this.request_id,
@@ -32,10 +32,10 @@ class NameAddressVerificationModel {
     // required this.permanent_city_id,
     // required this.permanent_state,
     // required this.permanent_pinCode,
-    required this.residing_from_date,
-    required this.residing_to_date,
+    // required this.residing_from_date,
+    // required this.residing_to_date,
     required this.data_preference,
     required this.case_uuid,
-    required this.till_date
+    // required this.till_date
   });
 }

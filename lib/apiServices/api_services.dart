@@ -907,11 +907,11 @@ class ApiService {
       // "permanent_address_city": nameAddressVerificationModel.permanent_city_id,
       // "permanent_address_state": nameAddressVerificationModel.permanent_state,
       // "permanent_address_postal_code": nameAddressVerificationModel.permanent_pinCode,
-      "residing_from_date": nameAddressVerificationModel.residing_from_date,
-      "residing_to_date": nameAddressVerificationModel.residing_to_date,
+      // "residing_from_date": nameAddressVerificationModel.residing_from_date,
+      // "residing_to_date": nameAddressVerificationModel.residing_to_date,
       "data_preference": nameAddressVerificationModel.data_preference,
       "case_uuid": nameAddressVerificationModel.case_uuid,
-      "till_date": nameAddressVerificationModel.till_date,
+      // "till_date": nameAddressVerificationModel.till_date,
     });
 
     try {
@@ -951,8 +951,8 @@ class ApiService {
       "case_uuid": nameAddressVerificationUpdateModel.case_uuid,
       "address_uuid": nameAddressVerificationUpdateModel.address_uuid,
       "data_preference": nameAddressVerificationUpdateModel.data_preference,
-      "residing_from_date": nameAddressVerificationUpdateModel.residing_from_date,
-      "residing_to_date": nameAddressVerificationUpdateModel.residing_to_date,
+      // "residing_from_date": nameAddressVerificationUpdateModel.residing_from_date,
+      // "residing_to_date": nameAddressVerificationUpdateModel.residing_to_date,
       "uid": nameAddressVerificationUpdateModel.uid,
     });
     try {

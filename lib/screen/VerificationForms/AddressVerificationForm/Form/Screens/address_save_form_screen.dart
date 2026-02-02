@@ -36,8 +36,8 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
   // TextEditingController permanentCityAddressController = TextEditingController();
   // TextEditingController permanentStateAddressController = TextEditingController();
   // TextEditingController permanentPinCodeController = TextEditingController();
-  TextEditingController residenceFromDateController = TextEditingController();
-  TextEditingController residenceToDateController = TextEditingController();
+  // TextEditingController residenceFromDateController = TextEditingController();
+  // TextEditingController residenceToDateController = TextEditingController();
 
   @override
   void initState() {
@@ -78,11 +78,11 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
     // print('permanent_city_id: ${isSameAddress ? currentCityAddressController.text : permanentCityAddressController.text}');
     // print('permanent_state: ${isSameAddress ? currentStateAddressController.text : permanentStateAddressController.text}');
     // print('permanent_pinCode: ${isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text}');
-    print('residing_from_date: ${residenceFromDateController.text}');
-    print('residing_to_date: ${residenceToDateController.text}');
+    // print('residing_from_date: ${residenceFromDateController.text}');
+    // print('residing_to_date: ${residenceToDateController.text}');
     print('data_preference: form');
     print('case_uuid: ${widget.Case_uuid}');
-    print('till_date: ${isChecked == true ? 1 : null}');
+    // print('till_date: ${isChecked == true ? 1 : null}');
 
     context.read<NameAddressVerificationFormCubit>().nameAddressForm(
         customer_id: customerId,
@@ -100,11 +100,11 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
             // permanent_city_id: isSameAddress ? currentCityAddressController.text : permanentCityAddressController.text,
             // permanent_state: isSameAddress ? currentStateAddressController.text : permanentStateAddressController.text,
             // permanent_pinCode: isSameAddress ? currentPinCodeController.text : permanentPinCodeController.text,
-            residing_from_date: residenceFromDateController.text,
-            residing_to_date: residenceToDateController.text,
+            // residing_from_date: residenceFromDateController.text,
+            // residing_to_date: residenceToDateController.text,
             data_preference: "form",
             case_uuid: widget.Case_uuid,
-            till_date: isChecked == true ? 1 : null
+            // till_date: isChecked == true ? 1 : null
         )
     );
   }
@@ -244,52 +244,52 @@ class _AddressSaveFormScreenState extends State<AddressSaveFormScreen> {
                   //     hintText: "Enter Postal Code",
                   //     textInputType: TextInputType.text
                   // ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Text(
-                    "Residing Period",
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: Theme.of(context).primaryColorDark, fontSize: 16),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  CustomRequiredTextField(
-                      controller: residenceFromDateController,
-                      titleText: "Residing From",
-                      hintText: "Enter Residing From",
-                      textInputType: TextInputType.text
-                  ),
-                  CustomNotRequiredTextField(
-                      enabled: !isChecked,
-                      controller: residenceToDateController,
-                      titleText: "Residing To",
-                      hintText: "Enter Residing To",
-                      textInputType: TextInputType.text
-                  ),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: isChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isChecked = value ?? false;
-
-                            if (isChecked) { residenceToDateController.clear(); }
-                          }); },
-                        activeColor: Colors.orange, // fill color when checked
-                        checkColor: Colors.white, // tick mark color
-                      ),
-                      Text(
-                        "Till Date",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(fontWeight: FontWeight.w700),
-                      ),
-                    ],
-                  ),
+                  // const SizedBox(
+                  //   height: 16,
+                  // ),
+                  // Text(
+                  //   "Residing Period",
+                  //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  //       color: Theme.of(context).primaryColorDark, fontSize: 16),
+                  // ),
+                  // const SizedBox(
+                  //   height: 16,
+                  // ),
+                  // CustomRequiredTextField(
+                  //     controller: residenceFromDateController,
+                  //     titleText: "Residing From",
+                  //     hintText: "Enter Residing From",
+                  //     textInputType: TextInputType.text
+                  // ),
+                  // CustomNotRequiredTextField(
+                  //     enabled: !isChecked,
+                  //     controller: residenceToDateController,
+                  //     titleText: "Residing To",
+                  //     hintText: "Enter Residing To",
+                  //     textInputType: TextInputType.text
+                  // ),
+                  // Row(
+                  //   children: [
+                  //     Checkbox(
+                  //       value: isChecked,
+                  //       onChanged: (bool? value) {
+                  //         setState(() {
+                  //           isChecked = value ?? false;
+                  //
+                  //           if (isChecked) { residenceToDateController.clear(); }
+                  //         }); },
+                  //       activeColor: Colors.orange, // fill color when checked
+                  //       checkColor: Colors.white, // tick mark color
+                  //     ),
+                  //     Text(
+                  //       "Till Date",
+                  //       style: Theme.of(context)
+                  //           .textTheme
+                  //           .bodySmall!
+                  //           .copyWith(fontWeight: FontWeight.w700),
+                  //     ),
+                  //   ],
+                  // ),
                   const SizedBox(height: 24),
                   BlocConsumer<NameAddressVerificationFormCubit,
                       NameAddressVerificationState>(

@@ -74,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       //   height: 10,
                       // ),
                       Text(
-                        data.profileResult!.userType == "1"
+                        data.profileResult!.userTypeId == 1
                             ? "${data.profileResult!.firstName} ${data.profileResult!.lastName}"  // show mobile if userType == 1
                             : "${data.profileResult!.companyName}",
                         style: Theme.of(context).textTheme.bodyLarge,
@@ -122,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 10,
                       ),
                       Text(
-                        data.profileResult!.userType == "1"
+                        data.profileResult!.userTypeId == 1
                             ? "+91-${data.profileResult!.mobileNumber}"   // show mobile if userType == 1
                             : "+91-${data.profileResult!.companyHrNumber}",          // show HR number if userType == 2
                         style: GoogleFonts.outfit(
@@ -132,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       Text(
-                        data.profileResult!.userType == "1"
+                        data.profileResult!.userTypeId == 1
                             ? "${data.profileResult!.email}"  // show mobile if userType == 1
                             : "${data.profileResult!.companyEmail}",
                         style: GoogleFonts.outfit(
