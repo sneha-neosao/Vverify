@@ -187,7 +187,7 @@ class _PendingDocState extends State<PendingDoc> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Verification Pending",
+              Text("Verification List",
                   style: Theme.of(context)
                       .textTheme
                       .titleLarge!

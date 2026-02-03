@@ -241,7 +241,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                  "Verification Pending",
+                  "Verification List",
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 28)
               ),
               isLoading && data.isEmpty

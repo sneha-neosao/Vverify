@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               context.pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text("Welcome to Pehchaan360")));
+                                      content: Text("Welcome to pehchaan360")));
                             }
                           } else if (agree is UserTermsConditionErrorState) {
                             ScaffoldMessenger.of(context).showSnackBar(

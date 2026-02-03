@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   }),
                   const SizedBox(height: 34),
                   Text(
-                    "By proceeding, I accept Pehchaan360’s",
+                    "By proceeding, I accept pehchaan360’s",
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   RichText(
