@@ -81,6 +81,7 @@ class _EmploymentDocumentUploadState extends State<EmploymentDocumentUpload> {
                           context.pop();
                         });
                       },
+                      onRemoveFile: (index) { context.read<EmploymentDocsFileCubit>().removeFileAt(index); },
                       // Pass the list of files instead of a single File
                       files: uploadDocs,
                     );

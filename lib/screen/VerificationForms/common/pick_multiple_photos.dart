@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_upload_bloc/education_document_upload_cubit.dart';
+
 import '../../../commonComponent/dottedBorder.dart';
 
 class PickMultiplePhoto extends StatelessWidget {
@@ -15,6 +14,9 @@ class PickMultiplePhoto extends StatelessWidget {
   final String mainTitle;
   final String? starRemove;
 
+  /// NEW: callback for removing a file
+  final void Function(int index)? onRemoveFile;
+
   const PickMultiplePhoto({
     super.key,
     required this.onPressedPickImage,
@@ -26,6 +28,7 @@ class PickMultiplePhoto extends StatelessWidget {
     required this.files,
     required this.mainTitle,
     this.starRemove,
+    this.onRemoveFile, // ✅ added
   });
 
   @override
@@ -180,10 +183,9 @@ class PickMultiplePhoto extends StatelessWidget {
                         top: 0,
                         child: GestureDetector(
                           onTap: () {
-                            // remove file via cubit
-                            context
-                                .read<EducationDocsFileCubit>()
-                                .removeFileAt(index);
+                            if (onRemoveFile != null) {
+                              onRemoveFile!(index);
+                            }
                           },
                           child: Container(
                             decoration: const BoxDecoration(

@@ -53,118 +53,124 @@ class _DrivingDocUpdateState extends State<DrivingDocUpdate> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
-        child: BlocBuilder<DrivingLicenceShowDataCubit,
-            DrivingLicenceShowDataState>(builder: (context, showData) {
-          if (showData is DrivingLicenceShowDataLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (showData is DrivingLicenceShowDataErrorState) {
-            return Center(
-              child: Text(showData.message),
-            );
-          } else if (showData is DrivingLicenceShowDataSuccessState) {
-            DrivingLicenceShowDataModel data =
-                showData.drivingLicenceShowDataModel;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Driving Licence Verification",
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: Theme.of(context).primaryColorDark),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Text(
-                  "Driving Licence Verification Remark:",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.red),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  data.data!.reason!,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(color: Colors.red),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                BlocBuilder<DriverDocFileUpload, File>(
-                    builder: (context, docUpload) {
-                  return PickPhotoUpdate(
-                    widthSize: double.infinity,
-                    onPressedPickImage: () {
-                      context.read<DriverDocFileUpload>().pickFile().then((_) {
-                        context.pop();
-                      });
-                    },
-                    onPressedTakePhoto: () {
-                      context
-                          .read<DriverDocFileUpload>()
-                          .pickImageFromCamera()
-                          .then((_) {
-                        context.pop();
-                      });
-                    },
-                    title: 'Driving Licence Documents',
-                    image: docUpload,
-                    mainTitle: "Driving Licence Documents",
-                    uploadImage: data.data!.dataDocument!,
-                  );
-                }),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text("Note : Upload Driving Licence Image/Documents"),
-                const SizedBox(
-                  height: 24,
-                ),
-                BlocConsumer<DrivingDocUpdateCubit, DrivingDocUpdateState>(
-                  listener: (context, upload) {
-                    if (upload is DrivingDocUpdateErrorState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(upload.message)));
-                    } else if (upload is DrivingDocUpdateSuccessState) {
-                      if (upload.data["status"] == 200) {
-                        context.pushReplacementNamed("bottomNav");
+    return WillPopScope(
+      onWillPop: () async {
+        context.read<DriverDocFileUpload>().clearImage();
+        return true;
+      },
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
+          child: BlocBuilder<DrivingLicenceShowDataCubit,
+              DrivingLicenceShowDataState>(builder: (context, showData) {
+            if (showData is DrivingLicenceShowDataLoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (showData is DrivingLicenceShowDataErrorState) {
+              return Center(
+                child: Text(showData.message),
+              );
+            } else if (showData is DrivingLicenceShowDataSuccessState) {
+              DrivingLicenceShowDataModel data =
+                  showData.drivingLicenceShowDataModel;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Driving Licence Verification",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Theme.of(context).primaryColorDark),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Text(
+                    "Driving Licence Verification Remark:",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Colors.red),
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    data.data!.reason!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: Colors.red),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  BlocBuilder<DriverDocFileUpload, File>(
+                      builder: (context, docUpload) {
+                    return PickPhotoUpdate(
+                      widthSize: double.infinity,
+                      onPressedPickImage: () {
+                        context.read<DriverDocFileUpload>().pickFile().then((_) {
+                          context.pop();
+                        });
+                      },
+                      onPressedTakePhoto: () {
+                        context
+                            .read<DriverDocFileUpload>()
+                            .pickImageFromCamera()
+                            .then((_) {
+                          context.pop();
+                        });
+                      },
+                      title: 'Driving Licence Documents',
+                      image: docUpload,
+                      mainTitle: "Driving Licence Documents",
+                      uploadImage: data.data!.dataDocument!,
+                    );
+                  }),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  const Text("Note : Upload Driving Licence Image/Documents"),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  BlocConsumer<DrivingDocUpdateCubit, DrivingDocUpdateState>(
+                    listener: (context, upload) {
+                      if (upload is DrivingDocUpdateErrorState) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(upload.message)));
+                      } else if (upload is DrivingDocUpdateSuccessState) {
+                        if (upload.data["status"] == 200) {
+                          context.pushReplacementNamed("bottomNav");
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(upload.data["message"])));
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(upload.data["message"])));
-                    }
-                  },
-                  builder: (context, upload) {
-                    return CustomButton(
-                        isLoading: upload is DrivingDocUpdateLoadingState,
-                        gradientColors: [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColorDark
-                        ],
-                        onTap: () {
-                          driverDocFileUpdate();
-                        },
-                        text: "SUBMIT");
-                  },
-                ),
-              ],
+                    },
+                    builder: (context, upload) {
+                      return CustomButton(
+                          isLoading: upload is DrivingDocUpdateLoadingState,
+                          gradientColors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).primaryColorDark
+                          ],
+                          onTap: () {
+                            driverDocFileUpdate();
+                          },
+                          text: "SUBMIT");
+                    },
+                  ),
+                ],
+              );
+            }
+            return const Center(
+              child: Text("Error..."),
             );
-          }
-          return const Center(
-            child: Text("Error..."),
-          );
-        }),
+          }),
+        ),
       ),
     );
   }

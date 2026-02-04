@@ -81,6 +81,7 @@ class _EducationDocumentUploadState extends State<EducationDocumentUpload> {
                           context.pop();
                         });
                       },
+                      onRemoveFile: (index) { context.read<EducationDocsFileCubit>().removeFileAt(index); },
                       // Pass the list of files instead of a single File
                       files: uploadDocs,
                     );

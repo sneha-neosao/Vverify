@@ -71,240 +71,250 @@ class _MumbaiDocUpdateState extends State<MumbaiDocUpdate> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 50),
-        child: SingleChildScrollView(child:
-            BlocBuilder<MumbaiDocShowDataCubit, MumbaiDocShowDataState>(
-                builder: (context, mumbaiDocData) {
-          if (mumbaiDocData is MumbaiDocShowDataLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (mumbaiDocData is MumbaiDocShowDataErrorState) {
-            return Center(
-              child: Text(mumbaiDocData.message),
-            );
-          } else if (mumbaiDocData is MumbaiDocShowDataSuccessState) {
-            MumbaiDocShowDataModel data = mumbaiDocData.mumbaiDocShowDataModel;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Police Verification For Mumbai",
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: Theme.of(context).primaryColorDark,
-                      ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Text(
-                  "Mumbai Police Verification Remark:",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.red),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  data.data!.reason!,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(color: Colors.red),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                BlocBuilder<UploadDocumentMumbai, File>(
-                    builder: (context, documents) {
-                  return PickPhotoUpdate(
-                    widthSize: double.infinity,
-                    onPressedPickImage: () {
-                      context.pop();
-                      context.read<UploadDocumentMumbai>().pickFile();
-                    },
-                    onPressedTakePhoto: () {
-                      context.pop();
-                      context
-                          .read<UploadDocumentMumbai>()
-                          .pickImageFromCamera();
-                    },
-                    title: "Documents Upload",
-                    image: documents,
-                    mainTitle: "Upload Documents",
-                    uploadImage: data.data!.dataDocument!,
-                  );
-                }),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text(
-                    "Note : Download sample pdf fill the data and upload."),
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    BlocBuilder<UploadDocumentMumbaiOwnerPhoto, File>(
-                        builder: (context, tenantPhoto) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          PickPhotoUpdate(
-                            mainTitle: "Property Owner Photo",
-                            widthSize: ScreenSize.screenWidth / 2.5,
-                            title: "Property Owner Photo",
-                            onPressedPickImage: () {
-                              context.pop();
-                              context
-                                  .read<UploadDocumentMumbaiOwnerPhoto>()
-                                  .pickImageFromGallery();
-                            },
-                            onPressedTakePhoto: () {
-                              context.pop();
-                              context
-                                  .read<UploadDocumentMumbaiOwnerPhoto>()
-                                  .pickImageFromCamera();
-                            },
-                            image: tenantPhoto,
-                            uploadImage: data.data!.ownerPhoto!,
-                          )
-                        ],
-                      );
-                    }),
-                    BlocBuilder<UploadDocumentMumbaiTenantPhoto, File>(
-                        builder: (context, signaturePhoto) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          PickPhotoUpdate(
-                            mainTitle: "Tenant Photo",
-                            widthSize: ScreenSize.screenWidth / 2.5,
-                            title: "Tenant Photo",
-                            onPressedPickImage: () {
-                              context.pop();
-                              context
-                                  .read<UploadDocumentMumbaiTenantPhoto>()
-                                  .pickImageFromGallery();
-                            },
-                            onPressedTakePhoto: () {
-                              context.pop();
-                              context
-                                  .read<UploadDocumentMumbaiTenantPhoto>()
-                                  .pickImageFromCamera();
-                            },
-                            image: signaturePhoto,
-                            uploadImage: data.data!.tenantPhoto!,
-                          )
-                        ],
-                      );
-                    }),
-                  ],
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                BlocBuilder<UploadDocumentMumbaiTenantIdentityProof, File>(
-                    builder: (context, identityProof) {
-                  return PickPhotoUpdate(
-                    mainTitle: "Tenant's Identity Proof",
-                    widthSize: double.infinity,
-                    title: "Tenant's Identity Proof",
-                    onPressedPickImage: () {
-                      context.pop();
-                      context
-                          .read<UploadDocumentMumbaiTenantIdentityProof>()
-                          .pickFile();
-                    },
-                    onPressedTakePhoto: () {
-                      context.pop();
-                      context
-                          .read<UploadDocumentMumbaiTenantIdentityProof>()
-                          .pickImageFromCamera();
-                    },
-                    image: identityProof,
-                    uploadImage: data.data!.tenantIdentityProofDoc!,
-                  );
-                }),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text(
-                    "Note : Upload Aadhaar Card, Pan Card, Passport, Voter Id"),
-                const SizedBox(height: 16),
-                BlocBuilder<UploadDocumentMumbaiTenantSignature, File>(
-                    builder: (context, companyLetter) {
-                  return PickPhotoUpdate(
-                    isSign: true,
-                    addSign: () {
-                      context.pop();
-                      context.pushNamed("SignatureScreen");
-                    },
-                    mainTitle: "Tenant Signature Photo",
-                    widthSize: double.infinity,
-                    title: "Tenant Signature Photo",
-                    onPressedPickImage: () {
-                      context.pop();
-                      context
-                          .read<UploadDocumentMumbaiTenantSignature>()
-                          .pickFile();
-                    },
-                    onPressedTakePhoto: () {
-                      context.pop();
-                      context
-                          .read<UploadDocumentMumbaiTenantSignature>()
-                          .pickImageFromCamera();
-                    },
-                    image: signImage != null ? signImage! : companyLetter,
-                    uploadImage: data.data!.tenantSignature!,
-                  );
-                }),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Text("Note : Upload tenant signature photo"),
-                const SizedBox(
-                  height: 24,
-                ),
-                BlocConsumer<MumbaiDocUpdateCubit, MumbaiDocUpdateState>(
-                    listener: (context, updateDoc) {
-                  if (updateDoc is MumbaiDocUpdateSuccessState) {
-                    if (updateDoc.data["status"] == 200) {
-                      context.pushNamed("bottomNav");
-                      pickImageClear();
-                    }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(updateDoc.data["message"])));
-                  } else if (updateDoc is MumbaiDocUpdateErrorState) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(updateDoc.message)));
-                  }
-                }, builder: (context, uploadDocument) {
-                  return CustomButton(
-                    isLoading: uploadDocument is MumbaiDocUpdateLoadingState,
-                    onTap: () {
-                      updateDocuments();
-                    },
-                    text: "SUBMIT",
-                    gradientColors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColorDark
+    return WillPopScope(
+      onWillPop: () async {
+        context.read<UploadDocumentMumbaiTenantPhoto>().clearImage();
+        context.read<UploadDocumentMumbaiTenantSignature>().clearImage();
+        context.read<UploadDocumentMumbaiTenantIdentityProof>().clearImage();
+        context.read<UploadDocumentMumbai>().clearImage();
+        context.read<UploadDocumentMumbaiOwnerPhoto>().clearImage();
+        return true;
+      },
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 50),
+          child: SingleChildScrollView(child:
+              BlocBuilder<MumbaiDocShowDataCubit, MumbaiDocShowDataState>(
+                  builder: (context, mumbaiDocData) {
+            if (mumbaiDocData is MumbaiDocShowDataLoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (mumbaiDocData is MumbaiDocShowDataErrorState) {
+              return Center(
+                child: Text(mumbaiDocData.message),
+              );
+            } else if (mumbaiDocData is MumbaiDocShowDataSuccessState) {
+              MumbaiDocShowDataModel data = mumbaiDocData.mumbaiDocShowDataModel;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Police Verification For Mumbai",
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Theme.of(context).primaryColorDark,
+                        ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Text(
+                    "Mumbai Police Verification Remark:",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Colors.red),
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    data.data!.reason!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: Colors.red),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  BlocBuilder<UploadDocumentMumbai, File>(
+                      builder: (context, documents) {
+                    return PickPhotoUpdate(
+                      widthSize: double.infinity,
+                      onPressedPickImage: () {
+                        context.pop();
+                        context.read<UploadDocumentMumbai>().pickFile();
+                      },
+                      onPressedTakePhoto: () {
+                        context.pop();
+                        context
+                            .read<UploadDocumentMumbai>()
+                            .pickImageFromCamera();
+                      },
+                      title: "Documents Upload",
+                      image: documents,
+                      mainTitle: "Upload Documents",
+                      uploadImage: data.data!.dataDocument!,
+                    );
+                  }),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  const Text(
+                      "Note : Download sample pdf fill the data and upload."),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      BlocBuilder<UploadDocumentMumbaiOwnerPhoto, File>(
+                          builder: (context, tenantPhoto) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PickPhotoUpdate(
+                              mainTitle: "Property Owner Photo",
+                              widthSize: ScreenSize.screenWidth / 2.5,
+                              title: "Property Owner Photo",
+                              onPressedPickImage: () {
+                                context.pop();
+                                context
+                                    .read<UploadDocumentMumbaiOwnerPhoto>()
+                                    .pickImageFromGallery();
+                              },
+                              onPressedTakePhoto: () {
+                                context.pop();
+                                context
+                                    .read<UploadDocumentMumbaiOwnerPhoto>()
+                                    .pickImageFromCamera();
+                              },
+                              image: tenantPhoto,
+                              uploadImage: data.data!.ownerPhoto!,
+                            )
+                          ],
+                        );
+                      }),
+                      BlocBuilder<UploadDocumentMumbaiTenantPhoto, File>(
+                          builder: (context, signaturePhoto) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PickPhotoUpdate(
+                              mainTitle: "Tenant Photo",
+                              widthSize: ScreenSize.screenWidth / 2.5,
+                              title: "Tenant Photo",
+                              onPressedPickImage: () {
+                                context.pop();
+                                context
+                                    .read<UploadDocumentMumbaiTenantPhoto>()
+                                    .pickImageFromGallery();
+                              },
+                              onPressedTakePhoto: () {
+                                context.pop();
+                                context
+                                    .read<UploadDocumentMumbaiTenantPhoto>()
+                                    .pickImageFromCamera();
+                              },
+                              image: signaturePhoto,
+                              uploadImage: data.data!.tenantPhoto!,
+                            )
+                          ],
+                        );
+                      }),
                     ],
-                  );
-                }),
-                const SizedBox(height: 16)
-              ],
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  BlocBuilder<UploadDocumentMumbaiTenantIdentityProof, File>(
+                      builder: (context, identityProof) {
+                    return PickPhotoUpdate(
+                      mainTitle: "Tenant's Identity Proof",
+                      widthSize: double.infinity,
+                      title: "Tenant's Identity Proof",
+                      onPressedPickImage: () {
+                        context.pop();
+                        context
+                            .read<UploadDocumentMumbaiTenantIdentityProof>()
+                            .pickFile();
+                      },
+                      onPressedTakePhoto: () {
+                        context.pop();
+                        context
+                            .read<UploadDocumentMumbaiTenantIdentityProof>()
+                            .pickImageFromCamera();
+                      },
+                      image: identityProof,
+                      uploadImage: data.data!.tenantIdentityProofDoc!,
+                    );
+                  }),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  const Text(
+                      "Note : Upload Aadhaar Card, Pan Card, Passport, Voter Id"),
+                  const SizedBox(height: 16),
+                  BlocBuilder<UploadDocumentMumbaiTenantSignature, File>(
+                      builder: (context, companyLetter) {
+                    return PickPhotoUpdate(
+                      isSign: true,
+                      addSign: () {
+                        context.pop();
+                        context.pushNamed("SignatureScreen");
+                      },
+                      mainTitle: "Tenant Signature Photo",
+                      widthSize: double.infinity,
+                      title: "Tenant Signature Photo",
+                      onPressedPickImage: () {
+                        context.pop();
+                        context
+                            .read<UploadDocumentMumbaiTenantSignature>()
+                            .pickFile();
+                      },
+                      onPressedTakePhoto: () {
+                        context.pop();
+                        context
+                            .read<UploadDocumentMumbaiTenantSignature>()
+                            .pickImageFromCamera();
+                      },
+                      image: signImage != null ? signImage! : companyLetter,
+                      uploadImage: data.data!.tenantSignature!,
+                    );
+                  }),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  const Text("Note : Upload tenant signature photo"),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  BlocConsumer<MumbaiDocUpdateCubit, MumbaiDocUpdateState>(
+                      listener: (context, updateDoc) {
+                    if (updateDoc is MumbaiDocUpdateSuccessState) {
+                      if (updateDoc.data["status"] == 200) {
+                        context.pushNamed("bottomNav");
+                        pickImageClear();
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(updateDoc.data["message"])));
+                    } else if (updateDoc is MumbaiDocUpdateErrorState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(updateDoc.message)));
+                    }
+                  }, builder: (context, uploadDocument) {
+                    return CustomButton(
+                      isLoading: uploadDocument is MumbaiDocUpdateLoadingState,
+                      onTap: () {
+                        updateDocuments();
+                      },
+                      text: "SUBMIT",
+                      gradientColors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColorDark
+                      ],
+                    );
+                  }),
+                  const SizedBox(height: 16)
+                ],
+              );
+            }
+            return const Center(
+              child: Text("Error..."),
             );
-          }
-          return const Center(
-            child: Text("Error..."),
-          );
-        })),
+          })),
+        ),
       ),
     );
   }

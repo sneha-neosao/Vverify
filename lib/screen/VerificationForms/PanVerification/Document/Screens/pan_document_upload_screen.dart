@@ -142,6 +142,7 @@ class _PanDocumentUploadState extends State<PanDocumentUpload> {
                           context.pop();
                         });
                       },
+                      onRemoveFile: (index) { context.read<PanDocsFileCubit>().removeFileAt(index); },
                       // Pass the list of files instead of a single File
                       files: uploadDocs,
                     );

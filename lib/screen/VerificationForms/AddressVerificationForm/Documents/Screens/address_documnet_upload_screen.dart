@@ -81,6 +81,7 @@ class _AddressDocumentUploadState extends State<AddressDocumentUpload> {
                           context.pop();
                         });
                       },
+                      onRemoveFile: (index) { context.read<AddressDocsFileCubit>().removeFileAt(index); },
                       // Pass the list of files instead of a single File
                       files: uploadDocs,
                     );
