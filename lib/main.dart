@@ -337,8 +337,7 @@ class MyApp extends StatelessWidget {
             create: (_) => VerifyRequestReportCubit(ApiService())),
         BlocProvider<PanDocsUploadCubitNew>(
             create: (_) => PanDocsUploadCubitNew(ApiService())),
-        BlocProvider<PanDocsFileCubit>(
-            create: (_) => PanDocsFileCubit()),
+        BlocProvider<PanDocsFileCubit>(create: (_) => PanDocsFileCubit()),
         BlocProvider<PanDocsUpdateCubitNew>(
             create: (_) => PanDocsUpdateCubitNew(ApiService())),
         BlocProvider<PanDocsUpdateFileCubit>(

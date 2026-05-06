@@ -10,6 +10,8 @@ class CustomButton extends StatelessWidget {
   final double? height; 
   final IconData? prefixIcon; 
   final IconData? suffixIcon; 
+  final Color? iconColor;
+  final double? iconSize;
   final Color? borderColor; 
   final double? borderWidth;
   final TextStyle? textStyle; 
@@ -25,6 +27,8 @@ class CustomButton extends StatelessWidget {
     this.height, 
     this.prefixIcon, 
     this.suffixIcon, 
+    this.iconColor,
+    this.iconSize,
     this.borderColor, 
     this.borderWidth, 
     this.textStyle,
@@ -79,7 +83,7 @@ class CustomButton extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (prefixIcon != null) ...[
-                      Icon(prefixIcon, color: Colors.white),
+                      Icon(prefixIcon, color: iconColor ?? Colors.white, size: iconSize),
                       const SizedBox(width: 8), // Space between prefix icon and text
                     ],
                     Text(
@@ -95,7 +99,7 @@ class CustomButton extends StatelessWidget {
                     ),
                     if (suffixIcon != null) ...[
                       const SizedBox(width: 8), // Space between text and suffix icon
-                      Icon(suffixIcon, color: Colors.white),
+                      Icon(suffixIcon, color: iconColor ?? Colors.white, size: iconSize),
                     ],
                   ],
                 ),

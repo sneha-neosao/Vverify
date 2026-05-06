@@ -140,26 +140,37 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
             ),
             BlocProvider(
               create: (_) => TimerCubit()..startTimer(),
-              child: BlocBuilder<TimerCubit, int>(builder: (context, timer) {
-                return RichText(
-                  text: TextSpan(
-                    text: 'We will resend the code in ',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    children: <TextSpan>[
-                      timer == 0
-                          ? TextSpan(
-                              text: 'Resend OTP',
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400))
-                          : TextSpan(
-                              text: '$timer s',
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400)),
-                    ],
+              child: BlocBuilder<TimerCubit, int>(builder: (timerContext, timer) {
+                return GestureDetector(
+                  onTap: timer == 0
+                      ? () {
+                          context
+                              .read<OtpVerifyCubit>()
+                              .resendOtp(mobileNumber: widget.mobileNum);
+                          timerContext.read<TimerCubit>().resetTimer();
+                          timerContext.read<TimerCubit>().startTimer();
+                        }
+                      : null,
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'We will resend the code in ',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      children: <TextSpan>[
+                        timer == 0
+                            ? TextSpan(
+                                text: 'Resend OTP',
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColorLight,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400))
+                            : TextSpan(
+                                text: '$timer s',
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColorLight,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400)),
+                      ],
+                    ),
                   ),
                 );
               }),
@@ -184,12 +195,23 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(data.message.toString())));
                 }
+              } else if (otpVerify is ResendOtpSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(otpVerify.message)));
+              } else if (otpVerify is ResendOtpError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(otpVerify.errorMessage)));
               }
             }, builder: (context, otpVerify) {
               return CustomButton(
                 isLoading: otpVerify is OtpVerifyLoading,
                 onTap: () {
-                  userOtpVerify(otpController.text);
+                  if (otpController.text.length == 6) {
+                    userOtpVerify(otpController.text);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please enter 6-digit OTP')));
+                  }
                 },
                 text: "Verify",
                 gradientColors: [

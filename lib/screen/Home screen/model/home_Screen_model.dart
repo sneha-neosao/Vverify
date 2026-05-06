@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final homeScreenModel = homeScreenModelFromJson(jsonString);
-
 import 'dart:convert';
 
 HomeScreenModel homeScreenModelFromJson(String str) => HomeScreenModel.fromJson(json.decode(str));
@@ -11,7 +7,7 @@ String homeScreenModelToJson(HomeScreenModel data) => json.encode(data.toJson())
 class HomeScreenModel {
   int? status;
   String? message;
-  List<Entity>? data;
+  List<HomeScreenData>? data;
 
   HomeScreenModel({
     this.status,
@@ -22,7 +18,7 @@ class HomeScreenModel {
   factory HomeScreenModel.fromJson(Map<String, dynamic> json) => HomeScreenModel(
     status: json["status"],
     message: json["message"],
-    data: json["data"] == null ? [] : List<Entity>.from(json["data"]!.map((x) => Entity.fromJson(x))),
+    data: json["data"] == null ? [] : List<HomeScreenData>.from(json["data"]!.map((x) => HomeScreenData.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -32,26 +28,58 @@ class HomeScreenModel {
   };
 }
 
-class Entity {
+class HomeScreenData {
   int? id;
-  String? entityName;
-  String? entityIcon;
+  String? title;
+  List<Entity>? entities;
 
-  Entity({
+  HomeScreenData({
     this.id,
-    this.entityName,
-    this.entityIcon,
+    this.title,
+    this.entities,
   });
 
-  factory Entity.fromJson(Map<String, dynamic> json) => Entity(
+  factory HomeScreenData.fromJson(Map<String, dynamic> json) => HomeScreenData(
     id: json["id"],
-    entityName: json["entity_name"],
-    entityIcon: json["entity_icon"],
+    title: json["title"],
+    entities: json["entities"] == null ? [] : List<Entity>.from(json["entities"]!.map((x) => Entity.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
+    "title": title,
+    "entities": entities == null ? [] : List<dynamic>.from(entities!.map((x) => x.toJson())),
+  };
+}
+
+class Entity {
+  int? id;
+  int? groupId;
+  String? entityName;
+  String? entityIcon;
+  String? entityDescription;
+
+  Entity({
+    this.id,
+    this.groupId,
+    this.entityName,
+    this.entityIcon,
+    this.entityDescription,
+  });
+
+  factory Entity.fromJson(Map<String, dynamic> json) => Entity(
+    id: json["id"],
+    groupId: json["group_id"],
+    entityName: json["entity_name"],
+    entityIcon: json["entity_icon"],
+    entityDescription: json["entity_description"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "group_id": groupId,
     "entity_name": entityName,
     "entity_icon": entityIcon,
+    "entity_description": entityDescription,
   };
 }

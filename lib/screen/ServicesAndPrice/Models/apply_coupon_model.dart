@@ -33,12 +33,16 @@ class ApplyCouponModel {
 
 class ApplyCouponResult {
   String? subtotal;
+  String? taxPercent;
+  String? taxTotal;
   String? discountApplied;
   String? finalAmount;
   CouponDetails? couponDetails;
 
   ApplyCouponResult({
     this.subtotal,
+    this.taxPercent,
+    this.taxTotal,
     this.discountApplied,
     this.finalAmount,
     this.couponDetails,
@@ -47,6 +51,8 @@ class ApplyCouponResult {
   factory ApplyCouponResult.fromJson(Map<String, dynamic> json) =>
       ApplyCouponResult(
         subtotal: json["subtotal"],
+        taxPercent: json["tax_percent"],
+        taxTotal: json["tax_total"],
         discountApplied: json["discountApplied"],
         finalAmount: json["finalAmount"],
         couponDetails: json["couponDetails"] == null
@@ -56,6 +62,8 @@ class ApplyCouponResult {
 
   Map<String, dynamic> toJson() => {
     "subtotal": subtotal,
+    "tax_percent": taxPercent,
+    "tax_total": taxTotal,
     "discountApplied": discountApplied,
     "finalAmount": finalAmount,
     "couponDetails": couponDetails?.toJson(),

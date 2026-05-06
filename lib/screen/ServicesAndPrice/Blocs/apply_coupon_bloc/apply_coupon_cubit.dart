@@ -9,37 +9,33 @@ class ApplyCouponCubit extends Cubit<ApplyCouponState> {
   ApplyCouponCubit(this._apiService)
       : super(ApplyCouponInitialState());
 
-  void applyCoupon(
-      {
-        required String token,
-        required String customer_id,
-        required String subtotal,
-        required String coupon_code
-      }) async {
+  void applyCoupon({
+    required String token,
+    String? coupon_code,
+    required List<Map<String, dynamic>> items,
+  }) async {
     emit(ApplyCouponLoadingState());
     try {
-      final response = await _apiService.applyCoupon(
+      final response = await _apiService.calculateAmount(
         token: token,
-        customer_id: customer_id,
-        subtotal: subtotal,
         coupon_code: coupon_code,
+        items: items,
       );
       if (response.data != null && response.data.containsKey("status")) {
         if (response.data["status"] == 200) {
-          ApplyCouponModel applyCouponModel = ApplyCouponModel.fromJson(response.data);
+          ApplyCouponModel applyCouponModel =
+              ApplyCouponModel.fromJson(response.data);
           emit(ApplyCouponSuccessState(applyCouponModel));
-        } else if (response.data["status"] == 500) {
+        } else {
           final errorMessage =
               response.data['message'] ?? 'Unknown error occurred.';
           emit(ApplyCouponErrorState(errorMessage));
-        } else {
-          emit(ApplyCouponErrorState('${response.data["message"]}'));
         }
       } else {
         emit(ApplyCouponErrorState('Invalid response data.'));
       }
     } catch (e) {
-      emit(ApplyCouponErrorState('An error occurred:$e'));
+      emit(ApplyCouponErrorState('An error occurred: $e'));
     }
   }
 }

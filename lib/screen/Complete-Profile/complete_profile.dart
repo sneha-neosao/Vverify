@@ -34,12 +34,18 @@ class _CompleteProfileState extends State<CompleteProfile> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController companyNameController = TextEditingController();
   final TextEditingController companyHrController = TextEditingController();
-  final TextEditingController companyHrNumberController = TextEditingController();
+  final TextEditingController companyHrNumberController =
+      TextEditingController();
   final TextEditingController companyEmailController = TextEditingController();
-  final TextEditingController companyAddressController = TextEditingController();
+  final TextEditingController companyAddressController =
+      TextEditingController();
+
+  bool agreeTerms = false;
+  bool agreePrivacy = false;
+  bool agreeRefund = false;
 
   String? selectedPrefix = 'Mr.';
-  List<String> prefixValues = <String>[ 'Mr.','Mrs.','Ms.'];
+  List<String> prefixValues = <String>['Mr.', 'Ms.', 'Mrs.'];
 
   final _formKey = GlobalKey<FormState>();
 
@@ -59,9 +65,9 @@ class _CompleteProfileState extends State<CompleteProfile> {
       required String salutation
       // File? profilePhoto
       }) async {
-
     final String mobileNumberToSend = userType == "1" ? widget.mobileNum : "";
-    final String hrNumberToSend = userType == "2" ? widget.mobileNum : companyHrNumber;
+    final String hrNumberToSend =
+        userType == "2" ? widget.mobileNum : companyHrNumber;
 
     // ✅ Print all values before sending to API print("Sending to API:");
     print("First Name: $firstName");
@@ -91,7 +97,7 @@ class _CompleteProfileState extends State<CompleteProfile> {
             companyAddress: companyAddress,
             salutation: selectedPrefix ?? ""
             // profilePhoto: profilePhoto
-    )
+            )
         .then((_) {});
   }
 
@@ -280,17 +286,17 @@ class _CompleteProfileState extends State<CompleteProfile> {
                               .textTheme
                               .bodySmall!
                               .copyWith(fontWeight: FontWeight.w700),
-                        children: [
-                          TextSpan(
-                            text: " * ",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-                          ),
-                        ]
-                      )
-                  ),
+                          children: [
+                        TextSpan(
+                          text: " * ",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.red),
+                        ),
+                      ])),
                   const SizedBox(
                     height: 16,
                   ),
@@ -310,15 +316,14 @@ class _CompleteProfileState extends State<CompleteProfile> {
                                     vertical: 12, horizontal: 8)),
                             foregroundColor:
                                 WidgetStateProperty.all<Color>(Colors.grey),
-                            shape:
-                                WidgetStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        side: BorderSide(
-                                            color: individual
-                                                ? Theme.of(context)
-                                                    .primaryColorDark
-                                                : Colors.grey)))),
+                            shape: WidgetStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    side: BorderSide(
+                                        color: individual
+                                            ? Theme.of(context).primaryColorDark
+                                            : Colors.grey)))),
                         onPressed: () {
                           setState(() {
                             broker = false;
@@ -350,15 +355,14 @@ class _CompleteProfileState extends State<CompleteProfile> {
                             //backgroundColor:WidgetStateProperty.all<Color>(Colors.grey) ,
                             foregroundColor:
                                 WidgetStateProperty.all<Color>(Colors.grey),
-                            shape:
-                                WidgetStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        side: BorderSide(
-                                            color: broker
-                                                ? Theme.of(context)
-                                                    .primaryColorDark
-                                                : Colors.grey)))),
+                            shape: WidgetStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    side: BorderSide(
+                                        color: broker
+                                            ? Theme.of(context).primaryColorDark
+                                            : Colors.grey)))),
                         onPressed: () {
                           setState(() {
                             individual = false;
@@ -375,153 +379,195 @@ class _CompleteProfileState extends State<CompleteProfile> {
                       ),
                     ],
                   ),
-                  if( broker == false && individual == true)
-                  Column(
-                    children: [
-                      CustomRequiredTextField(
-                          controller: firstNameController,
-                          titleText: "First Name",
-                          hintText: "Enter First Name",
-                          textInputType: TextInputType.text
-                      ),
-                      CustomRequiredTextField(
-                          controller: lastNameController,
-                          titleText: "Last Name",
-                          hintText: "Enter Last Name",
-                          textInputType: TextInputType.text
-                      ),
-                      CustomRequiredTextField(
-                          validator: validateMobile,
-                          readOnly: true,
-                          controller: TextEditingController(text: widget.mobileNum), // bind here
-                          titleText: "Mobile Number",
-                          hintText: "Enter Last Name",
-                          textInputType: TextInputType.text
-                      ),
-                      CustomRequiredTextField(
-                          validator: validateEmail,
-                          controller: emailController,
-                          titleText: "Email Address",
-                          hintText: "Enter Email Address",
-                          textInputType: TextInputType.text
-                      ),
-                    ],
-                  ),
-                  if( broker == true && individual == false)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomRequiredTextField(
-                          controller: companyNameController,
-                          titleText: "Company Name",
-                          hintText: "Enter Company Name",
-                          textInputType: TextInputType.text
-                      ),
-                      // const SizedBox(
-                      //   height: 16,
-                      // ),
-                      // RichText(
-                      //     text: TextSpan(
-                      //       text: "Salutation",
-                      //       style: Theme.of(context)
-                      //           .textTheme
-                      //           .bodySmall!
-                      //           .copyWith(fontWeight: FontWeight.w700),
-                      //     )),
-                      // const SizedBox(
-                      //   height: 4,
-                      // ),
-                      // SizedBox(
-                      //   height: 54,
-                      //   child: Theme(
-                      //     data: Theme.of(context).copyWith( highlightColor: Colors.black, ),
-                      //     child: DropdownButtonFormField<String>(
-                      //       value: prefixValues.contains(selectedPrefix) ? selectedPrefix : null,
-                      //       hint: Text(
-                      //         "Select Salutation",
-                      //         style: Theme.of(context)
-                      //             .textTheme
-                      //             .bodySmall!
-                      //             .copyWith(color: Colors.grey),
-                      //       ),
-                      //       onChanged: (String? value) {
-                      //         setState(() {
-                      //           selectedPrefix = value!.toLowerCase();
-                      //         });
-                      //       },
-                      //       items: prefixValues.map((String value) {
-                      //         return DropdownMenuItem<String>(
-                      //           value: value,
-                      //           child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
-                      //         );
-                      //       }).toList(),
-                      //       dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-                      //       decoration: InputDecoration(
-                      //         contentPadding:
-                      //         const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
-                      //         enabledBorder: OutlineInputBorder(
-                      //           borderRadius: BorderRadius.circular(8),
-                      //           borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-                      //         ),
-                      //         focusedBorder: OutlineInputBorder(
-                      //           borderRadius: BorderRadius.circular(8),
-                      //           borderSide:
-                      //           BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
-                      //         ),
-                      //         border: OutlineInputBorder(
-                      //           borderRadius: BorderRadius.circular(8),
-                      //           borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
-                      //         ),
-                      //         filled: true,
-                      //         fillColor: Theme.of(context).scaffoldBackgroundColor,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      // CustomRequiredTextField(
-                      //     controller: companyHrController,
-                      //     titleText: "Company Person / HR Name",
-                      //     hintText: "Enter Person / HR Name",
-                      //     textInputType: TextInputType.text
-                      // ),
-                      CustomSalutationTextField(
+                  if (broker == false && individual == true)
+                    Column(
+                      children: [
+                        CustomRequiredTextField(
+                            controller: firstNameController,
+                            titleText: "First Name",
+                            hintText: "Enter First Name",
+                            textInputType: TextInputType.text),
+                        CustomRequiredTextField(
+                            controller: lastNameController,
+                            titleText: "Last Name",
+                            hintText: "Enter Last Name",
+                            textInputType: TextInputType.text),
+                        CustomRequiredTextField(
+                            validator: validateMobile,
+                            readOnly: true,
+                            controller: TextEditingController(
+                                text: widget.mobileNum), // bind here
+                            titleText: "Mobile Number",
+                            hintText: "Enter Last Name",
+                            textInputType: TextInputType.text),
+                        CustomRequiredTextField(
+                            validator: validateEmail,
+                            controller: emailController,
+                            titleText: "Email Address",
+                            hintText: "Enter Email Address",
+                            textInputType: TextInputType.text),
+                      ],
+                    ),
+                  if (broker == true && individual == false)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomRequiredTextField(
+                            controller: companyNameController,
+                            titleText: "Company Name",
+                            hintText: "Enter Company Name",
+                            textInputType: TextInputType.text),
+                        // const SizedBox(
+                        //   height: 16,
+                        // ),
+                        // RichText(
+                        //     text: TextSpan(
+                        //       text: "Salutation",
+                        //       style: Theme.of(context)
+                        //           .textTheme
+                        //           .bodySmall!
+                        //           .copyWith(fontWeight: FontWeight.w700),
+                        //     )),
+                        // const SizedBox(
+                        //   height: 4,
+                        // ),
+                        // SizedBox(
+                        //   height: 54,
+                        //   child: Theme(
+                        //     data: Theme.of(context).copyWith( highlightColor: Colors.black, ),
+                        //     child: DropdownButtonFormField<String>(
+                        //       value: prefixValues.contains(selectedPrefix) ? selectedPrefix : null,
+                        //       hint: Text(
+                        //         "Select Salutation",
+                        //         style: Theme.of(context)
+                        //             .textTheme
+                        //             .bodySmall!
+                        //             .copyWith(color: Colors.grey),
+                        //       ),
+                        //       onChanged: (String? value) {
+                        //         setState(() {
+                        //           selectedPrefix = value!.toLowerCase();
+                        //         });
+                        //       },
+                        //       items: prefixValues.map((String value) {
+                        //         return DropdownMenuItem<String>(
+                        //           value: value,
+                        //           child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
+                        //         );
+                        //       }).toList(),
+                        //       dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+                        //       decoration: InputDecoration(
+                        //         contentPadding:
+                        //         const EdgeInsets.symmetric(horizontal: 18.0, vertical: 14.0),
+                        //         enabledBorder: OutlineInputBorder(
+                        //           borderRadius: BorderRadius.circular(8),
+                        //           borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+                        //         ),
+                        //         focusedBorder: OutlineInputBorder(
+                        //           borderRadius: BorderRadius.circular(8),
+                        //           borderSide:
+                        //           BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                        //         ),
+                        //         border: OutlineInputBorder(
+                        //           borderRadius: BorderRadius.circular(8),
+                        //           borderSide: BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+                        //         ),
+                        //         filled: true,
+                        //         fillColor: Theme.of(context).scaffoldBackgroundColor,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        // CustomRequiredTextField(
+                        //     controller: companyHrController,
+                        //     titleText: "Company Person / HR Name",
+                        //     hintText: "Enter Person / HR Name",
+                        //     textInputType: TextInputType.text
+                        // ),
+                        CustomSalutationTextField(
                           controller: companyHrController,
-                          titleText: "Company Person / HR Name",
-                          hintText: "Enter Person / HR Name",
+                          titleText: "Contact Person Name",
+                          hintText: "Enter full name (first name & last name)",
                           textInputType: TextInputType.text,
                           salutations: prefixValues,
                           selectedSalutation: selectedPrefix,
                           onSalutationChanged: (value) {
                             setState(() {
-                              selectedPrefix = value; // keep original casing and dot
+                              selectedPrefix =
+                                  value; // keep original casing and dot
                             });
-                          }
-                      ),
-                      CustomRequiredTextField(
-                          validator: validateMobile,
-                          readOnly: true,
-                          controller: TextEditingController(text: widget.mobileNum), // bind here
-                          titleText: "Contact Person / HR Phone",
-                          hintText: "Enter Contact Person / HR Phone",
-                          textInputType: TextInputType.text
-                      ),
-                      CustomRequiredTextField(
-                          validator: validateEmail,
-                          controller: companyEmailController,
-                          titleText: "Company Email",
-                          hintText: "Enter Company Email",
-                          textInputType: TextInputType.text
-                      ),
-                      CustomNotRequiredTextField(
-                          controller: companyAddressController,
-                          titleText: "Company Address",
-                          hintText: "Enter Company Address",
-                          textInputType: TextInputType.text
-                      ),
-                    ],
+                          },
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return "Contact Person Name is required";
+                            }
+                            if (value.trim().split(RegExp(r'\s+')).length < 2) {
+                              return "Please enter full name (e.g., Raj Patil)";
+                            }
+                            if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                              return "Contact Person Name must contain only letters and spaces";
+                            }
+                            return null;
+                          },
+                        ),
+                        CustomRequiredTextField(
+                            validator: validateMobile,
+                            readOnly: true,
+                            controller: TextEditingController(
+                                text: widget.mobileNum), // bind here
+                            titleText: "Contact Person Phone",
+                            hintText: "Enter Contact Person / HR Phone",
+                            textInputType: TextInputType.text),
+                        CustomRequiredTextField(
+                            validator: validateEmail,
+                            controller: companyEmailController,
+                            titleText: "Company Email Address",
+                            hintText: "Enter Company Email Address",
+                            textInputType: TextInputType.text),
+                        CustomNotRequiredTextField(
+                            controller: companyAddressController,
+                            titleText: "GST Number",
+                            hintText: "Optional",
+                            textInputType: TextInputType.text),
+                      ],
+                    ),
+                  const SizedBox(height: 16),
+                  CheckboxListTile(
+                    value: agreeTerms,
+                    onChanged: (val) =>
+                        setState(() => agreeTerms = val ?? false),
+                    title: Text("I agree to the Terms and Conditions",
+                        style: Theme.of(context).textTheme.bodySmall),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    activeColor: Theme.of(context).primaryColor,
+                    dense: true,
+                  ),
+                  CheckboxListTile(
+                    value: agreePrivacy,
+                    onChanged: (val) =>
+                        setState(() => agreePrivacy = val ?? false),
+                    title: Text(
+                        "I agree to the Privacy Policy & Data Protection",
+                        style: Theme.of(context).textTheme.bodySmall),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    activeColor: Theme.of(context).primaryColor,
+                    dense: true,
+                  ),
+                  CheckboxListTile(
+                    value: agreeRefund,
+                    onChanged: (val) =>
+                        setState(() => agreeRefund = val ?? false),
+                    title: Text("I agree to the Refund Policy",
+                        style: Theme.of(context).textTheme.bodySmall),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    activeColor: Theme.of(context).primaryColor,
+                    dense: true,
                   ),
                   const SizedBox(
-                    height: 32,
+                    height: 24,
                   ),
                   BlocConsumer<RegisterCubit, RegisterState>(
                       listener: (context, register) {
@@ -530,7 +576,7 @@ class _CompleteProfileState extends State<CompleteProfile> {
                       saveUserData(
                           id: data.result!.id.toString(),
                           token: data.token.toString());
-        
+
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(data.message.toString())));
                     } else if (register is RegisterError) {
@@ -538,7 +584,10 @@ class _CompleteProfileState extends State<CompleteProfile> {
                           SnackBar(content: Text(register.errorMessage)));
                     }
                   }, builder: (context, register) {
+                    bool isAllChecked =
+                        agreeTerms && agreePrivacy && agreeRefund;
                     return CustomButton(
+                      enabled: isAllChecked,
                       isLoading: register is RegisterLoading,
                       onTap: () {
                         if (_formKey.currentState?.validate() ?? false) {
@@ -554,18 +603,20 @@ class _CompleteProfileState extends State<CompleteProfile> {
                               companyAddress: companyAddressController.text,
                               salutation: selectedPrefix!
                               // profilePhoto: _image
-                          );
+                              );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content: Text('Please fill all fields')));
                         }
                       },
-                      text: "SAVE",
-                      gradientColors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColorLight
-                      ],
+                      text: "Save Profile & Continue",
+                      gradientColors: isAllChecked
+                          ? [
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).primaryColorLight
+                            ]
+                          : [Colors.grey[300]!, Colors.grey[300]!],
                     );
                   }),
                   const SizedBox(

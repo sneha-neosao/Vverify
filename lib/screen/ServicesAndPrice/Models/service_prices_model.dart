@@ -33,9 +33,7 @@ class ServicePriceModel {
   Map<String, dynamic> toJson() => {
         "status": status,
         "message": message,
-        "data": data == null
-            ? []
-            : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
       };
 }
 
@@ -45,6 +43,7 @@ class Datum {
   String? serviceDescription;
   String? serviceIcon;
   String? servicePrice;
+  int? isDeveloped;
 
   Datum({
     this.id,
@@ -52,6 +51,7 @@ class Datum {
     this.serviceDescription,
     this.serviceIcon,
     this.servicePrice,
+    this.isDeveloped,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -60,6 +60,7 @@ class Datum {
         serviceDescription: json["service_description"],
         serviceIcon: json["service_icon"],
         servicePrice: json["service_price"],
+        isDeveloped: json["is_developed"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -68,5 +69,6 @@ class Datum {
         "service_description": serviceDescription,
         "service_icon": serviceIcon,
         "service_price": servicePrice,
+        "is_developed": isDeveloped,
       };
 }

@@ -8,6 +8,7 @@ import 'package:v_verify/screen/Order%20Details/order_details.dart';
 import 'package:v_verify/screen/Payment%20Successful/payment_successful.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Screens/apply_coupon_screen.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Screens/services_and_price_screen.dart';
+import 'package:v_verify/screen/ServicesAndPrice/CheckOut/Screen/check_out.dart';
 import 'package:v_verify/screen/SplashScreen/SplashScreen.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Screens/address_documnet_upload_screen.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Screens/address_list.dart';
@@ -124,7 +125,13 @@ class AppRouter {
         name: "servicesAndPrice",
         builder: (context, state) {
           final entityId = state.pathParameters['id']!;
-          return ServicesAndPrice(entity_id: entityId,);
+          final isEdit = state.uri.queryParameters['isEdit'] == 'true';
+          final cartItemId = state.uri.queryParameters['cartItemId'];
+          return ServicesAndPrice(
+            entity_id: entityId,
+            isEdit: isEdit,
+            cartItemId: cartItemId,
+          );
         },
       ),
       GoRoute(
@@ -132,6 +139,13 @@ class AppRouter {
         name: "payment_success",
         builder: (context, state) {
           return const PaymentSuccessful();
+        },
+      ),
+      GoRoute(
+        path: '/checkOut',
+        name: "checkOut",
+        builder: (context, state) {
+          return const CheckOutScreen();
         },
       ),
 

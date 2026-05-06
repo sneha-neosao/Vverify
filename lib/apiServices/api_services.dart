@@ -45,6 +45,19 @@ class ApiService {
     return response;
   }
 
+//resendOtp
+  Future<Response> resendOtp({required String mobileNumber}) async {
+    FormData formData = FormData.fromMap({
+      'mobileNumber': mobileNumber,
+    });
+    final response = await _dio.post(
+      'account/resend/otp',
+      data: formData,
+    );
+    log('resendOtp $response');
+    return response;
+  }
+
 //otpVerify
   Future<Response> otpVerify(
       {required String mobileNumber, required String otp}) async {
@@ -117,9 +130,10 @@ class ApiService {
     }
   }
 
-  Future<Response> getServicesPricing({required String token,
-    required String type_id,
-    required String entity_id}) async {
+  Future<Response> getServicesPricing(
+      {required String token,
+      required String type_id,
+      required String entity_id}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio
@@ -235,7 +249,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('transaction/checkout', queryParameters: data);
+          await _dio.post('transaction/checkout', queryParameters: data);
       // log('getTransactionCheckout Response: ${response.data}');
       return response;
     } catch (e) {
@@ -265,7 +279,7 @@ class ApiService {
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.get('transaction/list', queryParameters: data);
+          await _dio.get('transaction/list', queryParameters: data);
       // log('getTransactionList Response: ${response.data}');
       return response;
     } catch (e) {
@@ -355,7 +369,7 @@ class ApiService {
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.get('verify-request/list', queryParameters: data);
+          await _dio.get('verify-request/list', queryParameters: data);
       print('getTransactionList Response: ${response.data}');
 
       // log('getTransactionList Response: ${response.data}');
@@ -385,12 +399,13 @@ class ApiService {
       'X-Action-From': 'mobile'
     };
     final response =
-    await _dio.get('verify-request/list', queryParameters: data);
+        await _dio.get('verify-request/list', queryParameters: data);
 
     if (response.statusCode == 200) {
       final rawJson = jsonEncode(response.data);
       for (var i = 0; i < rawJson.length; i += 1000) {
-        debugPrint(rawJson.substring(i, i + 1000 > rawJson.length ? rawJson.length : i + 1000));
+        debugPrint(rawJson.substring(
+            i, i + 1000 > rawJson.length ? rawJson.length : i + 1000));
       }
 
       List<verifyRequest> items = (response.data['data'] as List)
@@ -402,19 +417,18 @@ class ApiService {
     }
   }
 
-  Future<Response> verifyRequestUpdate({
-    required String token,
-    required String uuid,
-    required String firstName,
-    required String middleName,
-    required String lastName,
-    required String phone,
-    required String dob,
-    required String email,
-    required String employee_code,
-    required String date_of_joining,
-    required String gender
-  }) async {
+  Future<Response> verifyRequestUpdate(
+      {required String token,
+      required String uuid,
+      required String firstName,
+      required String middleName,
+      required String lastName,
+      required String phone,
+      required String dob,
+      required String email,
+      required String employee_code,
+      required String date_of_joining,
+      required String gender}) async {
     Map<String, dynamic> data = {
       "uuid": uuid,
       "first_name": firstName,
@@ -434,7 +448,7 @@ class ApiService {
         'X-Action-From': 'mobile'
       };
       final response =
-      await _dio.put('verify-request/entity/update', queryParameters: data);
+          await _dio.put('verify-request/entity/update', queryParameters: data);
       log('verifyRequestUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -472,7 +486,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.put('verify-request/update', queryParameters: data);
+          await _dio.put('verify-request/update', queryParameters: data);
       // log('verifyRequestUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -480,6 +494,7 @@ class ApiService {
       throw Exception('Failed to fetch verifyRequestUpdate: $e');
     }
   }
+
   Future<Response> VerifyDetailsView({
     required String token,
     required String request_id,
@@ -514,8 +529,6 @@ class ApiService {
     }
   }
 
-
-
   /// Education Verification
   Future<Response> educationList({
     required String token,
@@ -534,9 +547,10 @@ class ApiService {
     }
   }
 
-  Future<Response> EducationFormSave({required String token,
-    required String customer_id,
-    required EducationSaveFormModel educationSaveFormModel}) async {
+  Future<Response> EducationFormSave(
+      {required String token,
+      required String customer_id,
+      required EducationSaveFormModel educationSaveFormModel}) async {
     try {
       FormData formData = FormData.fromMap({
         "customer_id": customer_id,
@@ -545,8 +559,8 @@ class ApiService {
         "university_name": educationSaveFormModel.university_name,
         "institution_name": educationSaveFormModel.instituition_name,
         "year_of_passing": educationSaveFormModel.year_of_passing,
-        "degree_qualification_name": educationSaveFormModel
-            .degree_qualification_name,
+        "degree_qualification_name":
+            educationSaveFormModel.degree_qualification_name,
         "grades_type": educationSaveFormModel.grades_type,
         "grades_obtained": educationSaveFormModel.grades_obtained,
         "case_uuid": educationSaveFormModel.case_uuid
@@ -557,7 +571,7 @@ class ApiService {
         'X-Action-From': 'mobile'
       };
       final response =
-      await _dio.post('verify/education/form/save', data: formData);
+          await _dio.post('verify/education/form/save', data: formData);
       // log('EducationFormSave Response: ${response.data}');
       return response;
     } catch (e) {
@@ -566,9 +580,10 @@ class ApiService {
     }
   }
 
-  Future<Response> EducationFormUpdate({required String customer_id,
-    required String token,
-    required EducationUpdateFormModel educationUpdateFormModel}) async {
+  Future<Response> EducationFormUpdate(
+      {required String customer_id,
+      required String token,
+      required EducationUpdateFormModel educationUpdateFormModel}) async {
     try {
       FormData formData = FormData.fromMap({
         "uid": educationUpdateFormModel.uid,
@@ -578,8 +593,8 @@ class ApiService {
         "university_name": educationUpdateFormModel.university_name,
         "institution_name": educationUpdateFormModel.instituition_name,
         "year_of_passing": educationUpdateFormModel.year_of_passing,
-        "degree_qualification_name": educationUpdateFormModel
-            .degree_qualification_name,
+        "degree_qualification_name":
+            educationUpdateFormModel.degree_qualification_name,
         "grades_type": educationUpdateFormModel.grades_type,
         "grades_obtained": educationUpdateFormModel.grades_obtained,
         "case_uuid": educationUpdateFormModel.case_uuid,
@@ -591,7 +606,7 @@ class ApiService {
         'X-Action-From': 'mobile'
       };
       final response =
-      await _dio.post('verify/education/form/update', data: formData);
+          await _dio.post('verify/education/form/update', data: formData);
       // log('EducationFormUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -627,7 +642,8 @@ class ApiService {
         "type": "education",
         // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
         for (int i = 0; i < documents.length; i++)
-          "documents[$i][file]": await MultipartFile.fromFile(documents[i].path,
+          "documents[$i][file]": await MultipartFile.fromFile(
+            documents[i].path,
           ),
       });
 
@@ -687,8 +703,6 @@ class ApiService {
     }
   }
 
-
-
   /// Employment Verification
   Future<Response> employmentList({
     required String token,
@@ -707,9 +721,10 @@ class ApiService {
     }
   }
 
-  Future<Response> EmploymentSaveForm({required String token,
-    required String customer_id,
-    required EmploymentSaveFormModel employmentSaveFormModel}) async {
+  Future<Response> EmploymentSaveForm(
+      {required String token,
+      required String customer_id,
+      required EmploymentSaveFormModel employmentSaveFormModel}) async {
     try {
       FormData formData = FormData.fromMap({
         "request_id": employmentSaveFormModel.request_id,
@@ -734,7 +749,7 @@ class ApiService {
         'X-Action-From': 'mobile'
       };
       final response =
-      await _dio.post('verify/employment/form/save', data: formData);
+          await _dio.post('verify/employment/form/save', data: formData);
       // log('EmploymentSaveDoc Response: ${response.data}');
       return response;
     } catch (e) {
@@ -743,9 +758,10 @@ class ApiService {
     }
   }
 
-  Future<Response> employmentUpdateForm({required String token,
-    required String customer_id,
-    required EmploymentUpdateFormModel employmentUpdateFormModel}) async {
+  Future<Response> employmentUpdateForm(
+      {required String token,
+      required String customer_id,
+      required EmploymentUpdateFormModel employmentUpdateFormModel}) async {
     try {
       FormData formData = FormData.fromMap({
         "uid": employmentUpdateFormModel.uid,
@@ -772,7 +788,7 @@ class ApiService {
         'X-Action-From': 'mobile'
       };
       final response =
-      await _dio.post('verify/employment/form/update', data: formData);
+          await _dio.post('verify/employment/form/update', data: formData);
       // log('employmentUpdateForm Response: ${response.data}');
       return response;
     } catch (e) {
@@ -808,7 +824,8 @@ class ApiService {
         "type": "employment",
         // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
         for (int i = 0; i < documents.length; i++)
-          "documents[$i][file]": await MultipartFile.fromFile(documents[i].path,
+          "documents[$i][file]": await MultipartFile.fromFile(
+            documents[i].path,
           ),
       });
 
@@ -869,8 +886,6 @@ class ApiService {
     }
   }
 
-
-
   ///  Address Verification
   Future<Response> addressList({
     required String token,
@@ -891,17 +906,21 @@ class ApiService {
 
   Future<Response> NameAddressStore(
       {required String token,
-        required String customer_id,
-        required NameAddressVerificationModel nameAddressVerificationModel}) async {
+      required String customer_id,
+      required NameAddressVerificationModel
+          nameAddressVerificationModel}) async {
     FormData formData = FormData.fromMap({
       "customer_id": customer_id,
       "request_id": nameAddressVerificationModel.request_id,
       "service_request_id": nameAddressVerificationModel.service_request_id,
-      "current_address_line_1": nameAddressVerificationModel.current_address_line_1,
-      "current_address_line_2": nameAddressVerificationModel.current_address_line_2,
+      "current_address_line_1":
+          nameAddressVerificationModel.current_address_line_1,
+      "current_address_line_2":
+          nameAddressVerificationModel.current_address_line_2,
       "current_address_city": nameAddressVerificationModel.current_city_id,
       "current_address_state": nameAddressVerificationModel.current_state,
-      "current_address_postal_code": nameAddressVerificationModel.current_pinCode,
+      "current_address_postal_code":
+          nameAddressVerificationModel.current_pinCode,
       // "permanent_address_line_1": nameAddressVerificationModel.permanent_address_line_1,
       // "permanent_address_line_2": nameAddressVerificationModel.permanent_address_line_2,
       // "permanent_address_city": nameAddressVerificationModel.permanent_city_id,
@@ -920,7 +939,7 @@ class ApiService {
         'X-Action-From': 'mobile'
       };
       final response =
-      await _dio.post('verify/address/form/save', data: formData);
+          await _dio.post('verify/address/form/save', data: formData);
       log('NameAddressStoreVerification Response: ${response.data}');
       return response;
     } catch (e) {
@@ -931,18 +950,23 @@ class ApiService {
 
   Future<Response> NameAddressUpdate(
       {required String token,
-        required String customer_id,
-        required NameAddressVerificationUpdateModel
-        nameAddressVerificationUpdateModel}) async {
+      required String customer_id,
+      required NameAddressVerificationUpdateModel
+          nameAddressVerificationUpdateModel}) async {
     FormData formData = FormData.fromMap({
       "customer_id": customer_id,
       "request_id": nameAddressVerificationUpdateModel.request_id,
-      "service_request_id": nameAddressVerificationUpdateModel.service_request_id,
-      "current_address_line_1": nameAddressVerificationUpdateModel.current_address_line_1,
-      "current_address_line_2": nameAddressVerificationUpdateModel.current_address_line_2,
-      "current_address_city": nameAddressVerificationUpdateModel.current_city_id,
+      "service_request_id":
+          nameAddressVerificationUpdateModel.service_request_id,
+      "current_address_line_1":
+          nameAddressVerificationUpdateModel.current_address_line_1,
+      "current_address_line_2":
+          nameAddressVerificationUpdateModel.current_address_line_2,
+      "current_address_city":
+          nameAddressVerificationUpdateModel.current_city_id,
       "current_address_state": nameAddressVerificationUpdateModel.current_state,
-      "current_address_postal_code": nameAddressVerificationUpdateModel.current_pinCode,
+      "current_address_postal_code":
+          nameAddressVerificationUpdateModel.current_pinCode,
       // "permanent_address_line_1": nameAddressVerificationUpdateModel.permanent_address_line_1,
       // "permanent_address_line_2": nameAddressVerificationUpdateModel.permanent_address_line_2,
       // "permanent_address_city": nameAddressVerificationUpdateModel.permanent_city_id,
@@ -961,7 +985,7 @@ class ApiService {
         'X-Action-From': 'mobile'
       };
       final response =
-      await _dio.post('verify/address/form/update', data: formData);
+          await _dio.post('verify/address/form/update', data: formData);
       log('NameAddressUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -997,7 +1021,8 @@ class ApiService {
         "type": "all",
         // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
         for (int i = 0; i < documents.length; i++)
-          "documents[$i][file]": await MultipartFile.fromFile(documents[i].path,
+          "documents[$i][file]": await MultipartFile.fromFile(
+            documents[i].path,
           ),
       });
 
@@ -1058,17 +1083,15 @@ class ApiService {
     }
   }
 
-
-
   /// KYC (PAN) Legal Verification
   Future<Response> panNumberSave(
       {required String token,
-        required String serviceRequestId,
-        required String requestId,
-        required String customer_id,
-        required String document_type,
-        required String document_number
-        // required String panNumber
+      required String serviceRequestId,
+      required String requestId,
+      required String customer_id,
+      required String document_type,
+      required String document_number
+      // required String panNumber
       }) async {
     try {
       Map<String, dynamic> data = {
@@ -1082,7 +1105,7 @@ class ApiService {
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/pan/form/store', queryParameters: data);
+          await _dio.post('verify/pan/form/store', queryParameters: data);
       // log('panNumberSave Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1107,7 +1130,9 @@ class ApiService {
     print(token);
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/pan/show/$uid', /*data: formData*/);
+      final response = await _dio.get(
+        'verify/pan/show/$uid', /*data: formData*/
+      );
       // log('panNumberSave Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1118,12 +1143,12 @@ class ApiService {
 
   Future<Response> panNumberUpdate(
       {required String token,
-        required String serviceRequestId,
-        required String requestId,
-        required String customer_id,
-        required String document_type,
-        required String document_number
-        // required String panNumber
+      required String serviceRequestId,
+      required String requestId,
+      required String customer_id,
+      required String document_type,
+      required String document_number
+      // required String panNumber
       }) async {
     try {
       Map<String, dynamic> data = {
@@ -1137,7 +1162,7 @@ class ApiService {
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/pan/form/update', queryParameters: data);
+          await _dio.post('verify/pan/form/update', queryParameters: data);
       log('panNumberUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1161,16 +1186,14 @@ class ApiService {
         "customer_id": customer_id,
         // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
         for (int i = 0; i < documents.length; i++)
-          "documents[$i]": await MultipartFile.fromFile(documents[i].path,
+          "documents[$i]": await MultipartFile.fromFile(
+            documents[i].path,
           ),
       });
 
       // Debug logs
       log("=== AddressDocsUpload Request ===");
-      log("Files: ${documents.map((d) =>
-      d.path
-          .split('/')
-          .last).toList()}");
+      log("Files: ${documents.map((d) => d.path.split('/').last).toList()}");
 
       // POST with headers
       final response = await _dio.post(
@@ -1209,16 +1232,14 @@ class ApiService {
         "customer_id": customer_id,
         // "documents[0][file]": await MultipartFile.fromFile(documents[0].path)
         for (int i = 0; i < documents.length; i++)
-          "documents[$i]": await MultipartFile.fromFile(documents[i].path,
+          "documents[$i]": await MultipartFile.fromFile(
+            documents[i].path,
           ),
       });
 
       // Debug logs
       log("=== AddressDocsUpload Request ===");
-      log("Files: ${documents.map((d) =>
-      d.path
-          .split('/')
-          .last).toList()}");
+      log("Files: ${documents.map((d) => d.path.split('/').last).toList()}");
 
       // POST with headers
       final response = await _dio.post(
@@ -1267,7 +1288,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/court/form/store', data: formData);
+          await _dio.post('verify/court/form/store', data: formData);
       // log('courtVerification Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1300,7 +1321,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/court/form/update', data: formData);
+          await _dio.post('verify/court/form/update', data: formData);
       log('courtVerificationUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1333,7 +1354,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/court/document/store', data: formData);
+          await _dio.post('verify/court/document/store', data: formData);
       // log('courtVerificationDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1357,21 +1378,21 @@ class ApiService {
       "aadhaar_document": aadhaar_document.path.isEmpty
           ? null
           : await MultipartFile.fromFile(
-        aadhaar_document.path,
-        filename:
-        aadhaar_document.path.split('/').last, // Use the file name
-      ),
+              aadhaar_document.path,
+              filename:
+                  aadhaar_document.path.split('/').last, // Use the file name
+            ),
       "pan_document": pan_document.path.isEmpty
           ? null
           : await MultipartFile.fromFile(
-        pan_document.path,
-        filename: pan_document.path.split('/').last, // Use the file name
-      ),
+              pan_document.path,
+              filename: pan_document.path.split('/').last, // Use the file name
+            ),
     });
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/court/document/update', data: formData);
+          await _dio.post('verify/court/document/update', data: formData);
       // log('courtVerificationDocUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1380,13 +1401,11 @@ class ApiService {
     }
   }
 
-
-
   /// Reference Check Verification
   Future<Response> ReferenceVerification(
       {required String customer_id,
-        required String token,
-        required ReferenceModel referenceModel}) async {
+      required String token,
+      required ReferenceModel referenceModel}) async {
     FormData formData = FormData.fromMap({
       "customer_id": customer_id,
       "request_id": referenceModel.request_id,
@@ -1402,7 +1421,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/reference/form/store', data: formData);
+          await _dio.post('verify/reference/form/store', data: formData);
       // log('ReferenceVerification Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1413,8 +1432,8 @@ class ApiService {
 
   Future<Response> ReferenceVerificationUpdate(
       {required String token,
-        required String customer_id,
-        required ReferenceUpdateModel referenceUpdateModel}) async {
+      required String customer_id,
+      required ReferenceUpdateModel referenceUpdateModel}) async {
     FormData formData = FormData.fromMap({
       "customer_id": customer_id,
       "request_id": referenceUpdateModel.request_id,
@@ -1430,7 +1449,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/reference/form/update', data: formData);
+          await _dio.post('verify/reference/form/update', data: formData);
       // log('verifyRequestUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1473,7 +1492,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/reference/document/store', data: formData);
+          await _dio.post('verify/reference/document/store', data: formData);
       // log('referenceCheckDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1509,14 +1528,14 @@ class ApiService {
       "data_document": data_document.path.isEmpty
           ? null
           : await MultipartFile.fromFile(
-        data_document.path,
-        filename: data_document.path.split('/').last, // Use the file name
-      ),
+              data_document.path,
+              filename: data_document.path.split('/').last, // Use the file name
+            ),
     });
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/reference/document/update', data: formData);
+          await _dio.post('verify/reference/document/update', data: formData);
       // log('referenceCheckDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1524,8 +1543,6 @@ class ApiService {
       throw Exception('Failed to fetch referenceCheckDocUpload: $e');
     }
   }
-
-
 
   /// Driving License Verification
   Future<Response> drivingLicenceSave({
@@ -1546,7 +1563,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/driver-licence/form/store', data: formData);
+          await _dio.post('verify/driver-licence/form/store', data: formData);
       // log('drivingLicenceSave Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1573,7 +1590,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/driver-licence/form/update', data: formData);
+          await _dio.post('verify/driver-licence/form/update', data: formData);
       // log('drivingLicenceSave Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1639,9 +1656,9 @@ class ApiService {
       "data_document": data_document.path.isEmpty
           ? null
           : await MultipartFile.fromFile(
-        data_document.path,
-        filename: data_document.path.split('/').last, // Use the file name
-      ),
+              data_document.path,
+              filename: data_document.path.split('/').last, // Use the file name
+            ),
     });
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
@@ -1654,8 +1671,6 @@ class ApiService {
       throw Exception('Failed to fetch drivingDocUpdate: $e');
     }
   }
-
-
 
   /// GST CIN PAN Verification
   Future<Response> gstPanCinSave({
@@ -1678,7 +1693,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/gst-pan-cin/form/store', data: formData);
+          await _dio.post('verify/gst-pan-cin/form/store', data: formData);
       // log('gstPanCinSave Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1707,7 +1722,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/gst-pan-cin/form/update', data: formData);
+          await _dio.post('verify/gst-pan-cin/form/update', data: formData);
       // log('gstPanCinUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1715,6 +1730,7 @@ class ApiService {
       throw Exception('Failed to fetch gstPanCinUpdate: $e');
     }
   }
+
   Future<Response> gstPanCinShowData({
     required String token,
     required String uid,
@@ -1729,6 +1745,7 @@ class ApiService {
       throw Exception('Failed to fetch gstPanCinShowData: $e');
     }
   }
+
   Future<Response> gstPanCinDocUpload({
     required String customer_id,
     required String token,
@@ -1745,26 +1762,26 @@ class ApiService {
       "gst_document": gst_document.path.isEmpty
           ? null
           : await MultipartFile.fromFile(
-        gst_document.path,
-        filename: gst_document.path.split('/').last, // Use the file name
-      ),
+              gst_document.path,
+              filename: gst_document.path.split('/').last, // Use the file name
+            ),
       "pan_document": pan_document.path.isEmpty
           ? null
           : await MultipartFile.fromFile(
-        pan_document.path,
-        filename: pan_document.path.split('/').last, // Use the file name
-      ),
+              pan_document.path,
+              filename: pan_document.path.split('/').last, // Use the file name
+            ),
       "cin_document": cin_document.path.isEmpty
           ? null
           : await MultipartFile.fromFile(
-        cin_document.path,
-        filename: cin_document.path.split('/').last, // Use the file name
-      ),
+              cin_document.path,
+              filename: cin_document.path.split('/').last, // Use the file name
+            ),
     });
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/gst-pan-cin/document/store', data: formData);
+          await _dio.post('verify/gst-pan-cin/document/store', data: formData);
       // log('gstPanCinDocUpload Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1789,26 +1806,26 @@ class ApiService {
       "gst_document": gst_document.path.isEmpty
           ? null
           : await MultipartFile.fromFile(
-        gst_document.path,
-        filename: gst_document.path.split('/').last, // Use the file name
-      ),
+              gst_document.path,
+              filename: gst_document.path.split('/').last, // Use the file name
+            ),
       "pan_document": pan_document.path.isEmpty
           ? null
           : await MultipartFile.fromFile(
-        pan_document.path,
-        filename: pan_document.path.split('/').last, // Use the file name
-      ),
+              pan_document.path,
+              filename: pan_document.path.split('/').last, // Use the file name
+            ),
       "cin_document": cin_document.path.isEmpty
           ? null
           : await MultipartFile.fromFile(
-        cin_document.path,
-        filename: cin_document.path.split('/').last, // Use the file name
-      ),
+              cin_document.path,
+              filename: cin_document.path.split('/').last, // Use the file name
+            ),
     });
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/gst-pan-cin/document/update', data: formData);
+          await _dio.post('verify/gst-pan-cin/document/update', data: formData);
       // log('gstPanCinDocUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1817,13 +1834,11 @@ class ApiService {
     }
   }
 
-
-
   /// Police Verification (Mumbai)
   Future<Response> tenantMumbaiForm(
       {required String customerId,
-        required String token,
-        required MumbaiModel mumbaiModel}) async {
+      required String token,
+      required MumbaiModel mumbaiModel}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       FormData formData = FormData.fromMap({
@@ -1850,13 +1865,13 @@ class ApiService {
         "tenant_state": mumbaiModel.tenant_state,
         "tenant_postal_code": mumbaiModel.tenant_postal_code,
         "tenant_identity_proof_doc_type":
-        mumbaiModel.tenant_identity_proof_doc_type,
+            mumbaiModel.tenant_identity_proof_doc_type,
         "tenant_identity_proof_no": mumbaiModel.tenant_identity_proof_no,
         "tenant_co_resident_males_no": mumbaiModel.tenant_co_resident_males_no,
         "tenant_co_resident_females_no":
-        mumbaiModel.tenant_co_resident_females_no,
+            mumbaiModel.tenant_co_resident_females_no,
         "tenant_co_resident_children_no":
-        mumbaiModel.tenant_co_resident_children_no,
+            mumbaiModel.tenant_co_resident_children_no,
         "tenant_work_phone": mumbaiModel.tenant_work_phone,
         "tenant_work_email": mumbaiModel.tenant_work_email,
         "tenant_occupation": mumbaiModel.tenant_occupation,
@@ -1865,17 +1880,17 @@ class ApiService {
         "tenant_work_state": mumbaiModel.tenant_work_state,
         "tenant_work_postal_code": mumbaiModel.tenant_work_postal_code,
         "tenant_contact_one_full_name":
-        mumbaiModel.tenant_contact_one_full_name,
+            mumbaiModel.tenant_contact_one_full_name,
         "tenant_contact_one_phone": mumbaiModel.tenant_contact_one_phone,
         "tenant_contact_two_full_name":
-        mumbaiModel.tenant_contact_two_full_name,
+            mumbaiModel.tenant_contact_two_full_name,
         "tenant_contact_two_phone": mumbaiModel.tenant_contact_two_phone,
         "agent_name": mumbaiModel.agent_name,
         "agent_details": mumbaiModel.agent_details,
         "owner_photo": await MultipartFile.fromFile(
           mumbaiModel.owner_photo.path,
           filename:
-          mumbaiModel.owner_photo.path.split('/').last, // Use the file name
+              mumbaiModel.owner_photo.path.split('/').last, // Use the file name
         ),
         "tenant_photo": await MultipartFile.fromFile(
           mumbaiModel.tenant_photo.path,
@@ -1899,7 +1914,7 @@ class ApiService {
       });
 
       final response =
-      await _dio.post('verify/police/mumbai/form/save', data: formData);
+          await _dio.post('verify/police/mumbai/form/save', data: formData);
       // log('tenantMumbaiForm Response: ${response.data}');
       return response;
     } catch (e) {
@@ -1910,8 +1925,8 @@ class ApiService {
 
   Future<Response> tenantMumbaiFormUpdate(
       {required String token,
-        required String customer_id,
-        required MumbaiUpdateModel mumbaiUpdateModel}) async {
+      required String customer_id,
+      required MumbaiUpdateModel mumbaiUpdateModel}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       FormData formData = FormData.fromMap({
@@ -1938,68 +1953,68 @@ class ApiService {
         "tenant_state": mumbaiUpdateModel.tenant_state,
         "tenant_postal_code": mumbaiUpdateModel.tenant_postal_code,
         "tenant_identity_proof_doc_type":
-        mumbaiUpdateModel.tenant_identity_proof_doc_type,
+            mumbaiUpdateModel.tenant_identity_proof_doc_type,
         "tenant_identity_proof_no": mumbaiUpdateModel.tenant_identity_proof_no,
         "tenant_co_resident_males_no":
-        mumbaiUpdateModel.tenant_co_resident_males_no,
+            mumbaiUpdateModel.tenant_co_resident_males_no,
         "tenant_co_resident_females_no":
-        mumbaiUpdateModel.tenant_co_resident_females_no,
+            mumbaiUpdateModel.tenant_co_resident_females_no,
         "tenant_co_resident_children_no":
-        mumbaiUpdateModel.tenant_co_resident_children_no,
+            mumbaiUpdateModel.tenant_co_resident_children_no,
         "tenant_work_phone": mumbaiUpdateModel.tenant_work_phone,
         "tenant_work_email": mumbaiUpdateModel.tenant_work_email,
         "tenant_occupation": mumbaiUpdateModel.tenant_occupation,
         "tenant_work_place_address":
-        mumbaiUpdateModel.tenant_work_place_address,
+            mumbaiUpdateModel.tenant_work_place_address,
         "tenant_work_city": mumbaiUpdateModel.tenant_work_city,
         "tenant_work_state": mumbaiUpdateModel.tenant_work_state,
         "tenant_work_postal_code": mumbaiUpdateModel.tenant_work_postal_code,
         "tenant_contact_one_full_name":
-        mumbaiUpdateModel.tenant_contact_one_full_name,
+            mumbaiUpdateModel.tenant_contact_one_full_name,
         "tenant_contact_one_phone": mumbaiUpdateModel.tenant_contact_one_phone,
         "tenant_contact_two_full_name":
-        mumbaiUpdateModel.tenant_contact_two_full_name,
+            mumbaiUpdateModel.tenant_contact_two_full_name,
         "tenant_contact_two_phone": mumbaiUpdateModel.tenant_contact_two_phone,
         "agent_name": mumbaiUpdateModel.agent_name,
         "agent_details": mumbaiUpdateModel.agent_details,
         "owner_photo": mumbaiUpdateModel.owner_photo.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          mumbaiUpdateModel.owner_photo.path,
-          filename: mumbaiUpdateModel.owner_photo.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                mumbaiUpdateModel.owner_photo.path,
+                filename: mumbaiUpdateModel.owner_photo.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "tenant_photo": mumbaiUpdateModel.tenant_photo.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          mumbaiUpdateModel.tenant_photo.path,
-          filename: mumbaiUpdateModel.tenant_photo.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                mumbaiUpdateModel.tenant_photo.path,
+                filename: mumbaiUpdateModel.tenant_photo.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "tenant_identity_proof_doc":
-        mumbaiUpdateModel.tenant_identity_proof_doc.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-          mumbaiUpdateModel.tenant_identity_proof_doc.path,
-          filename: mumbaiUpdateModel.tenant_identity_proof_doc.path
-              .split('/')
-              .last, // Use the file name
-        ),
+            mumbaiUpdateModel.tenant_identity_proof_doc.path.isEmpty
+                ? null
+                : await MultipartFile.fromFile(
+                    mumbaiUpdateModel.tenant_identity_proof_doc.path,
+                    filename: mumbaiUpdateModel.tenant_identity_proof_doc.path
+                        .split('/')
+                        .last, // Use the file name
+                  ),
         "tenant_signature": mumbaiUpdateModel.tenant_signature.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          mumbaiUpdateModel.tenant_signature.path,
-          filename: mumbaiUpdateModel.tenant_signature.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                mumbaiUpdateModel.tenant_signature.path,
+                filename: mumbaiUpdateModel.tenant_signature.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "city_id": mumbaiUpdateModel.city_id
       });
 
       final response =
-      await _dio.post('verify/police/mumbai/form/update', data: formData);
+          await _dio.post('verify/police/mumbai/form/update', data: formData);
       // log('tenantMumbaiFormUpdate Response: ${response.data}');
       return response;
     } catch (e) {
@@ -2025,8 +2040,8 @@ class ApiService {
 
   Future<Response> tenantMumbaiUploadDocuments(
       {required String customer_id,
-        required String token,
-        required UploadDocumentsMumbaiModel uploadDocumentsMumbaiModel}) async {
+      required String token,
+      required UploadDocumentsMumbaiModel uploadDocumentsMumbaiModel}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
 
@@ -2068,7 +2083,7 @@ class ApiService {
       });
 
       final response =
-      await _dio.post('verify/police/mumbai/document/save', data: formData);
+          await _dio.post('verify/police/mumbai/document/save', data: formData);
       // log('tenantMumbaiUploadDocuments Response: ${response.data}');
       return response;
     } catch (e) {
@@ -2079,8 +2094,8 @@ class ApiService {
 
   Future<Response> tenantMumbaiUpdateDocuments(
       {required String token,
-        required String customer_id,
-        required UpdateDocumentsMumbaiModel updateDocumentsMumbaiModel}) async {
+      required String customer_id,
+      required UpdateDocumentsMumbaiModel updateDocumentsMumbaiModel}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
 
@@ -2092,46 +2107,46 @@ class ApiService {
         "tenant_photo": updateDocumentsMumbaiModel.tenant_photo.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          updateDocumentsMumbaiModel.tenant_photo.path,
-          filename: updateDocumentsMumbaiModel.tenant_photo.path
-              .split('/')
-              .last, // Use the file nameupdateDocumentsMumbaiModel
-        ),
+                updateDocumentsMumbaiModel.tenant_photo.path,
+                filename: updateDocumentsMumbaiModel.tenant_photo.path
+                    .split('/')
+                    .last, // Use the file nameupdateDocumentsMumbaiModel
+              ),
         "tenant_signature":
-        updateDocumentsMumbaiModel.tenant_signature.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-          updateDocumentsMumbaiModel.tenant_signature.path,
-          filename: updateDocumentsMumbaiModel.tenant_signature.path
-              .split('/')
-              .last, // Use the file name
-        ),
+            updateDocumentsMumbaiModel.tenant_signature.path.isEmpty
+                ? null
+                : await MultipartFile.fromFile(
+                    updateDocumentsMumbaiModel.tenant_signature.path,
+                    filename: updateDocumentsMumbaiModel.tenant_signature.path
+                        .split('/')
+                        .last, // Use the file name
+                  ),
         "tenant_identity_proof_doc":
-        updateDocumentsMumbaiModel.tenant_identity_proof_doc.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-          updateDocumentsMumbaiModel.tenant_identity_proof_doc.path,
-          filename: updateDocumentsMumbaiModel
-              .tenant_identity_proof_doc.path
-              .split('/')
-              .last, // Use the file name
-        ),
+            updateDocumentsMumbaiModel.tenant_identity_proof_doc.path.isEmpty
+                ? null
+                : await MultipartFile.fromFile(
+                    updateDocumentsMumbaiModel.tenant_identity_proof_doc.path,
+                    filename: updateDocumentsMumbaiModel
+                        .tenant_identity_proof_doc.path
+                        .split('/')
+                        .last, // Use the file name
+                  ),
         "owner_photo": updateDocumentsMumbaiModel.owner_photo.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          updateDocumentsMumbaiModel.owner_photo.path,
-          filename: updateDocumentsMumbaiModel.owner_photo.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                updateDocumentsMumbaiModel.owner_photo.path,
+                filename: updateDocumentsMumbaiModel.owner_photo.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "data_document": updateDocumentsMumbaiModel.data_document.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          updateDocumentsMumbaiModel.data_document.path,
-          filename: updateDocumentsMumbaiModel.data_document.path
-              .split('/')
-              .last, // Use the file name
-        )
+                updateDocumentsMumbaiModel.data_document.path,
+                filename: updateDocumentsMumbaiModel.data_document.path
+                    .split('/')
+                    .last, // Use the file name
+              )
       });
 
       final response = await _dio.post('verify/police/mumbai/document/update',
@@ -2159,12 +2174,11 @@ class ApiService {
     }
   }
 
-
   /// Police Verification (Non Mumbai)
   Future<Response> tenantNonMumbaiForm(
       {required String token,
-        required String customer_id,
-        required NonMumbaiModel nonMumbai}) async {
+      required String customer_id,
+      required NonMumbaiModel nonMumbai}) async {
     try {
       FormData formData = FormData.fromMap({
         "customer_id": customer_id,
@@ -2176,7 +2190,7 @@ class ApiService {
         "tenant_state": nonMumbai.tenant_state,
         "tenant_postal_code": nonMumbai.tenant_postal_code,
         "tenant_identity_proof_doc_type":
-        nonMumbai.tenant_identity_proof_doc_type,
+            nonMumbai.tenant_identity_proof_doc_type,
         "tenant_identity_proof_no": nonMumbai.tenant_identity_proof_no,
         "tenant_identification_mark": nonMumbai.tenant_identification_mark,
         "tenant_dob": nonMumbai.tenant_dob,
@@ -2195,34 +2209,34 @@ class ApiService {
         "tenant_contact_two_address": nonMumbai.tenant_contact_two_address,
         "tenant_has_criminal_offenses": nonMumbai.tenant_has_criminal_offenses,
         nonMumbai.tenant_crno_section.isEmpty ? "" : "tenant_crno_section":
-        nonMumbai.tenant_crno_section,
+            nonMumbai.tenant_crno_section,
         "tenant_whether_arrested": nonMumbai.tenant_whether_arrested,
         nonMumbai.tenant_present_case_status.isEmpty
-            ? ""
-            : "tenant_present_case_status":
-        nonMumbai.tenant_present_case_status,
+                ? ""
+                : "tenant_present_case_status":
+            nonMumbai.tenant_present_case_status,
         "tenant_earlier_residential_place":
-        nonMumbai.tenant_earlier_residential_place,
+            nonMumbai.tenant_earlier_residential_place,
         "tenant_earlier_residential_months":
-        nonMumbai.tenant_earlier_residential_months,
+            nonMumbai.tenant_earlier_residential_months,
         "tenant_earlier_residential_years":
-        nonMumbai.tenant_earlier_residential_years,
+            nonMumbai.tenant_earlier_residential_years,
         "tenant_earlier_residential_jurisdiction_of_police_station":
-        nonMumbai.tenant_earlier_residential_jurisdiction_of_police_station,
+            nonMumbai.tenant_earlier_residential_jurisdiction_of_police_station,
         "tenant_present_address_duration_years":
-        nonMumbai.tenant_present_address_duration_years,
+            nonMumbai.tenant_present_address_duration_years,
         "tenant_present_address_duration_months":
-        nonMumbai.tenant_present_address_duration_months,
+            nonMumbai.tenant_present_address_duration_months,
         "tenant_jurisdiction_of_police_station":
-        nonMumbai.tenant_jurisdiction_of_police_station,
+            nonMumbai.tenant_jurisdiction_of_police_station,
         "tenant_present_resendential_place":
-        nonMumbai.tenant_present_resendential_place,
+            nonMumbai.tenant_present_resendential_place,
         "tenant_signature_place": nonMumbai.tenant_signature_place,
         "tenant_signature_date": nonMumbai.tenant_signature_date,
         "tenant_photo": await MultipartFile.fromFile(
           nonMumbai.tenant_photo.path,
           filename:
-          nonMumbai.tenant_photo.path.split('/').last, // Use the file name
+              nonMumbai.tenant_photo.path.split('/').last, // Use the file name
         ),
         "tenant_signature": await MultipartFile.fromFile(
           nonMumbai.tenant_signature.path,
@@ -2237,19 +2251,19 @@ class ApiService {
               .last, // Use the file name
         ),
         "tenant_letter_from_employer":
-        nonMumbai.tenant_letter_from_employer!.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-          nonMumbai.tenant_letter_from_employer!.path,
-          filename: nonMumbai.tenant_letter_from_employer!.path
-              .split('/')
-              .last, // Use the file name
-        ),
+            nonMumbai.tenant_letter_from_employer!.path.isEmpty
+                ? null
+                : await MultipartFile.fromFile(
+                    nonMumbai.tenant_letter_from_employer!.path,
+                    filename: nonMumbai.tenant_letter_from_employer!.path
+                        .split('/')
+                        .last, // Use the file name
+                  ),
       });
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
-      await _dio.post('verify/police/non-mumbai/form/save', data: formData);
+          await _dio.post('verify/police/non-mumbai/form/save', data: formData);
       // log('tenantNonMumbaiForm Response: ${response.data}');
       return response;
     } catch (e) {
@@ -2260,8 +2274,8 @@ class ApiService {
 
   Future<Response> tenantNonMumbaiFormUpdate(
       {required String token,
-        required String customer_id,
-        required NonMumbaiUpdateModel nonMumbaiUpdateModel}) async {
+      required String customer_id,
+      required NonMumbaiUpdateModel nonMumbaiUpdateModel}) async {
     try {
       FormData formData = FormData.fromMap({
         "customer_id": customer_id,
@@ -2273,11 +2287,11 @@ class ApiService {
         "tenant_state": nonMumbaiUpdateModel.tenant_state,
         "tenant_postal_code": nonMumbaiUpdateModel.tenant_postal_code,
         "tenant_identity_proof_doc_type":
-        nonMumbaiUpdateModel.tenant_identity_proof_doc_type,
+            nonMumbaiUpdateModel.tenant_identity_proof_doc_type,
         "tenant_identity_proof_no":
-        nonMumbaiUpdateModel.tenant_identity_proof_no,
+            nonMumbaiUpdateModel.tenant_identity_proof_no,
         "tenant_identification_mark":
-        nonMumbaiUpdateModel.tenant_identification_mark,
+            nonMumbaiUpdateModel.tenant_identification_mark,
         "tenant_dob": nonMumbaiUpdateModel.tenant_dob,
         "tenant_birth_place": nonMumbaiUpdateModel.tenant_birth_place,
         "tenant_age": nonMumbaiUpdateModel.tenant_age,
@@ -2285,82 +2299,82 @@ class ApiService {
         "tenant_employed_year": nonMumbaiUpdateModel.tenant_employed_year,
         "tenant_employed_month": nonMumbaiUpdateModel.tenant_employed_month,
         "tenant_employer_or_company":
-        nonMumbaiUpdateModel.tenant_employer_or_company,
+            nonMumbaiUpdateModel.tenant_employer_or_company,
         "tenant_fathers_name": nonMumbaiUpdateModel.tenant_fathers_name,
         "tenant_fathers_address": nonMumbaiUpdateModel.tenant_fathers_address,
         "tenant_fathers_occupation":
-        nonMumbaiUpdateModel.tenant_fathers_occupation,
+            nonMumbaiUpdateModel.tenant_fathers_occupation,
         "tenant_contact_one_full_name":
-        nonMumbaiUpdateModel.tenant_contact_one_full_name,
+            nonMumbaiUpdateModel.tenant_contact_one_full_name,
         "tenant_contact_one_address":
-        nonMumbaiUpdateModel.tenant_contact_one_address,
+            nonMumbaiUpdateModel.tenant_contact_one_address,
         "tenant_contact_two_full_name":
-        nonMumbaiUpdateModel.tenant_contact_two_full_name,
+            nonMumbaiUpdateModel.tenant_contact_two_full_name,
         "tenant_contact_two_address":
-        nonMumbaiUpdateModel.tenant_contact_two_address,
+            nonMumbaiUpdateModel.tenant_contact_two_address,
         "tenant_has_criminal_offenses":
-        nonMumbaiUpdateModel.tenant_has_criminal_offenses,
+            nonMumbaiUpdateModel.tenant_has_criminal_offenses,
         nonMumbaiUpdateModel.tenant_crno_section.isEmpty
             ? ""
             : "tenant_crno_section": nonMumbaiUpdateModel.tenant_crno_section,
         "tenant_whether_arrested": nonMumbaiUpdateModel.tenant_whether_arrested,
         nonMumbaiUpdateModel.tenant_present_case_status.isEmpty
-            ? ""
-            : "tenant_present_case_status":
-        nonMumbaiUpdateModel.tenant_present_case_status,
+                ? ""
+                : "tenant_present_case_status":
+            nonMumbaiUpdateModel.tenant_present_case_status,
         "tenant_earlier_residential_place":
-        nonMumbaiUpdateModel.tenant_earlier_residential_place,
+            nonMumbaiUpdateModel.tenant_earlier_residential_place,
         "tenant_earlier_residential_months":
-        nonMumbaiUpdateModel.tenant_earlier_residential_months,
+            nonMumbaiUpdateModel.tenant_earlier_residential_months,
         "tenant_earlier_residential_years":
-        nonMumbaiUpdateModel.tenant_earlier_residential_years,
+            nonMumbaiUpdateModel.tenant_earlier_residential_years,
         "tenant_earlier_residential_jurisdiction_of_police_station":
-        nonMumbaiUpdateModel
-            .tenant_earlier_residential_jurisdiction_of_police_station,
+            nonMumbaiUpdateModel
+                .tenant_earlier_residential_jurisdiction_of_police_station,
         "tenant_present_address_duration_years":
-        nonMumbaiUpdateModel.tenant_present_address_duration_years,
+            nonMumbaiUpdateModel.tenant_present_address_duration_years,
         "tenant_present_address_duration_months":
-        nonMumbaiUpdateModel.tenant_present_address_duration_months,
+            nonMumbaiUpdateModel.tenant_present_address_duration_months,
         "tenant_jurisdiction_of_police_station":
-        nonMumbaiUpdateModel.tenant_jurisdiction_of_police_station,
+            nonMumbaiUpdateModel.tenant_jurisdiction_of_police_station,
         "tenant_present_resendential_place":
-        nonMumbaiUpdateModel.tenant_present_resendential_place,
+            nonMumbaiUpdateModel.tenant_present_resendential_place,
         "tenant_signature_place": nonMumbaiUpdateModel.tenant_signature_place,
         "tenant_signature_date": nonMumbaiUpdateModel.tenant_signature_date,
         "tenant_photo": nonMumbaiUpdateModel.tenant_photo.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          nonMumbaiUpdateModel.tenant_photo.path,
-          filename: nonMumbaiUpdateModel.tenant_photo.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                nonMumbaiUpdateModel.tenant_photo.path,
+                filename: nonMumbaiUpdateModel.tenant_photo.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "tenant_signature": nonMumbaiUpdateModel.tenant_signature.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          nonMumbaiUpdateModel.tenant_signature.path,
-          filename: nonMumbaiUpdateModel.tenant_signature.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                nonMumbaiUpdateModel.tenant_signature.path,
+                filename: nonMumbaiUpdateModel.tenant_signature.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "tenant_identity_proof_doc": nonMumbaiUpdateModel
-            .tenant_identity_proof_doc.path.isEmpty
+                .tenant_identity_proof_doc.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          nonMumbaiUpdateModel.tenant_identity_proof_doc.path,
-          filename: nonMumbaiUpdateModel.tenant_identity_proof_doc.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                nonMumbaiUpdateModel.tenant_identity_proof_doc.path,
+                filename: nonMumbaiUpdateModel.tenant_identity_proof_doc.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "tenant_letter_from_employer": nonMumbaiUpdateModel
-            .tenant_letter_from_employer!.path.isEmpty
+                .tenant_letter_from_employer!.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          nonMumbaiUpdateModel.tenant_letter_from_employer!.path,
-          filename: nonMumbaiUpdateModel.tenant_letter_from_employer!.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                nonMumbaiUpdateModel.tenant_letter_from_employer!.path,
+                filename: nonMumbaiUpdateModel.tenant_letter_from_employer!.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
       });
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
@@ -2391,9 +2405,9 @@ class ApiService {
 
   Future<Response> tenantNonMumbaiUploadDocuments(
       {required String token,
-        required String customer_id,
-        required UploadDocumentsNonMumbaiModel
-        uploadDocumentsNonMumbaiModel}) async {
+      required String customer_id,
+      required UploadDocumentsNonMumbaiModel
+          uploadDocumentsNonMumbaiModel}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
 
@@ -2443,11 +2457,12 @@ class ApiService {
       throw Exception('Failed to fetch tenantNonMumbaiUploadDocuments: $e');
     }
   }
+
   Future<Response> tenantNonMumbaiUpdateDocuments(
       {required String token,
-        required String customer_id,
-        required UpdateDocumentsNonMumbaiModel
-        updateDocumentsNonMumbaiModel}) async {
+      required String customer_id,
+      required UpdateDocumentsNonMumbaiModel
+          updateDocumentsNonMumbaiModel}) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
 
@@ -2458,49 +2473,49 @@ class ApiService {
         "tenant_photo": updateDocumentsNonMumbaiModel.tenant_photo.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          updateDocumentsNonMumbaiModel.tenant_photo.path,
-          filename: updateDocumentsNonMumbaiModel.tenant_photo.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                updateDocumentsNonMumbaiModel.tenant_photo.path,
+                filename: updateDocumentsNonMumbaiModel.tenant_photo.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "tenant_signature": updateDocumentsNonMumbaiModel
-            .tenant_signature.path.isEmpty
+                .tenant_signature.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          updateDocumentsNonMumbaiModel.tenant_signature.path,
-          filename: updateDocumentsNonMumbaiModel.tenant_signature.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                updateDocumentsNonMumbaiModel.tenant_signature.path,
+                filename: updateDocumentsNonMumbaiModel.tenant_signature.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "tenant_identity_proof_doc": updateDocumentsNonMumbaiModel
-            .tenant_identity_proof_doc.path.isEmpty
+                .tenant_identity_proof_doc.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          updateDocumentsNonMumbaiModel.tenant_identity_proof_doc.path,
-          filename: updateDocumentsNonMumbaiModel
-              .tenant_identity_proof_doc.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                updateDocumentsNonMumbaiModel.tenant_identity_proof_doc.path,
+                filename: updateDocumentsNonMumbaiModel
+                    .tenant_identity_proof_doc.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "tenant_letter_from_employer": updateDocumentsNonMumbaiModel
-            .tenant_letter_from_employer.path.isEmpty
+                .tenant_letter_from_employer.path.isEmpty
             ? null
             : await MultipartFile.fromFile(
-          updateDocumentsNonMumbaiModel.tenant_letter_from_employer.path,
-          filename: updateDocumentsNonMumbaiModel
-              .tenant_letter_from_employer.path
-              .split('/')
-              .last, // Use the file name
-        ),
+                updateDocumentsNonMumbaiModel.tenant_letter_from_employer.path,
+                filename: updateDocumentsNonMumbaiModel
+                    .tenant_letter_from_employer.path
+                    .split('/')
+                    .last, // Use the file name
+              ),
         "data_document":
-        updateDocumentsNonMumbaiModel.data_document.path.isEmpty
-            ? null
-            : await MultipartFile.fromFile(
-          updateDocumentsNonMumbaiModel.data_document.path,
-          filename: updateDocumentsNonMumbaiModel.data_document.path
-              .split('/')
-              .last, // Use the file name
-        )
+            updateDocumentsNonMumbaiModel.data_document.path.isEmpty
+                ? null
+                : await MultipartFile.fromFile(
+                    updateDocumentsNonMumbaiModel.data_document.path,
+                    filename: updateDocumentsNonMumbaiModel.data_document.path
+                        .split('/')
+                        .last, // Use the file name
+                  )
       });
 
       final response = await _dio
@@ -2528,40 +2543,7 @@ class ApiService {
     }
   }
 
-
-
   /// Police Verification
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   Future<Response> AadhaarGetOtp(
       {required String token,
@@ -2587,8 +2569,6 @@ class ApiService {
       throw Exception('Failed to fetch AadhaarGetOtp: $e');
     }
   }
-
-
 
   Future<Response> AadhaarVerifyOtp(
       {required String token,
@@ -2618,37 +2598,6 @@ class ApiService {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   Future<Response> collageNameGetData({
     required String token,
   }) async {
@@ -2676,12 +2625,6 @@ class ApiService {
       throw Exception('Failed to fetch universityNameGetData: $e');
     }
   }
-
-
-
-
-
-
 
   Future<Response> policeStationCityId({
     required String token,
@@ -2755,8 +2698,6 @@ class ApiService {
   //   }
   // }
 
-
-
   Future<Response> courtShowData(
       {required String token, required String uid}) async {
     try {
@@ -2769,9 +2710,6 @@ class ApiService {
       throw Exception('Failed to fetch courtShowData: $e');
     }
   }
-
-
-
 
   Future<Response> nameAddressDocUpload({
     required String customer_id,
@@ -2851,10 +2789,6 @@ class ApiService {
     }
   }
 
-
-
-
-
   Future<Response> userAgreeCondition(
       {required String token,
       required String customer_id,
@@ -2875,21 +2809,26 @@ class ApiService {
     }
   }
 
-  Future<Response> applyCoupon({
+  Future<Response> calculateAmount({
     required String token,
-    required String customer_id,
-    required String subtotal,
-    required String coupon_code
+    String? coupon_code,
+    required List<Map<String, dynamic>> items,
   }) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.post('calculate/amount',
-        data: { "customer_id": customer_id, "subtotal": subtotal, "coupon_code": coupon_code, },);
-      log('apply coupon Response: ${response.data}');
+      final response = await _dio.post(
+        'calculate/amount',
+        data: {
+          if (coupon_code != null && coupon_code.isNotEmpty)
+            "coupon_code": coupon_code,
+          "items": items,
+        },
+      );
+      log('calculateAmount Response: ${response.data}');
       return response;
     } catch (e) {
-      log('Error in apply coupon: $e');
-      throw Exception('Failed to fetch employShowData: $e');
+      log('Error in calculateAmount: $e');
+      throw Exception('Failed to calculate amount: $e');
     }
   }
 }

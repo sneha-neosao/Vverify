@@ -1,10 +1,11 @@
+import 'dart:convert';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/screen_size.dart';
@@ -27,6 +28,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int cartCount = 0;
+
   @override
   void initState() {
     context.read<TokenCubit>().getToken();
@@ -36,7 +39,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     checkInternet(context);
     info();
+    _updateCartCount();
     super.initState();
+  }
+
+  Future<void> _updateCartCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cartStr = prefs.getString('checkout_cart');
+    if (cartStr != null) {
+      final List<dynamic> cartItems = jsonDecode(cartStr);
+      setState(() {
+        cartCount = cartItems.length;
+      });
+    } else {
+      setState(() {
+        cartCount = 0;
+      });
+    }
   }
 
   @override
@@ -196,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
+        padding: const EdgeInsets.only(left: 16, right: 16),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -215,16 +234,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                   }, builder: (context, profile) {
                     if (profile is ProfileLoading) {
-                      return ListTile(
-                          title: Shimmer.fromColors(
-                        baseColor: Colors.grey[400]!,
-                        highlightColor: Colors.grey[50]!,
-                        child: const Text("Name Loading",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.41,
-                            )),
-                      ));
+                      return Skeletonizer(
+                        enabled: true,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(0),
+                          title: Container(
+                            width: 150,
+                            height: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
                     } else if (profile is ProfileError) {
                       return const Center(
                         child: Text("Error"),
@@ -253,10 +273,50 @@ class _HomeScreenState extends State<HomeScreen> {
                         //                   data.profileResult!.profilePhoto!)),
                         // ),
                         title: Text(
-                          data.profileResult!.userType?.toLowerCase() == "company"
+                          data.profileResult!.userType?.toLowerCase() ==
+                                  "company"
                               ? "Hi ${data.profileResult!.companyName}"
                               : "Hi ${(("${data.profileResult!.firstName} ${data.profileResult!.lastName}").toUpperCase())}",
                           style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        trailing: Stack(
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                await context.pushNamed('checkOut');
+                                _updateCartCount();
+                              },
+                              icon: Icon(
+                                Icons.shopping_cart_outlined,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                            if (cartCount > 0)
+                              Positioned(
+                                right: 8,
+                                top: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  child: Text(
+                                    '$cartCount',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       );
                     }
@@ -265,16 +325,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }),
                   Text(
-                    "Whom do you want to Verify?",
+                    "Select Whom you want to verify",
                     style: GoogleFonts.outfit(
-                      textStyle: Theme.of(context).textTheme.titleLarge,
+                      textStyle: Theme.of(context).textTheme.titleMedium,
                     ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "To select a whom you want to verify, Click the icons below to select entities & verification services.",
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.normal, color: Colors.grey),
                   ),
                 ],
               ),
+              SizedBox(height: 16),
               BlocBuilder<HomeScreenCubit, HomeScreenState>(
                 buildWhen: (previous, current) {
-                  // Only rebuild if the data has changed
                   if (previous is HomeScreenSuccessState &&
                       current is HomeScreenSuccessState) {
                     return previous.homeScreenModel != current.homeScreenModel;
@@ -283,27 +349,43 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 builder: (context, entity) {
                   if (entity is HomeScreenLoadingState) {
-                    return GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: 6,
-                      itemBuilder: (context, index) {
-                        return Shimmer.fromColors(
-                          baseColor: Colors.grey[400]!,
-                          highlightColor: Colors.grey[50]!,
-                          child: Container(
-                              height: ScreenSize.screenHeight / 6,
-                              width: ScreenSize.screenWidth / 6,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12))),
-                        );
-                      },
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
+                    return Skeletonizer(
+                      enabled: true,
+                      child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: 6,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 1.2,
+                        ),
+                        itemBuilder: (context, index) {
+                          return Card(
+                            elevation: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    width: 80,
+                                    height: 12,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   } else if (entity is HomeScreenErrorState) {
@@ -312,71 +394,246 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   } else if (entity is HomeScreenSuccessState) {
                     HomeScreenModel data = entity.homeScreenModel;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 0),
-                      child: GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                        ),
-                        itemCount: data.data!.length,
-                        itemBuilder: (context, index) {
-                          return Material(
-                            elevation: 4,
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(12),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(12),
-                              onTap: () {
-                                context.read<CountCubit>().clear();
-                                showModalBottomSheet<void>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return BottomSheetWidget(
-                                      entity_id:
-                                          data.data![index].id.toString(),
-                                      serviceName: data.data![index].entityName
-                                          .toString(),
-                                    );
-                                  },
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: data.data?.length ?? 0,
+                      itemBuilder: (context, groupIndex) {
+                        final group = data.data![groupIndex];
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  group.title?.toUpperCase() ?? "",
+                                  style: GoogleFonts.outfit(
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall!
+                                        .copyWith(
+                                          color: Colors.orange,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Expanded(
+                                  child: Divider(
+                                    color: Colors.orange,
+                                    thickness: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                childAspectRatio: 1.2,
+                              ),
+                              itemCount: group.entities?.length ?? 0,
+                              itemBuilder: (context, index) {
+                                final item = group.entities![index];
+                                return Material(
+                                  elevation: 2,
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Stack(
+                                    children: [
+                                      InkWell(
+                                        borderRadius: BorderRadius.circular(12),
+                                        onTap: () {
+                                          context.read<CountCubit>().clear();
+                                          context.pushNamed("servicesAndPrice",
+                                              pathParameters: {
+                                                'id': item.id.toString()
+                                              });
+                                          // showModalBottomSheet<void>(
+                                          //   context: context,
+                                          //   builder: (BuildContext context) {
+                                          //     return BottomSheetWidget(
+                                          //       entity_id: item.id.toString(),
+                                          //       serviceName:
+                                          //           item.entityName.toString(),
+                                          //     );
+                                          //   },
+                                          // );
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          width: double.infinity,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Image.network(
+                                                item.entityIcon!,
+                                                width: 40,
+                                                height: 40,
+                                                fit: BoxFit.contain,
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                item.entityName!,
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.outfit(
+                                                  textStyle: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(
+                                                        fontSize: 11,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 4,
+                                        right: 4,
+                                        child: InkWell(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => Dialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                                insetPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16),
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  padding:
+                                                      const EdgeInsets.all(24),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              item.entityName!,
+                                                              style: GoogleFonts
+                                                                  .outfit(
+                                                                textStyle: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .titleSmall!
+                                                                    .copyWith(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .primaryColor,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          IconButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context),
+                                                            icon: const Icon(
+                                                                Icons.close),
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            constraints:
+                                                                const BoxConstraints(),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Divider(height: 32),
+                                                      Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Image.network(
+                                                            item.entityIcon!,
+                                                            width: 40,
+                                                            height: 40,
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 16),
+                                                          Expanded(
+                                                            child: Text(
+                                                              item.entityDescription ??
+                                                                  "No description available.",
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium!
+                                                                  .copyWith(
+                                                                    height: 1.5,
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        700],
+                                                                  ),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .justify,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 32),
+                                                      SizedBox(
+                                                        width: double.infinity,
+                                                        child: CustomButton(
+                                                          onTap: () =>
+                                                              Navigator.pop(
+                                                                  context),
+                                                          text: "Got It",
+                                                          gradientColors: [
+                                                            Theme.of(context)
+                                                                .primaryColor,
+                                                            Theme.of(context)
+                                                                .primaryColorLight,
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Icon(
+                                            Icons.info_outline,
+                                            size: 18,
+                                            color: Colors.grey[400],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 );
                               },
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.network(
-                                      data.data![index].entityIcon!,
-                                      width: 50,
-                                      height: 50,
-                                      fit: BoxFit.contain,
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      textAlign: TextAlign.center,
-                                      data.data![index].entityName!,
-                                      style: GoogleFonts.outfit(
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                             ),
-                          );
-                        },
-                      ),
+                            const SizedBox(height: 24),
+                          ],
+                        );
+                      },
                     );
                   }
                   return const Center(
@@ -473,7 +730,6 @@ class BottomSheetWidget extends StatelessWidget {
                 context.pushNamed("servicesAndPrice",
                     pathParameters: {'id': entity_id});
                 context.pop();
-
               },
               text: "Proceed",
               gradientColors: [

@@ -1,18 +1,16 @@
-import 'package:dotted_border/dotted_border.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_cubit.dart';
-import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_state.dart';
+import 'dart:convert';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/chechout_status_checking_bloc/checkout_status_checking_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/chechout_status_checking_bloc/checkout_status_checking_state.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_state.dart';
-import 'package:v_verify/screen/ServicesAndPrice/coupon_text_field.dart';
 import 'package:v_verify/services/phonepe_payment_gateway_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../../commonComponent/custom_button.dart';
 import '../../../commonComponent/screen_size.dart';
@@ -24,7 +22,13 @@ import '../Models/service_prices_model.dart';
 
 class ServicesAndPrice extends StatefulWidget {
   String entity_id;
-  ServicesAndPrice({super.key, required this.entity_id});
+  final bool isEdit;
+  final String? cartItemId;
+  ServicesAndPrice(
+      {super.key,
+      required this.entity_id,
+      this.isEdit = false,
+      this.cartItemId});
 
   @override
   State<ServicesAndPrice> createState() => _WhatToVerifyState();
@@ -34,26 +38,27 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
   double totalPrice = 0.0;
   List<Map<String, dynamic>> addList = [];
   List<Map<String, dynamic>> checkoutList = [];
-  final TextEditingController couponController = TextEditingController();
+
   late PhonePeService phonePeService;
 
-  bool isCouponApplied = false;
-  bool isCouponSuccess = false;
-  String discountAmount = "";
-  String finalAmount = "";
-  String couponCode = '';
   List<int> addItem = [];
 
   // Add these variables for price calculations
   double subtotal = 0.0;
-  double gst = 0.0;
   double grandTotal = 0.0;
-  double discountedSubtotal = 0.0;
-  double actualDiscount = 0.0;
+  Set<int> expandedIndices = {};
 
   @override
   void initState() {
     getServices();
+    if (widget.isEdit) {
+      _loadExistingCartItem();
+    } else {
+      // Reset count to 1 for fresh selection
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<CountCubit>().setCount(1);
+      });
+    }
     super.initState();
     // Initialize PhonePeService
     phonePeService = PhonePeService();
@@ -71,87 +76,170 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
         token: token, type_id: typeId, entity_id: widget.entity_id);
   }
 
-  void checkoutTransaction({
-    required String payment_gateway,
-    required String payment_mode,
-    required int quantity,
-    required List<Map<String, dynamic>> items,
-  }) {
-    final String token = context.read<TokenCubit>().state;
-    final String id = context.read<IdCubit>().state;
-    context.read<CheckoutCubit>().checkout(
-        token: token,
-        customer_id: int.parse(id),
-        entity_id: int.parse(widget.entity_id),
-        payment_gateway: payment_gateway,
-        payment_mode: payment_mode,
-        quantity: quantity,
-        items: items,
-        coupon_code: couponController.text.trim()
-    );
-
-    context.read<PendingDocCubit>().getPendingDoc(
-        token: token, customerId: int.parse(id), page: 1, limit: 100);
-  }
-
   void calculatePrices(int tenantsCount) {
     // Calculate subtotal (price of all selected services * number of tenants)
     subtotal = totalPrice * tenantsCount;
+    grandTotal = subtotal;
+  }
 
-    // Reset values
-    actualDiscount = 0.0;
-    discountedSubtotal = subtotal;
+  Future<void> _loadExistingCartItem() async {
+    if (widget.cartItemId == null) return;
 
-    // If coupon is applied, use the values from backend
-    if (isCouponSuccess) {
-      try {
-        // Parse discount amount if available
-        if (discountAmount.isNotEmpty && discountAmount != "null") {
-          actualDiscount = double.parse(discountAmount);
+    final prefs = await SharedPreferences.getInstance();
+    final cartStr = prefs.getString('checkout_cart');
+    if (cartStr != null) {
+      final List<dynamic> decoded = jsonDecode(cartStr);
+      final currentCart = List<Map<String, dynamic>>.from(decoded);
+
+      final index = currentCart
+          .indexWhere((item) => item['cart_item_id'] == widget.cartItemId);
+      if (index != -1) {
+        final existingItem = currentCart[index];
+        final List<dynamic> savedCheckoutList =
+            existingItem['checkout_list'] ?? [];
+
+        setState(() {
+          checkoutList = List<Map<String, dynamic>>.from(savedCheckoutList);
+          addItem = checkoutList
+              .map((e) => int.parse(e['service_id'].toString()))
+              .toList();
+
+          totalPrice = 0.0;
+          for (var item in checkoutList) {
+            totalPrice += double.parse(item['price'].toString());
+          }
+        });
+
+        if (mounted) {
+          final count = existingItem['tenants_count'] ?? 1;
+          context.read<CountCubit>().setCount(count);
+          calculatePrices(count);
+          setState(() {});
         }
-
-        // Use finalAmount if available, otherwise calculate from subtotal and discount
-        if (finalAmount.isNotEmpty && finalAmount != "null") {
-          discountedSubtotal = double.parse(finalAmount);
-        } else if (actualDiscount > 0) {
-          discountedSubtotal = subtotal - actualDiscount;
-        }
-
-        // Ensure discounted subtotal doesn't go negative
-        if (discountedSubtotal < 0) {
-          discountedSubtotal = 0.0;
-        }
-
-        // Calculate GST based on discounted subtotal
-        gst = discountedSubtotal * 18 / 100;
-
-        // Calculate grand total with GST
-        grandTotal = discountedSubtotal + gst;
-      } catch (e) {
-        print("Error in calculatePrices: $e");
-        // Fallback to regular calculation
-        actualDiscount = 0.0;
-        discountedSubtotal = subtotal;
-        gst = subtotal * 18 / 100;
-        grandTotal = subtotal + gst;
       }
-    } else {
-      // No coupon applied
-      actualDiscount = 0.0;
-      discountedSubtotal = subtotal;
-      gst = subtotal * 18 / 100;
-      grandTotal = subtotal + gst;
+    }
+  }
+
+  Future<void> _addToCartAndNavigate(String entityName) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<Map<String, dynamic>> currentCart = [];
+    final cartStr = prefs.getString('checkout_cart');
+    if (cartStr != null) {
+      currentCart = List<Map<String, dynamic>>.from(jsonDecode(cartStr));
     }
 
-    print("calculatePrices called:");
-    print("  isCouponSuccess: $isCouponSuccess");
-    print("  finalAmount: '$finalAmount'");
-    print("  discountAmount: '$discountAmount'");
-    print("  subtotal: $subtotal");
-    print("  discountedSubtotal: $discountedSubtotal");
-    print("  actualDiscount: $actualDiscount");
-    print("  gst: $gst");
-    print("  grandTotal: $grandTotal");
+    // Add the current selection
+    final newItem = {
+      'cart_item_id': widget.isEdit && widget.cartItemId != null
+          ? widget.cartItemId
+          : DateTime.now().millisecondsSinceEpoch.toString(),
+      'entity_id': widget.entity_id,
+      'entity_name': entityName,
+      'tenants_count': context.read<CountCubit>().state,
+      'services_count': checkoutList.length,
+      'subtotal': subtotal,
+      'checkout_list': checkoutList,
+    };
+
+    if (widget.isEdit && widget.cartItemId != null) {
+      // Replace only the specific item being edited
+      final index = currentCart
+          .indexWhere((item) => item['cart_item_id'] == widget.cartItemId);
+      if (index != -1) {
+        currentCart[index] = newItem;
+      } else {
+        currentCart.add(newItem);
+      }
+    } else {
+      // Always add as a new item when coming from Home (or fresh selection)
+      currentCart.add(newItem);
+    }
+    await prefs.setString('checkout_cart', jsonEncode(currentCart));
+
+    if (mounted) {
+      context.pushNamed("checkOut");
+    }
+  }
+
+  void _showComingSoonDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 20.0,
+                  offset: Offset(0.0, 10.0),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.construction_rounded,
+                    color: Colors.orange.shade600,
+                    size: 48,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  "Coming Soon",
+                  style: GoogleFonts.outfit(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "This service is currently under development and will be available soon. Thank you for your patience.",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(
+                    fontSize: 15,
+                    color: Colors.grey.shade600,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    text: "Got it",
+                    gradientColors: [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).primaryColorLight,
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -163,193 +251,416 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+      ),
       body: Padding(
-        padding: const EdgeInsets.only(bottom: 0),
+        padding: const EdgeInsets.all(0.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title Section
+            // Top Quantity Section
             Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                "Select WHAT you want to verify",
-                style: GoogleFonts.outfit(
-                  fontSize: 24,
-                  letterSpacing: 0,
-                  fontWeight: FontWeight.w700,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text("Configure Verification",
+                  style: Theme.of(context).textTheme.titleMedium),
+            ),
+            BlocBuilder<CountCubit, int>(
+              builder: (context, count) {
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Verification Details",
+                            style: GoogleFonts.outfit(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "Quantity",
+                            style: GoogleFonts.outfit(
+                              fontSize: 14,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                context.read<CountCubit>().countRemove();
+                                setState(() {
+                                  calculatePrices(
+                                      context.read<CountCubit>().state);
+                                });
+                              },
+                              icon: const Icon(Icons.remove, size: 20),
+                            ),
+                            Text(
+                              count.toString(),
+                              style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                context.read<CountCubit>().countAdd();
+                                setState(() {
+                                  calculatePrices(
+                                      context.read<CountCubit>().state);
+                                });
+                              },
+                              icon: const Icon(Icons.add, size: 20),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Select Required Services",
+                  style: GoogleFonts.outfit(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
+            const SizedBox(height: 8),
             // Verification Options List
             BlocBuilder<ServicePriceCubit, ServicePriceState>(
                 builder: (context, servicePrice) {
-                  if (servicePrice is ServicePriceLoading) {
-                    return Expanded(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: 3,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 16, left: 16, right: 16),
-                            child: Shimmer.fromColors(
-                              baseColor: Colors.grey[400]!,
-                              highlightColor: Colors.grey[50]!,
-                              child: Container(
-                                height: ScreenSize.screenHeight / 4.5,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+              if (servicePrice is ServicePriceLoading) {
+                return Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    shrinkWrap: true,
+                    itemCount: 3,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
+                        child: Skeletonizer(
+                          enabled: true,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey.shade200),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 24,
+                                    height: 24,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Container(
+                                      height: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Container(
+                                    width: 40,
+                                    height: 15,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Container(
+                                    width: 24,
+                                    height: 24,
+                                    color: Colors.white,
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    );
-                  } else if (servicePrice is ServicePriceError) {
-                    return const Center(
-                      child: Text("error..."),
-                    );
-                  } else if (servicePrice is ServicePriceSuccess) {
-                    ServicePriceModel data = servicePrice.servicePriceModel;
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              } else if (servicePrice is ServicePriceError) {
+                return const Center(
+                  child: Text("error..."),
+                );
+              } else if (servicePrice is ServicePriceSuccess) {
+                ServicePriceModel data = servicePrice.servicePriceModel;
 
-                    return Expanded(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: data.data!.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Card(
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                      color: addItem.contains(index)
-                                          ? Colors.green
-                                          : Colors.transparent,
-                                      width: 2,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  color: Theme.of(context).cardColor,
-                                  margin: const EdgeInsets.all(10),
-                                  child: SizedBox(
-                                    height: ScreenSize.screenHeight / 4.5,
-                                    child: ListTile(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                return Expanded(
+                  child: ListView.builder(
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, bottom: 20),
+                    itemCount: data.data!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final item = data.data![index];
+                      final isSelected =
+                          checkoutList.any((e) => e['service_id'] == item.id);
+                      final isExpanded = expandedIndices.contains(index);
+
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey.shade200,
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                if (item.isDeveloped == 0) {
+                                  _showComingSoonDialog(context);
+                                  return;
+                                }
+                                setState(() {
+                                  if (isSelected) {
+                                    addItem.remove(index);
+                                    addList.removeWhere(
+                                        (map) => map.containsValue(index));
+                                    checkoutList.removeWhere(
+                                        (map) => map.containsValue(item.id));
+                                    totalPrice -= double.parse(
+                                        item.servicePrice.toString());
+                                  } else {
+                                    addItem.add(index);
+                                    addList.add({'index': index});
+                                    checkoutList.add({
+                                      'service_id': item.id,
+                                      "price": item.servicePrice
+                                    });
+                                    totalPrice += double.parse(
+                                        item.servicePrice.toString());
+                                  }
+                                  calculatePrices(tenantsCount);
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: Checkbox(
+                                        value: isSelected,
+                                        onChanged: (value) {
+                                          if (item.isDeveloped == 0) {
+                                            _showComingSoonDialog(context);
+                                            return;
+                                          }
+                                          // Toggle logic same as onTap
+                                          setState(() {
+                                            if (isSelected) {
+                                              addItem.remove(index);
+                                              addList.removeWhere((map) =>
+                                                  map.containsValue(index));
+                                              checkoutList.removeWhere((map) =>
+                                                  map.containsValue(item.id));
+                                              totalPrice -= double.parse(
+                                                  item.servicePrice.toString());
+                                            } else {
+                                              addItem.add(index);
+                                              addList.add({'index': index});
+                                              checkoutList.add({
+                                                'service_id': item.id,
+                                                "price": item.servicePrice
+                                              });
+                                              totalPrice += double.parse(
+                                                  item.servicePrice.toString());
+                                            }
+                                            calculatePrices(tenantsCount);
+                                          });
+                                        },
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        activeColor:
+                                            Theme.of(context).primaryColor,
                                       ),
-                                      onTap: () {
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        item.serviceTitle ?? "",
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: item.isDeveloped == 0
+                                              ? Colors.grey
+                                              : Colors.black87,
+                                        ),
+                                      ),
+                                    ),
+                                    if (item.isDeveloped == 0)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.orange.shade50,
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          border: Border.all(
+                                              color: Colors.orange.shade200),
+                                        ),
+                                        child: Text(
+                                          "Coming Soon",
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.orange.shade800,
+                                          ),
+                                        ),
+                                      )
+                                    else
+                                      Text(
+                                        "₹${item.servicePrice}",
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    IconButton(
+                                      onPressed: () {
                                         setState(() {
-                                          if (addItem.contains(index)) {
-                                            addItem.remove(index);
-                                            addList.removeWhere(
-                                                    (map) => map.containsValue(index));
-                                            checkoutList.removeWhere((map) =>
-                                                map.containsValue(
-                                                    data.data![index].id));
-                                            totalPrice = totalPrice -
-                                                double.parse(data
-                                                    .data![index].servicePrice
-                                                    .toString());
+                                          if (isExpanded) {
+                                            expandedIndices.remove(index);
                                           } else {
-                                            addItem.add(index);
-                                            addList.add({'index': index});
-                                            checkoutList.add({
-                                              'service_id': data.data![index].id,
-                                              "price": data.data![index].servicePrice
-                                            });
-                                            totalPrice = totalPrice +
-                                                double.parse(data
-                                                    .data![index].servicePrice
-                                                    .toString());
+                                            expandedIndices.add(index);
                                           }
                                         });
                                       },
-                                      title: Container(
-                                        width: ScreenSize.blockSizeHorizontal * 80,
-                                        margin: const EdgeInsets.only(top: 50),
-                                        child: Text(
-                                          data.data![index].serviceTitle.toString(),
-                                          textAlign: TextAlign.left,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge,
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        data.data![index].serviceDescription
-                                            .toString(),
-                                        style:
-                                        Theme.of(context).textTheme.bodySmall,
+                                      icon: Icon(
+                                        isExpanded
+                                            ? Icons.keyboard_arrow_up
+                                            : Icons.keyboard_arrow_down,
+                                        color: Colors.grey,
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                                Positioned(
-                                  top: -5,
-                                  left: 30,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFFFFFFF),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    width: ScreenSize.blockSizeHorizontal * 15,
-                                    height: ScreenSize.blockSizeHorizontal * 15,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image.network(
-                                        data.data![index].serviceIcon.toString(),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 30,
-                                  right: 30,
-                                  child: Text(
-                                    data.data![index].servicePrice.toString(),
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 50,
-                                  right: 30,
-                                  child: Text(
-                                    "Per Person",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith(fontSize: 12),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          );
-                        },
-                      ),
-                    );
-                  }
-                  return const Center(
-                    child: Text("Error"),
-                  );
-                }),
-            SizedBox(
-              height: ScreenSize.screenHeight / 6.5,
-            ),
+                            if (isExpanded)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 48, right: 16, bottom: 12),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    item.serviceDescription ?? "",
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 13,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+              return const Center(
+                child: Text("Error"),
+              );
+            }),
+            const SizedBox(height: 160),
           ],
         ),
       ),
       bottomSheet: BlocBuilder<ServicePriceCubit, ServicePriceState>(
         builder: (context, servicePrice) {
           if (servicePrice is ServicePriceLoading) {
-            return const SizedBox();
+            return Skeletonizer(
+              enabled: true,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade50,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                width: 100, height: 18, color: Colors.white),
+                            const SizedBox(height: 4),
+                            Container(
+                                width: 60, height: 14, color: Colors.white),
+                          ],
+                        ),
+                        Container(width: 80, height: 24, color: Colors.white),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                            flex: 2,
+                            child: Container(height: 50, color: Colors.white)),
+                        const SizedBox(width: 12),
+                        Expanded(
+                            flex: 1,
+                            child: Container(height: 50, color: Colors.white)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
           } else if (servicePrice is ServicePriceError) {
             return const Center(
               child: Text("error..."),
@@ -357,28 +668,29 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
           } else if (servicePrice is ServicePriceSuccess) {
             ServicePriceModel data = servicePrice.servicePriceModel;
 
-            return BlocListener<CheckOutStatusCheckingCubit,CheckoutStatusCheckingState>(
-              listener: (context,statusState){
-                if (statusState is CheckoutStatusCheckingErrorState){
+            return BlocListener<CheckOutStatusCheckingCubit,
+                CheckoutStatusCheckingState>(
+              listener: (context, statusState) {
+                if (statusState is CheckoutStatusCheckingErrorState) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(statusState.message))
-                  );
+                      SnackBar(content: Text(statusState.message)));
                 }
-                if(statusState is CheckoutStatusCheckingSuccessState){
+                if (statusState is CheckoutStatusCheckingSuccessState) {
                   // Navigate to success screen
                   context.pushReplacementNamed("payment_success");
                   ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Payment successful"))
-                  );
+                      const SnackBar(content: Text("Payment successful")));
                 }
               },
               child: BlocConsumer<CheckoutCubit, CheckOutState>(
                 listener: (context, checkout) async {
                   if (checkout is CheckOutSuccessState) {
-
-                    final paymentOrderId = checkout.checkoutModel.transaction!.txnId!;
-                    final orderId = checkout.checkoutModel.transaction!.paymentData!.orderId!;
-                    final token = checkout.checkoutModel.transaction!.paymentData!.token!;
+                    final paymentOrderId =
+                        checkout.checkoutModel.transaction!.txnId!;
+                    final orderId = checkout
+                        .checkoutModel.transaction!.paymentData!.orderId!;
+                    final token =
+                        checkout.checkoutModel.transaction!.paymentData!.token!;
                     final amount = checkout.checkoutModel.finalTotal;
 
                     // Convert amount from int? to double
@@ -401,23 +713,26 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                     phonePeService.handlePaymentResponse(
                       response,
                       context,
-                          (isSuccess) {
+                      (isSuccess) {
                         if (isSuccess) {
                           final String token = context.read<TokenCubit>().state;
-                          context.read<CheckOutStatusCheckingCubit>().checkoutStatusChecking(
-                              token: token, payment_order_id: paymentOrderId);
+                          context
+                              .read<CheckOutStatusCheckingCubit>()
+                              .checkoutStatusChecking(
+                                  token: token,
+                                  payment_order_id: paymentOrderId);
                         } else {
                           // Handle payment failure
                           ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Payment failed. Please try again."))
-                          );
+                              const SnackBar(
+                                  content: Text(
+                                      "Payment failed. Please try again.")));
                         }
                       },
                     );
                   } else if (checkout is CheckOutErrorState) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(checkout.errorMessage))
-                    );
+                        SnackBar(content: Text(checkout.errorMessage)));
                   }
                 },
                 builder: (context, checkout) {
@@ -425,419 +740,112 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
+                        color: Colors.orange.shade50,
                         borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            spreadRadius: 3,
-                            blurRadius: 3,
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, -5),
                           )
                         ],
                       ),
-                      height: ScreenSize.screenHeight / 7,
-                      width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 22.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'No. of Tenants: $tenantsCount',
-                                    style: Theme.of(context).textTheme.bodyLarge,
+                                    "Total Amount",
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      showModalBottomSheet<void>(
-                                        isScrollControlled: true,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return StatefulBuilder(
-                                            builder: (BuildContext context,
-                                                StateSetter setStateSheet) {
-                                              // Calculate initial height
-                                              double calculateHeight() {
-                                                if (addList.length == 1)
-                                                  return ScreenSize.screenHeight / 2;
-                                                if (addList.length == 2)
-                                                  return ScreenSize.screenHeight /
-                                                      1.8;
-                                                if (addList.length == 3)
-                                                  return ScreenSize.screenHeight /
-                                                      1.6;
-                                                if (addList.length > 3)
-                                                  return ScreenSize.screenHeight /
-                                                      1.5;
-                                                return ScreenSize.screenHeight / 2.3;
-                                              }
-
-                                              return Container(
-                                                color: Theme.of(context)
-                                                    .scaffoldBackgroundColor,
-                                                height: calculateHeight(),
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                    bottom:
-                                                    MediaQuery.of(context)
-                                                        .viewInsets
-                                                        .bottom,
-                                                  ),
-                                                  child: SingleChildScrollView(
-                                                    physics:
-                                                    const AlwaysScrollableScrollPhysics(),
-                                                    child: Padding(
-                                                      padding:
-                                                      const EdgeInsets.all(16.0),
-                                                      child: SafeArea(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          children: [
-                                                            Center(
-                                                              child: Container(
-                                                                width: 60,
-                                                                height: 6,
-                                                                decoration:
-                                                                BoxDecoration(
-                                                                  color: Colors.grey,
-                                                                  borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                      16),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              "Price Breakup",
-                                                              style: Theme.of(context)
-                                                                  .textTheme
-                                                                  .titleLarge!
-                                                                  .copyWith(
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .w700,
-                                                                fontSize: 16,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 16),
-                                                            Container(
-                                                              padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    12),
-                                                                color: Theme.of(
-                                                                    context)
-                                                                    .cardColor,
-                                                              ),
-                                                              child: Column(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    height:
-                                                                    addList.length >
-                                                                        3
-                                                                        ? ScreenSize
-                                                                        .screenHeight /
-                                                                        4
-                                                                        : null,
-                                                                    child: ListView
-                                                                        .builder(
-                                                                      itemCount:
-                                                                      addList
-                                                                          .length,
-                                                                      shrinkWrap:
-                                                                      true,
-                                                                      physics:
-                                                                      const NeverScrollableScrollPhysics(),
-                                                                      itemBuilder:
-                                                                          (BuildContext
-                                                                      context,
-                                                                          int
-                                                                          index) {
-                                                                        return ListTile(
-                                                                          contentPadding:
-                                                                          const EdgeInsets
-                                                                              .all(
-                                                                              0),
-                                                                          visualDensity:
-                                                                          const VisualDensity(
-                                                                            horizontal:
-                                                                            0,
-                                                                            vertical:
-                                                                            -4,
-                                                                          ),
-                                                                          title: Text(
-                                                                            "${data.data![addList[index]["index"]].serviceTitle}",
-                                                                            style: Theme.of(context)
-                                                                                .textTheme
-                                                                                .bodySmall,
-                                                                          ),
-                                                                          subtitle:
-                                                                          Text(
-                                                                            "₹${double.parse(data.data![addList[index]["index"]].servicePrice.toString()).toStringAsFixed(0)} X $tenantsCount",
-                                                                            style: Theme.of(context)
-                                                                                .textTheme
-                                                                                .bodySmall,
-                                                                          ),
-                                                                          trailing:
-                                                                          Text(
-                                                                            "₹${(double.parse(data.data![addList[index]["index"]].servicePrice!) * tenantsCount).toStringAsFixed(0)}",
-                                                                            style: Theme.of(context)
-                                                                                .textTheme
-                                                                                .bodySmall,
-                                                                          ),
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                                  // Coupon UI Section
-                                                                  _buildCouponUI(
-                                                                    context,
-                                                                    setStateSheet,
-                                                                    data,
-                                                                    tenantsCount,
-                                                                  ),
-                                                                  // Show original subtotal and discount separately for clarity
-                                                                  if (isCouponSuccess && actualDiscount > 0)
-                                                                    Column(
-                                                                      children: [
-                                                                        // Original Subtotal
-                                                                        ListTile(
-                                                                          contentPadding: const EdgeInsets.all(0),
-                                                                          visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                                                                          title: Text(
-                                                                            "Original Sub Total",
-                                                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                                              fontSize: 14,
-                                                                              decoration: TextDecoration.lineThrough,
-                                                                              color: Colors.grey,
-                                                                            ),
-                                                                          ),
-                                                                          trailing: Text(
-                                                                            "₹${subtotal.toStringAsFixed(2)}",
-                                                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                                              fontSize: 14,
-                                                                              decoration: TextDecoration.lineThrough,
-                                                                              color: Colors.grey,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        // Discount Applied
-                                                                        ListTile(
-                                                                          contentPadding: const EdgeInsets.all(0),
-                                                                          visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                                                                          title: Text(
-                                                                            "Discount Applied",
-                                                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                                              fontSize: 14,
-                                                                              color: Colors.green.shade700,
-                                                                            ),
-                                                                          ),
-                                                                          trailing: Text(
-                                                                            "-₹${actualDiscount.toStringAsFixed(2)}",
-                                                                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                                              fontSize: 14,
-                                                                              color: Colors.green.shade700,
-                                                                              fontWeight: FontWeight.w600,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  // Subtotal (with discount applied if any)
-                                                                  ListTile(
-                                                                    contentPadding:
-                                                                    const EdgeInsets
-                                                                        .all(0),
-                                                                    visualDensity:
-                                                                    const VisualDensity(
-                                                                      horizontal: 0,
-                                                                      vertical: -4,
-                                                                    ),
-                                                                    title: Text(
-                                                                      isCouponSuccess ? "Discounted Sub Total" : "Sub Total",
-                                                                      style: Theme.of(
-                                                                          context)
-                                                                          .textTheme
-                                                                          .bodyLarge!
-                                                                          .copyWith(
-                                                                          fontSize:
-                                                                          14),
-                                                                    ),
-                                                                    trailing: Text(
-                                                                      "₹${discountedSubtotal.toStringAsFixed(2)}",
-                                                                      style: Theme.of(
-                                                                          context)
-                                                                          .textTheme
-                                                                          .bodyLarge!
-                                                                          .copyWith(
-                                                                          fontSize:
-                                                                          14),
-                                                                    ),
-                                                                  ),
-                                                                  // GST
-                                                                  ListTile(
-                                                                    contentPadding:
-                                                                    const EdgeInsets
-                                                                        .all(0),
-                                                                    visualDensity:
-                                                                    const VisualDensity(
-                                                                      horizontal: 0,
-                                                                      vertical: -4,
-                                                                    ),
-                                                                    title: Text(
-                                                                      "GST Charge 18%",
-                                                                      style: Theme.of(
-                                                                          context)
-                                                                          .textTheme
-                                                                          .bodyLarge!
-                                                                          .copyWith(
-                                                                          fontSize:
-                                                                          14),
-                                                                    ),
-                                                                    trailing: Text(
-                                                                      "₹${gst.toStringAsFixed(2)}",
-                                                                      style: Theme.of(
-                                                                          context)
-                                                                          .textTheme
-                                                                          .bodyLarge!
-                                                                          .copyWith(
-                                                                          fontSize:
-                                                                          14),
-                                                                    ),
-                                                                  ),
-                                                                  // Grand Total
-                                                                  ListTile(
-                                                                    contentPadding:
-                                                                    const EdgeInsets
-                                                                        .all(0),
-                                                                    visualDensity:
-                                                                    const VisualDensity(
-                                                                      horizontal: 0,
-                                                                      vertical: -4,
-                                                                    ),
-                                                                    title: Text(
-                                                                      "Grand Total",
-                                                                      style: Theme.of(
-                                                                          context)
-                                                                          .textTheme
-                                                                          .bodyLarge,
-                                                                    ),
-                                                                    trailing: Text(
-                                                                      "₹${grandTotal.toStringAsFixed(2)}",
-                                                                      style: Theme.of(
-                                                                          context)
-                                                                          .textTheme
-                                                                          .bodyLarge,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 16),
-                                                            CustomButton(
-                                                              isLoading: checkout
-                                                              is CheckOutLoadingState,
-                                                              onTap: () {
-                                                                if (checkoutList
-                                                                    .isEmpty) {
-                                                                  ScaffoldMessenger
-                                                                      .of(context)
-                                                                      .showSnackBar(
-                                                                    const SnackBar(
-                                                                      content: Text(
-                                                                          "Please select services"),
-                                                                    ),
-                                                                  );
-                                                                } else {
-                                                                  checkoutTransaction(
-                                                                    payment_gateway:
-                                                                    "Stripe",
-                                                                    payment_mode:
-                                                                    "Credit Card",
-                                                                    quantity:
-                                                                    tenantsCount,
-                                                                    items:
-                                                                    checkoutList,
-                                                                  );
-                                                                }
-                                                              },
-                                                              text:
-                                                              "Pay ₹${grandTotal.toStringAsFixed(0)} /",
-                                                              gradientColors: [
-                                                                Theme.of(context)
-                                                                    .primaryColor,
-                                                                Theme.of(context)
-                                                                    .primaryColorLight,
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 16),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      'See price breakout',
-                                      style: TextStyle(
-                                        decoration: TextDecoration.underline,
-                                        color:
-                                        Theme.of(context).primaryColorDark,
-                                      ),
+                                  Text(
+                                    "$tenantsCount x ₹${totalPrice.toStringAsFixed(0)}",
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade700,
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            CustomButton(
-                              isLoading: checkout is CheckOutLoadingState,
-                              width: ScreenSize.screenWidth / 2.5,
-                              text:
-                              "Pay ₹${grandTotal.toStringAsFixed(0)} /-",
-                              onTap: () {
-                                if (checkoutList.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
+                              Text(
+                                "₹${grandTotal.toStringAsFixed(0)}",
+                                style: GoogleFonts.outfit(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange.shade800,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: CustomButton(
+                                  isLoading: checkout is CheckOutLoadingState,
+                                  onTap: () {
+                                    if (checkoutList.isEmpty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
                                           content:
-                                          Text("Please select services")));
-                                } else {
-                                  checkoutTransaction(
-                                    payment_gateway: "Stripe",
-                                    payment_mode: "Credit Card",
-                                    quantity: tenantsCount,
-                                    items: checkoutList,
-                                  );
-                                }
-                              },
-                              gradientColors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).primaryColorLight,
-                              ],
-                            ),
-                          ],
-                        ),
+                                              Text("Please select services"),
+                                        ),
+                                      );
+                                    } else {
+                                      _addToCartAndNavigate(data
+                                          .data![0].serviceTitle
+                                          .toString());
+                                    }
+                                  },
+                                  text: "Confirm",
+                                  gradientColors: [
+                                    Theme.of(context).primaryColor,
+                                    Theme.of(context).primaryColorLight,
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  height: 50,
+                                  child: OutlinedButton(
+                                    onPressed: () => context.pop(),
+                                    style: OutlinedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      side: BorderSide(
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ),
+                                    child: Text(
+                                      "Cancel",
+                                      style: GoogleFonts.outfit(
+                                        color: Theme.of(context).primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -850,309 +858,6 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
           );
         },
       ),
-    );
-  }
-
-  Widget _buildCouponUI(
-      BuildContext context,
-      StateSetter setStateSheet,
-      ServicePriceModel data,
-      int tenantsCount,
-      ) {
-    // Helper function to update both parent and bottom sheet state
-    void updateCouponState({
-      bool? applied,
-      bool? success,
-      String? discount,
-      String? finalAmt,
-      String? code,
-    }) {
-      setState(() {
-        if (applied != null) isCouponApplied = applied;
-        if (success != null) isCouponSuccess = success;
-        if (discount != null) discountAmount = discount ?? "";
-        if (finalAmt != null) finalAmount = finalAmt ?? "";
-        if (code != null) couponCode = code ?? "";
-      });
-      setStateSheet(() {
-        if (applied != null) isCouponApplied = applied;
-        if (success != null) isCouponSuccess = success;
-        if (discount != null) discountAmount = discount ?? "";
-        if (finalAmt != null) finalAmount = finalAmt ?? "";
-        if (code != null) couponCode = code ?? "";
-      });
-
-      // Always recalculate prices when coupon state changes
-      calculatePrices(tenantsCount);
-    }
-
-    return BlocConsumer<ApplyCouponCubit, ApplyCouponState>(
-      listener: (context, couponState) {
-        if (couponState is ApplyCouponSuccessState) {
-          // Log the entire response
-          print("Full ApplyCouponSuccessState response:");
-          print("Model: ${couponState.applyCouponModel.toJson()}");
-
-          // Extract data from the model
-          String? discountValue = couponState.applyCouponModel.result?.discountApplied;
-          String? finalAmountValue = couponState.applyCouponModel.result?.finalAmount;
-
-          print("Extracted values:");
-          print("  discountApplied: $discountValue");
-          print("  finalAmount: $finalAmountValue");
-
-          updateCouponState(
-            success: true,
-            discount: discountValue ?? "",
-            finalAmt: finalAmountValue ?? "",
-            code: couponController.text,
-            applied: false, // Hide the text field
-          );
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(couponState.applyCouponModel.message ?? "Coupon applied successfully"),
-            ),
-          );
-        } else if (couponState is ApplyCouponErrorState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(couponState.message)),
-          );
-        }
-      },
-      builder: (context, couponState) {
-        // Loading state
-        if (couponState is ApplyCouponLoadingState) {
-          return Container(
-            height: 60,
-            alignment: Alignment.center,
-            child: const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
-              strokeWidth: 3,
-            ),
-          );
-        }
-
-        // SUCCESS STATE - Coupon Applied UI
-        if (isCouponSuccess) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Coupon applied success message
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.green.shade200),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.check_circle,
-                        color: Colors.green.shade600, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        "Coupon ($couponCode) Applied!",
-                        style: TextStyle(
-                          color: Colors.green.shade800,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        // Remove coupon and reset to initial state
-                        couponController.clear();
-                        updateCouponState(
-                          applied: false,
-                          success: false,
-                          discount: "",
-                          finalAmt: "",
-                          code: '',
-                        );
-                      },
-                      icon: Icon(Icons.close,
-                          color: Colors.green.shade600, size: 20),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
-          );
-        }
-
-        // INPUT STATE - Text field for coupon code
-        if (isCouponApplied) {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 14.0),
-                  child: CouponTextField(
-                    controller: couponController,
-                    titleText: "Coupon Code",
-                    hintText: "Enter Coupon Code",
-                    textInputType: TextInputType.text,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Apply Button
-              SizedBox(
-                height: 45,
-                child: ElevatedButton(
-                  onPressed: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    if (couponController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Please enter coupon code")),
-                      );
-                    } else {
-                      applyCoupon(couponController.text, tenantsCount);
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text("Apply"),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Cancel Button
-              SizedBox(
-                height: 48,
-                child: OutlinedButton(
-                  onPressed: () {
-                    couponController.clear();
-                    updateCouponState(applied: false);
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.orange,
-                    side: const BorderSide(color: Colors.orange),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text("Cancel"),
-                ),
-              ),
-            ],
-          );
-        }
-
-        // DEFAULT STATE - Dotted border with "Have a coupon" text
-        return DottedBorder(
-          borderType: BorderType.RRect,
-          radius: const Radius.circular(12),
-          dashPattern: const [2, 2],
-          color: Colors.orange,
-          strokeWidth: 1,
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.orangeAccent.shade100.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 22.0, vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    height: 26,
-                    width: 26,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColorLight,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.local_activity_outlined,
-                        color: Colors.white,
-                        size: 22,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    "Have a coupon code ?",
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const Spacer(),
-                  InkWell(
-                    onTap: () {
-                      updateCouponState(applied: true);
-                    },
-                    child: const Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            "Apply",
-                            style: TextStyle(
-                              color: Colors.orange,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_circle_right_outlined,
-                          color: Colors.orange,
-                          size: 22,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void applyCoupon(String couponCode, int tenantsCount) {
-    // Calculate subtotal (total price * number of tenants)
-    double subtotalAmount = totalPrice * tenantsCount;
-    String subtotalStr = subtotalAmount.toStringAsFixed(2);
-
-    final String customerId = context.read<IdCubit>().state;
-    String token = context.read<TokenCubit>().state;
-
-    print("applyCoupon called:");
-    print("  subtotal: $subtotalStr");
-    print("  couponCode: $couponCode");
-
-    context.read<ApplyCouponCubit>().applyCoupon(
-      token: token,
-      customer_id: customerId,
-      subtotal: subtotalStr,
-      coupon_code: couponCode,
     );
   }
 }

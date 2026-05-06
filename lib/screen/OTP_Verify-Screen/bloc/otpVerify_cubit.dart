@@ -29,6 +29,25 @@ class OtpVerifyCubit extends Cubit<OtpVerifyState> {
       emit(OtpVerifyError('An error occurred: ${e.toString()}'));
     }
   }
+
+  void resendOtp({required String mobileNumber}) async {
+    emit(ResendOtpLoading());
+    try {
+      final response = await _apiService.resendOtp(mobileNumber: mobileNumber);
+
+      if (response.data != null && response.data.containsKey("status")) {
+        if (response.data["status"] == 200) {
+          emit(ResendOtpSuccess(response.data["message"] ?? 'OTP resend successfully.'));
+        } else {
+          emit(ResendOtpError(response.data["message"] ?? 'Failed to resend OTP.'));
+        }
+      } else {
+        emit(ResendOtpError('Invalid response data.'));
+      }
+    } catch (e) {
+      emit(ResendOtpError('An error occurred: ${e.toString()}'));
+    }
+  }
 }
 
 class TimerCubit extends Cubit<int> {

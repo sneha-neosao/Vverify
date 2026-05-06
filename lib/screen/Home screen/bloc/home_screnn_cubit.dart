@@ -54,6 +54,12 @@ class CountCubit extends Cubit<int> {
     }
   }
 
+  void setCount(int value) {
+    if (value > 0) {
+      emit(value);
+    }
+  }
+
   void clear() {
     emit(1);
   }

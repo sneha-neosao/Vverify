@@ -28,3 +28,23 @@ class OtpVerifyError extends OtpVerifyState {
   @override
   List<Object?> get props => [errorMessage];
 }
+
+class ResendOtpLoading extends OtpVerifyState {}
+
+class ResendOtpSuccess extends OtpVerifyState {
+  final String message;
+
+  ResendOtpSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ResendOtpError extends OtpVerifyState {
+  final String errorMessage;
+
+  ResendOtpError(this.errorMessage);
+
+  @override
+  List<Object?> get props => [errorMessage];
+}
