@@ -10,7 +10,7 @@ extension ThemeDataExtension on AppTheme {
         return ThemeData.light().copyWith(
           primaryTextTheme:
               const TextTheme(bodyMedium: TextStyle(color: Colors.black)),
-         canvasColor: Colors.black,
+          canvasColor: Colors.black,
           iconTheme: const IconThemeData(color: Colors.black),
           primaryColor: const Color(0xFFEE3B27),
           primaryColorLight: const Color(0xFFFEC051),
@@ -33,7 +33,6 @@ extension ThemeDataExtension on AppTheme {
             surfaceTintColor: Colors.transparent, //
             backgroundColor: Colors.transparent, // what you want
           ),
-
           elevatedButtonTheme: ElevatedButtonThemeData(
               style: ElevatedButton.styleFrom(
             foregroundColor: Colors.black,
@@ -94,6 +93,11 @@ extension ThemeDataExtension on AppTheme {
                 color: Colors.black,
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
+              ),
+              titleSmall: GoogleFonts.outfit(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
               )),
         );
       case AppTheme.dark:
@@ -111,7 +115,7 @@ extension ThemeDataExtension on AppTheme {
           shadowColor: const Color(0xff121212).withOpacity(0.5),
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
           appBarTheme: const AppBarTheme(
-            backgroundColor:  Color(0xFF373737),
+            backgroundColor: Color(0xFF373737),
             foregroundColor: Colors.white,
             titleTextStyle: TextStyle(
               color: Colors.white,
@@ -192,6 +196,6 @@ extension ThemeDataExtension on AppTheme {
                 fontWeight: FontWeight.w700,
               )),
         );
-      }
+    }
   }
 }

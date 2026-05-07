@@ -9,6 +9,8 @@ import '../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../../../commonComponent/custom_button.dart';
 import '../../Blocs/apply_coupon_bloc/apply_coupon_cubit.dart';
 import '../../Blocs/apply_coupon_bloc/apply_coupon_state.dart';
+import '../../Blocs/checkout_bloc/checkout_cubit.dart';
+import '../../Blocs/checkout_bloc/checkout_state.dart';
 
 class CheckOutScreen extends StatefulWidget {
   const CheckOutScreen({super.key});
@@ -23,6 +25,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   double gst = 0.0;
   double discount = 0.0;
   double grandTotal = 0.0;
+  String? appliedCouponCode;
   final TextEditingController couponController = TextEditingController();
 
   @override
@@ -92,196 +95,250 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     await prefs.setString('checkout_cart', jsonEncode(cartItems));
   }
 
+  void _handleCheckout() {
+    final token = context.read<TokenCubit>().state;
+    final customerIdStr = context.read<IdCubit>().state;
+    final customerId = int.tryParse(customerIdStr) ?? 0;
+
+    // Transform cartItems to the required format
+    List<Map<String, dynamic>> apiItems = cartItems.map((item) {
+      return {
+        "entity_id": int.tryParse(item['entity_id'].toString()) ?? 0,
+        "quantity": item['tenants_count'],
+        "services": (item['checkout_list'] as List).map((s) {
+          return {
+            "service_id": int.tryParse(s['service_id'].toString()) ?? 0,
+            "price": double.tryParse(s['price'].toString()) ?? 0.0,
+          };
+        }).toList(),
+      };
+    }).toList();
+
+    context.read<CheckoutCubit>().checkout(
+          token: token,
+          customer_id: customerId,
+          payment_gateway: "Zwitch",
+          payment_mode: "Credit Card",
+          coupon_code: appliedCouponCode,
+          items: apiItems,
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ApplyCouponCubit, ApplyCouponState>(
-      listener: (context, state) {
-        if (state is ApplyCouponSuccessState) {
-          final result = state.applyCouponModel.result;
-          if (result != null) {
-            setState(() {
-              subtotal = double.tryParse(result.subtotal.toString()) ?? 0.0;
-              gst = double.tryParse(result.taxTotal.toString()) ?? 0.0;
-              grandTotal =
-                  double.tryParse(result.finalAmount.toString()) ?? 0.0;
-              discount = double.tryParse(
-                      result.discountApplied?.toString() ?? '0.0') ??
-                  0.0;
-            });
-            if (result.couponDetails != null) {
+    return MultiBlocListener(
+        listeners: [
+          BlocListener<CheckoutCubit, CheckOutState>(
+            listener: (context, checkoutState) {
+              if (checkoutState is CheckOutSuccessState) {
+                context.pushReplacementNamed("payment_success");
+              } else if (checkoutState is CheckOutErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(checkoutState.errorMessage),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocConsumer<ApplyCouponCubit, ApplyCouponState>(
+          listener: (context, state) {
+            if (state is ApplyCouponSuccessState) {
+              final result = state.applyCouponModel.result;
+              if (result != null) {
+                setState(() {
+                  subtotal = double.tryParse(result.subtotal.toString()) ?? 0.0;
+                  gst = double.tryParse(result.taxTotal.toString()) ?? 0.0;
+                  grandTotal =
+                      double.tryParse(result.finalAmount.toString()) ?? 0.0;
+                  discount = double.tryParse(
+                          result.discountApplied?.toString() ?? '0.0') ??
+                      0.0;
+                  appliedCouponCode = result.couponDetails?.couponCode;
+                });
+                if (result.couponDetails != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Coupon applied successfully!"),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              }
+            } else if (state is ApplyCouponErrorState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Coupon applied successfully!"),
-                  backgroundColor: Colors.green,
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red,
                 ),
               );
             }
-          }
-        } else if (state is ApplyCouponErrorState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      },
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Colors.grey.shade50,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-              onPressed: () => context.pop(),
-            ),
-            title: Text(
-              "Checkout",
-              style: GoogleFonts.outfit(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
+          },
+          builder: (context, state) {
+            return Scaffold(
+              backgroundColor: Colors.grey.shade50,
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.transparent,
+                scrolledUnderElevation: 0,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                  onPressed: () => context.pop(),
+                ),
+                title: Text(
+                  "Checkout",
+                  style: GoogleFonts.outfit(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                centerTitle: true,
               ),
-            ),
-            centerTitle: true,
-          ),
-          body: Column(
-            children: [
-              // ── Scrollable cart list ──
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 16, bottom: 8),
-                  children: [
-                    Text(
-                      "Review Services",
-                      style: GoogleFonts.outfit(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    ...cartItems.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      var item = entry.value;
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
+              body: Column(
+                children: [
+                  // ── Cart list ──
+                  Expanded(
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, top: 16, bottom: 8),
+                      children: [
+                        Text(
+                          "Review Services",
+                          style: GoogleFonts.outfit(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item['entity_name'] ?? 'Entity',
-                                    style: GoogleFonts.outfit(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "${item['tenants_count']} person(s) • ${item['services_count']} services",
-                                    style: GoogleFonts.outfit(
-                                      color: Colors.grey.shade600,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                        const SizedBox(height: 12),
+                        ...cartItems.asMap().entries.map((entry) {
+                          int index = entry.key;
+                          var item = entry.value;
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            const SizedBox(width: 8),
-                            Row(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                CustomButton(
-                                  onTap: () {
-                                    final entityId =
-                                        item['entity_id']?.toString() ?? '';
-                                    if (entityId.isNotEmpty) {
-                                      final cartItemId =
-                                          item['cart_item_id']?.toString() ??
-                                              '';
-                                      context.pushNamed(
-                                        'servicesAndPrice',
-                                        pathParameters: {'id': entityId},
-                                        queryParameters: {
-                                          'isEdit': 'true',
-                                          'cartItemId': cartItemId
-                                        },
-                                      );
-                                    }
-                                  },
-                                  prefixIcon: Icons.edit,
-                                  iconColor: Colors.orange,
-                                  iconSize: 14,
-                                  text: "Edit",
-                                  width: 80,
-                                  height: 32,
-                                  borderColor: Colors.orange.shade300,
-                                  borderWidth: 1,
-                                  gradientColors: const [
-                                    Colors.transparent,
-                                    Colors.transparent,
-                                  ],
-                                  textStyle: GoogleFonts.outfit(
-                                    fontSize: 14,
-                                    color: Colors.orange,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item['entity_name'] ?? 'Entity',
+                                        style: GoogleFonts.outfit(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        "${item['tenants_count']} person(s) • ${item['services_count']} services",
+                                        style: GoogleFonts.outfit(
+                                          color: Colors.grey.shade600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                CustomButton(
-                                  onTap: () => _removeItem(index),
-                                  prefixIcon: Icons.delete,
-                                  iconColor: Colors.red,
-                                  iconSize: 14,
-                                  text: "Delete",
-                                  width: 90,
-                                  height: 32,
-                                  borderColor: Colors.red.shade300,
-                                  borderWidth: 1,
-                                  gradientColors: const [
-                                    Colors.transparent,
-                                    Colors.transparent,
+                                Row(
+                                  children: [
+                                    CustomButton(
+                                      onTap: () async {
+                                        final entityId =
+                                            item['entity_id']?.toString() ?? '';
+                                        if (entityId.isNotEmpty) {
+                                          final cartItemId =
+                                              item['cart_item_id']
+                                                      ?.toString() ??
+                                                  '';
+                                          await context.pushNamed(
+                                            'servicesAndPrice',
+                                            pathParameters: {'id': entityId},
+                                            queryParameters: {
+                                              'isEdit': 'true',
+                                              'cartItemId': cartItemId
+                                            },
+                                          );
+                                          _loadCartData();
+                                        }
+                                      },
+                                      prefixIcon: Icons.edit,
+                                      iconColor: Colors.orange,
+                                      iconSize: 14,
+                                      text: "Edit",
+                                      width: 80,
+                                      height: 32,
+                                      borderColor: Colors.orange.shade300,
+                                      borderWidth: 1,
+                                      gradientColors: const [
+                                        Colors.transparent,
+                                        Colors.transparent,
+                                      ],
+                                      textStyle: GoogleFonts.outfit(
+                                        fontSize: 14,
+                                        color: Colors.orange,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    CustomButton(
+                                      onTap: () => _removeItem(index),
+                                      prefixIcon: Icons.delete,
+                                      iconColor: Colors.red,
+                                      iconSize: 14,
+                                      text: "Delete",
+                                      width: 90,
+                                      height: 32,
+                                      borderColor: Colors.red.shade300,
+                                      borderWidth: 1,
+                                      gradientColors: const [
+                                        Colors.transparent,
+                                        Colors.transparent,
+                                      ],
+                                      textStyle: GoogleFonts.outfit(
+                                        fontSize: 14,
+                                        color: Colors.red,
+                                      ),
+                                    ),
                                   ],
-                                  textStyle: GoogleFonts.outfit(
-                                    fontSize: 14,
-                                    color: Colors.red,
-                                  ),
-                                ),
+                                )
                               ],
-                            )
-                          ],
+                            ),
+                          );
+                        }).toList(),
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: CustomButton(
+                            onTap: () => context.go('/bottomNav'),
+                            text: "+ Add More",
+                            width: 140,
+                            height: 40,
+                            gradientColors: [
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).primaryColorLight,
+                            ],
+                          ),
                         ),
-                      );
-                    }).toList(),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: CustomButton(
-                        onTap: () => context.go('/bottomNav'),
-                        text: "+ Add More",
-                        width: 140,
-                        height: 40,
-                        gradientColors: [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColorLight,
-                        ],
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-
-              // ── Fixed price summary panel ──
-              Container(
+              bottomNavigationBar: // ── Fixed price summary panel ──
+                  Container(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -300,116 +357,178 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Price Breakdown",
+                        style: GoogleFonts.outfit(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Subtotal",
                             style: GoogleFonts.outfit(
-                                color: Colors.grey.shade600)),
+                                fontSize: 16, color: Colors.grey.shade600)),
                         Text("₹${subtotal.toStringAsFixed(2)}",
                             style: GoogleFonts.outfit(
+                                fontSize: 16, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    if (appliedCouponCode != null) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.green.shade100),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Applied: $appliedCouponCode",
+                              style: GoogleFonts.outfit(
+                                color: Colors.green.shade700,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  appliedCouponCode = null;
+                                  discount = 0;
+                                  couponController.clear();
+                                });
+                                _calculateLocalTotals();
+                              },
+                              child: Text(
+                                "Remove",
+                                style: GoogleFonts.outfit(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Discount",
+                            style: GoogleFonts.outfit(
+                                fontSize: 16, color: Colors.green)),
+                        Text("- ₹${discount.toStringAsFixed(2)}",
+                            style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                color: Colors.green,
                                 fontWeight: FontWeight.w600)),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("GST (18%)",
                             style: GoogleFonts.outfit(
-                                color: Colors.grey.shade600)),
+                                fontSize: 16, color: Colors.grey.shade600)),
                         Text("₹${gst.toStringAsFixed(2)}",
                             style: GoogleFonts.outfit(
-                                fontWeight: FontWeight.w600)),
+                                fontSize: 16, fontWeight: FontWeight.w600)),
                       ],
                     ),
-                    if (discount > 0) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Discount",
-                              style: GoogleFonts.outfit(color: Colors.green)),
-                          Text("-₹${discount.toStringAsFixed(2)}",
-                              style: GoogleFonts.outfit(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.w600)),
-                        ],
-                      ),
-                    ],
                     const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Divider(),
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Divider(thickness: 1.5),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Grand Total",
-                            style: GoogleFonts.outfit(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        Text("₹${grandTotal.toStringAsFixed(2)}",
+                        Text("Total",
                             style: GoogleFonts.outfit(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.orange)),
+                                color: Theme.of(context).primaryColorLight)),
+                        Text("₹${grandTotal.toStringAsFixed(2)}",
+                            style: GoogleFonts.outfit(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).primaryColorLight)),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: couponController,
-                            decoration: InputDecoration(
-                              hintText: "Enter Coupon Code",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 20),
+                    if (appliedCouponCode == null) ...[
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: couponController,
+                              decoration: InputDecoration(
+                                hintText: "Enter Coupon Code",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
                               ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        CustomButton(
+                          const SizedBox(width: 12),
+                          CustomButton(
+                            onTap: () {
+                              if (couponController.text.isNotEmpty) {
+                                _calculateBackendTotals(
+                                    couponCode: couponController.text);
+                              }
+                            },
+                            text: state is ApplyCouponLoadingState
+                                ? "..."
+                                : "Apply",
+                            width: 100,
+                            height: 48,
+                            gradientColors: [
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).primaryColorLight,
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    BlocBuilder<CheckoutCubit, CheckOutState>(
+                      builder: (context, checkoutState) {
+                        return CustomButton(
                           onTap: () {
-                            if (couponController.text.isNotEmpty) {
-                              _calculateBackendTotals(
-                                  couponCode: couponController.text);
+                            if (checkoutState is! CheckOutLoadingState) {
+                              _handleCheckout();
                             }
                           },
-                          text: state is ApplyCouponLoadingState
-                              ? "..."
-                              : "Apply",
-                          width: 100,
-                          height: 48,
+                          text: checkoutState is CheckOutLoadingState
+                              ? "Processing..."
+                              : "Checkout ₹${grandTotal.toStringAsFixed(2)}",
+                          width: double.infinity,
+                          height: 54,
                           gradientColors: [
                             Theme.of(context).primaryColor,
                             Theme.of(context).primaryColorLight,
                           ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    CustomButton(
-                      onTap: () {
-                        // Navigate to payment
+                        );
                       },
-                      text: "Proceed to Payment",
-                      width: double.infinity,
-                      height: 50,
-                      gradientColors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColorLight,
-                      ],
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        );
-      },
-    );
+            );
+          },
+        ));
   }
 }

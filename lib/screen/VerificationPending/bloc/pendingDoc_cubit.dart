@@ -9,20 +9,28 @@ class PendingDocCubit extends Cubit<PendingDocState> {
 
   PendingDocCubit(this._apiService) : super(PendingDocInitialState());
 
-  Future<void> getPendingDoc(
-      {required String token,
-      required int customerId,
-      required int page,
-      required int limit,
-      String? status}) async {
+  Future<void> getPendingDoc({
+    required String token,
+    required int customerId,
+    required int page,
+    required int limit,
+    String? status,
+    int? groupId,
+    int? serviceId,
+    String? search,
+  }) async {
     emit(PendingDocLoadingState());
     try {
       final response = await _apiService.verifyRequestList(
-          token: token,
-          customer_id: customerId,
-          page: page,
-          limit: limit,
-          status: status);
+        token: token,
+        customer_id: customerId,
+        page: page,
+        limit: limit,
+        status: status,
+        group_id: groupId,
+        service_id: serviceId,
+        search: search,
+      );
 
       if (response.data != null && response.data.containsKey("status")) {
         final PendingDocModel pendingDocModel =

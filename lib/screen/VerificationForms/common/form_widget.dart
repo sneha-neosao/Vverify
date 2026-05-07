@@ -3,17 +3,18 @@ import 'package:flutter/services.dart';
 import '../../../commonComponent/customTextFiled.dart';
 
 class form_widget extends StatelessWidget {
-  const form_widget(
-      {super.key,
-      required this.controller,
-      required this.titleText,
-      required this.hintText,
-      required this.textInputType,
-      this.validator,
-      this.maskFormatter,
-      this.titleDetails,
-        this.onSaveValue
-      });
+  const form_widget({
+    super.key,
+    required this.controller,
+    required this.titleText,
+    required this.hintText,
+    required this.textInputType,
+    this.validator,
+    this.maskFormatter,
+    this.titleDetails,
+    this.onSaveValue,
+    this.validationMessage,
+  });
 
   final TextEditingController controller;
   final String titleText;
@@ -23,6 +24,7 @@ class form_widget extends StatelessWidget {
   final List<TextInputFormatter>? maskFormatter;
   final String? titleDetails;
   final void Function(String?)? onSaveValue;
+  final String? validationMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +49,13 @@ class form_widget extends StatelessWidget {
                     .bodySmall!
                     .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
               ),
-                  TextSpan(
-                    text:titleDetails,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(fontWeight: FontWeight.w700, color: Colors.grey),
-                  )
+              TextSpan(
+                text: titleDetails,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(fontWeight: FontWeight.w700, color: Colors.grey),
+              )
             ])),
         const SizedBox(
           height: 4,
@@ -66,7 +68,7 @@ class form_widget extends StatelessWidget {
           hintText: hintText,
           labelText: titleText,
           onSaveValue: onSaveValue,
-
+          validationMessage: validationMessage,
         )
       ],
     );
@@ -79,7 +81,6 @@ class FormFieldNotRequired extends StatelessWidget {
       required this.controller,
       required this.titleText,
       required this.hintText,
-
       required this.textInputType,
       this.validator,
       this.maskFormatter});
@@ -117,7 +118,7 @@ class FormFieldNotRequired extends StatelessWidget {
               FocusScope.of(context).nextFocus();
             },
             inputFormatters: maskFormatter,
-            validator: validator ,
+            validator: validator,
             decoration: InputDecoration(
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),

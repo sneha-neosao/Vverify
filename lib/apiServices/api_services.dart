@@ -229,27 +229,24 @@ class ApiService {
   Future<Response> getTransactionCheckout({
     required String token,
     required int customer_id,
-    required int entity_id,
     required String payment_gateway,
     required String payment_mode,
-    required int quantity,
-    required String coupon_code,
+    String? coupon_code,
     required List<Map<String, dynamic>> items,
+    String device_type = "mobile",
   }) async {
     Map<String, dynamic> data = {
       "customer_id": customer_id,
-      "entity_id": entity_id,
+      "device_type": device_type,
       "payment_gateway": payment_gateway,
       "payment_mode": payment_mode,
-      "quantity": quantity,
+      "coupon_code": coupon_code,
       "items": items,
-      "coupon_code": coupon_code
     };
 
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('transaction/checkout', queryParameters: data);
+      final response = await _dio.post('transaction/checkout', data: data);
       // log('getTransactionCheckout Response: ${response.data}');
       return response;
     } catch (e) {
@@ -358,62 +355,32 @@ class ApiService {
     required int page,
     required int limit,
     String? status,
+    int? group_id,
+    int? service_id,
+    String? search,
   }) async {
     try {
       Map<String, dynamic> data = {
         "customer_id": customer_id,
         "page": page,
         "limit": limit,
-        "status": status
+        "status": status,
+        "group_id": group_id,
+        "service_id": service_id,
+        "search": search,
       };
 
+      debugPrint('getTransactionList Request: ${data}');
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response =
           await _dio.get('verify-request/list', queryParameters: data);
       print('getTransactionList Response: ${response.data}');
 
-      // log('getTransactionList Response: ${response.data}');
+      log('getTransactionList Response: ${response.data}');
       return response;
     } catch (e) {
       log('Error in getTransactionList: $e');
       throw Exception('Failed to fetch getTransactionList: $e');
-    }
-  }
-
-  Future<List<verifyRequest>> verifyRequestListPagination({
-    required String token,
-    required String customer_id,
-    required int page,
-    required int limit,
-    String? status,
-  }) async {
-    Map<String, dynamic> data = {
-      "customer_id": customer_id,
-      "page": page,
-      "limit": limit,
-      "status": status
-    };
-
-    _dio.options.headers = {
-      'Authorization': 'Bearer $token',
-      'X-Action-From': 'mobile'
-    };
-    final response =
-        await _dio.get('verify-request/list', queryParameters: data);
-
-    if (response.statusCode == 200) {
-      final rawJson = jsonEncode(response.data);
-      for (var i = 0; i < rawJson.length; i += 1000) {
-        debugPrint(rawJson.substring(
-            i, i + 1000 > rawJson.length ? rawJson.length : i + 1000));
-      }
-
-      List<verifyRequest> items = (response.data['data'] as List)
-          .map((itemJson) => verifyRequest.fromJson(itemJson))
-          .toList();
-      return items;
-    } else {
-      throw Exception('Failed to load data');
     }
   }
 

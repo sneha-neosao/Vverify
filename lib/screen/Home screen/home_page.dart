@@ -326,9 +326,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
                   Text(
                     "Select Whom you want to verify",
-                    style: GoogleFonts.outfit(
-                      textStyle: Theme.of(context).textTheme.titleMedium,
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Theme.of(context).primaryColorLight),
                   ),
                   SizedBox(height: 4),
                   Text(
@@ -407,20 +408,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Text(
                                   group.title?.toUpperCase() ?? "",
-                                  style: GoogleFonts.outfit(
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall!
-                                        .copyWith(
-                                          color: Colors.orange,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .copyWith(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                                 const SizedBox(width: 8),
-                                const Expanded(
+                                Expanded(
                                   child: Divider(
-                                    color: Colors.orange,
+                                    color: Theme.of(context).primaryColorLight,
                                     thickness: 1,
                                   ),
                                 ),
@@ -448,12 +448,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     children: [
                                       InkWell(
                                         borderRadius: BorderRadius.circular(12),
-                                        onTap: () {
+                                        onTap: () async {
                                           context.read<CountCubit>().clear();
-                                          context.pushNamed("servicesAndPrice",
+                                          await context.pushNamed(
+                                              "servicesAndPrice",
                                               pathParameters: {
                                                 'id': item.id.toString()
                                               });
+                                          _updateCartCount();
                                           // showModalBottomSheet<void>(
                                           //   context: context,
                                           //   builder: (BuildContext context) {

@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 
-
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback? onTap;
-  final List<Color> gradientColors; 
+  final List<Color> gradientColors;
   final bool isLoading;
-  final double? width; 
-  final double? height; 
-  final IconData? prefixIcon; 
-  final IconData? suffixIcon; 
+  final double? width;
+  final double? height;
+  final IconData? prefixIcon;
+  final IconData? suffixIcon;
   final Color? iconColor;
   final double? iconSize;
-  final Color? borderColor; 
+  final Color? borderColor;
   final double? borderWidth;
-  final TextStyle? textStyle; 
+  final TextStyle? textStyle;
   final bool enabled;
 
   const CustomButton({
@@ -23,27 +22,24 @@ class CustomButton extends StatelessWidget {
     this.onTap,
     this.gradientColors = const [Colors.blue, Colors.green], // Default gradient
     this.isLoading = false,
-    this.width, 
-    this.height, 
-    this.prefixIcon, 
-    this.suffixIcon, 
+    this.width,
+    this.height,
+    this.prefixIcon,
+    this.suffixIcon,
     this.iconColor,
     this.iconSize,
-    this.borderColor, 
-    this.borderWidth, 
+    this.borderColor,
+    this.borderWidth,
     this.textStyle,
-    this.enabled = true, 
+    this.enabled = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (isLoading || !enabled)
-          ? null
-          : onTap,
+      onTap: (isLoading || !enabled) ? null : onTap,
       child: Container(
-        width: width ??
-            double.infinity, 
+        width: width ?? double.infinity,
         height: height ?? 50,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
@@ -57,7 +53,6 @@ class CustomButton extends StatelessWidget {
               : null,
         ),
         child: ElevatedButton(
-
           onPressed: (isLoading || !enabled) ? null : onTap,
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.zero, // Remove default padding
@@ -83,23 +78,32 @@ class CustomButton extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (prefixIcon != null) ...[
-                      Icon(prefixIcon, color: iconColor ?? Colors.white, size: iconSize),
-                      const SizedBox(width: 8), // Space between prefix icon and text
+                      Icon(prefixIcon,
+                          color: iconColor ?? Colors.white, size: iconSize),
+                      const SizedBox(
+                          width: 8), // Space between prefix icon and text
                     ],
-                    Text(
-                      text,
-                      style: textStyle ??
-                          TextStyle(
-                            color: enabled
-                                ? Colors.white
-                                : Colors.grey, // Text color
-                            fontSize: 16, // Adjust font size if needed
-                            fontWeight: FontWeight.bold, // Font weight
-                          ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          text,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: textStyle ??
+                              TextStyle(
+                                color: enabled ? Colors.white : Colors.grey,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ),
                     ),
                     if (suffixIcon != null) ...[
-                      const SizedBox(width: 8), // Space between text and suffix icon
-                      Icon(suffixIcon, color: iconColor ?? Colors.white, size: iconSize),
+                      const SizedBox(
+                          width: 8), // Space between text and suffix icon
+                      Icon(suffixIcon,
+                          color: iconColor ?? Colors.white, size: iconSize),
                     ],
                   ],
                 ),

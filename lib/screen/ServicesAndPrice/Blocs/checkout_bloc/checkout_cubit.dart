@@ -11,11 +11,9 @@ class CheckoutCubit extends Cubit<CheckOutState> {
   void checkout({
     required String token,
     required int customer_id,
-    required int entity_id,
     required String payment_gateway,
     required String payment_mode,
-    required int quantity,
-    required String coupon_code,
+    String? coupon_code,
     required List<Map<String, dynamic>> items,
   }) async {
     emit(CheckOutLoadingState());
@@ -23,10 +21,8 @@ class CheckoutCubit extends Cubit<CheckOutState> {
       final response = await _apiService.getTransactionCheckout(
           token: token,
           customer_id: customer_id,
-          entity_id: entity_id,
           payment_gateway: payment_gateway,
           payment_mode: payment_mode,
-          quantity: quantity,
           coupon_code: coupon_code,
           items: items);
 

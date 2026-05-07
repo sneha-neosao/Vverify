@@ -64,12 +64,18 @@ class verifyRequest {
   int? isDelete;
   DateTime? createdAt;
   DateTime? updatedAt;
+  String? status;
+  String? employeeCode;
+  String? dateOfJoining;
+  String? gender;
+  String? caseUuid;
+  String? caseStatus;
+  String? companyName;
+  String? groupId;
   int? requestId;
   List<Service>? services;
   Entity? entity;
   Customer? customer;
-  String? case_uuid;
-  String? status;
 
   verifyRequest({
     this.uuid,
@@ -87,12 +93,18 @@ class verifyRequest {
     this.isDelete,
     this.createdAt,
     this.updatedAt,
+    this.status,
+    this.employeeCode,
+    this.dateOfJoining,
+    this.gender,
+    this.caseUuid,
+    this.caseStatus,
+    this.companyName,
+    this.groupId,
     this.requestId,
     this.services,
     this.entity,
     this.customer,
-    this.case_uuid,
-    this.status
   });
 
   factory verifyRequest.fromJson(Map<String, dynamic> json) => verifyRequest(
@@ -105,7 +117,7 @@ class verifyRequest {
         last_name: json["last_name"],
         phone: json["phone"],
         email: json["email"],
-        dob: json["dob"] ,
+        dob: json["dob"],
         detailsUpdated: json["details_updated"],
         isActive: json["is_active"],
         isDelete: json["is_delete"],
@@ -115,6 +127,14 @@ class verifyRequest {
         updatedAt: json["updated_at"] == null
             ? null
             : DateTime.parse(json["updated_at"]),
+        status: json["status"],
+        employeeCode: json["employee_code"],
+        dateOfJoining: json["date_of_joining"],
+        gender: json["gender"],
+        caseUuid: json["case_uuid"],
+        caseStatus: json["case_status"],
+        companyName: json["company_name"],
+        groupId: json["group_id"]?.toString(),
         requestId: json["request_id"],
         services: json["services"] == null
             ? []
@@ -124,8 +144,6 @@ class verifyRequest {
         customer: json["customer"] == null
             ? null
             : Customer.fromJson(json["customer"]),
-      case_uuid: json["case_uuid"],
-      status: json["status"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -144,14 +162,20 @@ class verifyRequest {
         "is_delete": isDelete,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
+        "status": status,
+        "employee_code": employeeCode,
+        "date_of_joining": dateOfJoining,
+        "gender": gender,
+        "case_uuid": caseUuid,
+        "case_status": caseStatus,
+        "company_name": companyName,
+        "group_id": groupId,
         "request_id": requestId,
         "services": services == null
             ? []
             : List<dynamic>.from(services!.map((x) => x.toJson())),
         "entity": entity?.toJson(),
         "customer": customer?.toJson(),
-        "case_uuid": case_uuid,
-        "status": status
       };
 }
 
@@ -169,6 +193,16 @@ class Customer {
   int? isBlock;
   DateTime? createdAt;
   DateTime? updatedAt;
+  String? firebaseId;
+  int? isChecked;
+  String? companyName;
+  String? contactPersonHrName;
+  String? contactPersonHrPhone;
+  String? companyAddress;
+  String? companyEmail;
+  String? clientId;
+  String? contactPersonSalutation;
+  String? gstNumber;
 
   Customer({
     this.id,
@@ -184,6 +218,16 @@ class Customer {
     this.isBlock,
     this.createdAt,
     this.updatedAt,
+    this.firebaseId,
+    this.isChecked,
+    this.companyName,
+    this.contactPersonHrName,
+    this.contactPersonHrPhone,
+    this.companyAddress,
+    this.companyEmail,
+    this.clientId,
+    this.contactPersonSalutation,
+    this.gstNumber,
   });
 
   factory Customer.fromJson(Map<String, dynamic> json) => Customer(
@@ -204,6 +248,16 @@ class Customer {
         updatedAt: json["updated_at"] == null
             ? null
             : DateTime.parse(json["updated_at"]),
+        firebaseId: json["firebase_id"],
+        isChecked: json["is_checked"],
+        companyName: json["company_name"],
+        contactPersonHrName: json["contact_person_hr_name"],
+        contactPersonHrPhone: json["contact_person_hr_phone"],
+        companyAddress: json["company_address"],
+        companyEmail: json["company_email"],
+        clientId: json["client_id"],
+        contactPersonSalutation: json["contact_person_salutation"],
+        gstNumber: json["gst_number"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -220,30 +274,45 @@ class Customer {
         "is_block": isBlock,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
+        "firebase_id": firebaseId,
+        "is_checked": isChecked,
+        "company_name": companyName,
+        "contact_person_hr_name": contactPersonHrName,
+        "contact_person_hr_phone": contactPersonHrPhone,
+        "company_address": companyAddress,
+        "company_email": companyEmail,
+        "client_id": clientId,
+        "contact_person_salutation": contactPersonSalutation,
+        "gst_number": gstNumber,
       };
 }
 
 class Entity {
   int? id;
+  int? groupId;
   String? entityName;
   int? isActive;
   int? isDelete;
   DateTime? createdAt;
   DateTime? updatedAt;
   String? entityIcon;
+  String? entityDescription;
 
   Entity({
     this.id,
+    this.groupId,
     this.entityName,
     this.isActive,
     this.isDelete,
     this.createdAt,
     this.updatedAt,
     this.entityIcon,
+    this.entityDescription,
   });
 
   factory Entity.fromJson(Map<String, dynamic> json) => Entity(
         id: json["id"],
+        groupId: json["group_id"],
         entityName: json["entity_name"],
         isActive: json["is_active"],
         isDelete: json["is_delete"],
@@ -254,16 +323,19 @@ class Entity {
             ? null
             : DateTime.parse(json["updated_at"]),
         entityIcon: json["entity_icon"],
+        entityDescription: json["entity_description"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "group_id": groupId,
         "entity_name": entityName,
         "is_active": isActive,
         "is_delete": isDelete,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
         "entity_icon": entityIcon,
+        "entity_description": entityDescription,
       };
 }
 
@@ -277,28 +349,33 @@ class Service {
   String? serviceIcon;
   String? status;
   String? dataPreference;
+  int? isDeveloped;
 
-  Service(
-      {this.uid,
-      this.policeEntryType,
-      this.serviceRequestId,
-      this.serviceId,
-      this.serviceTitle,
-      this.serviceNavigate,
-      this.serviceIcon,
-      this.status,
-      this.dataPreference});
+  Service({
+    this.uid,
+    this.policeEntryType,
+    this.serviceRequestId,
+    this.serviceId,
+    this.serviceTitle,
+    this.serviceNavigate,
+    this.serviceIcon,
+    this.status,
+    this.dataPreference,
+    this.isDeveloped,
+  });
 
   factory Service.fromJson(Map<String, dynamic> json) => Service(
-      uid: json["uid"],
-      policeEntryType: json["police_entry_type"],
-      serviceRequestId: json["service_request_id"],
-      serviceId: json["service_id"],
-      serviceTitle: json["service_title"],
-      serviceNavigate: json["service_navigate"],
-      serviceIcon: json["service_icon"],
-      status: json["status"],
-      dataPreference: json["data_preference"]);
+        uid: json["uid"],
+        policeEntryType: json["police_entry_type"],
+        serviceRequestId: json["service_request_id"],
+        serviceId: json["service_id"],
+        serviceTitle: json["service_title"],
+        serviceNavigate: json["service_navigate"],
+        serviceIcon: json["service_icon"],
+        status: json["status"],
+        dataPreference: json["data_preference"],
+        isDeveloped: json["is_developed"],
+      );
 
   Map<String, dynamic> toJson() => {
         "uid": uid,
@@ -309,6 +386,7 @@ class Service {
         "service_navigate": serviceNavigate,
         "service_icon": serviceIcon,
         "status": status,
-        "data_preference": dataPreference
+        "data_preference": dataPreference,
+        "is_developed": isDeveloped,
       };
 }

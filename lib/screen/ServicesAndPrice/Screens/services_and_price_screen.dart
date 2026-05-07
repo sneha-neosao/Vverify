@@ -157,7 +157,11 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
     await prefs.setString('checkout_cart', jsonEncode(currentCart));
 
     if (mounted) {
-      context.pushNamed("checkOut");
+      if (widget.isEdit) {
+        context.pop();
+      } else {
+        context.pushNamed("checkOut");
+      }
     }
   }
 
@@ -242,6 +246,147 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
     );
   }
 
+  void _showAadhaarConsentDialog(BuildContext context, VoidCallback onAgree) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 20.0,
+                  offset: Offset(0.0, 10.0),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFEBD8),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.fingerprint,
+                    color: Color(0xFFFF7043),
+                    size: 48,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  "CONSENT REQUIRED",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFF101828),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "AADHAAR VERIFICATION ACCESS",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFFF79009),
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: GoogleFonts.outfit(
+                      fontSize: 15,
+                      color: const Color(0xFF475467),
+                      height: 1.5,
+                    ),
+                    children: const [
+                      TextSpan(
+                          text:
+                              "To proceed with secure Aadhaar verification via "),
+                      TextSpan(
+                        text: "DigiLocker",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      TextSpan(text: ", you will be required to provide the "),
+                      TextSpan(
+                        text: "Aadhaar number",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      TextSpan(text: ", the "),
+                      TextSpan(
+                        text: "OTP",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      TextSpan(
+                          text:
+                              " sent to the registered mobile number, and the "),
+                      TextSpan(
+                        text: "6-digit security MPIN",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      TextSpan(text: "."),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      onAgree();
+                    },
+                    text: "YES, I AGREE",
+                    gradientColors: const [
+                      Color(0xFFFF4D2D),
+                      Color(0xFFFF9D42),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _toggleServiceSelection(
+      Datum item, int index, bool isSelected, int tenantsCount) {
+    setState(() {
+      if (isSelected) {
+        addItem.remove(index);
+        addList.removeWhere((map) => map.containsValue(index));
+        checkoutList.removeWhere((map) => map.containsValue(item.id));
+        totalPrice -= double.parse(item.servicePrice.toString());
+      } else {
+        addItem.add(index);
+        addList.add({'index': index});
+        checkoutList.add({'service_id': item.id, "price": item.servicePrice});
+        totalPrice += double.parse(item.servicePrice.toString());
+      }
+      calculatePrices(tenantsCount);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     int tenantsCount = context.read<CountCubit>().state;
@@ -282,20 +427,10 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Verification Details",
-                            style: GoogleFonts.outfit(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "Quantity",
-                            style: GoogleFonts.outfit(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
+                          Text("Director Personal Record Check",
+                              style: Theme.of(context).textTheme.titleSmall!),
+                          Text("Quantity",
+                              style: Theme.of(context).textTheme.bodySmall!),
                         ],
                       ),
                       Container(
@@ -453,27 +588,18 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                                   _showComingSoonDialog(context);
                                   return;
                                 }
-                                setState(() {
-                                  if (isSelected) {
-                                    addItem.remove(index);
-                                    addList.removeWhere(
-                                        (map) => map.containsValue(index));
-                                    checkoutList.removeWhere(
-                                        (map) => map.containsValue(item.id));
-                                    totalPrice -= double.parse(
-                                        item.servicePrice.toString());
-                                  } else {
-                                    addItem.add(index);
-                                    addList.add({'index': index});
-                                    checkoutList.add({
-                                      'service_id': item.id,
-                                      "price": item.servicePrice
-                                    });
-                                    totalPrice += double.parse(
-                                        item.servicePrice.toString());
-                                  }
-                                  calculatePrices(tenantsCount);
-                                });
+
+                                if (!isSelected &&
+                                    item.serviceTitle ==
+                                        "Aadhaar Via Digilocker") {
+                                  _showAadhaarConsentDialog(context, () {
+                                    _toggleServiceSelection(
+                                        item, index, isSelected, tenantsCount);
+                                  });
+                                } else {
+                                  _toggleServiceSelection(
+                                      item, index, isSelected, tenantsCount);
+                                }
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(12.0),
@@ -489,28 +615,22 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                                             _showComingSoonDialog(context);
                                             return;
                                           }
-                                          // Toggle logic same as onTap
-                                          setState(() {
-                                            if (isSelected) {
-                                              addItem.remove(index);
-                                              addList.removeWhere((map) =>
-                                                  map.containsValue(index));
-                                              checkoutList.removeWhere((map) =>
-                                                  map.containsValue(item.id));
-                                              totalPrice -= double.parse(
-                                                  item.servicePrice.toString());
-                                            } else {
-                                              addItem.add(index);
-                                              addList.add({'index': index});
-                                              checkoutList.add({
-                                                'service_id': item.id,
-                                                "price": item.servicePrice
-                                              });
-                                              totalPrice += double.parse(
-                                                  item.servicePrice.toString());
-                                            }
-                                            calculatePrices(tenantsCount);
-                                          });
+
+                                          if (!isSelected &&
+                                              item.serviceTitle ==
+                                                  "Aadhaar Via Digilocker") {
+                                            _showAadhaarConsentDialog(context,
+                                                () {
+                                              _toggleServiceSelection(
+                                                  item,
+                                                  index,
+                                                  isSelected,
+                                                  tenantsCount);
+                                            });
+                                          } else {
+                                            _toggleServiceSelection(item, index,
+                                                isSelected, tenantsCount);
+                                          }
                                         },
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
@@ -676,6 +796,10 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                       SnackBar(content: Text(statusState.message)));
                 }
                 if (statusState is CheckoutStatusCheckingSuccessState) {
+                  // Clear cart after successful payment
+                  SharedPreferences.getInstance().then((prefs) {
+                    prefs.remove('checkout_cart');
+                  });
                   // Navigate to success screen
                   context.pushReplacementNamed("payment_success");
                   ScaffoldMessenger.of(context).showSnackBar(

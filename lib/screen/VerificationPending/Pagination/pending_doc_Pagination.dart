@@ -1,609 +1,829 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
-import 'package:v_verify/screen/VerificationPending/blinking_widget.dart';
+import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
+import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_state.dart';
+import 'package:v_verify/screen/VerificationPending/model/pendingDoc_model.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_state.dart';
-
-import '../../../commonComponent/screen_size.dart';
-import '../../VerificationForms/common/id.dart';
-import '../../VerificationForms/common/url.dart';
-import '../bloc/pendingDoc_cubit.dart';
-import '../model/pendingDoc_model.dart';
+import '../../../commonComponent/custom_button.dart';
 
 class PendingDocPagination extends StatefulWidget {
+  const PendingDocPagination({super.key});
+
   @override
-  _PendingDocPaginationState createState() => _PendingDocPaginationState();
+  State<PendingDocPagination> createState() => _PendingDocPaginationState();
 }
 
 class _PendingDocPaginationState extends State<PendingDocPagination> {
-  ApiService apiClient = ApiService();
-  List<verifyRequest> data = [];
-  bool isLoading = false;
-  bool hasMore = true;
-  int currentPage = 1;
-  int limit = 15;
-
-  // Initialize the ScrollController
-  late ScrollController _scrollController;
-
-  Set<int> loadingIndexes = {};
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedGroup = "Select Group";
+  final List<String> _groups = [
+    "Select Group",
+    "Company Check",
+    "Personal Check"
+  ];
+  int _expandedIndex = -1;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    // Instantiate ScrollController
-    _scrollController = ScrollController();
-    // Fetch initial data
-    fetchData();
-
-    // Add a listener for scrolling
-    _scrollController.addListener(_scrollListener);
-  }
-
-  // Fetch data method
-  Future<void> fetchData() async {
-    context.read<TokenCubit>().getToken();
-    context.read<IdCubit>().getId().then((value) async {
-      String token = context.read<TokenCubit>().state;
-      String id = context.read<IdCubit>().state;
-      if (isLoading) return;
-
-      setState(() {
-        isLoading = true;
-      });
-
-      try {
-        final newItems = await apiClient.verifyRequestListPagination(
-            token: token, customer_id: id, page: currentPage, limit: limit);
-
-        setState(() {
-          data.addAll(newItems);
-
-          isLoading = false;
-          if (newItems.length < limit) {
-            hasMore = false; // No more data to load
-          } else {
-            currentPage++;
-          }
-        });
-      } catch (e) {
-        setState(() {
-          isLoading = false;
-        });
-        print("Error fetching data: $e");
-      }
-    });
-  }
-
-  // ScrollListener for triggering pagination
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent &&
-        hasMore &&
-        !isLoading) {
-      fetchData();
-    }
+    _fetchData();
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
-    // Don't forget to dispose the ScrollController when done
-    _scrollController.dispose();
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
-  void checkCase({required String title, required int index, required BuildContext context}) {
-    switch (title) {
-      case "police-verification":
-        context.pushNamed("NonMumbaiPoliceSaveFormScreen1");
-        break;
-      case "pan-card-verification":
-        context.pushNamed("PanSaveFormScreen");
-        break;
-      case "reference-check-verification":
-        context.pushNamed("ReferenceSaveFormScreen");
-        break;
-      case "address-verifcation":
-        context.pushNamed("AddressList",pathParameters: {'uid': data[index].case_uuid.toString()},
-        );
-        break;
-      case "employment-verification-list":
-        context.pushNamed("EmployDataList",pathParameters: {'uid': data[index].case_uuid.toString()},
-        );
-        break;
-      case "education-verification-list":
-        context.pushNamed("EducationList", pathParameters: {
-          'uid': data[index].case_uuid.toString()
-        });
-        break;
-      case "driving-licence-verification":
-        context.pushNamed("DrivingLicenceSaveFormScreen");
-        break;
-      case "gst-cin-pan-verification":
-        context.pushNamed("GstVerificationSaveFormScreen");
-        break;
-      case "court-legal-verification":
-        context.pushNamed("CourtVerificationSaveFormScreen");
-        break;
-    }
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        _fetchData();
+      }
+    });
+    setState(() {});
   }
 
-  void secondCheckCase(
-      {required List<verifyRequest> data,
-      required BuildContext context,
-      required int index,
-      required int servicesIndex}) {
-    switch (data[index].services![servicesIndex].serviceNavigate) {
-      case "police-verification":
-        data[index].services![servicesIndex].policeEntryType == 1
-            ? data[index].services![servicesIndex].dataPreference == "form"
-                ? context.pushNamed("MumbaiPoliceUpdateFormScreen1",
-                    pathParameters: {
-                        'uid':
-                            data[index].services![servicesIndex].uid.toString()
-                      })
-                : context.pushNamed("MumbaiDocUpdate", pathParameters: {
-                    'uid': data[index].services![servicesIndex].uid.toString()
-                  })
-            : data[index].services![servicesIndex].dataPreference == "form"
-                ? context.pushNamed("NonMumbaiPoliceUpdateFormScreen1",
-                    pathParameters: {
-                        'uid':
-                            data[index].services![servicesIndex].uid.toString()
-                      })
-                : context
-                    .pushNamed("UpdateDocumentsNonMumbai", pathParameters: {
-                    'uid': data[index].services![servicesIndex].uid.toString()
-                  });
-        break;
-      case "pan-card-verification":
-        data[index].services![servicesIndex].dataPreference == "form"
-        ? context.pushNamed("PanUpdateFormScreen", pathParameters: {
-          'uid': data[index].services![servicesIndex].uid.toString()
-        })
-        : context.pushNamed("PanDocumentUpdate",
-            pathParameters: {
-          'uid': data[index].services![servicesIndex].uid.toString()
-        }
-        );
-        break;
-      case "reference-check-verification":
-        data[index].services![servicesIndex].dataPreference == "form"
-            ? context.pushNamed("ReferenceUpdateFormScreen", pathParameters: {
-                'uid': data[index].services![servicesIndex].uid.toString()
-              })
-            : context.pushNamed("ReferenceUpdateDoc", pathParameters: {
-                'uid': data[index].services![servicesIndex].uid.toString()
-              });
-        break;
-      case "address-verifcation":
-        data[index].services![servicesIndex].dataPreference == "form"
-            ? context.pushNamed("NameAddressVerificationUpdateNew",
-                pathParameters: {
-                    'uid': data[index].services![servicesIndex].uid.toString()
-                  })
-            : context.pushNamed("NameAddressDocUpdate", pathParameters: {
-                'uid': data[index].services![servicesIndex].uid.toString()
-              });
-        break;
-      case "driving-licence-verification":
-        data[index].services![servicesIndex].dataPreference == "form"
-            ? context.pushNamed("DrivingLicenceUpdateFormScreen", pathParameters: {
-                "uid": data[index].services![servicesIndex].uid.toString()
-              })
-            : context.pushNamed("DrivingDocUpdate", pathParameters: {
-                "uid": data[index].services![servicesIndex].uid.toString()
-              });
-        break;
-      case "gst-cin-pan-verification":
-        data[index].services![servicesIndex].dataPreference == "form"
-            ? context.pushNamed("GstVerificationUpdateFormScreen", pathParameters: {
-                "uid": data[index].services![servicesIndex].uid.toString()
-              })
-            : context.pushNamed("GstPanCinDocUpdate", pathParameters: {
-                "uid": data[index].services![servicesIndex].uid.toString()
-              });
-        break;
+  Future<void> _fetchData() async {
+    await context.read<TokenCubit>().getToken();
+    await context.read<IdCubit>().getId();
 
-      case "court-legal-verification":
-        data[index].services![servicesIndex].dataPreference == "form"
-            ? context.pushNamed("CourtVerificationUpdateFormScreen", pathParameters: {
-                "uid": data[index].services![servicesIndex].uid.toString()
-              })
-            : context.pushNamed("CourtDocumentUpdateFormScreen", pathParameters: {
-                "uid": data[index].services![servicesIndex].uid.toString()
-              });
-        break;
+    final token = context.read<TokenCubit>().state;
+    final customerIdStr = context.read<IdCubit>().state;
+    final customerId = int.tryParse(customerIdStr) ?? 0;
+
+    int? groupId;
+    if (_selectedGroup == "Company Check") {
+      groupId = 1;
+    } else if (_selectedGroup == "Personal Check") {
+      groupId = 2;
+    }
+
+    if (mounted) {
+      await context.read<PendingDocCubit>().getPendingDoc(
+            token: token,
+            customerId: customerId,
+            page: 1,
+            limit: 100,
+            groupId: groupId,
+            search: _searchController.text.isNotEmpty
+                ? _searchController.text
+                : null,
+          );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        setState(() {
-          _scrollController.position.jumpTo(0);
-          data.clear();
-          isLoading = false;
-          currentPage = 1;
-          hasMore = true;
-          fetchData();
-        });
-      },
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
+    return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: BlocListener<VerifyRequestReportCubit, VerifyRequestReportState>(
+          listener: (context, state) {
+            if (state is VerifyRequestReportLoadingState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Downloading Report...")),
+              );
+            } else if (state is VerifyRequestReportDownloadedState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text("Report downloaded to: ${state.filePath}")),
+              );
+            } else if (state is VerifyRequestReportErrorState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Error: ${state.message}")),
+              );
+            }
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                  "Verification List",
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 28)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text("Verification List",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Theme.of(context).primaryColorLight)),
               ),
-              isLoading && data.isEmpty
-                  ? Expanded(
-                      child: ListView.builder(
-                          itemCount: 15,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Shimmer.fromColors(
-                                baseColor: Colors.grey[400]!,
-                                highlightColor: Colors.grey[50]!,
-                                child: Container(
-                                    height: ScreenSize.screenHeight / 7,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(12)
-                                    )
-                                ),
-                              ),
-                            );
-                          }),
-                    )
-                  : data.isEmpty
-                      ? const Expanded(
-                          child: Center(
-                              child: Text("No data found verification list.")),
-                        )
-                      : Expanded(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            controller: _scrollController,
-                            // Attach ScrollController to ListView
-                            itemCount: data.length + (isLoading ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              if (index == data.length) {
-                                // Show a loading indicator while fetching data
-                                return const Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                );
-                              }
-                              return BlocBuilder<IsPressedCubit, int>(
-                                  builder: (context, isPressed) {
-                                    final rawStatus = data[index].status?.toLowerCase() ?? "";
-                                    String status;
-                                    print("verification status : ${rawStatus}");
-
-                                    if (rawStatus.isEmpty || rawStatus == "-" || rawStatus == "") {
-                                      status = "pending";
-                                    } else if (rawStatus == "discrepancy" || rawStatus == "rejected") {
-                                      status = "discrepancy";
-                                    } else if (rawStatus == "verified" || rawStatus == "clear") {
-                                      status = "verified";
-                                    } else {
-                                      status = rawStatus; // fallback for other values
-                                    }
-
-                                  return Card(
-                                  color: Theme.of(context).cardColor,
-                                  child: Column(
-                                    children: [
-                                      ListTile(
-                                      onTap: () {
-                                          context.read<IsPressedCubit>().isPressed(index);
-                                      },
-                                      tileColor: Colors.orangeAccent,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(8),
-                                          topRight: Radius.circular(8),
-                                        ),
-                                      ),
-                                      title: data[index].first_name != null
-                                          ? Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              // ✅ Case name (fixed width via Expanded, wraps to next line)
-                                              Expanded(
-                                                child: Text(
-                                                  "${data[index].first_name} ${data[index].middle_name} ${data[index].last_name}",
-                                                  maxLines: 2,
-                                                  softWrap: true,
-                                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold,),
-                                                ),
-                                              ),
-
-
-                                              if(status.toLowerCase() != "pending")
-                                                BlocBuilder<VerifyRequestReportCubit, VerifyRequestReportState>(
-                                                  builder: (context, state) {
-                                                    return InkWell(
-                                                      onTap: () async {
-                                                        setState(() {
-                                                          loadingIndexes.add(index);
-                                                        });
-
-                                                        await context.read<VerifyRequestReportCubit>().verifyRequestReport(
-                                                          token: context.read<TokenCubit>().state,
-                                                          case_uuid: data[index].uuid.toString(),
-                                                        );
-
-                                                        setState(() {
-                                                          loadingIndexes.remove(index);
-                                                        });
-                                                      },
-                                                      child: loadingIndexes.contains(index)
-                                                          ? const Padding(
-                                                        padding: EdgeInsets.all(6.0),
-                                                        child: SizedBox(
-                                                          height: 16,
-                                                          width: 16,
-                                                          child: CircularProgressIndicator(strokeWidth: 2),
-                                                        ),
-                                                      )
-                                                          : const Padding(
-                                                        padding: EdgeInsets.all(6.0),
-                                                        child: Icon(Icons.get_app, color: Colors.black, size: 22),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-
-                                              // ✏️ Edit icon (unchanged)
-                                              InkWell(
-                                                onTap: () {
-                                                  context.pushNamed(
-                                                    "VerifyRequestEditFormNew",
-                                                    pathParameters: {
-                                                      'request_id': data[index].requestId!.toString(),
-                                                      'uuid': data[index].uuid.toString(),
-                                                      'service_title': data[index].entity!.entityName!
-                                                    },
-                                                  );
-                                                },
-                                                child: const Padding(
-                                                  padding: EdgeInsets.all(6.0),
-                                                  child: Icon(
-                                                    Icons.border_color_outlined,
-                                                    color: Colors.black,
-                                                    size: 18,
-                                                  ),
-                                                ),
-                                              ),
-
-                                    // ⬆⬇ Arrow (ONLY change)
-                                              Icon(
-                                                isPressed == index
-                                                    ? Icons.keyboard_arrow_up
-                                                    : Icons.keyboard_arrow_down,
-                                                color: Colors.black,
-                                              ),
-                                            ],
-                                          ),
-
-                                          status.toLowerCase() == "discrepancy" ?
-                                          BlinkingStatus( icon: Icons.not_interested, text: "Discrepancy", color: Colors.black, ) :
-                                              Row(
-                                            children: [
-                                              Icon(
-                                                status.toLowerCase() == "verified"
-                                                    ? Icons.verified
-                                                    : Icons.schedule,
-                                                    // : status.toLowerCase() == "discrepancy"
-                                                    // ? Icons.not_interested
-                                                    // : Icons.schedule,
-                                                color: Colors.black,
-                                                size: 14,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                status.toLowerCase() == "verified"
-                                                    ? "Clear"
-                                                    : "Pending",
-                                                    // : status.toLowerCase() == "discrepancy" || status.toLowerCase() == "rejected"
-                                                    // ? "Discrepancy"
-                                                    // : "Pending",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall!
-                                                    .copyWith(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          // ✅ Status row (unchanged)
-
-                                        ],
-                                      )
-                                          : Text(data[index].entity!.entityName.toString(),),
-                                    ),
-                                      isPressed == index
-                                          ? ListView.builder(
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: data[index].services!.length,
-                                              itemBuilder: (BuildContext context, int servicesIndex) {
-
-                                                final rawServiceStatus = data[index].services![servicesIndex].status?.toLowerCase() ?? "";
-                                                String serviceStatus;
-                                                print("verification service status : ${rawServiceStatus}");
-
-                                                if (rawServiceStatus.isEmpty || rawServiceStatus == "-" || rawServiceStatus == "" || rawServiceStatus == "NA") {
-                                                  serviceStatus = "pending";
-                                                } else if (rawServiceStatus == "discrepancy" || rawServiceStatus == "rejected" || rawServiceStatus == "failed" ) {
-                                                  serviceStatus = "discrepancy";
-                                                } else if (rawServiceStatus == "verified" || rawServiceStatus == "clear") {
-                                                  serviceStatus = "verified";
-                                                } else {
-                                                  serviceStatus = rawServiceStatus; // fallback for other values
-                                                }
-
-                                                return Column(
-                                                  children: [
-                                                    ListTile(
-                                                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                        onTap: () {
-                                                          serviceRequestId = data[index].services![servicesIndex].serviceRequestId.toString();
-
-                                                          requestId = data[index].requestId.toString();
-
-                                                          if (data[index].detailsUpdated == 0) {
-                                                            context.pushNamed("verifyRequestUpdateNew",
-                                                                pathParameters:
-                                                                {
-                                                                  'uuid': data[index].uuid.toString(),
-                                                                  'service_title': data[index].entity!.entityName!
-                                                                }
-                                                                );
-                                                          } else if (data[index].detailsUpdated == 1) {
-                                                            if (data[index].services![servicesIndex].status == "pending") {
-                                                              if (data[index].services![servicesIndex].serviceTitle == "Employment Verification") {
-                                                                context.pushNamed("EmployDataList",pathParameters: {
-                                                                  'uid': data[index].case_uuid.toString()}
-                                                                );
-                                                              } else if (data[index].services![servicesIndex].serviceTitle == "Education Verification") {
-                                                                print("case_uuid at pending doc: ${data[index].case_uuid.toString()}");
-                                                                context.pushNamed("EducationList",pathParameters: {
-                                                                  'uid': data[index].case_uuid.toString()
-                                                                });
-                                                              } else if (data[index].services![servicesIndex].serviceTitle =="Address verification") {
-                                                                print("case_uuid at pending doc: ${data[index].case_uuid.toString()}");
-                                                                context.pushNamed("AddressList",pathParameters: {
-                                                                  'uid': data[index].case_uuid.toString()
-                                                                });
-                                                              } else {
-                                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please wait your application under process")));
-                                                              }
-                                                            } else if (data[index].services![servicesIndex].status == "verified") {
-                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your application already verified")));
-                                                            } else if (data[index].services![servicesIndex].status == "rejected") {
-                                                              secondCheckCase(data: data, context: context,index: index, servicesIndex: servicesIndex);
-                                                            } else if (data[index].services![servicesIndex].status == "failed") {
-                                                              secondCheckCase(data: data, context: context, index: index, servicesIndex: servicesIndex);
-                                                            } else {
-                                                              checkCase(title: data[index].services![servicesIndex].serviceNavigate.toString(), index: index, context: context,);
-                                                            }
-                                                          }
-                                                        },
-                                                        leading: Image.network(
-                                                          "$imageUrl${data[index].services![servicesIndex].serviceIcon}",
-                                                          width: 30,
-                                                        ),
-                                                        title: Text(data[index].services![servicesIndex].serviceTitle!.toUpperCase(),
-                                                          style: Theme.of(context).textTheme.bodySmall,
-                                                        ),
-                                                        subtitle: serviceStatus.toLowerCase() == "discrepancy" ?
-                                                        BlinkingStatus( icon: Icons.not_interested, text: "Discrepancy", color: Colors.red, ) :
-                                                        Row(
-                                                          children: [
-                                                            Icon(
-                                                              serviceStatus.toLowerCase() == "verified"
-                                                                  ? Icons.verified
-                                                                  : Icons.schedule,
-                                                                  // : serviceStatus.toLowerCase() == "discrepancy"
-                                                                  // ? Icons.not_interested
-                                                                  // : Icons.schedule,
-                                                              color:
-                                                              serviceStatus.toLowerCase() == "verified"
-                                                                  ? Colors.green
-                                                                  : Colors.orangeAccent,
-                                                                  // : serviceStatus.toLowerCase() == "discrepancy"
-                                                                  // ? Colors.red
-                                                                  // : Colors.orangeAccent,
-                                                              size: 14,
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 4,
-                                                            ),
-                                                            Text(
-                                                                serviceStatus.toLowerCase() == "verified"
-                                                                  ? "Verified"
-                                                                  : "Pending",
-                                                                  // : serviceStatus.toLowerCase() == "discrepancy"
-                                                                  // ? "Discrepancy"
-                                                                  // : "Pending",
-                                                                style: Theme.of(
-                                                                    context)
-                                                                    .textTheme
-                                                                    .bodySmall!
-                                                                    .copyWith(
-                                                                    fontSize:
-                                                                    14,
-                                                                    color: serviceStatus.toLowerCase() == "verified"
-                                                                        ? Colors.green
-                                                                        : Colors.orangeAccent
-                                                                        // : serviceStatus.toLowerCase() == "discrepancy"
-                                                                        // ? Colors.red
-                                                                        // : Colors.orangeAccent
-                                                                )
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        trailing: data[index].services![servicesIndex].status == "failed" || data[index].services![servicesIndex].status == "rejected"
-                                                            ? TextButton(
-                                                                onPressed: null,
-                                                                child: Text(
-                                                                  "Update",
-                                                                  style: Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .bodySmall,
-                                                                ))
-                                                            : data[index].services![servicesIndex].status == "pending"
-                                                                ? const SizedBox()
-                                                                : TextButton(
-                                                                    onPressed: null,
-                                                                    child: Text(
-                                                                      "ADD DETAILS >",
-                                                                      style: Theme.of(context).textTheme.bodySmall,
-                                                                    )
-                                                        )
-                                                    ),
-                                                    data[index].services!.length == 1
-                                                        ? const SizedBox()
-                                                        : const Divider(),
-                                                  ],
-                                                );
-                                              })
-                                          : const SizedBox()
-                                    ],
-                                  ),
-                                );
+              // ── Search and Filter Header ──
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        controller: _searchController,
+                        textAlign: TextAlign.center,
+                        onSubmitted: (value) => _fetchData(),
+                        decoration: InputDecoration(
+                          hintText: "Search Service...",
+                          hintStyle: GoogleFonts.outfit(
+                              fontSize: 14, color: Colors.grey.shade400),
+                          prefixIcon: Icon(Icons.search,
+                              size: 20, color: Colors.grey.shade400),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Container(
+                        height: 45,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                          border: Border.all(
+                              color: Theme.of(context)
+                                  .dividerColor
+                                  .withOpacity(0.1)),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _selectedGroup,
+                            isExpanded: true,
+                            icon: Icon(Icons.keyboard_arrow_down,
+                                color: Theme.of(context).iconTheme.color),
+                            dropdownColor: Theme.of(context).cardColor,
+                            style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.color),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedGroup = newValue!;
                               });
+                              _fetchData();
                             },
+                            items: _groups
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
                           ),
                         ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Main List ──
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () => _fetchData(),
+                  child: BlocBuilder<PendingDocCubit, PendingDocState>(
+                    builder: (context, state) {
+                      if (state is PendingDocLoadingState) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is PendingDocErrorState) {
+                        return Center(child: Text(state.message));
+                      } else if (state is PendingDocSuccessState) {
+                        final data = state.pendingDocModel.data ?? [];
+
+                        if (data.isEmpty) {
+                          return const Center(child: Text("No data found"));
+                        }
+                        return ListView.builder(
+                          itemCount: data.length,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemBuilder: (context, index) {
+                            final item = data[index];
+                            final isExpanded = _expandedIndex == index;
+
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.grey.shade200),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.03),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  // Card Header
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _expandedIndex =
+                                            isExpanded ? -1 : index;
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? const Color(0xFFF0F2F5)
+                                            : Colors.grey.shade900,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: const Radius.circular(12),
+                                          topRight: const Radius.circular(12),
+                                          bottomLeft: isExpanded
+                                              ? Radius.zero
+                                              : const Radius.circular(12),
+                                          bottomRight: isExpanded
+                                              ? Radius.zero
+                                              : const Radius.circular(12),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              item.entity?.entityName ?? "N/A",
+                                              style: GoogleFonts.outfit(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.color,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  final token = context
+                                                      .read<TokenCubit>()
+                                                      .state;
+                                                  context
+                                                      .read<
+                                                          VerifyRequestReportCubit>()
+                                                      .verifyRequestReport(
+                                                        token: token,
+                                                        case_uuid:
+                                                            item.uuid ?? "",
+                                                      );
+                                                },
+                                                child: _buildHeaderIcon(
+                                                    Icons.download,
+                                                    const Color(0xFF3F51B5)),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              _buildHeaderIcon(
+                                                Icons.info_outline_rounded,
+                                                const Color(0xFFFFA000),
+                                                tooltip: (item.status == null ||
+                                                        item.status == "-")
+                                                    ? "Pending"
+                                                    : item.status!,
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Icon(
+                                                isExpanded
+                                                    ? Icons.keyboard_arrow_up
+                                                    : Icons.keyboard_arrow_down,
+                                                color: Theme.of(context)
+                                                    .iconTheme
+                                                    .color,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                  // Expandable Content
+                                  if (isExpanded)
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Action Button
+                                          Align(
+                                              alignment: Alignment.centerRight,
+                                              child: CustomButton(
+                                                  onTap: () =>
+                                                      _showFormDialog(item),
+                                                  text:
+                                                      "+ ADD ${item.entity?.entityName?.toUpperCase()}",
+                                                  width: 200,
+                                                  height: 40,
+                                                  gradientColors: const [
+                                                    Color(0xFFFF7043),
+                                                    Color(0xFFFB8C00),
+                                                  ],
+                                                  textStyle: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(
+                                                          color: Colors.white,
+                                                          fontSize: 12))),
+                                          const SizedBox(height: 24),
+
+                                          // Services Grid
+                                          GridView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount:
+                                                (item.services ?? []).length,
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 3,
+                                              crossAxisSpacing: 10,
+                                              mainAxisSpacing: 20,
+                                              childAspectRatio: 0.65,
+                                            ),
+                                            itemBuilder: (context, sIndex) {
+                                              final service =
+                                                  item.services![sIndex];
+                                              return InkWell(
+                                                onTap: () {
+                                                  final dialogServices = [
+                                                    "pan-card-verification",
+                                                    "aadhaar",
+                                                    "media-check",
+                                                    "reference-check-verification",
+                                                    "court-legal-verification",
+                                                    "police-verification",
+                                                    "employment-verification-list",
+                                                    "education-verification-list",
+                                                    "address-verifcation",
+                                                    "credit-history",
+                                                    "driving-licence-verification",
+                                                    "director",
+                                                    "bank-check",
+                                                    "gst-cin-pan-verification",
+                                                    "passport"
+                                                  ];
+
+                                                  if (dialogServices.contains(
+                                                      service
+                                                          .serviceNavigate)) {
+                                                    _showFormDialog(item);
+                                                  }
+                                                },
+                                                child: Column(
+                                                  children: [
+                                                    Stack(
+                                                      children: [
+                                                        Container(
+                                                          height: 70,
+                                                          width: 70,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(12),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .cardColor,
+                                                            border: Border.all(
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .dividerColor),
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.05),
+                                                                blurRadius: 10,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          child: Image.network(
+                                                            service.serviceIcon ??
+                                                                "",
+                                                            errorBuilder: (c, e,
+                                                                    s) =>
+                                                                const Icon(
+                                                                    Icons
+                                                                        .description,
+                                                                    color: Colors
+                                                                        .grey),
+                                                          ),
+                                                        ),
+                                                        Positioned(
+                                                          right: 0,
+                                                          top: 0,
+                                                          child: Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(4),
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                              color: Color(
+                                                                  0xFFFF5722),
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                            ),
+                                                            child: const Icon(
+                                                                Icons
+                                                                    .priority_high,
+                                                                color: Colors
+                                                                    .white,
+                                                                size: 10),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    SizedBox(
+                                                      height: 32,
+                                                      child: Text(
+                                                        service.serviceTitle
+                                                                ?.toUpperCase() ??
+                                                            "",
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style:
+                                                            GoogleFonts.outfit(
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium
+                                                                  ?.color,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0xFFFFF3E0),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        border: Border.all(
+                                                            color: const Color(
+                                                                0xFFFFE0B2)),
+                                                      ),
+                                                      child: Text(
+                                                        "Pending",
+                                                        style:
+                                                            GoogleFonts.outfit(
+                                                          fontSize: 10,
+                                                          color: const Color(
+                                                              0xFFE65100),
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }
+                      return const SizedBox();
+                    },
+                  ),
+                ),
+              )
             ],
           ),
-        ),
+        ));
+  }
+
+  Widget _buildHeaderIcon(IconData icon, Color color, {String? tooltip}) {
+    Widget iconWidget = Container(
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+          ),
+        ],
       ),
+      child: Icon(icon, size: 16, color: color),
     );
+
+    if (tooltip != null) {
+      return Tooltip(
+        message: tooltip,
+        triggerMode: TooltipTriggerMode.tap,
+        preferBelow: false,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        textStyle: GoogleFonts.outfit(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        child: iconWidget,
+      );
+    }
+
+    return iconWidget;
+  }
+
+  void _showServiceDialog(BuildContext context, String title) {
+    // This is now replaced by _showFormDialog but kept for fallback if needed
+    _showFormDialog(context
+        as verifyRequest); // This is incorrect, just removing it or updating
+  }
+
+  void _showFormDialog(verifyRequest item) {
+    final groupId = item.entity?.groupId ?? 1;
+    final entityName =
+        item.entity?.entityName ?? (groupId == 1 ? "Company" : "Personal");
+    TextEditingController companyNameController = TextEditingController();
+    TextEditingController mobileNumberController = TextEditingController();
+    TextEditingController emailAddressController = TextEditingController();
+    TextEditingController firstNameController = TextEditingController();
+    TextEditingController lastNameController = TextEditingController();
+    TextEditingController phoneNumberController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => groupId == 1
+          ? _buildFormDialog(
+              title: "Fill $entityName Info",
+              icon: Icons.business_rounded,
+              formKey: formKey,
+              fields: [
+                form_widget(
+                  controller: companyNameController,
+                  titleText: 'Company Name',
+                  hintText: "Enter Company Name",
+                  textInputType: TextInputType.text,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter company name';
+                    }
+                    return null;
+                  },
+                ),
+                FormFieldNotRequired(
+                  controller: mobileNumberController,
+                  titleText: 'Mobile Number',
+                  hintText: "Enter Mobile Number",
+                  textInputType: TextInputType.number,
+                ),
+                FormFieldNotRequired(
+                  controller: emailAddressController,
+                  titleText: 'Email Address',
+                  hintText: "Enter Email Address",
+                  textInputType: TextInputType.emailAddress,
+                ),
+              ],
+            )
+          : _buildFormDialog(
+              title: "Fill $entityName Info",
+              icon: Icons.person_rounded,
+              formKey: formKey,
+              fields: [
+                form_widget(
+                  controller: firstNameController,
+                  titleText: 'First Name',
+                  hintText: "Enter First Name",
+                  textInputType: TextInputType.text,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter first name';
+                    }
+                    return null;
+                  },
+                ),
+                form_widget(
+                  controller: lastNameController,
+                  titleText: 'Last Name',
+                  hintText: "Enter Last Name",
+                  textInputType: TextInputType.text,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter last name';
+                    }
+                    return null;
+                  },
+                ),
+                FormFieldNotRequired(
+                  controller: phoneNumberController,
+                  titleText: 'Phone Number',
+                  hintText: "Enter Phone Number",
+                  textInputType: TextInputType.number,
+                ),
+                FormFieldNotRequired(
+                  controller: emailController,
+                  titleText: 'Email Address',
+                  hintText: "Enter Email Address",
+                  textInputType: TextInputType.emailAddress,
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget _buildFormDialog({
+    required String title,
+    required IconData icon,
+    required List<Widget> fields,
+    required GlobalKey<FormState> formKey,
+  }) {
+    return Dialog(
+        insetPadding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        backgroundColor: Theme.of(context).cardColor,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(icon,
+                          color: Theme.of(context).primaryColor, size: 32),
+                    ),
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(title,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(
+                                  color: Theme.of(context).primaryColorLight)),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEF2F2), // Very light red
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFFEE2E2)),
+                      ),
+                      child: RichText(
+                        text: TextSpan(
+                          style: GoogleFonts.outfit(
+                              color: const Color(0xFF64748B),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500),
+                          children: [
+                            const TextSpan(text: "Note : "),
+                            TextSpan(
+                              text: "* ",
+                              style: GoogleFonts.outfit(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const TextSpan(text: "Indicates mandatory fields"),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ...fields,
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color(0xFFFF5722),
+                              const Color(0xFFFF9800),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFFF5722).withOpacity(0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              Navigator.pop(context);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: Text(
+                            "SAVE",
+                            style: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text("Cancel",
+                          style: GoogleFonts.outfit(color: Colors.grey)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
+  }
+
+  Widget _buildFormField(String label, IconData icon) {
+    return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0), child: SizedBox()
+
+        //  TextField(
+        //   decoration: InputDecoration(
+        //     labelText: label,
+        //     labelStyle: GoogleFonts.outfit(color: Colors.grey, fontSize: 14),
+        //     prefixIcon: Icon(icon, size: 20, color: Colors.grey),
+        //     filled: true,
+        //     fillColor: Theme.of(context).dividerColor.withOpacity(0.05),
+        //     border: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(12),
+        //       borderSide: BorderSide.none,
+        //     ),
+        //     focusedBorder: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(12),
+        //       borderSide: BorderSide(color: Theme.of(context).primaryColor),
+        //     ),
+        //   ),
+        // ),
+        );
   }
 }
