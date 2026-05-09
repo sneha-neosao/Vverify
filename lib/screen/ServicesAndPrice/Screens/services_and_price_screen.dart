@@ -590,8 +590,12 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                                 }
 
                                 if (!isSelected &&
-                                    item.serviceTitle ==
-                                        "Aadhaar Via Digilocker") {
+                                    item.serviceTitle!
+                                        .toLowerCase()
+                                        .contains("digilocker") &&
+                                    item.serviceTitle!
+                                        .toLowerCase()
+                                        .contains("aadhaar")) {
                                   _showAadhaarConsentDialog(context, () {
                                     _toggleServiceSelection(
                                         item, index, isSelected, tenantsCount);
@@ -617,8 +621,8 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                                           }
 
                                           if (!isSelected &&
-                                              item.serviceTitle ==
-                                                  "Aadhaar Via Digilocker") {
+                                              item.serviceTitle!
+                                                  .contains("Digilocker")) {
                                             _showAadhaarConsentDialog(context,
                                                 () {
                                               _toggleServiceSelection(

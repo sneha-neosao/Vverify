@@ -14,6 +14,7 @@ class form_widget extends StatelessWidget {
     this.titleDetails,
     this.onSaveValue,
     this.validationMessage,
+    this.isReadOnly = false,
   });
 
   final TextEditingController controller;
@@ -25,6 +26,7 @@ class form_widget extends StatelessWidget {
   final String? titleDetails;
   final void Function(String?)? onSaveValue;
   final String? validationMessage;
+  final bool isReadOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +68,10 @@ class form_widget extends StatelessWidget {
           controller: controller,
           keyboardType: textInputType,
           hintText: hintText,
-          labelText: titleText,
+          // labelText: titleText,
           onSaveValue: onSaveValue,
           validationMessage: validationMessage,
+          isReadOnly: isReadOnly,
         )
       ],
     );

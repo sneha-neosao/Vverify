@@ -487,9 +487,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 style: GoogleFonts.outfit(
                                                   textStyle: Theme.of(context)
                                                       .textTheme
-                                                      .bodySmall!
+                                                      .bodyMedium!
                                                       .copyWith(
-                                                        fontSize: 11,
+                                                        fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                       ),

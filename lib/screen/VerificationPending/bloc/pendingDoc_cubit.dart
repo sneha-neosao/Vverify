@@ -18,8 +18,11 @@ class PendingDocCubit extends Cubit<PendingDocState> {
     int? groupId,
     int? serviceId,
     String? search,
+    bool isLoading = true,
   }) async {
-    emit(PendingDocLoadingState());
+    if (isLoading) {
+      emit(PendingDocLoadingState());
+    }
     try {
       final response = await _apiService.verifyRequestList(
         token: token,

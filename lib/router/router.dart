@@ -61,6 +61,7 @@ import '../screen/VerificationForms/courtVerification/Document/Screens/court_doc
 import '../screen/VerificationForms/courtVerification/Form/Screens/court_verification_update_form_screen.dart';
 import '../screen/VerificationPending/Pagination/pending_doc_Pagination.dart';
 import '../screen/VerificationPending/verifyRequestUpdate/verify_request_edit_form_new.dart';
+import '../screen/AllFormList/FormList/form_list.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -685,6 +686,18 @@ class AppRouter {
         name: "AadhaarGetOtp",
         builder: (context, state) {
           return AadhaarGetOtp();
+        },
+      ),
+      GoRoute(
+        path: '/formList',
+        name: "formList",
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return FormListScreen(
+            applicantData: extra?['applicantData'],
+            serviceNavigate: extra?['serviceNavigate'],
+            serviceTitle: extra?['serviceTitle'],
+          );
         },
       ),
 

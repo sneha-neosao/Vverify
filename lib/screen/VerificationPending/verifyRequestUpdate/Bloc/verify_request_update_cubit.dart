@@ -8,24 +8,29 @@ class VerifyRequestUpdateCubit extends Cubit<VerifyRequestUpdateState> {
   VerifyRequestUpdateCubit(this._apiService)
       : super(VerifyRequestUpdateInitialState());
 
-  void verifyRequestUpdate(
-      {required String token,
-      required String uuid,
-      required String firstName,
-      required String middleName,
-      required String lastName,
-      required String phone,
-      required String dob,
-      required String email,
-      required String employee_code,
-      required String date_of_joining,
-      required String gender,
-      String? status}) async {
+  void verifyRequestUpdate({
+    required String token,
+    required String uuid,
+    int? group_id,
+    String? company_name,
+    String? firstName,
+    String? middleName,
+    String? lastName,
+    String? phone,
+    String? dob,
+    String? email,
+    String? employee_code,
+    String? date_of_joining,
+    String? gender,
+    String? status,
+  }) async {
     emit(VerifyRequestUpdateLoadingState());
     try {
       final response = await _apiService.verifyRequestUpdate(
         token: token,
         uuid: uuid,
+        group_id: group_id,
+        company_name: company_name,
         phone: phone,
         dob: dob,
         firstName: firstName,
@@ -34,7 +39,7 @@ class VerifyRequestUpdateCubit extends Cubit<VerifyRequestUpdateState> {
         email: email,
         employee_code: employee_code,
         date_of_joining: date_of_joining,
-        gender: gender
+        gender: gender,
       );
 
       if (response.data != null && response.data.containsKey("status")) {

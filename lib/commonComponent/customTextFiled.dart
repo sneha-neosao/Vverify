@@ -87,12 +87,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return TextFormField(
         onSaved: widget.onSaveValue,
         textInputAction: TextInputAction.next,
-        onFieldSubmitted: widget.onSaveValue,
-
-        //     (value) {
-        //   FocusScope.of(context).nextFocus();
-        //
-        // },
+        onFieldSubmitted: (value) {
+          FocusScope.of(context).nextFocus();
+          if (widget.onSaveValue != null) {
+            widget.onSaveValue!(value);
+          }
+        },
         inputFormatters: widget.maskFormatter,
         //autofocus: true,
         maxLines: widget.maxLine,
@@ -149,8 +149,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         onEditingComplete: () {},
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return widget.validationMessage ??
-                'This field is required';
+            return widget.validationMessage ?? 'This field is required';
           }
           if (widget.validator != null) {
             return widget.validator!(value);

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
@@ -10,6 +12,8 @@ import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_state.dart';
 import 'package:v_verify/screen/VerificationPending/model/pendingDoc_model.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_state.dart';
+import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_state.dart';
 import '../../../commonComponent/custom_button.dart';
 
 class PendingDocPagination extends StatefulWidget {
@@ -55,7 +59,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
     setState(() {});
   }
 
-  Future<void> _fetchData() async {
+  Future<void> _fetchData({bool isLoading = true}) async {
     await context.read<TokenCubit>().getToken();
     await context.read<IdCubit>().getId();
 
@@ -80,6 +84,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
             search: _searchController.text.isNotEmpty
                 ? _searchController.text
                 : null,
+            isLoading: isLoading,
           );
     }
   }
@@ -201,7 +206,26 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                   child: BlocBuilder<PendingDocCubit, PendingDocState>(
                     builder: (context, state) {
                       if (state is PendingDocLoadingState) {
-                        return const Center(child: CircularProgressIndicator());
+                        return Skeletonizer(
+                          enabled: true,
+                          child: ListView.builder(
+                            itemCount: 5,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemBuilder: (context, index) => Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const ListTile(
+                                leading: CircleAvatar(),
+                                title: Text("Loading Verification..."),
+                                subtitle: Text("Please wait a moment"),
+                              ),
+                            ),
+                          ),
+                        );
                       } else if (state is PendingDocErrorState) {
                         return Center(child: Text(state.message));
                       } else if (state is PendingDocSuccessState) {
@@ -264,15 +288,25 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              item.entity?.entityName ?? "N/A",
-                                              style: GoogleFonts.outfit(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                                color: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium
-                                                    ?.color,
-                                              ),
+                                              (item.companyName != null &&
+                                                      item.companyName!
+                                                          .isNotEmpty)
+                                                  ? item.companyName!
+                                                  : ((item.first_name != null &&
+                                                              item.first_name!
+                                                                  .isNotEmpty) ||
+                                                          (item.last_name !=
+                                                                  null &&
+                                                              item.last_name!
+                                                                  .isNotEmpty))
+                                                      ? "${item.first_name ?? ""} ${item.last_name ?? ""}"
+                                                          .trim()
+                                                      : item.entity
+                                                              ?.entityName ??
+                                                          "N/A",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -334,10 +368,34 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                           Align(
                                               alignment: Alignment.centerRight,
                                               child: CustomButton(
-                                                  onTap: () =>
-                                                      _showFormDialog(item),
-                                                  text:
-                                                      "+ ADD ${item.entity?.entityName?.toUpperCase()}",
+                                                  onTap: () {
+                                                    if (item.detailsUpdated ==
+                                                        1) {
+                                                      context.pushNamed(
+                                                        'formList',
+                                                        extra: {
+                                                          'applicantData':
+                                                              item.toJson(),
+                                                          'serviceNavigate': item
+                                                                  .services
+                                                                  ?.first
+                                                                  .serviceNavigate ??
+                                                              "",
+                                                          'serviceTitle': item
+                                                                  .services
+                                                                  ?.first
+                                                                  .serviceTitle ??
+                                                              "Verification",
+                                                        },
+                                                      );
+                                                    } else {
+                                                      _showFormDialog(item,
+                                                          item.services?.first);
+                                                    }
+                                                  },
+                                                  text: item.detailsUpdated == 1
+                                                      ? "VIEW ${item.services?.first.serviceTitle?.toUpperCase() ?? "DOCUMENTS"}"
+                                                      : "+ ADD ${item.entity?.entityName?.toUpperCase()}",
                                                   width: 200,
                                                   height: 40,
                                                   gradientColors: const [
@@ -371,28 +429,23 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                   item.services![sIndex];
                                               return InkWell(
                                                 onTap: () {
-                                                  final dialogServices = [
-                                                    "pan-card-verification",
-                                                    "aadhaar",
-                                                    "media-check",
-                                                    "reference-check-verification",
-                                                    "court-legal-verification",
-                                                    "police-verification",
-                                                    "employment-verification-list",
-                                                    "education-verification-list",
-                                                    "address-verifcation",
-                                                    "credit-history",
-                                                    "driving-licence-verification",
-                                                    "director",
-                                                    "bank-check",
-                                                    "gst-cin-pan-verification",
-                                                    "passport"
-                                                  ];
-
-                                                  if (dialogServices.contains(
-                                                      service
-                                                          .serviceNavigate)) {
-                                                    _showFormDialog(item);
+                                                  if (item.detailsUpdated ==
+                                                      1) {
+                                                    context.pushNamed(
+                                                      'formList',
+                                                      extra: {
+                                                        'applicantData':
+                                                            item.toJson(),
+                                                        'serviceNavigate':
+                                                            service
+                                                                .serviceNavigate,
+                                                        'serviceTitle': service
+                                                            .serviceTitle,
+                                                      },
+                                                    );
+                                                  } else {
+                                                    _showFormDialog(
+                                                        item, service);
                                                   }
                                                 },
                                                 child: Column(
@@ -576,23 +629,34 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
     return iconWidget;
   }
 
-  void _showServiceDialog(BuildContext context, String title) {
-    // This is now replaced by _showFormDialog but kept for fallback if needed
-    _showFormDialog(context
-        as verifyRequest); // This is incorrect, just removing it or updating
-  }
-
-  void _showFormDialog(verifyRequest item) {
+  void _showFormDialog(verifyRequest item, Service? service) {
+    debugPrint('firstName: ${item.customer!.firstName.toString()}');
     final groupId = item.entity?.groupId ?? 1;
     final entityName =
         item.entity?.entityName ?? (groupId == 1 ? "Company" : "Personal");
-    TextEditingController companyNameController = TextEditingController();
-    TextEditingController mobileNumberController = TextEditingController();
-    TextEditingController emailAddressController = TextEditingController();
-    TextEditingController firstNameController = TextEditingController();
-    TextEditingController lastNameController = TextEditingController();
-    TextEditingController phoneNumberController = TextEditingController();
-    TextEditingController emailController = TextEditingController();
+
+    // Split contact person name if needed
+    String hrName = item.customer?.contactPersonHrName ?? "";
+    List<String> nameParts = hrName.trim().split(RegExp(r'\s+'));
+    String fallbackFirst = nameParts.isNotEmpty ? nameParts[0] : "";
+    String fallbackLast =
+        nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+
+    TextEditingController companyNameController =
+        TextEditingController(text: item.companyName);
+    TextEditingController firstNameController = TextEditingController(
+        text: (item.first_name == null || item.first_name!.isEmpty)
+            ? fallbackFirst
+            : item.first_name);
+    TextEditingController lastNameController = TextEditingController(
+        text: (item.last_name == null || item.last_name!.isEmpty)
+            ? fallbackLast
+            : item.last_name);
+    TextEditingController phoneController =
+        TextEditingController(text: item.phone);
+    TextEditingController emailController =
+        TextEditingController(text: item.email);
+
     final formKey = GlobalKey<FormState>();
 
     showDialog(
@@ -603,6 +667,44 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
               title: "Fill $entityName Info",
               icon: Icons.business_rounded,
               formKey: formKey,
+              onSave: () {
+                final token = context.read<TokenCubit>().state;
+                context.read<VerifyRequestUpdateCubit>().verifyRequestUpdate(
+                      token: token,
+                      uuid: item.uuid ?? "",
+                      group_id: 1,
+                      company_name: companyNameController.text,
+                      firstName: firstNameController.text,
+                      middleName: "",
+                      lastName: lastNameController.text,
+                      phone: phoneController.text,
+                      dob: "",
+                      email: emailController.text,
+                      employee_code: "",
+                      date_of_joining: "",
+                      gender: "",
+                    );
+              },
+              onSuccess: () {
+                // Update local state only on success
+                item.companyName = companyNameController.text;
+                item.first_name = firstNameController.text;
+                item.last_name = lastNameController.text;
+                item.detailsUpdated = 1;
+                setState(() {});
+
+                // Navigate to Form List after success if a service was selected
+                if (service != null) {
+                  context.pushNamed(
+                    'formList',
+                    extra: {
+                      'applicantData': item.toJson(),
+                      'serviceNavigate': service.serviceNavigate,
+                      'serviceTitle': service.serviceTitle,
+                    },
+                  );
+                }
+              },
               fields: [
                 form_widget(
                   controller: companyNameController,
@@ -617,13 +719,13 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                   },
                 ),
                 FormFieldNotRequired(
-                  controller: mobileNumberController,
+                  controller: phoneController,
                   titleText: 'Mobile Number',
                   hintText: "Enter Mobile Number",
                   textInputType: TextInputType.number,
                 ),
                 FormFieldNotRequired(
-                  controller: emailAddressController,
+                  controller: emailController,
                   titleText: 'Email Address',
                   hintText: "Enter Email Address",
                   textInputType: TextInputType.emailAddress,
@@ -634,6 +736,43 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
               title: "Fill $entityName Info",
               icon: Icons.person_rounded,
               formKey: formKey,
+              onSave: () {
+                final token = context.read<TokenCubit>().state;
+                context.read<VerifyRequestUpdateCubit>().verifyRequestUpdate(
+                      token: token,
+                      uuid: item.uuid ?? "",
+                      group_id: 2,
+                      company_name: "",
+                      firstName: firstNameController.text,
+                      middleName: "",
+                      lastName: lastNameController.text,
+                      phone: phoneController.text,
+                      dob: "",
+                      email: emailController.text,
+                      employee_code: "",
+                      date_of_joining: "",
+                      gender: "",
+                    );
+              },
+              onSuccess: () {
+                // Update local state only on success
+                item.first_name = firstNameController.text;
+                item.last_name = lastNameController.text;
+                item.detailsUpdated = 1; // Mark as updated
+                setState(() {});
+
+                // Navigate to Form List after success if a service was selected
+                if (service != null) {
+                  context.pushNamed(
+                    'formList',
+                    extra: {
+                      'applicantData': item.toJson(),
+                      'serviceNavigate': service.serviceNavigate,
+                      'serviceTitle': service.serviceTitle,
+                    },
+                  );
+                }
+              },
               fields: [
                 form_widget(
                   controller: firstNameController,
@@ -660,7 +799,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                   },
                 ),
                 FormFieldNotRequired(
-                  controller: phoneNumberController,
+                  controller: phoneController,
                   titleText: 'Phone Number',
                   hintText: "Enter Phone Number",
                   textInputType: TextInputType.number,
@@ -681,6 +820,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
     required IconData icon,
     required List<Widget> fields,
     required GlobalKey<FormState> formKey,
+    required VoidCallback onSave,
+    required VoidCallback onSuccess,
   }) {
     return Dialog(
         insetPadding: EdgeInsets.zero,
@@ -747,47 +888,80 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                     const SizedBox(height: 12),
                     ...fields,
                     const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              const Color(0xFFFF5722),
-                              const Color(0xFFFF9800),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFFF5722).withOpacity(0.3),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                    BlocConsumer<VerifyRequestUpdateCubit,
+                        VerifyRequestUpdateState>(
+                      listener: (context, state) {
+                        if (state is VerifyRequestUpdateSuccessState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Updated successfully!")),
+                          );
+                          onSuccess();
+                          Navigator.pop(context);
+                          _fetchData(
+                              isLoading: false); // Silent background refresh
+                        } else if (state is VerifyRequestUpdateErrorState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.message)),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        return SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color(0xFFFF5722),
+                                  const Color(0xFFFF9800),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      const Color(0xFFFF5722).withOpacity(0.3),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              Navigator.pop(context);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                            child: ElevatedButton(
+                              onPressed: state
+                                      is VerifyRequestUpdateLoadingState
+                                  ? null
+                                  : () {
+                                      if (formKey.currentState!.validate()) {
+                                        onSave();
+                                      }
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12)),
+                              ),
+                              child: state is VerifyRequestUpdateLoadingState
+                                  ? SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      "SAVE",
+                                      style: GoogleFonts.outfit(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                            ),
                           ),
-                          child: Text(
-                            "SAVE",
-                            style: GoogleFonts.outfit(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 12),
                     TextButton(
@@ -801,29 +975,5 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
             ),
           ),
         ));
-  }
-
-  Widget _buildFormField(String label, IconData icon) {
-    return Padding(
-        padding: const EdgeInsets.only(bottom: 16.0), child: SizedBox()
-
-        //  TextField(
-        //   decoration: InputDecoration(
-        //     labelText: label,
-        //     labelStyle: GoogleFonts.outfit(color: Colors.grey, fontSize: 14),
-        //     prefixIcon: Icon(icon, size: 20, color: Colors.grey),
-        //     filled: true,
-        //     fillColor: Theme.of(context).dividerColor.withOpacity(0.05),
-        //     border: OutlineInputBorder(
-        //       borderRadius: BorderRadius.circular(12),
-        //       borderSide: BorderSide.none,
-        //     ),
-        //     focusedBorder: OutlineInputBorder(
-        //       borderRadius: BorderRadius.circular(12),
-        //       borderSide: BorderSide(color: Theme.of(context).primaryColor),
-        //     ),
-        //   ),
-        // ),
-        );
   }
 }

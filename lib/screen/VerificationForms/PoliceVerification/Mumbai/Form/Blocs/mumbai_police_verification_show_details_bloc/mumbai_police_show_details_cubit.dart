@@ -7,8 +7,7 @@ import 'mumbai_police_show_details_state.dart';
 class MumbaiShowDataCubit extends Cubit<MumbaiShowDataState> {
   ApiService _apiService;
 
-  MumbaiShowDataCubit(this._apiService)
-      : super(MumbaiShowDataInitialState());
+  MumbaiShowDataCubit(this._apiService) : super(MumbaiShowDataInitialState());
 
   void mumbaiShowData({required String token, required String uid}) async {
     emit(MumbaiShowDataLoadingState());
@@ -19,7 +18,7 @@ class MumbaiShowDataCubit extends Cubit<MumbaiShowDataState> {
       );
       if (response.data != null && response.data.containsKey("status")) {
         MumbaiShowDataModel mumbaiShowDataModel =
-        MumbaiShowDataModel.fromJson(response.data);
+            MumbaiShowDataModel.fromJson(response.data);
         if (response.data["status"] == 200) {
           emit(MumbaiShowDataSuccessState(mumbaiShowDataModel));
         } else if (response.data["status"] == 500) {

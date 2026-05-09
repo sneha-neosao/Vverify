@@ -131,6 +131,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
           BlocListener<CheckoutCubit, CheckOutState>(
             listener: (context, checkoutState) {
               if (checkoutState is CheckOutSuccessState) {
+                SharedPreferences.getInstance().then((prefs) {
+                  prefs.remove('checkout_cart');
+                });
                 context.pushReplacementNamed("payment_success");
               } else if (checkoutState is CheckOutErrorState) {
                 ScaffoldMessenger.of(context).showSnackBar(

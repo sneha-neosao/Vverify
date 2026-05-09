@@ -384,38 +384,44 @@ class ApiService {
     }
   }
 
-  Future<Response> verifyRequestUpdate(
-      {required String token,
-      required String uuid,
-      required String firstName,
-      required String middleName,
-      required String lastName,
-      required String phone,
-      required String dob,
-      required String email,
-      required String employee_code,
-      required String date_of_joining,
-      required String gender}) async {
+  Future<Response> verifyRequestUpdate({
+    required String token,
+    required String uuid,
+    int? group_id,
+    String? company_name,
+    String? firstName,
+    String? middleName,
+    String? lastName,
+    String? phone,
+    String? dob,
+    String? email,
+    String? employee_code,
+    String? date_of_joining,
+    String? gender,
+  }) async {
     Map<String, dynamic> data = {
       "uuid": uuid,
-      "first_name": firstName,
-      "middle_name": middleName,
-      "last_name": lastName,
-      "phone": phone,
-      "dob": dob,
-      "email": email,
-      "employee_code": employee_code,
-      "date_of_joining": date_of_joining,
-      "gender": gender
+      if (group_id != null) "group_id": group_id,
+      if (company_name != null) "company_name": company_name,
+      if (firstName != null) "first_name": firstName,
+      if (middleName != null) "middle_name": middleName,
+      if (lastName != null) "last_name": lastName,
+      if (phone != null) "phone": phone,
+      if (dob != null) "dob": dob,
+      if (email != null) "email": email,
+      if (employee_code != null) "employee_code": employee_code,
+      if (date_of_joining != null) "date_of_joining": date_of_joining,
+      if (gender != null) "gender": gender,
     };
 
+    debugPrint('verifyRequestUpdate Request: ${data}');
     try {
       _dio.options.headers = {
         'Authorization': 'Bearer $token',
         'X-Action-From': 'mobile'
       };
       final response =
-          await _dio.put('verify-request/entity/update', queryParameters: data);
+          await _dio.put('verify-request/entity/update', data: data);
       log('verifyRequestUpdate Response: ${response.data}');
       return response;
     } catch (e) {
