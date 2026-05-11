@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/file_view_screen.dart';
 
 class StatusChip extends StatelessWidget {
@@ -40,7 +41,15 @@ class StatusChip extends StatelessWidget {
 
 class BrowseFileButton extends StatefulWidget {
   final Function(PlatformFile?)? onFilePicked;
-  const BrowseFileButton({super.key, this.onFilePicked});
+  final String? initialFilePath;
+  final String? storageKey; // Key to save/load file path from SharedPreferences
+
+  const BrowseFileButton({
+    super.key,
+    this.onFilePicked,
+    this.initialFilePath,
+    this.storageKey,
+  });
 
   @override
   State<BrowseFileButton> createState() => _BrowseFileButtonState();
@@ -48,6 +57,55 @@ class BrowseFileButton extends StatefulWidget {
 
 class _BrowseFileButtonState extends State<BrowseFileButton> {
   PlatformFile? _pickedFile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPersistedFile();
+  }
+
+  Future<void> _loadPersistedFile() async {
+    if (widget.initialFilePath != null) {
+      final file = File(widget.initialFilePath!);
+      if (await file.exists()) {
+        final length = await file.length();
+        setState(() {
+          _pickedFile = PlatformFile(
+            name: file.path.split('/').last,
+            path: file.path,
+            size: length,
+          );
+        });
+      }
+    } else if (widget.storageKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      final savedPath = prefs.getString(widget.storageKey!);
+      if (savedPath != null) {
+        final file = File(savedPath);
+        if (await file.exists()) {
+          final length = await file.length();
+          setState(() {
+            _pickedFile = PlatformFile(
+              name: file.path.split(Platform.pathSeparator).last,
+              path: file.path,
+              size: length,
+            );
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> _savePersistedFile(String? path) async {
+    if (widget.storageKey != null) {
+      final prefs = await SharedPreferences.getInstance();
+      if (path != null) {
+        await prefs.setString(widget.storageKey!, path);
+      } else {
+        await prefs.remove(widget.storageKey!);
+      }
+    }
+  }
 
   Future<void> _pickFile() async {
     try {
@@ -60,6 +118,7 @@ class _BrowseFileButtonState extends State<BrowseFileButton> {
         setState(() {
           _pickedFile = result.files.first;
         });
+        await _savePersistedFile(_pickedFile?.path);
         if (widget.onFilePicked != null) {
           widget.onFilePicked!(_pickedFile);
         }
@@ -108,10 +167,11 @@ class _BrowseFileButtonState extends State<BrowseFileButton> {
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     icon: const Icon(Icons.close, size: 16, color: Colors.red),
-                    onPressed: () {
+                    onPressed: () async {
                       setState(() {
                         _pickedFile = null;
                       });
+                      await _savePersistedFile(null);
                       if (widget.onFilePicked != null) {
                         widget.onFilePicked!(null);
                       }
@@ -201,9 +261,9 @@ class FormDropdownWidget extends StatelessWidget {
           text: TextSpan(
             text: titleText,
             style: GoogleFonts.outfit(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF263238),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF455A64),
             ),
             children: const [
               TextSpan(
@@ -216,18 +276,31 @@ class FormDropdownWidget extends StatelessWidget {
         const SizedBox(height: 4),
         DropdownButtonFormField<String>(
           value: value,
+          dropdownColor: Colors.white,
+          icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF455A64)),
+          style:
+              GoogleFonts.outfit(color: const Color(0xFF263238), fontSize: 14),
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: GoogleFonts.outfit(color: Colors.grey, fontSize: 14),
+            filled: true,
+            fillColor: Colors.white,
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+              borderSide:
+                  const BorderSide(color: Color(0xFFE0E0E0), width: 1.0),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+              borderSide:
+                  const BorderSide(color: Color(0xFFE0E0E0), width: 1.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide:
+                  const BorderSide(color: Color(0xFF3F51B5), width: 1.5),
             ),
           ),
           items: items.map((String item) {

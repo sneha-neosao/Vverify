@@ -23,6 +23,9 @@ class CustomTextField extends StatefulWidget {
   final int? maxLine;
   MaskTextInputFormatter? inputFormatter;
   final List<TextInputFormatter>? maskFormatter;
+  final AutovalidateMode? autovalidateMode;
+
+  final bool isRequired;
 
   // Constructor to pass values for customization
   CustomTextField(
@@ -46,7 +49,9 @@ class CustomTextField extends StatefulWidget {
       this.inputDecoration,
       this.maxLine,
       this.inputFormatter,
-      this.maskFormatter})
+      this.maskFormatter,
+      this.autovalidateMode,
+      this.isRequired = true})
       : super(key: key);
 
   @override
@@ -85,6 +90,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+        autovalidateMode: widget.autovalidateMode,
         onSaved: widget.onSaveValue,
         textInputAction: TextInputAction.next,
         onFieldSubmitted: (value) {
@@ -148,8 +154,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
         },
         onEditingComplete: () {},
         validator: (value) {
-          if (value == null || value.isEmpty) {
-            return widget.validationMessage ?? 'This field is required';
+          if (widget.isRequired) {
+            if (value == null || value.isEmpty) {
+              return widget.validationMessage ?? 'This field is required';
+            }
           }
           if (widget.validator != null) {
             return widget.validator!(value);

@@ -15,6 +15,8 @@ class form_widget extends StatelessWidget {
     this.onSaveValue,
     this.validationMessage,
     this.isReadOnly = false,
+    this.autovalidateMode,
+    this.isRequired = true,
   });
 
   final TextEditingController controller;
@@ -27,6 +29,8 @@ class form_widget extends StatelessWidget {
   final void Function(String?)? onSaveValue;
   final String? validationMessage;
   final bool isReadOnly;
+  final AutovalidateMode? autovalidateMode;
+  final bool isRequired;
 
   @override
   Widget build(BuildContext context) {
@@ -44,13 +48,14 @@ class form_widget extends StatelessWidget {
                     .bodySmall!
                     .copyWith(fontWeight: FontWeight.w700),
                 children: [
-              TextSpan(
-                text: titleText.isEmpty ? "" : " * ",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-              ),
+              if (isRequired)
+                TextSpan(
+                  text: titleText.isEmpty ? "" : " * ",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+                ),
               TextSpan(
                 text: titleDetails,
                 style: Theme.of(context)
@@ -72,6 +77,8 @@ class form_widget extends StatelessWidget {
           onSaveValue: onSaveValue,
           validationMessage: validationMessage,
           isReadOnly: isReadOnly,
+          autovalidateMode: autovalidateMode,
+          isRequired: isRequired,
         )
       ],
     );

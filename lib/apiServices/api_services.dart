@@ -475,7 +475,7 @@ class ApiService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get('verify-request/$request_id/show');
-      // log('VerifyDetailsView Response: ${response.data}');
+      log('VerifyDetailsView Response: ${response.data}');
       return response;
     } catch (e) {
       // log('Error in VerifyDetailsView: $e');
@@ -1375,6 +1375,25 @@ class ApiService {
   }
 
   /// Reference Check Verification
+  Future<Response> referenceFormStore({
+    required String token,
+    required Map<String, dynamic> data,
+  }) async {
+    log("referenceFormStore Data: $data");
+    try {
+      FormData formData = FormData.fromMap(data);
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile'
+      };
+      final response =
+          await _dio.post('verify/reference/form/store', data: formData);
+      return response;
+    } catch (e) {
+      throw Exception('Failed to store reference form: $e');
+    }
+  }
+
   Future<Response> ReferenceVerification(
       {required String customer_id,
       required String token,
@@ -2802,6 +2821,28 @@ class ApiService {
     } catch (e) {
       log('Error in calculateAmount: $e');
       throw Exception('Failed to calculate amount: $e');
+    }
+  }
+
+  Future<Response> extractAadhaarOcr(
+      {required File file, String documentType = "adhaar"}) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "document_type": documentType,
+        "attachment": await MultipartFile.fromFile(
+          file.path,
+          filename: file.path.split('/').last,
+        ),
+      });
+      final response = await _dio.post(
+        "https://ocr.neosao.co.in/ocr/extract",
+        data: formData,
+      );
+      log('extractAadhaarOcr Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in extractAadhaarOcr: $e');
+      throw Exception('Failed to extract $documentType OCR: $e');
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'widgets/PanVerification/pan_verification_card.dart';
-import 'widgets/AadhaarVerification/aadhaar_verification_card.dart';
+import 'widgets/AadhaarVerificationDigilocker/aadhaar_verification_digilocker_card.dart';
 import 'widgets/ReferenceCheck/reference_check_card.dart';
 import 'widgets/LegalCheck/legal_check_card.dart';
 import 'widgets/MediaCheck/media_check_card.dart';
@@ -34,6 +34,8 @@ class FormListScreen extends StatefulWidget {
 class _FormListScreenState extends State<FormListScreen> {
   final TextEditingController panController = TextEditingController();
   final TextEditingController aadhaarController = TextEditingController();
+  final TextEditingController dlController = TextEditingController();
+  final TextEditingController dlDobController = TextEditingController();
 
   Widget _getServiceCard(String? navigate, String? title) {
     switch (navigate) {
@@ -44,7 +46,13 @@ class _FormListScreenState extends State<FormListScreen> {
         return AadhaarDigilockerCard(
             controller: aadhaarController, serviceTitle: title);
       case "reference-check-verification":
-        return ReferenceCheckCard(serviceTitle: title);
+        return ReferenceCheckCard(
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "court-legal-verification":
         return LegalCheckCard(serviceTitle: title);
       case "media-check":
@@ -58,7 +66,10 @@ class _FormListScreenState extends State<FormListScreen> {
       case "credit-history":
         return CreditHistoryCard(serviceTitle: title);
       case "driving-licence-verification":
-        return DrivingLicenseCard(serviceTitle: title);
+        return DrivingLicenseCard(
+            controller: dlController,
+            dobController: dlDobController,
+            serviceTitle: title);
       case "bank-check":
         return BankAccountCard(serviceTitle: title);
       case "gst-cin-pan-verification":

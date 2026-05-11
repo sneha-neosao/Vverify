@@ -7,24 +7,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../commonComponent/custom_button.dart';
 import '../../../../VerificationForms/common/form_widget.dart';
 import '../common_widgets.dart';
-import '../AadhaarVerificationDigilocker/bloc/aadhaar_ocr_cubit.dart';
-import '../AadhaarVerificationDigilocker/bloc/aadhaar_ocr_state.dart';
+import 'bloc/aadhaar_ocr_cubit.dart';
+import 'bloc/aadhaar_ocr_state.dart';
 
-class PanVerificationCard extends StatefulWidget {
+class AadhaarDigilockerCard extends StatefulWidget {
   final TextEditingController controller;
   final String? serviceTitle;
 
-  const PanVerificationCard({
+  const AadhaarDigilockerCard({
     super.key,
     required this.controller,
     this.serviceTitle,
   });
 
   @override
-  State<PanVerificationCard> createState() => _PanVerificationCardState();
+  State<AadhaarDigilockerCard> createState() => _AadhaarDigilockerCardState();
 }
 
-class _PanVerificationCardState extends State<PanVerificationCard> {
+class _AadhaarDigilockerCardState extends State<AadhaarDigilockerCard> {
   @override
   void initState() {
     super.initState();
@@ -40,15 +40,15 @@ class _PanVerificationCardState extends State<PanVerificationCard> {
 
   Future<void> _loadSavedData() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedPan = prefs.getString('pan_number_persist');
-    if (savedPan != null && widget.controller.text.isEmpty) {
-      widget.controller.text = savedPan;
+    final savedAadhaar = prefs.getString('aadhaar_number_persist');
+    if (savedAadhaar != null && widget.controller.text.isEmpty) {
+      widget.controller.text = savedAadhaar;
     }
   }
 
   Future<void> _saveData() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('pan_number_persist', widget.controller.text);
+    await prefs.setString('aadhaar_number_persist', widget.controller.text);
   }
 
   @override
@@ -58,11 +58,13 @@ class _PanVerificationCardState extends State<PanVerificationCard> {
       child: BlocConsumer<AadhaarOcrCubit, AadhaarOcrState>(
         listener: (context, state) {
           if (state is AadhaarOcrSuccess) {
-            if (state.ocrData.details?.panNumber != null) {
-              widget.controller.text = state.ocrData.details!.panNumber!;
+            if (state.ocrData.details?.aadhaarNumber != null) {
+              // Remove spaces from extracted Aadhaar number
+              widget.controller.text =
+                  state.ocrData.details!.aadhaarNumber!.replaceAll(' ', '');
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                    content: Text("PAN Number Extracted Successfully!")),
+                    content: Text("Aadhaar Number Extracted Successfully!")),
               );
             }
           } else if (state is AadhaarOcrFailure) {
@@ -86,7 +88,7 @@ class _PanVerificationCardState extends State<PanVerificationCard> {
                         const SizedBox(width: 12),
                         Flexible(
                           child: Text(
-                            widget.serviceTitle ?? "PAN Verification",
+                            widget.serviceTitle ?? "AADHAAR Via Digilocker",
                             style: GoogleFonts.outfit(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -108,12 +110,24 @@ class _PanVerificationCardState extends State<PanVerificationCard> {
                 children: [
                   form_widget(
                     controller: widget.controller,
-                    titleText: "PAN Number",
-                    hintText: "Enter PAN Number (e.g. ABCDE1234F)",
-                    textInputType: TextInputType.text,
+                    titleText: "Aadhaar Number",
+                    hintText: "Enter 12 digit AADHAAR number",
+                    textInputType: TextInputType.number,
                     maskFormatter: [
-                      LengthLimitingTextInputFormatter(10),
+                      FilteringTextInputFormatter.digitsOnly,
+                      FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                      LengthLimitingTextInputFormatter(12),
                     ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Enter Aadhaar number";
+                      }
+                      if (value.length != 12) {
+                        return "Aadhaar must be 12 digits";
+                      }
+                      return null;
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                   if (state is AadhaarOcrLoading)
                     const Padding(
@@ -137,12 +151,12 @@ class _PanVerificationCardState extends State<PanVerificationCard> {
               ),
               const SizedBox(height: 10),
               BrowseFileButton(
-                storageKey: 'pan_file_persist',
+                storageKey: 'aadhaar_file_persist',
                 onFilePicked: (file) {
                   if (file != null) {
-                    context.read<AadhaarOcrCubit>().extractAadhaarDetails(
-                        File(file.path!),
-                        documentType: "pan");
+                    context
+                        .read<AadhaarOcrCubit>()
+                        .extractAadhaarDetails(File(file.path!));
                   } else {
                     widget.controller.clear();
                     context.read<AadhaarOcrCubit>().reset();
@@ -185,7 +199,7 @@ class _PanVerificationCardState extends State<PanVerificationCard> {
                   ),
                 ),
               ],
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               Align(
                 alignment: Alignment.centerRight,
                 child: CustomButton(
