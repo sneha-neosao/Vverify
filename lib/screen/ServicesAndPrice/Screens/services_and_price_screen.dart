@@ -810,59 +810,7 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                       const SnackBar(content: Text("Payment successful")));
                 }
               },
-              child: BlocConsumer<CheckoutCubit, CheckOutState>(
-                listener: (context, checkout) async {
-                  if (checkout is CheckOutSuccessState) {
-                    final paymentOrderId =
-                        checkout.checkoutModel.transaction!.txnId!;
-                    final orderId = checkout
-                        .checkoutModel.transaction!.paymentData!.orderId!;
-                    final token =
-                        checkout.checkoutModel.transaction!.paymentData!.token!;
-                    final amount = checkout.checkoutModel.finalTotal;
-
-                    // Convert amount from int? to double
-                    final doubleAmount = amount?.toDouble();
-
-                    print('Starting PhonePe Payment:');
-                    print('Order ID: $orderId');
-                    print('Token: ${token}');
-                    print('Amount: ₹$doubleAmount');
-
-                    // Call instance method (not static)
-                    final response = await phonePeService.startTransaction(
-                      orderId: orderId,
-                      token: token,
-                      appSchema: 'vverify', // Your app URL scheme
-                      // amount: doubleAmount ?? 0.0, // Pass as double
-                    );
-
-                    // Handle the response
-                    phonePeService.handlePaymentResponse(
-                      response,
-                      context,
-                      (isSuccess) {
-                        if (isSuccess) {
-                          final String token = context.read<TokenCubit>().state;
-                          context
-                              .read<CheckOutStatusCheckingCubit>()
-                              .checkoutStatusChecking(
-                                  token: token,
-                                  payment_order_id: paymentOrderId);
-                        } else {
-                          // Handle payment failure
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      "Payment failed. Please try again.")));
-                        }
-                      },
-                    );
-                  } else if (checkout is CheckOutErrorState) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(checkout.errorMessage)));
-                  }
-                },
+              child: BlocBuilder<CheckoutCubit, CheckOutState>(
                 builder: (context, checkout) {
                   return SafeArea(
                     child: Container(

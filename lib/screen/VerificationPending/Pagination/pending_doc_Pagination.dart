@@ -136,8 +136,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                           hintText: "Search Service...",
                           hintStyle: GoogleFonts.outfit(
                               fontSize: 14, color: Colors.grey.shade400),
-                          prefixIcon: Icon(Icons.search,
-                              size: 20, color: Colors.grey.shade400),
+                          // prefixIcon: Icon(Icons.search,
+                          //     size: 20, color: Colors.grey.shade400),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12)),
                           contentPadding:
@@ -332,14 +332,23 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                     const Color(0xFF3F51B5)),
                                               ),
                                               const SizedBox(width: 8),
-                                              _buildHeaderIcon(
-                                                Icons.info_outline_rounded,
-                                                const Color(0xFFFFA000),
-                                                tooltip: (item.status == null ||
-                                                        item.status == "-")
-                                                    ? "Pending"
-                                                    : item.status!,
-                                              ),
+                                              if (item.detailsUpdated == 1) ...[
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    _showFormDialog(item, null);
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 6),
+                                                    child: _buildHeaderIcon(
+                                                        Icons.edit,
+                                                        const Color(
+                                                            0xFF3F51B5)),
+                                                  ),
+                                                ),
+                                              ],
+                                              _buildStatusIcon(item),
                                               const SizedBox(width: 8),
                                               Icon(
                                                 isExpanded
@@ -451,6 +460,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                 child: Column(
                                                   children: [
                                                     Stack(
+                                                      clipBehavior: Clip.none,
                                                       children: [
                                                         Container(
                                                           height: 70,
@@ -499,20 +509,104 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                 const EdgeInsets
                                                                     .all(4),
                                                             decoration:
-                                                                const BoxDecoration(
-                                                              color: Color(
-                                                                  0xFFFF5722),
+                                                                BoxDecoration(
+                                                              color: (service.status?.toLowerCase().contains(
+                                                                              'verified') ??
+                                                                          false) ||
+                                                                      (service.status?.toLowerCase().contains(
+                                                                              'done') ??
+                                                                          false)
+                                                                  ? Colors.green
+                                                                  : const Color(
+                                                                      0xFFFF5722),
                                                               shape: BoxShape
                                                                   .circle,
                                                             ),
-                                                            child: const Icon(
-                                                                Icons
-                                                                    .priority_high,
+                                                            child: Icon(
+                                                                (service.status?.toLowerCase().contains('verified') ??
+                                                                            false) ||
+                                                                        (service.status?.toLowerCase().contains('done') ??
+                                                                            false)
+                                                                    ? Icons
+                                                                        .check
+                                                                    : Icons
+                                                                        .priority_high,
                                                                 color: Colors
                                                                     .white,
                                                                 size: 10),
                                                           ),
                                                         ),
+                                                        if ((service.status
+                                                                    ?.toLowerCase()
+                                                                    .contains(
+                                                                        'verified') ??
+                                                                false) ||
+                                                            (service.status
+                                                                    ?.toLowerCase()
+                                                                    .contains(
+                                                                        'done') ??
+                                                                false))
+                                                          Positioned(
+                                                            right: -2,
+                                                            bottom: -2,
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                final token =
+                                                                    context
+                                                                        .read<
+                                                                            TokenCubit>()
+                                                                        .state;
+                                                                context
+                                                                    .read<
+                                                                        VerifyRequestReportCubit>()
+                                                                    .verifyServiceReport(
+                                                                      token:
+                                                                          token,
+                                                                      uuid: item
+                                                                              .uuid ??
+                                                                          "",
+                                                                      service_id:
+                                                                          service.serviceRequestId ??
+                                                                              0,
+                                                                      service_name:
+                                                                          service.serviceTitle ??
+                                                                              "Service",
+                                                                    );
+                                                              },
+                                                              child: Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(6),
+                                                                decoration:
+                                                                    const BoxDecoration(
+                                                                  color: Colors
+                                                                      .blue,
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                      color: Colors
+                                                                          .black12,
+                                                                      blurRadius:
+                                                                          4,
+                                                                      offset:
+                                                                          Offset(
+                                                                              0,
+                                                                              2),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                child:
+                                                                    const Icon(
+                                                                  Icons
+                                                                      .file_download,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  size: 14,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
                                                       ],
                                                     ),
                                                     const SizedBox(height: 8),
@@ -541,33 +635,80 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                       ),
                                                     ),
                                                     const SizedBox(height: 4),
-                                                    Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 4),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFFFFF3E0),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        border: Border.all(
-                                                            color: const Color(
-                                                                0xFFFFE0B2)),
-                                                      ),
-                                                      child: Text(
-                                                        "Pending",
-                                                        style:
-                                                            GoogleFonts.outfit(
-                                                          fontSize: 10,
-                                                          color: const Color(
-                                                              0xFFE65100),
-                                                          fontWeight:
-                                                              FontWeight.w600,
+                                                    (() {
+                                                      final String status = (service
+                                                                  .status
+                                                                  ?.isNotEmpty ??
+                                                              false)
+                                                          ? service.status!
+                                                              .toLowerCase()
+                                                          : "pending";
+
+                                                      Color textColor =
+                                                          const Color(
+                                                              0xFFF57C00);
+                                                      Color bgColor =
+                                                          const Color(
+                                                              0xFFFFFDE7);
+                                                      Color borderColor =
+                                                          const Color(
+                                                              0xFFFFF59D);
+
+                                                      if (status
+                                                          .contains('reject')) {
+                                                        textColor = const Color(
+                                                            0xFFD32F2F);
+                                                        bgColor = const Color(
+                                                            0xFFFFEBEE);
+                                                        borderColor =
+                                                            const Color(
+                                                                0xFFEF9A9A);
+                                                      } else if (status
+                                                              .contains(
+                                                                  'verified') ||
+                                                          status.contains(
+                                                              'done')) {
+                                                        textColor = const Color(
+                                                            0xFF388E3C);
+                                                        bgColor = const Color(
+                                                            0xFFE8F5E9);
+                                                        borderColor =
+                                                            const Color(
+                                                                0xFFA5D6A7);
+                                                      }
+
+                                                      return Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 4),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: bgColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          border: Border.all(
+                                                              color:
+                                                                  borderColor),
                                                         ),
-                                                      ),
-                                                    ),
+                                                        child: Text(
+                                                          (service.status
+                                                                      ?.isNotEmpty ??
+                                                                  false)
+                                                              ? '${service.status![0].toUpperCase()}${service.status!.substring(1).toLowerCase()}'
+                                                              : "Pending",
+                                                          style: GoogleFonts
+                                                              .outfit(
+                                                            fontSize: 10,
+                                                            color: textColor,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }()),
                                                   ],
                                                 ),
                                               );
@@ -629,6 +770,26 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
     return iconWidget;
   }
 
+  Widget _buildStatusIcon(verifyRequest item) {
+    IconData iconData = Icons.info_outline_rounded;
+    Color iconColor = const Color.fromRGBO(255, 160, 0, 1);
+    String status = item.status ?? "-";
+
+    if (item.services == null || item.services!.isEmpty || status == "-") {
+      status = "Pending";
+      iconData = Icons.info_outline_rounded;
+      iconColor = const Color.fromRGBO(255, 160, 0, 1);
+    } else if (status.toLowerCase() == "clear") {
+      iconData = Icons.check_circle_rounded;
+      iconColor = Colors.green;
+    } else if (status.toLowerCase() == "discrepancy") {
+      iconData = Icons.gpp_maybe_rounded;
+      iconColor = Colors.red;
+    }
+
+    return _buildHeaderIcon(iconData, iconColor, tooltip: status);
+  }
+
   void _showFormDialog(verifyRequest item, Service? service) {
     debugPrint('firstName: ${item.customer!.firstName.toString()}');
     final groupId = item.entity?.groupId ?? 1;
@@ -664,7 +825,9 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
       barrierDismissible: true,
       builder: (context) => groupId == 1
           ? _buildFormDialog(
-              title: "Fill $entityName Info",
+              title: item.detailsUpdated == 1
+                  ? "Update $entityName Info"
+                  : "Fill $entityName Info",
               icon: Icons.business_rounded,
               formKey: formKey,
               onSave: () {
@@ -733,7 +896,9 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
               ],
             )
           : _buildFormDialog(
-              title: "Fill $entityName Info",
+              title: item.detailsUpdated == 1
+                  ? "Update $entityName Info"
+                  : "Fill $entityName Info",
               icon: Icons.person_rounded,
               formKey: formKey,
               onSave: () {
@@ -907,59 +1072,19 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                         }
                       },
                       builder: (context, state) {
-                        return SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  const Color(0xFFFF5722),
-                                  const Color(0xFFFF9800),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color:
-                                      const Color(0xFFFF5722).withOpacity(0.3),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: ElevatedButton(
-                              onPressed: state
-                                      is VerifyRequestUpdateLoadingState
-                                  ? null
-                                  : () {
-                                      if (formKey.currentState!.validate()) {
-                                        onSave();
-                                      }
-                                    },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12)),
-                              ),
-                              child: state is VerifyRequestUpdateLoadingState
-                                  ? SizedBox(
-                                      width: 25,
-                                      height: 25,
-                                      child: const CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : Text(
-                                      "SAVE",
-                                      style: GoogleFonts.outfit(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16),
-                                    ),
-                            ),
-                          ),
+                        return CustomButton(
+                          text: "SAVE",
+                          height: 45,
+                          isLoading: state is VerifyRequestUpdateLoadingState,
+                          gradientColors: const [
+                            Color(0xFFFF5722),
+                            Color(0xFFFF9800),
+                          ],
+                          onTap: () {
+                            if (formKey.currentState!.validate()) {
+                              onSave();
+                            }
+                          },
                         );
                       },
                     ),

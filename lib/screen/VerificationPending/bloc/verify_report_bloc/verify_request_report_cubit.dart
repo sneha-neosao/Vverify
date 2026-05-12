@@ -26,7 +26,8 @@ class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
       if (response.data is List<int>) {
         final pdfBytes = response.data as List<int>;
 
-        final downloadsDir = Directory('/storage/emulated/0/Download'); // public Downloads
+        final downloadsDir =
+            Directory('/storage/emulated/0/Download'); // public Downloads
         final filePath = '${downloadsDir.path}/report_$case_uuid.pdf';
         final file = File(filePath);
         await file.writeAsBytes(pdfBytes);
@@ -42,6 +43,38 @@ class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
         //     'Authorization': 'Bearer $token',   // ✅ include your token
         //   },
         // );
+
+        emit(VerifyRequestReportDownloadedState(file.path));
+      } else {
+        emit(VerifyRequestReportErrorState('Unexpected response format.'));
+      }
+    } catch (e) {
+      emit(VerifyRequestReportErrorState('An error occurred: $e'));
+    }
+  }
+
+  Future<void> verifyServiceReport({
+    required String token,
+    required String uuid,
+    required int service_id,
+    required String service_name,
+  }) async {
+    emit(VerifyRequestReportLoadingState());
+    try {
+      final response = await _apiService.VerifyServiceReportDownload(
+        token: token,
+        uuid: uuid,
+        service_id: service_id,
+      );
+
+      if (response.data is List<int>) {
+        final pdfBytes = response.data as List<int>;
+
+        final downloadsDir = Directory('/storage/emulated/0/Download');
+        final filePath =
+            '${downloadsDir.path}/${service_name.replaceAll(' ', '_')}_$uuid.pdf';
+        final file = File(filePath);
+        await file.writeAsBytes(pdfBytes);
 
         emit(VerifyRequestReportDownloadedState(file.path));
       } else {

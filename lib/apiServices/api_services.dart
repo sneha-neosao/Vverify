@@ -502,6 +502,24 @@ class ApiService {
     }
   }
 
+  Future<Response> VerifyServiceReportDownload({
+    required String token,
+    required String uuid,
+    required int service_id,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+        'verify-request/report/service/pdf/$uuid/$service_id',
+        options: Options(responseType: ResponseType.bytes),
+      );
+      return response;
+    } catch (e) {
+      log('Error in VerifyServiceReportDownload: $e');
+      throw Exception('Failed to fetch VerifyServiceReportDownload: $e');
+    }
+  }
+
   /// Education Verification
   Future<Response> educationList({
     required String token,
@@ -1374,7 +1392,71 @@ class ApiService {
     }
   }
 
-  /// Reference Check Verification
+  Future<Response> courtVerificationShowData({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/court/show/$uid');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to fetch courtVerificationShowData: $e');
+    }
+  }
+
+  Future<Response> bankVerificationForm({
+    required String token,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      FormData formData = FormData.fromMap(data);
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile'
+      };
+      final response =
+          await _dio.post('verify/bank/form/store', data: formData);
+      return response;
+    } catch (e) {
+      throw Exception('Failed to store bank verification form: $e');
+    }
+  }
+
+  Future<Response> bankVerificationShowData({
+    required String token,
+    required String uid,
+  }) async {
+    print("bankVerificationShowData Token: $token");
+    print("bankVerificationShowData Uid: $uid");
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('verify/bank/show/$uid');
+      log('bankVerificationShowData Response: ${response.data}');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to fetch bankVerificationShowData: $e');
+    }
+  }
+
+  Future<Response> bankVerificationUpdate({
+    required String token,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      FormData formData = FormData.fromMap(data);
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile'
+      };
+      final response =
+          await _dio.post('verify/bank/form/update', data: formData);
+      return response;
+    } catch (e) {
+      throw Exception('Failed to update bank verification form: $e');
+    }
+  }
+
   Future<Response> referenceFormStore({
     required String token,
     required Map<String, dynamic> data,
@@ -1388,9 +1470,28 @@ class ApiService {
       };
       final response =
           await _dio.post('verify/reference/form/store', data: formData);
+      log('referenceFormStore Response: ${response.data}');
       return response;
     } catch (e) {
       throw Exception('Failed to store reference form: $e');
+    }
+  }
+
+  Future<Response> referenceFormUpdate({
+    required String token,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      FormData formData = FormData.fromMap(data);
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile'
+      };
+      final response =
+          await _dio.post('verify/reference/form/update', data: formData);
+      return response;
+    } catch (e) {
+      throw Exception('Failed to update reference form: $e');
     }
   }
 

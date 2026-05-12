@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import '../Model/reference_store_model.dart';
-import '../Model/verify_request_response_model.dart';
 import 'reference_store_state.dart';
 
 class ReferenceStoreCubit extends Cubit<ReferenceStoreState> {
@@ -23,8 +22,10 @@ class ReferenceStoreCubit extends Cubit<ReferenceStoreState> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final status = response.data['status'];
         if (status == 200 || status == "200") {
+          final uid = response.data['data']?['uid'];
           emit(ReferenceStoreSuccess(
-              response.data['message'] ?? 'Reference stored successfully'));
+              response.data['message'] ?? 'Reference stored successfully',
+              uid: uid?.toString()));
         } else {
           emit(ReferenceStoreError(
               response.data['message'] ?? 'Failed to store reference'));
@@ -37,32 +38,33 @@ class ReferenceStoreCubit extends Cubit<ReferenceStoreState> {
     }
   }
 
-  Future<void> fetchReferenceDetails({
+  Future<void> updateReferenceForm({
     required String token,
-    required String requestId,
+    required ReferenceStoreModel model,
   }) async {
-    emit(ReferenceDetailsLoading());
+    emit(ReferenceStoreLoading());
     try {
-      final response = await _apiService.VerifyDetailsView(
+      final response = await _apiService.referenceFormUpdate(
         token: token,
-        request_id: requestId,
+        data: model.toJson(),
       );
 
-      if (response.data != null && response.data['status'] == 200) {
-        final VerifyRequestResponseModel model =
-            VerifyRequestResponseModel.fromJson(response.data);
-
-        final referenceData = model.data?.referenceCheckVerification;
-        if (referenceData != null) {
-          emit(ReferenceDetailsSuccess(referenceData));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final status = response.data['status'];
+        if (status == 200 || status == "200") {
+          final uid = response.data['data']?['uid'];
+          emit(ReferenceStoreSuccess(
+              response.data['message'] ?? 'Reference updated successfully',
+              uid: uid?.toString()));
         } else {
-          emit(ReferenceDetailsInitial());
+          emit(ReferenceStoreError(
+              response.data['message'] ?? 'Failed to update reference'));
         }
       } else {
-        emit(ReferenceDetailsError("Failed to fetch details"));
+        emit(ReferenceStoreError('Server error: ${response.statusCode}'));
       }
     } catch (e) {
-      emit(ReferenceDetailsError("Error fetching details: $e"));
+      emit(ReferenceStoreError('An error occurred: $e'));
     }
   }
 }

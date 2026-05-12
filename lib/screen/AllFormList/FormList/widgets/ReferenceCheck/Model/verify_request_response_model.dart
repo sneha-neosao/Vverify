@@ -137,11 +137,10 @@ class VerifyRequestData {
         customer: json["customer"] == null
             ? null
             : VerifyRequestCustomer.fromJson(json["customer"]),
-        referenceCheckVerification:
-            json["reference_check_verification"] == null
-                ? null
-                : ReferenceCheckVerification.fromJson(
-                    json["reference_check_verification"]),
+        referenceCheckVerification: json["reference_check_verification"] == null
+            ? null
+            : ReferenceCheckVerification.fromJson(
+                json["reference_check_verification"]),
       );
 
   Map<String, dynamic> toJson() => {

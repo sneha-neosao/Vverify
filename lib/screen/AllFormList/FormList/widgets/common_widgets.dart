@@ -12,22 +12,46 @@ class StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String lowerStatus = status.toLowerCase();
+
+    Color textColor = const Color(0xFFF57C00);
+    Color bgColor = const Color(0xFFFFFDE7);
+    Color borderColor = const Color(0xFFFFF59D);
+    IconData icon = Icons.access_time;
+
+    if (lowerStatus == 'pending') {
+      textColor = const Color(0xFFF57C00);
+      bgColor = const Color(0xFFFFFDE7);
+      borderColor = const Color(0xFFFFF59D);
+    } else if (lowerStatus.contains('reject')) {
+      textColor = const Color(0xFFD32F2F);
+      bgColor = const Color(0xFFFFEBEE);
+      borderColor = const Color(0xFFEF9A9A);
+      icon = Icons.cancel_outlined;
+    } else if (lowerStatus.contains('verified') ||
+        lowerStatus.contains('done')) {
+      textColor = const Color(0xFF388E3C);
+      bgColor = const Color(0xFFE8F5E9);
+      borderColor = const Color(0xFFA5D6A7);
+      icon = Icons.check_circle_outline;
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFDE7),
+        color: bgColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFFFF59D)),
+        border: Border.all(color: borderColor),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.access_time, color: Color(0xFFF57C00), size: 16),
+          Icon(icon, color: textColor, size: 16),
           const SizedBox(width: 6),
           Text(
             status,
             style: GoogleFonts.outfit(
-              color: const Color(0xFFF57C00),
+              color: textColor,
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.5,

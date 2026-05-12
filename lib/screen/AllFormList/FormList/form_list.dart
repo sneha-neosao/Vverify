@@ -54,7 +54,13 @@ class _FormListScreenState extends State<FormListScreen> {
           applicantData: widget.applicantData,
         );
       case "court-legal-verification":
-        return LegalCheckCard(serviceTitle: title);
+        return LegalCheckCard(
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "media-check":
         return MediaCheckCard(serviceTitle: title);
       case "address-verifcation":
@@ -71,7 +77,13 @@ class _FormListScreenState extends State<FormListScreen> {
             dobController: dlDobController,
             serviceTitle: title);
       case "bank-check":
-        return BankAccountCard(serviceTitle: title);
+        return BankAccountCard(
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "gst-cin-pan-verification":
         return GstVerificationCard(serviceTitle: title);
       case "director":
@@ -136,9 +148,9 @@ class _FormListScreenState extends State<FormListScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          widget.serviceTitle ?? "Verification Forms",
+          "${widget.serviceTitle} form" ?? "Verification Forms",
           style: GoogleFonts.outfit(
-            color: Colors.black,
+            color: Theme.of(context).primaryColorLight,
             fontWeight: FontWeight.bold,
           ),
         ),

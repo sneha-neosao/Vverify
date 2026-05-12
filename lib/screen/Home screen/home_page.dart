@@ -477,8 +477,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             children: [
                                               Image.network(
                                                 item.entityIcon!,
-                                                width: 40,
-                                                height: 40,
+                                                width: 60,
+                                                height: 60,
                                                 fit: BoxFit.contain,
                                               ),
                                               const SizedBox(height: 8),

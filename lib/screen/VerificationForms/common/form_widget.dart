@@ -17,7 +17,10 @@ class form_widget extends StatelessWidget {
     this.isReadOnly = false,
     this.autovalidateMode,
     this.isRequired = true,
+    this.onTap,
   });
+
+  final VoidCallback? onTap;
 
   final TextEditingController controller;
   final String titleText;
@@ -79,6 +82,7 @@ class form_widget extends StatelessWidget {
           isReadOnly: isReadOnly,
           autovalidateMode: autovalidateMode,
           isRequired: isRequired,
+          onTap: onTap,
         )
       ],
     );

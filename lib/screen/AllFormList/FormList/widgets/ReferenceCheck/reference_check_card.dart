@@ -9,7 +9,11 @@ import '../common_widgets.dart';
 import 'BlocCubit/reference_store_cubit.dart';
 import 'BlocCubit/reference_store_state.dart';
 import 'Model/reference_store_model.dart';
-import 'Model/verify_request_response_model.dart';
+import 'BlocCubit/reference_details_cubit.dart';
+import 'BlocCubit/reference_details_state.dart';
+import 'Model/reference_check_details_model.dart';
+import '../../../../VerificationPending/bloc/pendingDoc_cubit.dart';
+import '../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 
 class ReferenceCheckCard extends StatefulWidget {
   final String? serviceTitle;
@@ -30,6 +34,7 @@ class ReferenceCheckCard extends StatefulWidget {
 class _ReferenceCheckCardState extends State<ReferenceCheckCard> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isReadOnly = false;
+  bool isEditing = false;
 
   // Person 1 Controllers
   final TextEditingController p1NameController = TextEditingController();
@@ -46,98 +51,33 @@ class _ReferenceCheckCardState extends State<ReferenceCheckCard> {
   final TextEditingController p2AltMobileController = TextEditingController();
 
   late final ReferenceStoreCubit _cubit;
+  late final ReferenceDetailsCubit _detailsCubit;
 
   @override
   void initState() {
     super.initState();
     _cubit = ReferenceStoreCubit(ApiService());
-
-    // Only load local "app data" if the form hasn't been submitted to API yet
-    if (widget.applicantData?['details_updated'] != 1) {
-      _loadPersistedData();
-      _addListeners();
-    }
+    _detailsCubit = ReferenceDetailsCubit(ApiService());
 
     _checkAndFetchDetails();
   }
 
-  void _addListeners() {
-    p1NameController.addListener(_savePersistedData);
-    p1MobileController.addListener(_savePersistedData);
-    p1RelationController.addListener(_savePersistedData);
-    p1EmailController.addListener(_savePersistedData);
-    p1AltMobileController.addListener(_savePersistedData);
-    p2NameController.addListener(_savePersistedData);
-    p2MobileController.addListener(_savePersistedData);
-    p2RelationController.addListener(_savePersistedData);
-    p2EmailController.addListener(_savePersistedData);
-    p2AltMobileController.addListener(_savePersistedData);
-  }
-
-  void _removeListeners() {
-    p1NameController.removeListener(_savePersistedData);
-    p1MobileController.removeListener(_savePersistedData);
-    p1RelationController.removeListener(_savePersistedData);
-    p1EmailController.removeListener(_savePersistedData);
-    p1AltMobileController.removeListener(_savePersistedData);
-    p2NameController.removeListener(_savePersistedData);
-    p2MobileController.removeListener(_savePersistedData);
-    p2RelationController.removeListener(_savePersistedData);
-    p2EmailController.removeListener(_savePersistedData);
-    p2AltMobileController.removeListener(_savePersistedData);
-  }
-
-  Future<void> _loadPersistedData() async {
-    if (isReadOnly) return;
-    final prefs = await SharedPreferences.getInstance();
-    final requestId = widget.applicantData?['request_id']?.toString() ?? "";
-
-    p1NameController.text = prefs.getString('ref_p1_name_$requestId') ?? "";
-    p1MobileController.text = prefs.getString('ref_p1_mobile_$requestId') ?? "";
-    p1RelationController.text =
-        prefs.getString('ref_p1_relation_$requestId') ?? "";
-    p1EmailController.text = prefs.getString('ref_p1_email_$requestId') ?? "";
-    p1AltMobileController.text = prefs.getString('ref_p1_alt_$requestId') ?? "";
-
-    p2NameController.text = prefs.getString('ref_p2_name_$requestId') ?? "";
-    p2MobileController.text = prefs.getString('ref_p2_mobile_$requestId') ?? "";
-    p2RelationController.text =
-        prefs.getString('ref_p2_relation_$requestId') ?? "";
-    p2EmailController.text = prefs.getString('ref_p2_email_$requestId') ?? "";
-    p2AltMobileController.text = prefs.getString('ref_p2_alt_$requestId') ?? "";
-  }
-
-  Future<void> _savePersistedData() async {
-    if (isReadOnly) return;
-    final prefs = await SharedPreferences.getInstance();
-    final requestId = widget.applicantData?['request_id']?.toString() ?? "";
-
-    await prefs.setString('ref_p1_name_$requestId', p1NameController.text);
-    await prefs.setString('ref_p1_mobile_$requestId', p1MobileController.text);
-    await prefs.setString(
-        'ref_p1_relation_$requestId', p1RelationController.text);
-    await prefs.setString('ref_p1_email_$requestId', p1EmailController.text);
-    await prefs.setString('ref_p1_alt_$requestId', p1AltMobileController.text);
-
-    await prefs.setString('ref_p2_name_$requestId', p2NameController.text);
-    await prefs.setString('ref_p2_mobile_$requestId', p2MobileController.text);
-    await prefs.setString(
-        'ref_p2_relation_$requestId', p2RelationController.text);
-    await prefs.setString('ref_p2_email_$requestId', p2EmailController.text);
-    await prefs.setString('ref_p2_alt_$requestId', p2AltMobileController.text);
-  }
-
-  Future<void> _checkAndFetchDetails() async {
-    if (widget.applicantData?['details_updated'] == 1 ||
+  Future<void> _checkAndFetchDetails(
+      {bool force = false, String? uidFromResponse}) async {
+    if (force ||
+        widget.applicantData?['details_updated'] == 1 ||
         widget.serviceData?['status'] == "DONE") {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? "";
-      final requestId = widget.applicantData?['request_id']?.toString() ?? "";
+      final uid = uidFromResponse ??
+          widget.serviceData?['uid']?.toString() ??
+          widget.applicantData?['uid']?.toString() ??
+          "";
 
-      if (token.isNotEmpty && requestId.isNotEmpty) {
-        _cubit.fetchReferenceDetails(
+      if (token.isNotEmpty && uid.isNotEmpty) {
+        _detailsCubit.fetchReferenceDetails(
           token: token,
-          requestId: requestId,
+          uid: uid,
         );
       }
     }
@@ -145,8 +85,8 @@ class _ReferenceCheckCardState extends State<ReferenceCheckCard> {
 
   @override
   void dispose() {
-    _removeListeners();
     _cubit.close();
+    _detailsCubit.close();
     p1NameController.dispose();
     p1MobileController.dispose();
     p1RelationController.dispose();
@@ -183,10 +123,17 @@ class _ReferenceCheckCardState extends State<ReferenceCheckCard> {
       );
 
       if (context.mounted) {
-        _cubit.storeReferenceForm(
-          token: token,
-          model: model,
-        );
+        if (isEditing) {
+          _cubit.updateReferenceForm(
+            token: token,
+            model: model,
+          );
+        } else {
+          _cubit.storeReferenceForm(
+            token: token,
+            model: model,
+          );
+        }
       }
     }
   }
@@ -199,157 +146,313 @@ class _ReferenceCheckCardState extends State<ReferenceCheckCard> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _cubit,
-      child: BlocConsumer<ReferenceStoreCubit, ReferenceStoreState>(
-        listener: (context, state) {
-          if (state is ReferenceStoreSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(state.message), backgroundColor: Colors.green),
-            );
-            // Refresh details and set to read-only
-            final requestId =
-                widget.applicantData?['request_id']?.toString() ?? "";
-            SharedPreferences.getInstance().then((prefs) {
-              final token = prefs.getString('token') ?? "";
-              if (mounted) {
-                context.read<ReferenceStoreCubit>().fetchReferenceDetails(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _cubit),
+        BlocProvider.value(value: _detailsCubit),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<ReferenceStoreCubit, ReferenceStoreState>(
+            listener: (context, state) {
+              if (state is ReferenceStoreSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: Colors.green),
+                );
+                setState(() {
+                  isReadOnly = true;
+                  isEditing = false;
+                });
+                _checkAndFetchDetails(force: true, uidFromResponse: state.uid);
+
+                // Refresh Verification List
+                final token = context.read<TokenCubit>().state;
+                final customerId = context.read<IdCubit>().state;
+                context.read<PendingDocCubit>().getPendingDoc(
                       token: token,
-                      requestId: requestId,
+                      customerId: int.tryParse(customerId) ?? 0,
+                      page: 1,
+                      limit: 100,
+                      isLoading: false,
                     );
+              } else if (state is ReferenceStoreError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(state.error), backgroundColor: Colors.red),
+                );
               }
-            });
-          } else if (state is ReferenceDetailsSuccess) {
-            _populateData(state.data);
-          } else if (state is ReferenceDetailsError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
-            );
-          } else if (state is ReferenceStoreError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is ReferenceDetailsLoading) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-          return Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Row(
+            },
+          ),
+          BlocListener<ReferenceDetailsCubit, ReferenceDetailsState>(
+            listener: (context, state) {
+              if (state is ReferenceDetailsSuccess) {
+                _populateData(state.data);
+              } else if (state is ReferenceDetailsError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(state.error), backgroundColor: Colors.red),
+                );
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<ReferenceDetailsCubit, ReferenceDetailsState>(
+          builder: (context, detailsState) {
+            if (detailsState is ReferenceDetailsLoading) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            String currentStatus =
+                widget.serviceData?['status']?.toString() ?? "PENDING";
+            if (detailsState is ReferenceDetailsSuccess) {
+              currentStatus = detailsState.data.status ?? currentStatus;
+            }
+            bool isRejected = currentStatus.toLowerCase().contains("reject");
+
+            return BlocBuilder<ReferenceStoreCubit, ReferenceStoreState>(
+              builder: (context, state) {
+                return Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(Icons.people_outline,
-                              color: Color(0xFFFFB74D), size: 28),
-                          const SizedBox(width: 12),
-                          Flexible(
-                            child: Text(
-                              widget.serviceTitle ?? "Reference Check",
-                              style: GoogleFonts.outfit(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF263238),
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          Expanded(
+                            child: Row(
+                              children: [
+                                const Icon(Icons.people_outline,
+                                    color: Color(0xFFFFB74D), size: 28),
+                                const SizedBox(width: 12),
+                                Flexible(
+                                  child: Text(
+                                    widget.serviceTitle ?? "Reference Check",
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFF263238),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
+                          const SizedBox(width: 8),
+                          StatusChip(
+                            status: (currentStatus.isNotEmpty)
+                                ? '${currentStatus[0].toUpperCase()}${currentStatus.substring(1).toLowerCase()}'
+                                : "Pending",
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    const StatusChip(status: "PENDING"),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                _buildReferencePerson(
-                  context,
-                  "Reference Person 1",
-                  p1NameController,
-                  p1MobileController,
-                  p1RelationController,
-                  p1EmailController,
-                  p1AltMobileController,
-                  isRequired: true,
-                  isReadOnly: isReadOnly,
-                  nameValidator: (value) =>
-                      (value == null || value.trim().isEmpty)
-                          ? "Name is required"
-                          : null,
-                  mobileValidator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "Mobile Number is required";
-                    }
-                    if (value.trim().length != 10) return "Must be 10 digits";
-                    return null;
-                  },
-                  relationValidator: (value) =>
-                      (value == null || value.trim().isEmpty)
-                          ? "Relation is required"
-                          : null,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Divider(color: Color(0xFFEEEEEE), thickness: 1),
-                ),
-                _buildReferencePerson(
-                  context,
-                  "Reference Person 2",
-                  p2NameController,
-                  p2MobileController,
-                  p2RelationController,
-                  p2EmailController,
-                  p2AltMobileController,
-                  isRequired: false,
-                  isReadOnly: isReadOnly,
-                ),
-                const SizedBox(height: 24),
-                if (!isReadOnly)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: CustomButton(
-                      text: state is ReferenceStoreLoading
-                          ? "Submitting..."
-                          : "Submit",
-                      width: 140,
-                      height: 48,
-                      prefixIcon:
-                          state is ReferenceStoreLoading ? null : Icons.send,
-                      iconSize: 18,
-                      gradientColors: const [
-                        Color(0xFFF4511E),
-                        Color(0xFFFFB74D),
-                      ],
-                      onTap: state is ReferenceStoreLoading
-                          ? null
-                          : () => _submitForm(context),
-                    ),
+                      if (isRejected &&
+                          (detailsState is ReferenceDetailsSuccess) &&
+                          (detailsState.data.reason?.isNotEmpty ?? false))
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(top: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFEBEE),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color:
+                                    const Color(0xFFEF9A9A).withOpacity(0.5)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.info_outline,
+                                      color: Color(0xFFD32F2F), size: 18),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "Verification Remark",
+                                    style: GoogleFonts.outfit(
+                                      color: const Color(0xFFD32F2F),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                "${detailsState.data.reason}",
+                                style: GoogleFonts.outfit(
+                                  color:
+                                      const Color(0xFFD32F2F).withOpacity(0.9),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(height: 24),
+                      _buildReferencePerson(
+                        context,
+                        "Reference Person 1",
+                        p1NameController,
+                        p1MobileController,
+                        p1RelationController,
+                        p1EmailController,
+                        p1AltMobileController,
+                        isRequired: true,
+                        isReadOnly: isReadOnly,
+                        nameValidator: (value) =>
+                            (value == null || value.trim().isEmpty)
+                                ? "Name is required"
+                                : null,
+                        mobileValidator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return "Mobile Number is required";
+                          }
+                          if (value.trim().length != 10)
+                            return "Must be 10 digits";
+                          return null;
+                        },
+                        relationValidator: (value) =>
+                            (value == null || value.trim().isEmpty)
+                                ? "Relation is required"
+                                : null,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: Divider(color: Color(0xFFEEEEEE), thickness: 1),
+                      ),
+                      _buildReferencePerson(
+                        context,
+                        "Reference Person 2",
+                        p2NameController,
+                        p2MobileController,
+                        p2RelationController,
+                        p2EmailController,
+                        p2AltMobileController,
+                        isRequired: false,
+                        isReadOnly: isReadOnly,
+                        mobileValidator: (value) {
+                          if (value != null && value.trim().isNotEmpty) {
+                            if (value.trim().length != 10) {
+                              return "Must be 10 digits";
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      if (!isReadOnly && isEditing)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            CustomButton(
+                              text: "Cancel",
+                              width: 120,
+                              height: 48,
+                              // prefixIcon: Icons.cancel_outlined,
+                              iconSize: 18,
+                              gradientColors: const [
+                                Color(0xFF9E9E9E),
+                                Color(0xFFBDBDBD),
+                              ],
+                              onTap: state is ReferenceStoreLoading
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        isReadOnly = true;
+                                        isEditing = false;
+                                        _formKey.currentState?.reset();
+                                      });
+                                      if (detailsState
+                                          is ReferenceDetailsSuccess) {
+                                        _populateData(detailsState.data);
+                                      }
+                                    },
+                            ),
+                            const SizedBox(width: 16),
+                            CustomButton(
+                              text: state is ReferenceStoreLoading
+                                  ? "Saving..."
+                                  : "Save",
+                              width: 120,
+                              height: 48,
+                              prefixIcon: state is ReferenceStoreLoading
+                                  ? null
+                                  : Icons.save,
+                              iconSize: 18,
+                              gradientColors: const [
+                                Color(0xFFF4511E),
+                                Color(0xFFFFB74D),
+                              ],
+                              onTap: state is ReferenceStoreLoading
+                                  ? null
+                                  : () => _submitForm(context),
+                            ),
+                          ],
+                        )
+                      else if (!isReadOnly || (isReadOnly && isRejected))
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: CustomButton(
+                            text: state is ReferenceStoreLoading
+                                ? "Submitting..."
+                                : (isReadOnly && isRejected)
+                                    ? "Update"
+                                    : "Submit",
+                            width: 140,
+                            height: 48,
+                            prefixIcon: state is ReferenceStoreLoading
+                                ? null
+                                : (isReadOnly && isRejected
+                                    ? Icons.edit
+                                    : Icons.send),
+                            iconSize: 18,
+                            gradientColors: const [
+                              Color(0xFFF4511E),
+                              Color(0xFFFFB74D),
+                            ],
+                            onTap: state is ReferenceStoreLoading
+                                ? null
+                                : () {
+                                    if (isReadOnly && isRejected) {
+                                      setState(() {
+                                        isReadOnly = false;
+                                        isEditing = true;
+                                      });
+                                    } else {
+                                      _submitForm(context);
+                                    }
+                                  },
+                          ),
+                        ),
+                    ],
                   ),
-              ],
-            ),
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
 
-  void _populateData(ReferenceCheckVerification data) {
-    // Stop listening to changes once we load verified API data
-    _removeListeners();
+  void _populateData(ReferenceCheckDetailsData data) {
     setState(() {
       isReadOnly = true;
+      isEditing = false;
       p1NameController.text = data.personName1 ?? "";
       p1MobileController.text = data.personMobileNumber1 ?? "";
       p1RelationController.text = data.personRelation1 ?? "";

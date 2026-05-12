@@ -26,6 +26,7 @@ class CustomTextField extends StatefulWidget {
   final AutovalidateMode? autovalidateMode;
 
   final bool isRequired;
+  final VoidCallback? onTap;
 
   // Constructor to pass values for customization
   CustomTextField(
@@ -51,7 +52,8 @@ class CustomTextField extends StatefulWidget {
       this.inputFormatter,
       this.maskFormatter,
       this.autovalidateMode,
-      this.isRequired = true})
+      this.isRequired = true,
+      this.onTap})
       : super(key: key);
 
   @override
@@ -90,83 +92,85 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-        autovalidateMode: widget.autovalidateMode,
-        onSaved: widget.onSaveValue,
-        textInputAction: TextInputAction.next,
-        onFieldSubmitted: (value) {
-          FocusScope.of(context).nextFocus();
-          if (widget.onSaveValue != null) {
-            widget.onSaveValue!(value);
-          }
-        },
-        inputFormatters: widget.maskFormatter,
-        //autofocus: true,
-        maxLines: widget.maxLine,
-        controller: widget.controller,
-        focusNode: widget.focusNode,
-        decoration: InputDecoration(
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide:
-                BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
-          ),
-          hintStyle: const TextStyle(color: Colors.grey),
-          labelText: widget.labelText,
-          hintText: widget.hintText,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide:
-                BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 18.0,
-            vertical: 14.0,
-          ),
-          filled: true,
-          // fillColor: Colors.white,
-          prefixIcon: widget.prefixIcon != null
-              ? Icon(widget.prefixIcon, color: Colors.blue)
-              : null,
-          suffixIcon: widget.suffixIcon != null && _showSuffixIcon
-              ? IconButton(
-                  icon: Icon(widget.suffixIcon),
-                  onPressed: widget.suffixIconOnPressed ??
-                      () {
-                        widget.controller.clear();
-                        if (widget.onChanged != null) {
-                          widget.onChanged!('');
-                        }
-                      },
-                )
-              : null,
+      autovalidateMode: widget.autovalidateMode,
+      onSaved: widget.onSaveValue,
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (value) {
+        FocusScope.of(context).nextFocus();
+        if (widget.onSaveValue != null) {
+          widget.onSaveValue!(value);
+        }
+      },
+      inputFormatters: widget.maskFormatter,
+      //autofocus: true,
+      maxLines: widget.maxLine,
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide:
+              BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
         ),
-        style: Theme.of(context).textTheme.bodyMedium,
-        keyboardType: widget.keyboardType,
-        // textInputAction: TextInputAction.done,
-        onChanged: (value) {
-          if (widget.onChanged != null) {
-            widget.onChanged!(value);
+        hintStyle: const TextStyle(color: Colors.grey),
+        labelText: widget.labelText,
+        hintText: widget.hintText,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.grey, width: 1.0),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide:
+              BorderSide(color: Theme.of(context).canvasColor, width: 1.0),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 18.0,
+          vertical: 14.0,
+        ),
+        filled: true,
+        // fillColor: Colors.white,
+        prefixIcon: widget.prefixIcon != null
+            ? Icon(widget.prefixIcon, color: Colors.blue)
+            : null,
+        suffixIcon: widget.suffixIcon != null && _showSuffixIcon
+            ? IconButton(
+                icon: Icon(widget.suffixIcon),
+                onPressed: widget.suffixIconOnPressed ??
+                    () {
+                      widget.controller.clear();
+                      if (widget.onChanged != null) {
+                        widget.onChanged!('');
+                      }
+                    },
+              )
+            : null,
+      ),
+      style: Theme.of(context).textTheme.bodyMedium,
+      keyboardType: widget.keyboardType,
+      // textInputAction: TextInputAction.done,
+      onChanged: (value) {
+        if (widget.onChanged != null) {
+          widget.onChanged!(value);
+        }
+      },
+      onEditingComplete: () {},
+      validator: (value) {
+        if (widget.isRequired) {
+          if (value == null || value.isEmpty) {
+            return widget.validationMessage ?? 'This field is required';
           }
-        },
-        onEditingComplete: () {},
-        validator: (value) {
-          if (widget.isRequired) {
-            if (value == null || value.isEmpty) {
-              return widget.validationMessage ?? 'This field is required';
-            }
-          }
-          if (widget.validator != null) {
-            return widget.validator!(value);
-          }
-          return null;
-        },
-        readOnly: widget.isReadOnly,
-        textCapitalization: widget.isCapitalized
-            ? TextCapitalization.characters
-            : TextCapitalization.none);
+        }
+        if (widget.validator != null) {
+          return widget.validator!(value);
+        }
+        return null;
+      },
+      readOnly: widget.isReadOnly,
+      textCapitalization: widget.isCapitalized
+          ? TextCapitalization.characters
+          : TextCapitalization.none,
+      onTap: widget.onTap,
+    );
   }
 }
