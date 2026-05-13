@@ -66,9 +66,21 @@ class _FormListScreenState extends State<FormListScreen> {
       case "address-verifcation":
         return AddressVerificationCard(serviceTitle: title);
       case "education-verification-list":
-        return EducationVerificationCard(serviceTitle: title);
+        return EducationVerificationCard(
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "employment-verification-list":
-        return EmploymentVerificationCard(serviceTitle: title);
+        return EmploymentVerificationCard(
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "credit-history":
         return CreditHistoryCard(serviceTitle: title);
       case "driving-licence-verification":

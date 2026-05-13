@@ -23,13 +23,15 @@ class StatusChip extends StatelessWidget {
       textColor = const Color(0xFFF57C00);
       bgColor = const Color(0xFFFFFDE7);
       borderColor = const Color(0xFFFFF59D);
-    } else if (lowerStatus.contains('reject')) {
+    } else if (lowerStatus.contains('reject') ||
+        lowerStatus.contains('discrepancy')) {
       textColor = const Color(0xFFD32F2F);
       bgColor = const Color(0xFFFFEBEE);
       borderColor = const Color(0xFFEF9A9A);
       icon = Icons.cancel_outlined;
     } else if (lowerStatus.contains('verified') ||
-        lowerStatus.contains('done')) {
+        lowerStatus.contains('done') ||
+        lowerStatus.contains('Clear')) {
       textColor = const Color(0xFF388E3C);
       bgColor = const Color(0xFFE8F5E9);
       borderColor = const Color(0xFFA5D6A7);
@@ -265,6 +267,8 @@ class FormDropdownWidget extends StatelessWidget {
   final List<String> items;
   final String? value;
   final Function(String?)? onChanged;
+  final String? Function(String?)? validator;
+  final bool isRequired;
 
   const FormDropdownWidget({
     super.key,
@@ -273,6 +277,8 @@ class FormDropdownWidget extends StatelessWidget {
     required this.items,
     this.value,
     this.onChanged,
+    this.validator,
+    this.isRequired = true,
   });
 
   @override
@@ -289,11 +295,12 @@ class FormDropdownWidget extends StatelessWidget {
               fontWeight: FontWeight.w600,
               color: const Color(0xFF455A64),
             ),
-            children: const [
-              TextSpan(
-                text: " * ",
-                style: TextStyle(color: Colors.red),
-              ),
+            children: [
+              if (isRequired)
+                const TextSpan(
+                  text: " * ",
+                  style: TextStyle(color: Colors.red),
+                ),
             ],
           ),
         ),
@@ -334,6 +341,7 @@ class FormDropdownWidget extends StatelessWidget {
             );
           }).toList(),
           onChanged: onChanged,
+          validator: validator,
         ),
       ],
     );
@@ -345,6 +353,10 @@ class FormDateWidget extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
   final VoidCallback? onTap;
+  final bool isRequired;
+  final bool isReadOnly;
+  final String? Function(String?)? validator;
+  final AutovalidateMode? autovalidateMode;
 
   const FormDateWidget({
     super.key,
@@ -352,6 +364,10 @@ class FormDateWidget extends StatelessWidget {
     required this.hintText,
     required this.controller,
     this.onTap,
+    this.isRequired = true,
+    this.isReadOnly = false,
+    this.validator,
+    this.autovalidateMode,
   });
 
   @override
@@ -363,24 +379,27 @@ class FormDateWidget extends StatelessWidget {
         RichText(
           text: TextSpan(
             text: titleText,
-            style: GoogleFonts.outfit(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF263238),
-            ),
-            children: const [
-              TextSpan(
-                text: " * ",
-                style: TextStyle(color: Colors.red),
-              ),
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall!
+                .copyWith(fontWeight: FontWeight.w500),
+            children: [
+              if (isRequired)
+                const TextSpan(
+                  text: " * ",
+                  style: TextStyle(color: Colors.red),
+                ),
             ],
           ),
         ),
         const SizedBox(height: 4),
         TextFormField(
           controller: controller,
+          style: GoogleFonts.outfit(color: Colors.black, fontSize: 14),
           readOnly: true,
-          onTap: onTap,
+          onTap: isReadOnly ? null : onTap,
+          validator: validator,
+          autovalidateMode: autovalidateMode,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: GoogleFonts.outfit(color: Colors.grey, fontSize: 14),

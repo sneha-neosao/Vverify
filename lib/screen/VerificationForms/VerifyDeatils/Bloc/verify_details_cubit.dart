@@ -8,14 +8,14 @@ class VerifyDetailsCubit extends Cubit<VerifyDetailsState> {
 
   VerifyDetailsCubit(this._apiService) : super(VerifyDetailsInitialState());
 
-  void verifyDetails(
-      {required String token, required String requestId}) async {
+  void verifyDetails({required String token, required String requestId}) async {
     emit(VerifyDetailsLoadingState());
     try {
       final response = await _apiService.VerifyDetailsView(
           token: token, request_id: requestId);
       if (response.data != null && response.data.containsKey("status")) {
-         VerifyDetailsModel verifyDetailsModel = VerifyDetailsModel.fromJson(response.data);
+        VerifyDetailsModel verifyDetailsModel =
+            VerifyDetailsModel.fromJson(response.data);
         if (response.data["status"] == 200) {
           emit(VerifyDetailsSuccessState(verifyDetailsModel));
         } else if (response.data["status"] == 500) {

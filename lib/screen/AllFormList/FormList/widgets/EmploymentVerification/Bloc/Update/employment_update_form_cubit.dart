@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../../apiServices/api_services.dart';
-import '../../Models/employment_update_form_model.dart';
+import '../../../../../../../apiServices/api_services.dart';
+import '../../Model/employment_update_form_model.dart';
 import 'employment_update_form_state.dart';
 
 class EmploymentUpdateFormCubit extends Cubit<EmploymentUpdateFormState> {

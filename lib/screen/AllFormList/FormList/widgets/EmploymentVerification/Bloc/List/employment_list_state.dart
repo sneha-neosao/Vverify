@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../Models/employment_list_model.dart';
+import '../../Model/employment_list_model.dart';
 
 class EmployDataListState extends Equatable {
   @override

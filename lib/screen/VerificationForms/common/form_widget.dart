@@ -49,7 +49,7 @@ class form_widget extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall!
-                    .copyWith(fontWeight: FontWeight.w700),
+                    .copyWith(fontWeight: FontWeight.w500),
                 children: [
               if (isRequired)
                 TextSpan(
@@ -57,14 +57,14 @@ class form_widget extends StatelessWidget {
                   style: Theme.of(context)
                       .textTheme
                       .bodySmall!
-                      .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+                      .copyWith(fontWeight: FontWeight.w500, color: Colors.red),
                 ),
               TextSpan(
                 text: titleDetails,
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall!
-                    .copyWith(fontWeight: FontWeight.w700, color: Colors.grey),
+                    .copyWith(fontWeight: FontWeight.w500, color: Colors.grey),
               )
             ])),
         const SizedBox(
@@ -121,7 +121,7 @@ class FormFieldNotRequired extends StatelessWidget {
           style: Theme.of(context)
               .textTheme
               .bodySmall!
-              .copyWith(fontWeight: FontWeight.w700),
+              .copyWith(fontWeight: FontWeight.w500),
         ),
         const SizedBox(
           height: 4,

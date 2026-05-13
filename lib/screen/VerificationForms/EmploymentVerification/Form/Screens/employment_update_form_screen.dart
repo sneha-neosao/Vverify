@@ -5,12 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_show_details_bloc/employ_show_details_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_show_details_bloc/employ_show_details_state.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_update_form_bloc/employment_update_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_update_form_bloc/employment_update_form_state.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Models/employment_show_details_model.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Models/employment_update_form_model.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Show/employ_show_details_cubit.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Show/employ_show_details_state.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Update/employment_update_form_cubit.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Update/employment_update_form_state.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Model/employment_show_details_model.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Model/employment_update_form_model.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/TextController/employment_text_controllers.dart';
 import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
@@ -233,9 +233,7 @@ class _EmploymentUpdateFormScreenState
                       ),
                       Text(
                         detailsData.data!.verification_remark!,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!,
+                        style: Theme.of(context).textTheme.bodySmall!,
                       ),
                       const SizedBox(
                         height: 16,
@@ -252,8 +250,12 @@ class _EmploymentUpdateFormScreenState
                       ),
                       Text(
                         "Employment Details",
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: Theme.of(context).primaryColorDark, fontSize: 16),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(
+                                color: Theme.of(context).primaryColorDark,
+                                fontSize: 16),
                       ),
                       const SizedBox(height: 16),
                       CustomRequiredTextField(
@@ -344,7 +346,9 @@ class _EmploymentUpdateFormScreenState
                               setState(() {
                                 isChecked = value ?? false;
 
-                                if (isChecked) { leaveDateController.clear(); }
+                                if (isChecked) {
+                                  leaveDateController.clear();
+                                }
                               });
                             },
                             activeColor:

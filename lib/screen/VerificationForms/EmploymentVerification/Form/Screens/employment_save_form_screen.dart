@@ -5,22 +5,26 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_save_form_bloc/employment_save_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_save_form_bloc/employment_save_form_state.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Save/employment_save_form_cubit.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Save/employment_save_form_state.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/TextController/employment_text_controllers.dart';
 import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
 import '../../../../../commonComponent/custom_button.dart';
 import '../../../common/id.dart';
-import '../Models/employment_save_form_model.dart';
+import '../../../../AllFormList/FormList/widgets/EmploymentVerification/Model/employment_save_form_model.dart';
 
 class EmploymentSaveFormScreen extends StatefulWidget {
   String Case_uuid;
 
-   EmploymentSaveFormScreen({super.key,required this.Case_uuid,});
+  EmploymentSaveFormScreen({
+    super.key,
+    required this.Case_uuid,
+  });
 
   @override
-  State<EmploymentSaveFormScreen> createState() => _EmploymentSaveFormScreenState();
+  State<EmploymentSaveFormScreen> createState() =>
+      _EmploymentSaveFormScreenState();
 }
 
 class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
@@ -90,15 +94,22 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
     print('request_id: $requestId');
     print('service_request_id: $serviceRequestId');
     print('customer_id: $customerId');
-    print('employer_name: ${employmentTextControllerNew.employmentEmployerNameController.text}');
+    print(
+        'employer_name: ${employmentTextControllerNew.employmentEmployerNameController.text}');
     print('employed_from: ${joinDateController.text}');
     print('employed_to: ${leaveDateController.text}');
-    print('designation: ${employmentTextControllerNew.employmentDesignationController.text}');
-    print('department: ${employmentTextControllerNew.employmentDepartmentController.text}');
-    print('remunaration: ${employmentTextControllerNew.employmentRemunerationController.text}');
-    print('reporting_manager: ${employmentTextControllerNew.employmentReportingManagerController.text}');
-    print('reason_for_leaving: ${employmentTextControllerNew.employmentReasonForLeavingController.text}');
-    print('reason_for_leaving: ${employmentTextControllerNew.employmentReasonForLeavingController.text}');
+    print(
+        'designation: ${employmentTextControllerNew.employmentDesignationController.text}');
+    print(
+        'department: ${employmentTextControllerNew.employmentDepartmentController.text}');
+    print(
+        'remunaration: ${employmentTextControllerNew.employmentRemunerationController.text}');
+    print(
+        'reporting_manager: ${employmentTextControllerNew.employmentReportingManagerController.text}');
+    print(
+        'reason_for_leaving: ${employmentTextControllerNew.employmentReasonForLeavingController.text}');
+    print(
+        'reason_for_leaving: ${employmentTextControllerNew.employmentReasonForLeavingController.text}');
     print('case_uuid: ${widget.Case_uuid}');
     print('till_date: ${isChecked == 1 ? 1 : null}');
 
@@ -109,17 +120,22 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
             request_id: requestId!,
             service_request_id: serviceRequestId!,
             customer_id: customerId,
-            employer_name: employmentTextControllerNew.employmentEmployerNameController.text,
+            employer_name: employmentTextControllerNew
+                .employmentEmployerNameController.text,
             employed_from: joinDateController.text,
             employed_to: leaveDateController.text,
-            designation: employmentTextControllerNew.employmentDesignationController.text,
-            department: employmentTextControllerNew.employmentDepartmentController.text,
-            remunaration: employmentTextControllerNew.employmentRemunerationController.text,
-            reporting_manager: employmentTextControllerNew.employmentReportingManagerController.text,
-            reason_for_leaving: employmentTextControllerNew.employmentReasonForLeavingController.text,
+            designation: employmentTextControllerNew
+                .employmentDesignationController.text,
+            department:
+                employmentTextControllerNew.employmentDepartmentController.text,
+            remunaration: employmentTextControllerNew
+                .employmentRemunerationController.text,
+            reporting_manager: employmentTextControllerNew
+                .employmentReportingManagerController.text,
+            reason_for_leaving: employmentTextControllerNew
+                .employmentReasonForLeavingController.text,
             case_uuid: widget.Case_uuid,
-            till_date: isChecked == true ? 1 : null
-        ));
+            till_date: isChecked == true ? 1 : null));
   }
 
   @override
@@ -161,15 +177,16 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
                   Text(
                     "Employment Details",
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: Theme.of(context).primaryColorDark, fontSize: 16),
+                        color: Theme.of(context).primaryColorDark,
+                        fontSize: 16),
                   ),
                   const SizedBox(height: 16),
                   CustomRequiredTextField(
-                      controller: employmentTextControllerNew.employmentEmployerNameController,
+                      controller: employmentTextControllerNew
+                          .employmentEmployerNameController,
                       titleText: "Employer Name",
                       hintText: "Enter Employer Name",
-                      textInputType: TextInputType.text
-                  ),
+                      textInputType: TextInputType.text),
                   const SizedBox(
                     height: 16,
                   ),
@@ -181,12 +198,16 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
                               .bodySmall!
                               .copyWith(fontWeight: FontWeight.w700),
                           children: [
-                            TextSpan(
-                              text: " * ",
-                              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                  fontWeight: FontWeight.w700, color: Colors.red),
-                            ),
-                          ])),
+                        TextSpan(
+                          text: " * ",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.red),
+                        ),
+                      ])),
                   const SizedBox(
                     height: 8,
                   ),
@@ -216,12 +237,12 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
                   ),
                   RichText(
                       text: TextSpan(
-                          text: "To Date (Leaving)",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(fontWeight: FontWeight.w700),
-                          )),
+                    text: "To Date (Leaving)",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(fontWeight: FontWeight.w700),
+                  )),
                   const SizedBox(
                     height: 8,
                   ),
@@ -249,8 +270,11 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
                           setState(() {
                             isChecked = value ?? false;
 
-                            if (isChecked) { leaveDateController.clear(); }
-                          }); },
+                            if (isChecked) {
+                              leaveDateController.clear();
+                            }
+                          });
+                        },
                         activeColor: Colors.orange, // fill color when checked
                         checkColor: Colors.white, // tick mark color
                       ),
@@ -264,39 +288,35 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
                     ],
                   ),
                   CustomNotRequiredTextField(
-                      controller: employmentTextControllerNew.employmentDesignationController,
+                      controller: employmentTextControllerNew
+                          .employmentDesignationController,
                       titleText: "Designation",
                       hintText: "Enter Designation",
-                      textInputType: TextInputType.text
-                  ),
+                      textInputType: TextInputType.text),
                   CustomNotRequiredTextField(
-                      controller: employmentTextControllerNew.employmentDepartmentController,
+                      controller: employmentTextControllerNew
+                          .employmentDepartmentController,
                       titleText: "Department",
                       hintText: "Enter Department",
-                      textInputType: TextInputType.text
-                  ),
-
+                      textInputType: TextInputType.text),
                   CustomNotRequiredTextField(
-                      controller: employmentTextControllerNew.employmentRemunerationController,
+                      controller: employmentTextControllerNew
+                          .employmentRemunerationController,
                       titleText: "Remuneration",
                       hintText: "Enter Remuneration",
-                      textInputType: TextInputType.text
-                  ),
-
+                      textInputType: TextInputType.text),
                   CustomNotRequiredTextField(
-                      controller: employmentTextControllerNew.employmentReportingManagerController,
+                      controller: employmentTextControllerNew
+                          .employmentReportingManagerController,
                       titleText: "Reporting Manager",
                       hintText: "Enter Reporting Manager",
-                      textInputType: TextInputType.text
-                  ),
-
+                      textInputType: TextInputType.text),
                   CustomRequiredTextField(
-                      controller: employmentTextControllerNew.employmentReasonForLeavingController,
+                      controller: employmentTextControllerNew
+                          .employmentReasonForLeavingController,
                       titleText: "Reason For Leaving",
                       hintText: "Enter Reason For Leaving",
-                      textInputType: TextInputType.text
-                  ),
-
+                      textInputType: TextInputType.text),
                   const SizedBox(
                     height: 24,
                   ),
@@ -304,25 +324,22 @@ class _EmploymentSaveFormScreenState extends State<EmploymentSaveFormScreen> {
                     width: 8,
                   ),
                   BlocConsumer<EmploymentSaveFormCubit,
-                      EmploymentSaveFormState>(
-                      listener: (context, employSave) {
-                        if (employSave is EmploymentSaveFormSuccessState) {
-                          if (employSave.data["status"] == 200) {
-                            context.pushNamed("EmployDataList", pathParameters: {
-                              'uid': widget.Case_uuid.toString()
-                            });
-
-                          }
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(employSave.data["message"])));
-                        } else if (employSave is EmploymentSaveFormErrorState) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(employSave.message)));
-                        }
-                      }, builder: (context, employSave) {
+                      EmploymentSaveFormState>(listener: (context, employSave) {
+                    if (employSave is EmploymentSaveFormSuccessState) {
+                      if (employSave.data["status"] == 200) {
+                        context.pushNamed("EmployDataList", pathParameters: {
+                          'uid': widget.Case_uuid.toString()
+                        });
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(employSave.data["message"])));
+                    } else if (employSave is EmploymentSaveFormErrorState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(employSave.message)));
+                    }
+                  }, builder: (context, employSave) {
                     return CustomButton(
-                        isLoading:
-                        employSave is EmploymentSaveFormLoadingState,
+                        isLoading: employSave is EmploymentSaveFormLoadingState,
                         height: 45,
                         onTap: () {
                           // context.pushReplacementNamed("EmployDataList");

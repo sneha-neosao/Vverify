@@ -11,22 +11,22 @@ import 'package:v_verify/commonComponent/dottedBorder.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 
 import '../../../../Bottom/bottomNavbar.dart';
-import '../Blocs/employment_list_cubit.dart';
-import '../Blocs/employment_list_state.dart';
-import '../Models/employment_list_model.dart';
+import '../../../../AllFormList/FormList/widgets/EmploymentVerification/Bloc/List/employment_list_cubit.dart';
+import '../../../../AllFormList/FormList/widgets/EmploymentVerification/Bloc/List/employment_list_state.dart';
+import '../../../../AllFormList/FormList/widgets/EmploymentVerification/Model/employment_list_model.dart';
 
 class EmployDataList extends StatefulWidget {
   String Case_uuid;
 
-   EmployDataList({super.key, required this.Case_uuid});
+  EmployDataList({super.key, required this.Case_uuid});
 
   @override
   State<EmployDataList> createState() => _EmployDataListState();
 }
 
 class _EmployDataListState extends State<EmployDataList> {
-String? _fileName;
-File? filePath;
+  String? _fileName;
+  File? filePath;
 
   @override
   void initState() {
@@ -35,23 +35,23 @@ File? filePath;
     super.initState();
   }
 
-Future<void> pickFile() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles();
+  Future<void> pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-  if (result != null) {
-    File file = File(result.files.single.path!);
+    if (result != null) {
+      File file = File(result.files.single.path!);
 
-    // You can access the file path and name like this
-    setState(() {
-      _fileName = result.files.single.name;
-      filePath = file;
-      print("pdfFile${result.files.single.name}");
-      print("pdfFile${result.files.single.path!}");
-    });
-  } else {
-    //User canceled the picker
+      // You can access the file path and name like this
+      setState(() {
+        _fileName = result.files.single.name;
+        filePath = file;
+        print("pdfFile${result.files.single.name}");
+        print("pdfFile${result.files.single.path!}");
+      });
+    } else {
+      //User canceled the picker
+    }
   }
-}
 
   void employmentListDataLoad() {
     String token = context.read<TokenCubit>().state;
@@ -67,12 +67,12 @@ Future<void> pickFile() async {
     super.dispose();
   }
 
-Future<void> _launchURL(String url) async {
-  final Uri uri = Uri.parse(url);
-  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-    throw Exception('Could not launch $url');
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $url');
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +95,9 @@ Future<void> _launchURL(String url) async {
               onTap: () {
                 context.pushNamed(
                   "EmploymentSaveFormScreen",
-                  pathParameters: {'case_uid': widget.Case_uuid}, // must be non-empty
+                  pathParameters: {
+                    'case_uid': widget.Case_uuid
+                  }, // must be non-empty
                 );
               },
               text: "Add Employment Details",
@@ -111,7 +113,9 @@ Future<void> _launchURL(String url) async {
               onTap: () {
                 context.pushNamed(
                   "EmploymentDocumentUpload",
-                  pathParameters: {'uid': widget.Case_uuid}, // must be non-empty
+                  pathParameters: {
+                    'uid': widget.Case_uuid
+                  }, // must be non-empty
                 );
               },
               text: "Add Documents",
@@ -166,11 +170,14 @@ Future<void> _launchURL(String url) async {
                         final rawStatus = data.data![index].v_status ?? "";
                         String status;
 
-                        if (rawStatus.isEmpty || rawStatus == "-" || rawStatus == "") {
+                        if (rawStatus.isEmpty ||
+                            rawStatus == "-" ||
+                            rawStatus == "") {
                           status = "pending";
                         } else if (rawStatus == "discrepancy") {
                           status = "discrepancy";
-                        } else if (rawStatus == "verified" || rawStatus == "clear") {
+                        } else if (rawStatus == "verified" ||
+                            rawStatus == "clear") {
                           status = "verified";
                         } else {
                           status = rawStatus; // fallback for other values
@@ -179,311 +186,348 @@ Future<void> _launchURL(String url) async {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
+                            children: [
+                              ListTile(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                tileColor: Theme.of(context).cardColor,
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    ListTile(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      tileColor: Theme.of(context).cardColor,
-                                      subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                  status.toLowerCase() == "verified"
-                                                      ? "Verified"
-                                                      : status.toLowerCase() == "discrepancy"
-                                                      ? "Discrepancy" : "Verification Pending",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall!
-                                                      .copyWith(
-                                                      fontSize: 14,
-                                                      color: status.toLowerCase() == "verified"
-                                                          ? Colors.green
-                                                          :status.toLowerCase() == "discrepancy"
-                                                          ? Colors.red
-                                                          : Colors.orange
-                                                  )
-
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "Employer Name",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                            color: Colors.grey),
-                                                  ),
-                                                  Text(
-                                                    data.data![index].employer_name?.trim().isEmpty ?? true
-                                                        ? "NA"
-                                                        : data.data![index].employer_name!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "From Date (Joining)",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                            color: Colors.grey),
-                                                  ),
-                                                  Text(
-                                                    data.data![index].employed_from?.trim().isEmpty ?? true
-                                                        ? "NA"
-                                                        : data.data![index].employed_from!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "To Date (Leaving)",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                            color: Colors.grey),
-                                                  ),
-                                                  Text(
-                                                    data.data![index].employed_to?.trim().isEmpty ?? true
-                                                        ? "Till Date"
-                                                        : data.data![index].employed_to!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "Designation",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                            color: Colors.grey),
-                                                  ),
-                                                  Text(
-                                                    data.data![index].designation?.trim().isEmpty ?? true
-                                                        ? "NA"
-                                                        : data.data![index].designation!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "Department",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                        color: Colors.grey),
-                                                  ),
-                                                  Text(
-                                                    data.data![index].department?.trim().isEmpty ?? true
-                                                        ? "NA"
-                                                        : data.data![index].department!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "Remuneration",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                        color: Colors.grey),
-                                                  ),
-                                                  Text(
-                                                    data.data![index].remunaration?.trim().isEmpty ?? true
-                                                        ? "NA"
-                                                        : data.data![index].remunaration!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "Reporting Manager",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                        color: Colors.grey),
-                                                  ),
-                                                  Text(
-                                                    data.data![index].reporting_manager?.trim().isEmpty ?? true
-                                                        ? "NA"
-                                                        : data.data![index].reporting_manager!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "Reason For Leaving",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                        color: Colors.grey),
-                                                  ),
-                                                  Text(
-                                                    data.data![index].reason_for_leaving?.trim().isEmpty ?? true
-                                                        ? "NA"
-                                                        : data.data![index].reason_for_leaving!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "Artefacts",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                        color: Colors.grey),
-                                                  ),
-                                                  data.data![index].artefact_img?.trim().isEmpty ?? true
-                                                      ? const Text("NA")
-                                                      : InkWell(
-                                                    onTap: () => _launchURL(data.data![index].artefact_img!),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            status.toLowerCase() == "verified"
+                                                ? "Verified"
+                                                : status.toLowerCase() ==
+                                                        "discrepancy"
+                                                    ? "Discrepancy"
+                                                    : "Verification Pending",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(
+                                                    fontSize: 14,
+                                                    color: status
+                                                                .toLowerCase() ==
+                                                            "verified"
+                                                        ? Colors.green
+                                                        : status.toLowerCase() ==
+                                                                "discrepancy"
+                                                            ? Colors.red
+                                                            : Colors.orange)),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Employer Name",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(color: Colors.grey),
+                                            ),
+                                            Text(
+                                              data.data![index].employer_name
+                                                          ?.trim()
+                                                          .isEmpty ??
+                                                      true
+                                                  ? "NA"
+                                                  : data.data![index]
+                                                      .employer_name!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "From Date (Joining)",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(color: Colors.grey),
+                                            ),
+                                            Text(
+                                              data.data![index].employed_from
+                                                          ?.trim()
+                                                          .isEmpty ??
+                                                      true
+                                                  ? "NA"
+                                                  : data.data![index]
+                                                      .employed_from!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "To Date (Leaving)",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(color: Colors.grey),
+                                            ),
+                                            Text(
+                                              data.data![index].employed_to
+                                                          ?.trim()
+                                                          .isEmpty ??
+                                                      true
+                                                  ? "Till Date"
+                                                  : data.data![index]
+                                                      .employed_to!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Designation",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(color: Colors.grey),
+                                            ),
+                                            Text(
+                                              data.data![index].designation
+                                                          ?.trim()
+                                                          .isEmpty ??
+                                                      true
+                                                  ? "NA"
+                                                  : data.data![index]
+                                                      .designation!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Department",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(color: Colors.grey),
+                                            ),
+                                            Text(
+                                              data.data![index].department
+                                                          ?.trim()
+                                                          .isEmpty ??
+                                                      true
+                                                  ? "NA"
+                                                  : data
+                                                      .data![index].department!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Remuneration",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(color: Colors.grey),
+                                            ),
+                                            Text(
+                                              data.data![index].remunaration
+                                                          ?.trim()
+                                                          .isEmpty ??
+                                                      true
+                                                  ? "NA"
+                                                  : data.data![index]
+                                                      .remunaration!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Reporting Manager",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(color: Colors.grey),
+                                            ),
+                                            Text(
+                                              data.data![index]
+                                                          .reporting_manager
+                                                          ?.trim()
+                                                          .isEmpty ??
+                                                      true
+                                                  ? "NA"
+                                                  : data.data![index]
+                                                      .reporting_manager!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Reason For Leaving",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(color: Colors.grey),
+                                            ),
+                                            Text(
+                                              data.data![index]
+                                                          .reason_for_leaving
+                                                          ?.trim()
+                                                          .isEmpty ??
+                                                      true
+                                                  ? "NA"
+                                                  : data.data![index]
+                                                      .reason_for_leaving!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Artefacts",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(color: Colors.grey),
+                                            ),
+                                            data.data![index].artefact_img
+                                                        ?.trim()
+                                                        .isEmpty ??
+                                                    true
+                                                ? const Text("NA")
+                                                : InkWell(
+                                                    onTap: () => _launchURL(data
+                                                        .data![index]
+                                                        .artefact_img!),
                                                     child: Text(
-                                                      data.data![index].artefact_img!,
-                                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                                        color: Colors.blue,
-                                                        decoration: TextDecoration.underline,
-                                                      ),
+                                                      data.data![index]
+                                                          .artefact_img!,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                            color: Colors.blue,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                          ),
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(
-                                      height: 16,
-                                    ),
-                                    TextButton(
-                                        onPressed: () {
-                                          if (data.data![index].v_status ==
-                                              "") {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(const SnackBar(
-                                                    content: Text(
-                                                        "Please wait your application under process")));
-                                          } else if (data.data![index].v_status ==
-                                              "verified") {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(const SnackBar(
-                                                    content: Text(
-                                                        "Your application already verified")));
-                                          } else {
-                                            context.pushNamed(
-                                              'EmploymentUpdateFormScreen',
-                                              pathParameters: {
-                                                'uid': data.data![index].uid!,
-                                                'case_uuid': data.data![index].case_uuid!,
-                                                'employment_uuid': data.data![index].employment_uuid!
-                                              },
-                                            );
-                                          }
-                                        },
-                                        child: Text(
-                                          "Update",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        ))
                                   ],
                                 ),
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              TextButton(
+                                  onPressed: () {
+                                    if (data.data![index].v_status == "") {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  "Please wait your application under process")));
+                                    } else if (data.data![index].v_status ==
+                                        "verified") {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  "Your application already verified")));
+                                    } else {
+                                      context.pushNamed(
+                                        'EmploymentUpdateFormScreen',
+                                        pathParameters: {
+                                          'uid': data.data![index].uid!,
+                                          'case_uuid':
+                                              data.data![index].case_uuid!,
+                                          'employment_uuid':
+                                              data.data![index].employment_uuid!
+                                        },
+                                      );
+                                    }
+                                  },
+                                  child: Text(
+                                    "Update",
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                  ))
+                            ],
+                          ),
                         );
                       }),
                 );

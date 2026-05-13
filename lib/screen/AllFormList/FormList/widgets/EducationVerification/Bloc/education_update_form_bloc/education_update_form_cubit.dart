@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Blocs/education_update_form_bloc/education_update_form_state.dart';
-import '../../../../../../../apiServices/api_services.dart';
-import '../../Models/education_update_form_model.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EducationVerification/Bloc/education_update_form_bloc/education_update_form_state.dart';
+import '../../../../../../../../apiServices/api_services.dart';
+import '../../Model/education_update_form_model.dart';
 
 class EducationUpdateFormCubit extends Cubit<EducationUpdateFormState> {
   ApiService _apiService;
@@ -10,9 +10,8 @@ class EducationUpdateFormCubit extends Cubit<EducationUpdateFormState> {
       : super(EducationUpdateFormInitialState());
 
   void educationUpdateForm(
-      {
-        required String token,
-        required String customer_id,
+      {required String token,
+      required String customer_id,
       required EducationUpdateFormModel educationUpdateFormModel}) async {
     emit(EducationUpdateFormLoadingState());
     try {

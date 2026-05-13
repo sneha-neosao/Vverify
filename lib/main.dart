@@ -37,13 +37,13 @@ import 'package:v_verify/screen/VerificationForms/DrvingLicence/Form/Blocs/drivi
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Form/Blocs/driving_licence_update_bloc/driving_licence_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_list_bloc/education_doc_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/List/Blocs/education_list_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Blocs/education_show_details_bloc/education_show_details_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Form/Blocs/education_update_form_bloc/education_update_form_cubit.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EducationVerification/Bloc/education_show_details_bloc/education_show_details_cubit.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EducationVerification/Bloc/education_update_form_bloc/education_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/Collage/Bloc/collage_name_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/University/Bloc/university_name_bloc.dart';
 import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_list_bloc/employment_doc_list_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_update_form_bloc/employment_update_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/List/Blocs/employment_list_cubit.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Update/employment_update_form_cubit.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/List/employment_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Document/Blocs/gst_document_update_bloc/gst_document_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Document/Blocs/gst_document_upload_bloc/gst_document_upload_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Form/Blocs/gst_verification_save_form_bloc/gst_verification_save_form_cubit.dart';
@@ -85,10 +85,10 @@ import 'package:v_verify/theme/theme_data.dart';
 import 'firebase_options.dart';
 import 'screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_update_form_bloc/name_address_verification_cubit.dart';
 import 'screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_upload_bloc/education_document_upload_cubit.dart';
-import 'screen/VerificationForms/EducationVerification/Form/Blocs/education_save_form_bloc/education_save_form_cubit.dart';
+import 'screen/AllFormList/FormList/widgets/EducationVerification/Bloc/education_save_form_bloc/education_save_form_cubit.dart';
 import 'screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_upload_bloc/employment_document_upload_cubit.dart';
-import 'screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_save_form_bloc/employment_save_form_cubit.dart';
-import 'screen/VerificationForms/EmploymentVerification/Form/Blocs/employment_show_details_bloc/employ_show_details_cubit.dart';
+import 'screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Save/employment_save_form_cubit.dart';
+import 'screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Show/employ_show_details_cubit.dart';
 
 void main() async {
   await dotenv.load();
@@ -115,10 +115,13 @@ class MyApp extends StatelessWidget {
         MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarIconBrightness: isDarkMode
-          ? Brightness.light
-          : Brightness.dark, // For white status bar icons
-    ));
+        statusBarIconBrightness:
+
+            // isDarkMode
+            //     ?
+            Brightness.light
+        //: Brightness.dark, // For white status bar icons
+        ));
     return MultiBlocProvider(
       providers: [
         BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),

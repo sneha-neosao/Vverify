@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../../apiServices/api_services.dart';
-import '../../Models/education_show_details_model.dart';
+import '../../../../../../../apiServices/api_services.dart';
+import '../../Model/education_show_details_model.dart';
 import 'education_show_details_state.dart';
 
 class EducationShowDetailsCubit extends Cubit<EducationShowDetailsState> {
@@ -9,18 +9,17 @@ class EducationShowDetailsCubit extends Cubit<EducationShowDetailsState> {
   EducationShowDetailsCubit(this._apiService)
       : super(EducationShowDetailsInitialState());
 
-  void educationUpdateForm(
-      {required String token,
-        required String uid}) async {
+  void educationUpdateForm({required String token, required String uid}) async {
     emit(EducationShowDetailsLoadingState());
     try {
       final response = await _apiService.educationShowDataDetails(
-        token: token, uid:uid,
-
+        token: token,
+        uid: uid,
       );
       if (response.data != null && response.data.containsKey("status")) {
         if (response.data["status"] == 200) {
-          EducationDataDetailsModel educationDataDetailsModel = EducationDataDetailsModel.fromJson(response.data);
+          EducationDataDetailsModel educationDataDetailsModel =
+              EducationDataDetailsModel.fromJson(response.data);
           emit(EducationShowDetailsSuccessState(educationDataDetailsModel));
         } else if (response.data["status"] == 500) {
           final errorMessage =

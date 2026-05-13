@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../Models/education_show_details_model.dart';
+import '../../Model/education_show_details_model.dart';
 
 class EducationShowDetailsState extends Equatable {
   @override

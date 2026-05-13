@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../../apiServices/api_services.dart';
-import '../../Models/employment_save_form_model.dart';
+import '../../../../../../../apiServices/api_services.dart';
+import '../../Model/employment_save_form_model.dart';
 import 'employment_save_form_state.dart';
 
 class EmploymentSaveFormCubit extends Cubit<EmploymentSaveFormState> {
@@ -10,9 +10,8 @@ class EmploymentSaveFormCubit extends Cubit<EmploymentSaveFormState> {
       : super(EmploymentSaveFormInitialState());
 
   void employmentSaveForm(
-      {
-        required String token,
-        required String customer_id,
+      {required String token,
+      required String customer_id,
       required EmploymentSaveFormModel employmentSaveFormModel}) async {
     emit(EmploymentSaveFormLoadingState());
     try {

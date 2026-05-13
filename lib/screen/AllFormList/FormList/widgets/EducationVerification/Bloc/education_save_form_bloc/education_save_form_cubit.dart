@@ -4,8 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../../../apiServices/api_services.dart';
-import '../../Models/education_save_form_model.dart';
+import '../../../../../../../apiServices/api_services.dart';
+import '../../Model/education_save_form_model.dart';
 import 'education_save_form_state.dart';
 
 class EducationSaveFormCubit extends Cubit<EducationSaveFormState> {
@@ -15,9 +15,8 @@ class EducationSaveFormCubit extends Cubit<EducationSaveFormState> {
       : super(EducationSaveFormInitialState());
 
   void educationSaveForm(
-      {
-        required String customer_id,
-        required String token,
+      {required String customer_id,
+      required String token,
       required EducationSaveFormModel educationSaveFormModel}) async {
     emit(EducationSaveFormLoadingState());
     try {
@@ -30,8 +29,7 @@ class EducationSaveFormCubit extends Cubit<EducationSaveFormState> {
         if (response.data["status"] == 200) {
           emit(EducationSaveFormSuccessState(response.data));
         } else if (response.data["status"] == 500) {
-          final errorMessage =
-              response.data['message'];
+          final errorMessage = response.data['message'];
           emit(EducationSaveFormErrorState(errorMessage));
         } else {
           emit(EducationSaveFormErrorState('${response.data["message"]}'));
@@ -45,10 +43,8 @@ class EducationSaveFormCubit extends Cubit<EducationSaveFormState> {
   }
 }
 
-class EducationCertificateDocuments extends Cubit<File>{
-
-  EducationCertificateDocuments():super(File(""));
-
+class EducationCertificateDocuments extends Cubit<File> {
+  EducationCertificateDocuments() : super(File(""));
 
   final ImagePicker _picker = ImagePicker();
 
@@ -72,11 +68,10 @@ class EducationCertificateDocuments extends Cubit<File>{
     if (image != null) {
       emit(File(image.path));
       // _image = File(image.path);
-      
     }
   }
-  
-  void clearImage(){
+
+  void clearImage() {
     emit(File(""));
   }
 }

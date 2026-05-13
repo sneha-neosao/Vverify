@@ -82,7 +82,7 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
     );
     if (picked != null) {
       setState(() {
-        widget.dobController.text = DateFormat('dd/MM/yyyy').format(picked);
+        widget.dobController.text = DateFormat('dd-MM-yyyy').format(picked);
       });
     }
   }
@@ -175,7 +175,7 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
               FormDateWidget(
                 controller: widget.dobController,
                 titleText: "Date of Birth",
-                hintText: "DD/MM/YYYY",
+                hintText: "DD-MM-YYYY",
                 onTap: () => _selectDate(context),
               ),
               if (state is AadhaarOcrSuccess) ...[

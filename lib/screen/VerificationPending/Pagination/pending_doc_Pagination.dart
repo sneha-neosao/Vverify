@@ -97,16 +97,33 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
           listener: (context, state) {
             if (state is VerifyRequestReportLoadingState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Downloading Report...")),
+                const SnackBar(
+                  content: Text("Downloading Report..."),
+                  duration: Duration(seconds: 1),
+                ),
               );
             } else if (state is VerifyRequestReportDownloadedState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                    content: Text("Report downloaded to: ${state.filePath}")),
+                  content: Text("Report downloaded to: ${state.filePath}"),
+                  backgroundColor: Colors.green,
+                  duration: const Duration(seconds: 3),
+                ),
+              );
+              // ── Show in app review ──
+              context.pushNamed(
+                'fileView',
+                extra: {
+                  'filePath': state.filePath,
+                  'fileName': state.filePath.split('/').last,
+                },
               );
             } else if (state is VerifyRequestReportErrorState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Error: ${state.message}")),
+                SnackBar(
+                  content: Text("Error: ${state.message}"),
+                  backgroundColor: Colors.red,
+                ),
               );
             }
           },
@@ -436,6 +453,11 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                             itemBuilder: (context, sIndex) {
                                               final service =
                                                   item.services![sIndex];
+                                              // Resolve the single source-of-truth status
+                                              final effectiveStatus =
+                                                  _effectiveStatus(
+                                                      service.status,
+                                                      item.caseStatus);
                                               return InkWell(
                                                 onTap: () {
                                                   if (item.detailsUpdated ==
@@ -501,6 +523,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                         .grey),
                                                           ),
                                                         ),
+                                                        // ── Status Dot Badge (top-right) ──
                                                         Positioned(
                                                           right: 0,
                                                           top: 0,
@@ -510,42 +533,24 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                     .all(4),
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: (service.status?.toLowerCase().contains(
-                                                                              'verified') ??
-                                                                          false) ||
-                                                                      (service.status?.toLowerCase().contains(
-                                                                              'done') ??
-                                                                          false)
-                                                                  ? Colors.green
-                                                                  : const Color(
-                                                                      0xFFFF5722),
+                                                              color: _statusDotColor(
+                                                                  effectiveStatus),
                                                               shape: BoxShape
                                                                   .circle,
                                                             ),
                                                             child: Icon(
-                                                                (service.status?.toLowerCase().contains('verified') ??
-                                                                            false) ||
-                                                                        (service.status?.toLowerCase().contains('done') ??
-                                                                            false)
-                                                                    ? Icons
-                                                                        .check
-                                                                    : Icons
-                                                                        .priority_high,
-                                                                color: Colors
-                                                                    .white,
-                                                                size: 10),
+                                                              _statusDotIcon(
+                                                                  effectiveStatus),
+                                                              color:
+                                                                  Colors.white,
+                                                              size: 10,
+                                                            ),
                                                           ),
                                                         ),
-                                                        if ((service.status
-                                                                    ?.toLowerCase()
-                                                                    .contains(
-                                                                        'verified') ??
-                                                                false) ||
-                                                            (service.status
-                                                                    ?.toLowerCase()
-                                                                    .contains(
-                                                                        'done') ??
-                                                                false))
+                                                        // ── Download Button (bottom-right) ──
+                                                        if (_showDownloadBtn(
+                                                            service.status,
+                                                            item.caseStatus))
                                                           Positioned(
                                                             right: -2,
                                                             bottom: -2,
@@ -610,6 +615,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                       ],
                                                     ),
                                                     const SizedBox(height: 8),
+                                                    // ── Service Title ──
                                                     SizedBox(
                                                       height: 32,
                                                       child: Text(
@@ -635,48 +641,11 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                       ),
                                                     ),
                                                     const SizedBox(height: 4),
-                                                    (() {
-                                                      final String status = (service
-                                                                  .status
-                                                                  ?.isNotEmpty ??
-                                                              false)
-                                                          ? service.status!
-                                                              .toLowerCase()
-                                                          : "pending";
-
-                                                      Color textColor =
-                                                          const Color(
-                                                              0xFFF57C00);
-                                                      Color bgColor =
-                                                          const Color(
-                                                              0xFFFFFDE7);
-                                                      Color borderColor =
-                                                          const Color(
-                                                              0xFFFFF59D);
-
-                                                      if (status
-                                                          .contains('reject')) {
-                                                        textColor = const Color(
-                                                            0xFFD32F2F);
-                                                        bgColor = const Color(
-                                                            0xFFFFEBEE);
-                                                        borderColor =
-                                                            const Color(
-                                                                0xFFEF9A9A);
-                                                      } else if (status
-                                                              .contains(
-                                                                  'verified') ||
-                                                          status.contains(
-                                                              'done')) {
-                                                        textColor = const Color(
-                                                            0xFF388E3C);
-                                                        bgColor = const Color(
-                                                            0xFFE8F5E9);
-                                                        borderColor =
-                                                            const Color(
-                                                                0xFFA5D6A7);
-                                                      }
-
+                                                    // ── Status Chip ──
+                                                    Builder(builder: (_) {
+                                                      final chips =
+                                                          _statusChipColors(
+                                                              effectiveStatus);
                                                       return Container(
                                                         padding:
                                                             const EdgeInsets
@@ -685,30 +654,26 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                 vertical: 4),
                                                         decoration:
                                                             BoxDecoration(
-                                                          color: bgColor,
+                                                          color: chips[1],
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(12),
                                                           border: Border.all(
-                                                              color:
-                                                                  borderColor),
+                                                              color: chips[2]),
                                                         ),
                                                         child: Text(
-                                                          (service.status
-                                                                      ?.isNotEmpty ??
-                                                                  false)
-                                                              ? '${service.status![0].toUpperCase()}${service.status!.substring(1).toLowerCase()}'
-                                                              : "Pending",
+                                                          _statusLabel(
+                                                              effectiveStatus),
                                                           style: GoogleFonts
                                                               .outfit(
                                                             fontSize: 10,
-                                                            color: textColor,
+                                                            color: chips[0],
                                                             fontWeight:
                                                                 FontWeight.w600,
                                                           ),
                                                         ),
                                                       );
-                                                    }()),
+                                                    }),
                                                   ],
                                                 ),
                                               );
@@ -771,23 +736,128 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
   }
 
   Widget _buildStatusIcon(verifyRequest item) {
-    IconData iconData = Icons.info_outline_rounded;
-    Color iconColor = const Color.fromRGBO(255, 160, 0, 1);
-    String status = item.status ?? "-";
+    // Use effective status: item.status → fallback to item.caseStatus
+    final effective = _effectiveStatus(item.status, item.caseStatus);
 
-    if (item.services == null || item.services!.isEmpty || status == "-") {
-      status = "Pending";
-      iconData = Icons.info_outline_rounded;
-      iconColor = const Color.fromRGBO(255, 160, 0, 1);
-    } else if (status.toLowerCase() == "clear") {
-      iconData = Icons.check_circle_rounded;
-      iconColor = Colors.green;
-    } else if (status.toLowerCase() == "discrepancy") {
-      iconData = Icons.gpp_maybe_rounded;
-      iconColor = Colors.red;
+    debugPrint(
+        'card status: $effective (raw: ${item.status}, case: ${item.caseStatus})');
+
+    if (item.services == null || item.services!.isEmpty) {
+      return _buildHeaderIcon(
+        Icons.info_outline_rounded,
+        const Color.fromRGBO(255, 160, 0, 1),
+        tooltip: 'Pending',
+      );
     }
 
-    return _buildHeaderIcon(iconData, iconColor, tooltip: status);
+    final IconData iconData;
+    final Color iconColor;
+    final String label;
+
+    if (_isVerified(effective)) {
+      iconData = Icons.check_circle_rounded;
+      iconColor = Colors.green;
+      label = 'Clear';
+    } else if (_isRejected(effective)) {
+      iconData = Icons.gpp_maybe_rounded;
+      iconColor = Colors.red;
+      label =
+          (effective?.toLowerCase() == 'reject') ? 'Rejected' : 'Discrepancy';
+    } else {
+      // pending / "-" / null
+      iconData = Icons.info_outline_rounded;
+      iconColor = const Color.fromRGBO(255, 160, 0, 1);
+      label = 'Pending';
+    }
+
+    return _buildHeaderIcon(iconData, iconColor, tooltip: label);
+  }
+
+  // ─── Status Helpers ───────────────────────────────────────────────────────
+
+  /// Resolves the effective display status for a service tile.
+  ///
+  /// Priority:
+  ///   1. service.status  — if it's a real value (not null / "" / "-")
+  ///   2. item.case_status — fallback when service hasn't been processed yet
+  ///   3. null             — treated as "pending" by all helpers below
+  static String? _effectiveStatus(String? serviceStatus, String? caseStatus) {
+    final s = serviceStatus?.trim();
+    if (s != null && s.isNotEmpty && s != '-') return s;
+    final c = caseStatus?.trim();
+    if (c != null && c.isNotEmpty && c != '-') return c;
+    return null; // pending
+  }
+
+  /// Returns true if the resolved status means "verified / done / clear"
+  static bool _isVerified(String? status) {
+    final s = status?.toLowerCase() ?? '';
+    return s.contains('verified') || s.contains('done') || s.contains('clear');
+  }
+
+  /// Returns true if the resolved status means "pending" (null, empty, or "-")
+  static bool _isPending(String? status) {
+    if (status == null) return true;
+    final s = status.trim().toLowerCase();
+    return s.isEmpty || s == '-' || s.contains('pending');
+  }
+
+  /// Returns true if the resolved status means "rejected / discrepancy"
+  static bool _isRejected(String? status) {
+    final s = status?.toLowerCase() ?? '';
+    return s.contains('reject') || s.contains('discrepancy');
+  }
+
+  /// Background dot color for the service status badge
+  static Color _statusDotColor(String? status) {
+    if (_isVerified(status)) return Colors.green;
+    if (_isRejected(status)) return Colors.red;
+    return const Color(0xFFFF5722); // pending
+  }
+
+  /// Icon inside the status dot badge
+  static IconData _statusDotIcon(String? status) {
+    if (_isVerified(status)) return Icons.check;
+    if (_isRejected(status)) return Icons.gpp_maybe_rounded;
+    return Icons.priority_high; // pending
+  }
+
+  /// Status chip colors: [textColor, bgColor, borderColor]
+  static List<Color> _statusChipColors(String? status) {
+    if (_isVerified(status)) {
+      return [
+        const Color(0xFF388E3C),
+        const Color(0xFFE8F5E9),
+        const Color(0xFFA5D6A7),
+      ];
+    }
+    if (_isRejected(status)) {
+      return [
+        const Color(0xFFD32F2F),
+        const Color(0xFFFFEBEE),
+        const Color(0xFFEF9A9A),
+      ];
+    }
+    // pending (default)
+    return [
+      const Color(0xFFF57C00),
+      const Color(0xFFFFFDE7),
+      const Color(0xFFFFF59D),
+    ];
+  }
+
+  /// Display label for the status chip
+  static String _statusLabel(String? status) {
+    if (_isPending(status)) return 'Pending';
+    if (status!.toLowerCase() == 'clear') return 'Verified';
+    if (status.toLowerCase() == 'discrepancy') return 'Discrepancy';
+    return '${status[0].toUpperCase()}${status.substring(1).toLowerCase()}';
+  }
+
+  /// Whether the download button should appear on a service tile
+  static bool _showDownloadBtn(String? serviceStatus, String? caseStatus) {
+    final effective = _effectiveStatus(serviceStatus, caseStatus);
+    return _isVerified(effective) || _isRejected(effective);
   }
 
   void _showFormDialog(verifyRequest item, Service? service) {

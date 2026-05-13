@@ -62,6 +62,8 @@ import '../screen/VerificationForms/courtVerification/Form/Screens/court_verific
 import '../screen/VerificationPending/Pagination/pending_doc_Pagination.dart';
 import '../screen/VerificationPending/verifyRequestUpdate/verify_request_edit_form_new.dart';
 import '../screen/AllFormList/FormList/form_list.dart';
+import '../screen/AllFormList/FormList/widgets/file_view_screen.dart';
+import '../screen/VerificationForms/common/Preview/preview.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -700,7 +702,25 @@ class AppRouter {
           );
         },
       ),
-
+      GoRoute(
+        path: '/preview',
+        name: "preview",
+        builder: (context, state) {
+          final url = state.extra as String? ?? "";
+          return Preview(url: url);
+        },
+      ),
+      GoRoute(
+        path: '/fileView',
+        name: "fileView",
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          return FileViewScreen(
+            filePath: extra['filePath'],
+            fileName: extra['fileName'],
+          );
+        },
+      ),
     ],
   );
 }
