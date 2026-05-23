@@ -9,8 +9,8 @@ import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
 import '../Blocs/address_update_form_bloc/name_address_verification_cubit.dart';
 import '../Blocs/address_update_form_bloc/name_address_verification_state.dart';
-import '../Blocs/address_show_details_bloc/address_show_details_bloc.dart';
-import '../Blocs/address_show_details_bloc/address_show_details_state.dart';
+import '../../../../AllFormList/FormList/widgets/AddressVerification/Bloc/ShowDataBloc/address_show_details_bloc.dart';
+import '../../../../AllFormList/FormList/widgets/AddressVerification/Bloc/ShowDataBloc/address_show_details_state.dart';
 import '../Models/address_show_details_model.dart';
 
 class AddressUpdateFormScreen extends StatefulWidget {
@@ -18,7 +18,11 @@ class AddressUpdateFormScreen extends StatefulWidget {
   final String case_uuid;
   final String address_uuid;
 
-  AddressUpdateFormScreen({super.key,  required this.uid, required this.case_uuid, required this.address_uuid});
+  AddressUpdateFormScreen(
+      {super.key,
+      required this.uid,
+      required this.case_uuid,
+      required this.address_uuid});
 
   @override
   State<AddressUpdateFormScreen> createState() =>
@@ -87,12 +91,10 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
     print('case_uuid: ${widget.case_uuid}');
     print('till_date: ${isChecked == true ? 1 : null}');
 
-    context.read<NameAddressVerificationUpdateFormCubit>()
-        .nameAddressUpdateForm(
+    context.read<NameAddressVerificationUpdateFormCubit>().nameAddressUpdateForm(
         customer_id: customerId,
         token: token,
-        nameAddressVerificationUpdateModel:
-        NameAddressVerificationUpdateModel(
+        nameAddressVerificationUpdateModel: NameAddressVerificationUpdateModel(
             request_id: requestId!,
             service_request_id: serviceRequestId!,
             current_address_line_1: currentLine1AddressController.text,
@@ -111,9 +113,7 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
             // residing_from_date: residenceFromDateController.text,
             // residing_to_date: residenceToDateController.text,
             // till_date: isChecked == true ? 1 : null,
-            uid: widget.uid
-        )
-    );
+            uid: widget.uid));
   }
 
   void showDataLoad() {
@@ -130,292 +130,292 @@ class _AddressUpdateFormScreenState extends State<AddressUpdateFormScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-            child:
-            BlocConsumer<NameAddressShowDataCubit, NameAddressShowDataState>(
-              listener: (context, showData){
-                if (showData is NameAddressShowDataSSuccessState) {
-                  NameAddressShowDataModel data = showData.nameAddressShowDataModel;
-        
-                  currentLine1AddressController.text = data.data!.current_address_line_1 ?? "";
-                  currentLine2AddressController.text = data.data!.current_address_line_2 ?? "";
-                  currentCityAddressController.text = data.data!.current_address_city ?? "";
-                  currentStateAddressController.text = data.data!.current_address_state ?? "";
-                  currentPinCodeController.text = data.data!.current_address_postal_code ?? "";
-                  // permanentLine1AddressController.text = data.data!.permanent_address_line_1 ?? "";
-                  // permanentLine2AddressController.text = data.data!.permanent_address_line_2 ?? "";
-                  // permanentCityAddressController.text = data.data!.permanent_address_city ?? "";
-                  // permanentStateAddressController.text = data.data!.permanent_address_state ?? "";
-                  // permanentPinCodeController.text = data.data!.permanent_address_postal_code ?? "";
-                  // residenceFromDateController.text = data.data!.residing_from_date ?? "";
-                  // residenceToDateController.text = data.data!.residing_to_date ?? "";
-                  // ✅ Checkbox logic
-                  // isChecked = (data.data!.residing_to_date == null ||
-                  //     data.data!.residing_to_date!.isEmpty);
-                  // setState(() {});
-                }
-              },
-                builder: (context, showData) {
-                  if (showData is NameAddressShowDataSLoadingState) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (showData is NameAddressShowDataSErrorState) {
-                    return Center(
-                      child: Text(showData.message),
-                    );
-                  } else if (showData is NameAddressShowDataSSuccessState) {
-                    NameAddressShowDataModel data = showData.nameAddressShowDataModel;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Address Verification",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium!
-                              .copyWith(color: Theme.of(context).primaryColorDark),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Text(
-                          "Address Verification Remark:",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(color: Colors.red),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        Text(
-                          data.data!.verification_remark!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(color: Colors.red),
-                        ),
-                        // const SizedBox(
-                        //   height: 4,
-                        // ),
-                        // Text(
-                        //   "Permanent Address Verification Remark:",
-                        //   style: Theme.of(context)
-                        //       .textTheme
-                        //       .bodyLarge!
-                        //       .copyWith(color: Colors.red),
-                        // ),
-                        // const SizedBox(
-                        //   height: 4,
-                        // ),
-                        // Text(
-                        //   data.data!.permanent_address_verification_remark!,
-                        //   style: Theme.of(context)
-                        //       .textTheme
-                        //       .bodySmall!
-                        //       .copyWith(color: Colors.red),
-                        // ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        // const SizedBox(
-                        //   height: 4,
-                        // ),
-                        Text(
-                          "Note: * Indicates required fields.",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(color: Colors.grey),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Text(
-                          "Person's Address",
-                          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                              color: Theme.of(context).primaryColorDark, fontSize: 16),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        CustomRequiredTextField(
-                            controller: currentLine1AddressController,
-                            titleText: "Address Line 1",
-                            hintText: "Enter Line 1 Address",
-                            textInputType: TextInputType.text
-                        ),
-                        CustomNotRequiredTextField(
-                            controller: currentLine2AddressController,
-                            titleText: "Address Line 2",
-                            hintText: "Enter Line 2 Address",
-                            textInputType: TextInputType.text
-                        ),
-                        CustomRequiredTextField(
-                            controller: currentCityAddressController,
-                            titleText: "City",
-                            hintText: "Enter City",
-                            textInputType: TextInputType.text
-                        ),
-                        CustomRequiredTextField(
-                            controller: currentStateAddressController,
-                            titleText: "State",
-                            hintText: "Enter State",
-                            textInputType: TextInputType.text
-                        ),
-                        CustomRequiredTextField(
-                            controller: currentPinCodeController,
-                            titleText: "Postal Code",
-                            hintText: "Enter Postal Code",
-                            textInputType: TextInputType.text
-                        ),
-                        // const SizedBox(
-                        //   height: 16,
-                        // ),
-                        // Text(
-                        //   "Person's Permanent Address",
-                        //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        //       color: Theme.of(context).primaryColorDark, fontSize: 16),
-                        // ),
-                        // const SizedBox(
-                        //   height: 16,
-                        // ),
-                        // Row(
-                        //   children: [
-                        //     Checkbox(
-                        //       value: isSameAddress,
-                        //       onChanged: (bool? value) {
-                        //         setState(() {
-                        //           isSameAddress = value ?? false;
-                        //         }); },
-                        //       activeColor: Colors.orange, // fill color when checked
-                        //       checkColor: Colors.white, // tick mark color
-                        //     ),
-                        //     Text(
-                        //       "Same as Current Address",
-                        //       style: Theme.of(context)
-                        //           .textTheme
-                        //           .bodySmall!
-                        //           .copyWith(fontWeight: FontWeight.w700),
-                        //     ),
-                        //   ],
-                        // ),
-                        // CustomRequiredTextField(
-                        //     controller: isSameAddress ? currentLine1AddressController : permanentLine1AddressController,
-                        //     titleText: "Address Line 1",
-                        //     hintText: "Enter Address Line 1",
-                        //     textInputType: TextInputType.text
-                        // ),
-                        // CustomNotRequiredTextField(
-                        //     controller: isSameAddress ? currentLine2AddressController : permanentLine2AddressController,
-                        //     titleText: "Address Line 2",
-                        //     hintText: "Enter Address Line 2",
-                        //     textInputType: TextInputType.text
-                        // ),
-                        // CustomRequiredTextField(
-                        //     controller: isSameAddress ? currentCityAddressController : permanentCityAddressController,
-                        //     titleText: "City",
-                        //     hintText: "Enter City",
-                        //     textInputType: TextInputType.text
-                        // ),
-                        // CustomRequiredTextField(
-                        //     controller: isSameAddress ? currentStateAddressController : permanentStateAddressController,
-                        //     titleText: "State",
-                        //     hintText: "Enter State",
-                        //     textInputType: TextInputType.text
-                        // ),
-                        // CustomRequiredTextField(
-                        //     controller: isSameAddress ? currentPinCodeController : permanentPinCodeController,
-                        //     titleText: "Postal Code",
-                        //     hintText: "Enter Postal Code",
-                        //     textInputType: TextInputType.text
-                        // ),
-                        // const SizedBox(
-                        //   height: 16,
-                        // ),
-                        // Text(
-                        //   "Residing Period",
-                        //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        //       color: Theme.of(context).primaryColorDark, fontSize: 16),
-                        // ),
-                        // const SizedBox(
-                        //   height: 16,
-                        // ),
-                        // CustomRequiredTextField(
-                        //     controller: residenceFromDateController,
-                        //     titleText: "Residing From",
-                        //     hintText: "Enter Residing From",
-                        //     textInputType: TextInputType.text
-                        // ),
-                        // CustomNotRequiredTextField(
-                        //     enabled: !isChecked,
-                        //     controller: residenceToDateController,
-                        //     titleText: "Residing To",
-                        //     hintText: "Enter Residing To",
-                        //     textInputType: TextInputType.text
-                        // ),
-                        // Row(
-                        //   children: [
-                        //     Checkbox(
-                        //       value: isChecked,
-                        //       onChanged: (bool? value) {
-                        //         setState(() {
-                        //           isChecked = value ?? false;
-                        //
-                        //           if (isChecked) { residenceToDateController.clear(); }
-                        //         }); },
-                        //       activeColor: Colors.orange, // fill color when checked
-                        //       checkColor: Colors.white, // tick mark color
-                        //     ),
-                        //     Text(
-                        //       "Till Date",
-                        //       style: Theme.of(context)
-                        //           .textTheme
-                        //           .bodySmall!
-                        //           .copyWith(fontWeight: FontWeight.w700),
-                        //     ),
-                        //   ],
-                        // ),
-                        const SizedBox(
-                          height: 24,
-                        ),
-                        BlocConsumer<NameAddressVerificationUpdateFormCubit,
+            child: BlocConsumer<NameAddressShowDataCubit,
+                NameAddressShowDataState>(listener: (context, showData) {
+              if (showData is NameAddressShowDataSSuccessState) {
+                NameAddressShowDataModel data =
+                    showData.nameAddressShowDataModel;
+
+                currentLine1AddressController.text =
+                    data.data!.current_address_line_1 ?? "";
+                currentLine2AddressController.text =
+                    data.data!.current_address_line_2 ?? "";
+                currentCityAddressController.text =
+                    data.data!.current_address_city ?? "";
+                currentStateAddressController.text =
+                    data.data!.current_address_state ?? "";
+                currentPinCodeController.text =
+                    data.data!.current_address_postal_code ?? "";
+                // permanentLine1AddressController.text = data.data!.permanent_address_line_1 ?? "";
+                // permanentLine2AddressController.text = data.data!.permanent_address_line_2 ?? "";
+                // permanentCityAddressController.text = data.data!.permanent_address_city ?? "";
+                // permanentStateAddressController.text = data.data!.permanent_address_state ?? "";
+                // permanentPinCodeController.text = data.data!.permanent_address_postal_code ?? "";
+                // residenceFromDateController.text = data.data!.residing_from_date ?? "";
+                // residenceToDateController.text = data.data!.residing_to_date ?? "";
+                // ✅ Checkbox logic
+                // isChecked = (data.data!.residing_to_date == null ||
+                //     data.data!.residing_to_date!.isEmpty);
+                // setState(() {});
+              }
+            }, builder: (context, showData) {
+              if (showData is NameAddressShowDataSLoadingState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (showData is NameAddressShowDataSErrorState) {
+                return Center(
+                  child: Text(showData.message),
+                );
+              } else if (showData is NameAddressShowDataSSuccessState) {
+                NameAddressShowDataModel data =
+                    showData.nameAddressShowDataModel;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Address Verification",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: Theme.of(context).primaryColorDark),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Text(
+                      "Address Verification Remark:",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .copyWith(color: Colors.red),
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      data.data!.verification_remark!,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(color: Colors.red),
+                    ),
+                    // const SizedBox(
+                    //   height: 4,
+                    // ),
+                    // Text(
+                    //   "Permanent Address Verification Remark:",
+                    //   style: Theme.of(context)
+                    //       .textTheme
+                    //       .bodyLarge!
+                    //       .copyWith(color: Colors.red),
+                    // ),
+                    // const SizedBox(
+                    //   height: 4,
+                    // ),
+                    // Text(
+                    //   data.data!.permanent_address_verification_remark!,
+                    //   style: Theme.of(context)
+                    //       .textTheme
+                    //       .bodySmall!
+                    //       .copyWith(color: Colors.red),
+                    // ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    // const SizedBox(
+                    //   height: 4,
+                    // ),
+                    Text(
+                      "Note: * Indicates required fields.",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Colors.grey),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Text(
+                      "Person's Address",
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Theme.of(context).primaryColorDark,
+                          fontSize: 16),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    CustomRequiredTextField(
+                        controller: currentLine1AddressController,
+                        titleText: "Address Line 1",
+                        hintText: "Enter Line 1 Address",
+                        textInputType: TextInputType.text),
+                    CustomNotRequiredTextField(
+                        controller: currentLine2AddressController,
+                        titleText: "Address Line 2",
+                        hintText: "Enter Line 2 Address",
+                        textInputType: TextInputType.text),
+                    CustomRequiredTextField(
+                        controller: currentCityAddressController,
+                        titleText: "City",
+                        hintText: "Enter City",
+                        textInputType: TextInputType.text),
+                    CustomRequiredTextField(
+                        controller: currentStateAddressController,
+                        titleText: "State",
+                        hintText: "Enter State",
+                        textInputType: TextInputType.text),
+                    CustomRequiredTextField(
+                        controller: currentPinCodeController,
+                        titleText: "Postal Code",
+                        hintText: "Enter Postal Code",
+                        textInputType: TextInputType.text),
+                    // const SizedBox(
+                    //   height: 16,
+                    // ),
+                    // Text(
+                    //   "Person's Permanent Address",
+                    //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    //       color: Theme.of(context).primaryColorDark, fontSize: 16),
+                    // ),
+                    // const SizedBox(
+                    //   height: 16,
+                    // ),
+                    // Row(
+                    //   children: [
+                    //     Checkbox(
+                    //       value: isSameAddress,
+                    //       onChanged: (bool? value) {
+                    //         setState(() {
+                    //           isSameAddress = value ?? false;
+                    //         }); },
+                    //       activeColor: Colors.orange, // fill color when checked
+                    //       checkColor: Colors.white, // tick mark color
+                    //     ),
+                    //     Text(
+                    //       "Same as Current Address",
+                    //       style: Theme.of(context)
+                    //           .textTheme
+                    //           .bodySmall!
+                    //           .copyWith(fontWeight: FontWeight.w700),
+                    //     ),
+                    //   ],
+                    // ),
+                    // CustomRequiredTextField(
+                    //     controller: isSameAddress ? currentLine1AddressController : permanentLine1AddressController,
+                    //     titleText: "Address Line 1",
+                    //     hintText: "Enter Address Line 1",
+                    //     textInputType: TextInputType.text
+                    // ),
+                    // CustomNotRequiredTextField(
+                    //     controller: isSameAddress ? currentLine2AddressController : permanentLine2AddressController,
+                    //     titleText: "Address Line 2",
+                    //     hintText: "Enter Address Line 2",
+                    //     textInputType: TextInputType.text
+                    // ),
+                    // CustomRequiredTextField(
+                    //     controller: isSameAddress ? currentCityAddressController : permanentCityAddressController,
+                    //     titleText: "City",
+                    //     hintText: "Enter City",
+                    //     textInputType: TextInputType.text
+                    // ),
+                    // CustomRequiredTextField(
+                    //     controller: isSameAddress ? currentStateAddressController : permanentStateAddressController,
+                    //     titleText: "State",
+                    //     hintText: "Enter State",
+                    //     textInputType: TextInputType.text
+                    // ),
+                    // CustomRequiredTextField(
+                    //     controller: isSameAddress ? currentPinCodeController : permanentPinCodeController,
+                    //     titleText: "Postal Code",
+                    //     hintText: "Enter Postal Code",
+                    //     textInputType: TextInputType.text
+                    // ),
+                    // const SizedBox(
+                    //   height: 16,
+                    // ),
+                    // Text(
+                    //   "Residing Period",
+                    //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    //       color: Theme.of(context).primaryColorDark, fontSize: 16),
+                    // ),
+                    // const SizedBox(
+                    //   height: 16,
+                    // ),
+                    // CustomRequiredTextField(
+                    //     controller: residenceFromDateController,
+                    //     titleText: "Residing From",
+                    //     hintText: "Enter Residing From",
+                    //     textInputType: TextInputType.text
+                    // ),
+                    // CustomNotRequiredTextField(
+                    //     enabled: !isChecked,
+                    //     controller: residenceToDateController,
+                    //     titleText: "Residing To",
+                    //     hintText: "Enter Residing To",
+                    //     textInputType: TextInputType.text
+                    // ),
+                    // Row(
+                    //   children: [
+                    //     Checkbox(
+                    //       value: isChecked,
+                    //       onChanged: (bool? value) {
+                    //         setState(() {
+                    //           isChecked = value ?? false;
+                    //
+                    //           if (isChecked) { residenceToDateController.clear(); }
+                    //         }); },
+                    //       activeColor: Colors.orange, // fill color when checked
+                    //       checkColor: Colors.white, // tick mark color
+                    //     ),
+                    //     Text(
+                    //       "Till Date",
+                    //       style: Theme.of(context)
+                    //           .textTheme
+                    //           .bodySmall!
+                    //           .copyWith(fontWeight: FontWeight.w700),
+                    //     ),
+                    //   ],
+                    // ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    BlocConsumer<NameAddressVerificationUpdateFormCubit,
                             NameAddressVerificationUpdateState>(
-                            listener: (context, updateData) {
-                              if (updateData
-                              is NameAddressVerificationUpdateSuccessState) {
-                                if (updateData.data["status"] == 200) {
-                                  context.pushNamed("AddressList",pathParameters: {
-                                    'uid': widget.case_uuid
-                                  });
-                                }
-                              } else if (updateData
-                              is NameAddressVerificationUpdateErrorState) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(updateData.message)));
-                              }
-                            }, builder: (context, updateData) {
-                          return CustomButton(
-                            isLoading: updateData
+                        listener: (context, updateData) {
+                      if (updateData
+                          is NameAddressVerificationUpdateSuccessState) {
+                        if (updateData.data["status"] == 200) {
+                          context.pushNamed("AddressList",
+                              pathParameters: {'uid': widget.case_uuid});
+                        }
+                      } else if (updateData
+                          is NameAddressVerificationUpdateErrorState) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(updateData.message)));
+                      }
+                    }, builder: (context, updateData) {
+                      return CustomButton(
+                        isLoading: updateData
                             is NameAddressVerificationUpdateLoadingState,
-                            onTap: () {
-                              nameAddressUpdate();
-                            },
-                            text: "Update",
-                            gradientColors: [
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).primaryColorDark
-                            ],
-                          );
-                        }),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                      ],
-                    );
-                  }
-                  return const SizedBox.shrink();
-                }),
+                        onTap: () {
+                          nameAddressUpdate();
+                        },
+                        text: "Update",
+                        gradientColors: [
+                          Theme.of(context).primaryColor,
+                          Theme.of(context).primaryColorDark
+                        ],
+                      );
+                    }),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                  ],
+                );
+              }
+              return const SizedBox.shrink();
+            }),
           ),
         ),
       ),

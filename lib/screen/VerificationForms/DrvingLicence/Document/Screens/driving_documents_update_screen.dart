@@ -8,9 +8,9 @@ import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 
 import '../../../common/pickphoto.dart';
-import '../../Form/Blocs/driving_licence_show_details_bloc/driving_licence_show_details_state.dart';
-import '../../Form/Blocs/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
-import '../../Form/Models/driving_licence_show_details_model.dart';
+import '../../../../AllFormList/FormList/widgets/DrivingLicense/Bloc/driving_licence_show_details_bloc/driving_licence_show_details_state.dart';
+import '../../../../AllFormList/FormList/widgets/DrivingLicense/Bloc/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
+import '../../../../AllFormList/FormList/widgets/DrivingLicense/Models/driving_licence_show_details_model.dart';
 import '../Blocs/driving_licence_document_upload_bloc/driver_document_upload_cubit.dart';
 import '../Blocs/driving_licence_document_update_bloc;/driving_document_update_cubit.dart';
 import '../Blocs/driving_licence_document_update_bloc;/driving_document_update_state.dart';
@@ -112,7 +112,10 @@ class _DrivingDocUpdateState extends State<DrivingDocUpdate> {
                     return PickPhotoUpdate(
                       widthSize: double.infinity,
                       onPressedPickImage: () {
-                        context.read<DriverDocFileUpload>().pickFile().then((_) {
+                        context
+                            .read<DriverDocFileUpload>()
+                            .pickFile()
+                            .then((_) {
                           context.pop();
                         });
                       },

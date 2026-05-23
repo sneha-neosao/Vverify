@@ -29,11 +29,11 @@ import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Docume
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Blocs/address_document_upload_bloc/address_document_upload_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Blocs/address_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_save_form_bloc/address_save_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_show_details_bloc/address_show_details_bloc.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/AddressVerification/Bloc/ShowDataBloc/address_show_details_bloc.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/Blocs/driving_licence_document_update_bloc;/driving_document_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/Blocs/driving_licence_document_upload_bloc/driver_document_upload_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/DrvingLicence/Form/Blocs/driving_licence_save_form_bloc/driving_licence_save_form_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/DrvingLicence/Form/Blocs/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/DrivingLicense/Bloc/driving_licence_save_form_bloc/driving_licence_save_form_bloc.dart';
+import 'package:v_verify/screen/AllFormList/FormList/widgets/DrivingLicense/Bloc/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/DrvingLicence/Form/Blocs/driving_licence_update_bloc/driving_licence_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_list_bloc/education_doc_list_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/EducationVerification/List/Blocs/education_list_cubit.dart';

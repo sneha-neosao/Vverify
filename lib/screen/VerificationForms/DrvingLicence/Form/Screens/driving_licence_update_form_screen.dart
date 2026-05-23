@@ -10,9 +10,9 @@ import 'package:v_verify/screen/VerificationForms/DrvingLicence/Form/Blocs/drivi
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationForms/common/id.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
-import '../Blocs/driving_licence_show_details_bloc/driving_licence_show_details_state.dart';
-import '../Blocs/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
-import '../Models/driving_licence_show_details_model.dart';
+import '../../../../AllFormList/FormList/widgets/DrivingLicense/Bloc/driving_licence_show_details_bloc/driving_licence_show_details_state.dart';
+import '../../../../AllFormList/FormList/widgets/DrivingLicense/Bloc/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
+import '../../../../AllFormList/FormList/widgets/DrivingLicense/Models/driving_licence_show_details_model.dart';
 
 class DrivingLicenceUpdateFormScreen extends StatefulWidget {
   String uid;
@@ -20,10 +20,12 @@ class DrivingLicenceUpdateFormScreen extends StatefulWidget {
   DrivingLicenceUpdateFormScreen({super.key, required this.uid});
 
   @override
-  State<DrivingLicenceUpdateFormScreen> createState() => _DrivingLicenceUpdateFormScreenState();
+  State<DrivingLicenceUpdateFormScreen> createState() =>
+      _DrivingLicenceUpdateFormScreenState();
 }
 
-class _DrivingLicenceUpdateFormScreenState extends State<DrivingLicenceUpdateFormScreen> {
+class _DrivingLicenceUpdateFormScreenState
+    extends State<DrivingLicenceUpdateFormScreen> {
   @override
   void initState() {
     drivingLicenceShowDataLoad();
@@ -59,17 +61,17 @@ class _DrivingLicenceUpdateFormScreenState extends State<DrivingLicenceUpdateFor
   Future<void> _selectDobDate(BuildContext context) async {
     DateTime date18YearsAgo = _getDate18YearsAgo();
     final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: date18YearsAgo, // initial date
-      firstDate: DateTime(1950), // the earliest possible date
-      lastDate: date18YearsAgo // the latest possible date
-    );
+        context: context,
+        initialDate: date18YearsAgo, // initial date
+        firstDate: DateTime(1950), // the earliest possible date
+        lastDate: date18YearsAgo // the latest possible date
+        );
     if (picked != null && picked != selectedJoiningDate) {
       String formattedDate = DateFormat('dd/MM/yyyy').format(picked);
-     // setState(() {
-        selectedJoiningDate = picked;
-        dateOfBirthController.text = formattedDate;
-     // });
+      // setState(() {
+      selectedJoiningDate = picked;
+      dateOfBirthController.text = formattedDate;
+      // });
     }
   }
 
@@ -139,9 +141,7 @@ class _DrivingLicenceUpdateFormScreenState extends State<DrivingLicenceUpdateFor
                       ),
                       Text(
                         data.data!.reason!,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!,
+                        style: Theme.of(context).textTheme.bodySmall!,
                       ),
                       const SizedBox(
                         height: 16,
@@ -158,8 +158,12 @@ class _DrivingLicenceUpdateFormScreenState extends State<DrivingLicenceUpdateFor
                       ),
                       Text(
                         "Driving Licence Details",
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: Theme.of(context).primaryColorDark, fontSize: 16),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(
+                                color: Theme.of(context).primaryColorDark,
+                                fontSize: 16),
                       ),
                       const SizedBox(height: 16),
                       CustomRequiredTextField(

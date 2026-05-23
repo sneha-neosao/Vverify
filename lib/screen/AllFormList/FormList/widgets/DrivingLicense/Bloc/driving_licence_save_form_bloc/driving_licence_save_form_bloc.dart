@@ -8,9 +8,8 @@ class DrivingLicenceBloc extends Cubit<DrivingLicenceState> {
   DrivingLicenceBloc(this._apiService) : super(DrivingLicenceInitialState());
 
   void drivingLicenceSaveData(
-      {
-        required String token,
-        required String customer_id,
+      {required String token,
+      required String customer_id,
       required String request_id,
       required String service_request_id,
       required String driver_licence_number,
@@ -45,6 +44,7 @@ class DrivingLicenceBloc extends Cubit<DrivingLicenceState> {
     }
   }
 }
+
 class FormUploadDrivingCubit extends Cubit<bool> {
   FormUploadDrivingCubit() : super(false);
 

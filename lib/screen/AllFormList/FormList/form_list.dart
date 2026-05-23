@@ -62,9 +62,21 @@ class _FormListScreenState extends State<FormListScreen> {
           applicantData: widget.applicantData,
         );
       case "media-check":
-        return MediaCheckCard(serviceTitle: title);
+        return MediaCheckCard(
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "address-verifcation":
-        return AddressVerificationCard(serviceTitle: title);
+        return AddressVerificationCard(
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "education-verification-list":
         return EducationVerificationCard(
           serviceTitle: title,
@@ -85,9 +97,14 @@ class _FormListScreenState extends State<FormListScreen> {
         return CreditHistoryCard(serviceTitle: title);
       case "driving-licence-verification":
         return DrivingLicenseCard(
-            controller: dlController,
-            dobController: dlDobController,
-            serviceTitle: title);
+          controller: dlController,
+          dobController: dlDobController,
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "bank-check":
         return BankAccountCard(
           serviceTitle: title,

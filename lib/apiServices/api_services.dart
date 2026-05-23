@@ -1477,6 +1477,52 @@ class ApiService {
     }
   }
 
+  Future<Response> mediaCheckStore({
+    required String token,
+    required String requestId,
+    required String serviceRequestId,
+    required String customerId,
+    required String serviceId,
+    required String keyword,
+  }) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'request_id': requestId,
+        'service_request_id': serviceRequestId,
+        'customer_id': customerId,
+        'service_id': serviceId,
+        'keyword': keyword,
+      });
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile'
+      };
+      final response =
+          await _dio.post('verify/media-check/store', data: formData);
+      log('mediaCheckStore Response: ${response.data}');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to verify media check: $e');
+    }
+  }
+
+  Future<Response> mediaCheckShow({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile'
+      };
+      final response = await _dio.get('verify/media-check/show/$uid');
+      log('mediaCheckShow Response: ${response.data}');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to fetch media check details: $e');
+    }
+  }
+
   Future<Response> referenceFormUpdate({
     required String token,
     required Map<String, dynamic> data,
@@ -1698,7 +1744,8 @@ class ApiService {
   }) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('verify/driver-licence/show/$uid');
+      // final response = await _dio.get('verify/driver-licence/show/$uid');
+      final response = await _dio.get('verify/pan/show/$uid');
       // log('drivingLicenceShowData Response: ${response.data}');
       return response;
     } catch (e) {
