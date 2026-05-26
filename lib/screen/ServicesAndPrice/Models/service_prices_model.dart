@@ -14,11 +14,17 @@ class ServicePriceModel {
   int? status;
   String? message;
   List<Datum>? data;
+  List<Datum>? suggestionCombos;
+  String? actualPrice;
+  String? discountPrice;
 
   ServicePriceModel({
     this.status,
     this.message,
     this.data,
+    this.suggestionCombos,
+    this.actualPrice,
+    this.discountPrice,
   });
 
   factory ServicePriceModel.fromJson(Map<String, dynamic> json) =>
@@ -28,6 +34,11 @@ class ServicePriceModel {
         data: json["data"] == null
             ? []
             : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+        suggestionCombos: json["suggestion_combos"] == null
+            ? []
+            : List<Datum>.from(json["suggestion_combos"]!.map((x) => Datum.fromJson(x))),
+        actualPrice: json["actual_price"]?.toString(),
+        discountPrice: json["discount_price"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -36,6 +47,11 @@ class ServicePriceModel {
         "data": data == null
             ? []
             : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "suggestion_combos": suggestionCombos == null
+            ? []
+            : List<dynamic>.from(suggestionCombos!.map((x) => x.toJson())),
+        "actual_price": actualPrice,
+        "discount_price": discountPrice,
       };
 }
 

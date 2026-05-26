@@ -21,7 +21,6 @@ import '../screen/VerificationForms/PoliceVerification/NonMumbai/Document/Models
 import '../screen/VerificationForms/PoliceVerification/NonMumbai/Document/Models/non_mumbai_documents_upload_model.dart';
 import '../screen/VerificationForms/ReferenceForm/Form/Models/Reference_save_form_model.dart';
 import '../screen/VerificationForms/ReferenceForm/Form/Models/Reference_update_form_model.dart';
-import '../screen/VerificationPending/model/pendingDoc_model.dart';
 
 class ApiService {
   final Dio _dio = Dio();
@@ -130,6 +129,28 @@ class ApiService {
     }
   }
 
+  Future<Response> logout(
+      {required String token, required String customerId}) async {
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile'
+      };
+      FormData formData = FormData.fromMap({
+        'customerId': customerId,
+      });
+      final response = await _dio.post(
+        'account/logout',
+        data: formData,
+      );
+      log('logout Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in logout: $e');
+      throw Exception('Failed to logout: $e');
+    }
+  }
+
   Future<Response> getServicesPricing(
       {required String token,
       required String type_id,
@@ -223,6 +244,47 @@ class ApiService {
     } catch (e) {
       // log('Error in getEntity: $e');
       throw Exception('Failed to fetch getEntity: $e');
+    }
+  }
+
+  Future<Response> getAllEntities({required String token}) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get('all-entities');
+      log('getAllEntities Response: ${response.data}');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to fetch getAllEntities: $e');
+    }
+  }
+
+  Future<Response> verifyRequestList({
+    required String token,
+    required int customer_id,
+    required int page,
+    required int limit,
+    int? entity_id,
+    String? v_status,
+    String? search,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final queryParams = <String, dynamic>{
+        'customer_id': customer_id,
+        'page': page,
+        'limit': limit,
+        if (entity_id != null) 'entity_id': entity_id,
+        if (v_status != null) 'v_status': v_status,
+        if (search != null && search.isNotEmpty) 'search': search,
+      };
+      final response = await _dio.get(
+        'verify-request/list',
+        queryParameters: queryParams,
+      );
+      log('verifyRequestList Response: ${response.data}');
+      return response;
+    } catch (e) {
+      throw Exception('Failed to fetch verifyRequestList: $e');
     }
   }
 
@@ -349,40 +411,6 @@ class ApiService {
   }
 
   /// Verification Request
-  Future<Response> verifyRequestList({
-    required String token,
-    required int customer_id,
-    required int page,
-    required int limit,
-    String? status,
-    int? group_id,
-    int? service_id,
-    String? search,
-  }) async {
-    try {
-      Map<String, dynamic> data = {
-        "customer_id": customer_id,
-        "page": page,
-        "limit": limit,
-        "status": status,
-        "group_id": group_id,
-        "service_id": service_id,
-        "search": search,
-      };
-
-      debugPrint('getTransactionList Request: ${data}');
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.get('verify-request/list', queryParameters: data);
-      print('getTransactionList Response: ${response.data}');
-
-      log('getTransactionList Response: ${response.data}');
-      return response;
-    } catch (e) {
-      log('Error in getTransactionList: $e');
-      throw Exception('Failed to fetch getTransactionList: $e');
-    }
-  }
 
   Future<Response> verifyRequestUpdate({
     required String token,
@@ -1699,11 +1727,11 @@ class ApiService {
       "driver_licence_number": driver_licence_number,
       "dob": dob,
     });
+    log('drivingLicenceSave Request: ${formData.files}');
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/driver-licence/form/store', data: formData);
-      // log('drivingLicenceSave Response: ${response.data}');
+      final response = await _dio.post('verify/pan/form/store', data: formData);
+      log('drivingLicenceSave Response: ${response.data}');
       return response;
     } catch (e) {
       // log('Error in drivingLicenceSave: $e');
@@ -2991,6 +3019,58 @@ class ApiService {
     } catch (e) {
       log('Error in extractAadhaarOcr: $e');
       throw Exception('Failed to extract $documentType OCR: $e');
+    }
+  }
+
+  Future<Response> dashboardCount({
+    required String token,
+    required String customer_id,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+        'dashboard-counts?customer_id=$customer_id',
+      );
+      log('dashboardCount Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in dashboardCount: $e');
+      throw Exception('Failed to dashboardCount: $e');
+    }
+  }
+
+  Future<Response> dashboardAllEntities({
+    required String token,
+    required String customer_id,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+        'dashboard/all-entities?customer_id=$customer_id',
+      );
+      log('dashboardAllEntities Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in dashboardAllEntities: $e');
+      throw Exception('Failed to dashboardAllEntities: $e');
+    }
+  }
+
+  Future<Response> entitiesData({
+    required String token,
+    required String customer_id,
+    required String entity_id,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+        'entities-data?customer_id=$customer_id&entity_id=$entity_id',
+      );
+      log('entitiesData Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in entitiesData: $e');
+      throw Exception('Failed to entitiesData: $e');
     }
   }
 }

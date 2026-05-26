@@ -17,12 +17,14 @@ import 'package:v_verify/screen/Login-Screen/bloc/login_cubit.dart';
 import 'package:v_verify/screen/OTP_Verify-Screen/bloc/otpVerify_cubit.dart';
 import 'package:v_verify/screen/Order%20History/bloc/order_history_cubit.dart';
 import 'package:v_verify/screen/ProfileScreen/bloc/profile_cubit.dart';
+import 'package:v_verify/screen/ProfileScreen/bloc/sign_out_cubit.dart';
 import 'package:v_verify/screen/PushNotification/Bloc/push_notification_cubit.dart';
 import 'package:v_verify/screen/PushNotification/push_notification.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/chechout_status_checking_bloc/checkout_status_checking_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/service_prices_bloc/service_prices_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_cubit.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/all_entities_bloc/all_entities_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarGetOtp/Bloc/aadhaar_verification_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarVerifyOtp/bloc/aadhaarVerifyOtp_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Blocs/address_document_list_bloc/address_doc_list_cubit.dart';
@@ -77,6 +79,13 @@ import 'package:v_verify/screen/VerificationForms/courtVerification/Document/Blo
 import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_update_form_bloc/court_verification_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_show_details_bloc/court_verification_show_details_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/dashboard_count_bloc.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/dashboard_entities_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/entity_services_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
+
+
+
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_cubit.dart';
@@ -130,8 +139,11 @@ class MyApp extends StatelessWidget {
             create: (_) => OtpVerifyCubit(ApiService())),
         BlocProvider<RegisterCubit>(create: (_) => RegisterCubit(ApiService())),
         BlocProvider<ProfileCubit>(create: (_) => ProfileCubit(ApiService())),
+        BlocProvider<SignOutCubit>(create: (_) => SignOutCubit(ApiService())),
         BlocProvider<ServicePriceCubit>(
             create: (_) => ServicePriceCubit(ApiService())),
+        BlocProvider<AllEntitiesCubit>(
+            create: (_) => AllEntitiesCubit(ApiService())),
         BlocProvider<TokenCubit>(create: (_) => TokenCubit()),
         BlocProvider<IdCubit>(create: (_) => IdCubit()),
         BlocProvider<UserTypeId>(create: (_) => UserTypeId()),
@@ -210,6 +222,14 @@ class MyApp extends StatelessWidget {
             create: (_) => EducationSaveFormCubit(ApiService())),
         BlocProvider<PendingDocCubit>(
             create: (_) => PendingDocCubit(ApiService())),
+        BlocProvider<DashboardCountBloc>(
+            create: (_) => DashboardCountBloc(ApiService())),
+        BlocProvider<DashboardEntitiesCubit>(
+            create: (_) => DashboardEntitiesCubit(ApiService())),
+        BlocProvider<EntityServicesCubit>(
+            create: (_) => EntityServicesCubit(ApiService())),
+        BlocProvider<PendingDocNavigationCubit>(
+            create: (_) => PendingDocNavigationCubit()),
         BlocProvider<VerifyDetailsCubit>(
             create: (_) => VerifyDetailsCubit(ApiService())),
         BlocProvider<ReferenceCheckDetailsCubit>(

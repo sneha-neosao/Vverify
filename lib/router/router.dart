@@ -60,6 +60,7 @@ import '../screen/VerificationForms/courtVerification/Document/Screens/court_doc
 import '../screen/VerificationForms/courtVerification/Document/Screens/court_document_upload_screen.dart';
 import '../screen/VerificationForms/courtVerification/Form/Screens/court_verification_update_form_screen.dart';
 import '../screen/VerificationPending/Pagination/pending_doc_Pagination.dart';
+import '../screen/VerificationPending/Pagination/DashBoard/dashboard.dart';
 import '../screen/VerificationPending/verifyRequestUpdate/verify_request_edit_form_new.dart';
 import '../screen/AllFormList/FormList/form_list.dart';
 import '../screen/AllFormList/FormList/widgets/file_view_screen.dart';
@@ -164,10 +165,24 @@ class AppRouter {
       ),
 
       GoRoute(
+        path: '/dashboard',
+        name: "dashboard",
+        builder: (context, state) {
+          return const DashboardScreen();
+        },
+      ),
+      GoRoute(
         path: '/PendingDoc',
         name: "PendingDoc",
         builder: (context, state) {
-          return  PendingDocPagination();
+          final status = state.uri.queryParameters['status'];
+          final groupIdStr = state.uri.queryParameters['groupId'];
+          final entityIdStr = state.uri.queryParameters['entityId'];
+          return PendingDocPagination(
+            initialStatus: status,
+            initialGroupId: groupIdStr != null ? int.tryParse(groupIdStr) : null,
+            initialEntityId: entityIdStr != null ? int.tryParse(entityIdStr) : null,
+          );
         },
       ),
       GoRoute(

@@ -2,7 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_state.dart';
 
-import '../model/pendingDoc_model.dart';
+import 'package:v_verify/screen/VerificationPending/model/pendingDoc_model.dart';
+
 
 class PendingDocCubit extends Cubit<PendingDocState> {
   ApiService _apiService;
@@ -17,6 +18,8 @@ class PendingDocCubit extends Cubit<PendingDocState> {
     String? status,
     int? groupId,
     int? serviceId,
+    int? entityId,
+    String? vStatus,
     String? search,
     bool isLoading = true,
   }) async {
@@ -29,9 +32,8 @@ class PendingDocCubit extends Cubit<PendingDocState> {
         customer_id: customerId,
         page: page,
         limit: limit,
-        status: status,
-        group_id: groupId,
-        service_id: serviceId,
+        entity_id: entityId ?? serviceId,
+        v_status: vStatus,
         search: search,
       );
 
@@ -54,6 +56,7 @@ class PendingDocCubit extends Cubit<PendingDocState> {
       emit(PendingDocErrorState('An error occurred:$e'));
     }
   }
+
 }
 
 class IsPressedCubit extends Cubit<int> {

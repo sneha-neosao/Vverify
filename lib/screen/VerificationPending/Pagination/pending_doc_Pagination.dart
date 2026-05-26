@@ -15,15 +15,31 @@ import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/veri
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_state.dart';
 import '../../../commonComponent/custom_button.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/all_entities_bloc/all_entities_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/entities_drawer.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/dashboard.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
+
+
 
 class PendingDocPagination extends StatefulWidget {
-  const PendingDocPagination({super.key});
+  final String? initialStatus;
+  final int? initialGroupId;
+  final int? initialEntityId;
+
+  const PendingDocPagination({
+    super.key,
+    this.initialStatus,
+    this.initialGroupId,
+    this.initialEntityId,
+  });
 
   @override
   State<PendingDocPagination> createState() => _PendingDocPaginationState();
 }
 
 class _PendingDocPaginationState extends State<PendingDocPagination> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
   String _selectedGroup = "Select Group";
   final List<String> _groups = [
@@ -37,8 +53,39 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    
+    // Sync initial routing parameters to navigation Cubit on startup
+    final navCubit = context.read<PendingDocNavigationCubit>();
+    if (widget.initialEntityId != null) {
+      navCubit.selectCategory(
+        status: widget.initialStatus,
+        entityId: widget.initialEntityId,
+        groupId: widget.initialGroupId,
+      );
+    } else {
+      navCubit.clear();
+    }
+
+    if (widget.initialGroupId == 1) {
+      _selectedGroup = "Company Check";
+    } else if (widget.initialGroupId == 2) {
+      _selectedGroup = "Personal Check";
+    }
+
     _searchController.addListener(_onSearchChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final token = context.read<TokenCubit>().state;
+      context.read<AllEntitiesCubit>().getAllEntities(token: token);
+
+      final filterState = context.read<PendingDocNavigationCubit>().state;
+      if (filterState.entityId != null) {
+        _fetchDataWithFilters(
+          status: filterState.status,
+          entityId: filterState.entityId,
+          groupId: filterState.groupId,
+        );
+      }
+    });
   }
 
   @override
@@ -60,6 +107,21 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
   }
 
   Future<void> _fetchData({bool isLoading = true}) async {
+    final filterState = context.read<PendingDocNavigationCubit>().state;
+    await _fetchDataWithFilters(
+      status: filterState.status,
+      entityId: filterState.entityId,
+      groupId: filterState.groupId,
+      isLoading: isLoading,
+    );
+  }
+
+  Future<void> _fetchDataWithFilters({
+    required String? status,
+    required int? entityId,
+    required int? groupId,
+    bool isLoading = true,
+  }) async {
     await context.read<TokenCubit>().getToken();
     await context.read<IdCubit>().getId();
 
@@ -67,12 +129,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
     final customerIdStr = context.read<IdCubit>().state;
     final customerId = int.tryParse(customerIdStr) ?? 0;
 
-    int? groupId;
-    if (_selectedGroup == "Company Check") {
-      groupId = 1;
-    } else if (_selectedGroup == "Personal Check") {
-      groupId = 2;
-    }
+    // Derive v_status: 'Verified' → 'completed', 'Pending' or null → no filter
+    final String? vStatus = (status == 'Verified') ? 'completed' : null;
 
     if (mounted) {
       await context.read<PendingDocCubit>().getPendingDoc(
@@ -80,7 +138,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
             customerId: customerId,
             page: 1,
             limit: 100,
-            groupId: groupId,
+            entityId: entityId,
+            vStatus: vStatus,
             search: _searchController.text.isNotEmpty
                 ? _searchController.text
                 : null,
@@ -91,8 +150,28 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    return BlocConsumer<PendingDocNavigationCubit, PendingDocFilterState>(
+      listener: (context, filterState) {
+        if (filterState.entityId != null) {
+          _fetchDataWithFilters(
+            status: filterState.status,
+            entityId: filterState.entityId,
+            groupId: filterState.groupId,
+          );
+        }
+      },
+      builder: (context, filterState) {
+        if (filterState.entityId == null) {
+          return const DashboardScreen();
+        }
+
+        return Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            drawer: EntitiesDrawer(
+              currentEntityId: filterState.entityId?.toString() ?? "",
+              navigateToPendingDoc: true,
+            ),
         body: BlocListener<VerifyRequestReportCubit, VerifyRequestReportState>(
           listener: (context, state) {
             if (state is VerifyRequestReportLoadingState) {
@@ -131,12 +210,26 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text("Verification List",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(color: Theme.of(context).primaryColorLight)),
+                padding: const EdgeInsets.only(
+                    left: 4.0, top: 16.0, right: 16.0, bottom: 16.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.menu,
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                      onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                    ),
+                    const SizedBox(width: 8),
+                    Text("Verification ",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(
+                                color: Theme.of(context).primaryColorLight)),
+                  ],
+                ),
               ),
               // ── Search and Filter Header ──
               Padding(
@@ -696,6 +789,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
             ],
           ),
         ));
+      },
+    );
   }
 
   Widget _buildHeaderIcon(IconData icon, Color color, {String? tooltip}) {

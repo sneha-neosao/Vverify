@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../../apiServices/api_services.dart';
 import '../../../../../commonComponent/custom_button.dart';
 import '../../../../VerificationForms/common/form_widget.dart';
 import '../common_widgets.dart';
@@ -14,6 +13,12 @@ import '../AadhaarVerificationDigilocker/bloc/aadhaar_ocr_cubit.dart';
 import '../AadhaarVerificationDigilocker/bloc/aadhaar_ocr_state.dart';
 import 'Models/driving_licence_show_details_model.dart';
 import '../../../../VerificationPending/bloc/pendingDoc_cubit.dart';
+import 'Bloc/driving_licence_save_form_bloc/driving_licence_save_form_bloc.dart';
+import 'Bloc/driving_licence_save_form_bloc/driving_licence_save_form_state.dart';
+import 'Bloc/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
+import 'Bloc/driving_licence_show_details_bloc/driving_licence_show_details_state.dart';
+import '../../../../VerificationForms/DrvingLicence/Form/Blocs/driving_licence_update_bloc/driving_licence_update_form_cubit.dart';
+import '../../../../VerificationForms/DrvingLicence/Form/Blocs/driving_licence_update_bloc/driving_licence_update_form_state.dart';
 
 class DrivingLicenseCard extends StatefulWidget {
   final TextEditingController controller;
@@ -40,6 +45,7 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
   bool _isFetchingDetails = false;
   bool _isReadOnly = false;
   Data? _verifiedDetails;
+  bool _shouldShowDialog = false;
 
   @override
   void initState() {
@@ -62,8 +68,7 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
     _checkAndFetchDetails();
   }
 
-  Future<Map<String, dynamic>?> _checkAndFetchDetails(
-      {String? uidFromResponse}) async {
+  void _checkAndFetchDetails({String? uidFromResponse}) async {
     final status =
         widget.serviceData?['status']?.toString().toLowerCase() ?? "";
     final uid = uidFromResponse ?? widget.serviceData?['uid']?.toString() ?? "";
@@ -82,36 +87,17 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
         });
       }
       try {
+        final showDataCubit = context.read<DrivingLicenceShowDataCubit>();
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString('token') ?? "";
         if (token.isNotEmpty) {
-          final response =
-              await ApiService().drivingLicenceShowData(token: token, uid: uid);
-          if (response.statusCode == 200 || response.statusCode == 201) {
-            final showResponse = DrivingLicenceShowDataModel.fromJson(
-                Map<String, dynamic>.from(response.data));
-            if (showResponse.status == 200 && showResponse.data != null) {
-              if (mounted) {
-                setState(() {
-                  _verifiedDetails = showResponse.data;
-                  _isReadOnly = true;
-                  if (_verifiedDetails!.driverLicenceNumber != null) {
-                    widget.controller.text =
-                        _verifiedDetails!.driverLicenceNumber.toString();
-                  }
-                  if (_verifiedDetails!.dob != null) {
-                    widget.dobController.text =
-                        _verifiedDetails!.dob.toString();
-                  }
-                });
-              }
-              return Map<String, dynamic>.from(response.data);
-            }
-          }
+          showDataCubit.drivingLicenceShowDataLoad(
+            token: token,
+            uid: uid,
+          );
         }
       } catch (e) {
         debugPrint("Error fetching driving license details: $e");
-      } finally {
         if (mounted) {
           setState(() {
             _isFetchingDetails = false;
@@ -119,7 +105,6 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
         }
       }
     }
-    return null;
   }
 
   Future<void> _submitForm() async {
@@ -146,10 +131,13 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
     if (mounted) {
       setState(() {
         _isLoading = true;
+        _shouldShowDialog = true;
       });
     }
 
     try {
+      final updateCubit = context.read<DrivingLicenceUpdateCubit>();
+      final saveCubit = context.read<DrivingLicenceBloc>();
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? "";
       final customerId = prefs.getString('id') ?? "";
@@ -167,118 +155,37 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
           _verifiedDetails?.uid ?? widget.serviceData?['uid']?.toString() ?? "";
       final isUpdate = existingUid.isNotEmpty;
 
-      final response = isUpdate
-          ? await ApiService().drivingLicenceUpdate(
-              token: token,
-              customer_id: customerId,
-              request_id: requestId,
-              service_request_id: serviceRequestId,
-              driver_licence_number: dlNumber,
-              dob: dob,
-            )
-          : await ApiService().drivingLicenceSave(
-              token: token,
-              customer_id: customerId,
-              request_id: requestId,
-              service_request_id: serviceRequestId,
-              driver_licence_number: dlNumber,
-              dob: dob,
-            );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final resData = Map<String, dynamic>.from(response.data);
-        // Normalize status — API can return int or String
-        final statusRaw = resData["status"];
-        final statusCode = statusRaw is int
-            ? statusRaw
-            : int.tryParse(statusRaw?.toString() ?? "") ?? 0;
-        final message = resData["message"]?.toString();
-
-        debugPrint("Save/Update response statusCode: $statusCode");
-        debugPrint("Save/Update resData keys: ${resData.keys.toList()}");
-
-        if (statusCode == 200) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message ??
-                    "Driving License details submitted successfully."),
-                backgroundColor: Colors.green,
-              ),
-            );
-          }
-
-          // uid may be at top level OR nested inside resData["data"]["uid"]
-          final dataMap = resData["data"] is Map
-              ? Map<String, dynamic>.from(resData["data"] as Map)
-              : <String, dynamic>{};
-          final savedUid = (resData["uid"]?.toString() ?? "").isNotEmpty
-              ? resData["uid"].toString()
-              : (dataMap["uid"]?.toString() ?? "").isNotEmpty
-                  ? dataMap["uid"].toString()
-                  : existingUid;
-
-          debugPrint("Saved UID for show fetch: $savedUid");
-
-          if (savedUid.isEmpty) {
-            // No uid available — cannot fetch show details; mark readonly
-            if (mounted) {
-              setState(() {
-                _isReadOnly = true;
-              });
-            }
-            return;
-          }
-
-          final detailsData =
-              await _checkAndFetchDetails(uidFromResponse: savedUid);
-
-          if (!mounted) return;
-          if (detailsData != null) {
-            _showVerificationResultDialog(context, detailsData);
-          } else {
-            // Show dialog could not load — at least mark read-only
-            setState(() {
-              _isReadOnly = true;
-            });
-          }
-
-          // Refresh Pending Documents list
-          final currentCustomerId = prefs.getString('id') ?? "";
-          if (mounted) {
-            context.read<PendingDocCubit>().getPendingDoc(
-                  token: token,
-                  customerId: int.tryParse(currentCustomerId) ?? 0,
-                  page: 1,
-                  limit: 100,
-                  isLoading: false,
-                );
-          }
-        } else {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message ?? "Submission failed."),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        }
+      if (isUpdate) {
+        updateCubit.drivingLicenceUpdateData(
+          token: token,
+          customer_id: customerId,
+          request_id: requestId,
+          service_request_id: serviceRequestId,
+          driver_licence_number: dlNumber,
+          dob: dob,
+        );
+      } else {
+        saveCubit.drivingLicenceSaveData(
+          token: token,
+          customer_id: customerId,
+          request_id: requestId,
+          service_request_id: serviceRequestId,
+          driver_licence_number: dlNumber,
+          dob: dob,
+        );
       }
     } catch (e) {
       if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _shouldShowDialog = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Error: ${e.toString()}"),
             backgroundColor: Colors.red,
           ),
         );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
       }
     }
   }
@@ -617,315 +524,554 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
 
     final String? remark = _verifiedDetails?.reason;
 
-    return BlocProvider(
-      create: (context) => AadhaarOcrCubit(),
-      child: BlocConsumer<AadhaarOcrCubit, AadhaarOcrState>(
-        listener: (context, state) {
-          if (state is AadhaarOcrSuccess) {
-            bool extracted = false;
-            if (state.ocrData.details?.dlNumber != null) {
-              widget.controller.text = state.ocrData.details!.dlNumber!;
-              extracted = true;
-            }
-            if (state.ocrData.details?.dob != null) {
-              widget.dobController.text = state.ocrData.details!.dob!;
-              extracted = true;
-            }
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<DrivingLicenceBloc, DrivingLicenceState>(
+          listener: (context, state) async {
+            if (state is DrivingLicenceSuccessState) {
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
+              final resData = state.data;
+              final statusRaw = resData["status"];
+              final statusCode = statusRaw is int
+                  ? statusRaw
+                  : int.tryParse(statusRaw?.toString() ?? "") ?? 0;
+              final message = resData["message"]?.toString();
 
-            if (extracted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text("Details Extracted Successfully!")),
-              );
-            }
-          } else if (state is AadhaarOcrFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
-            );
-          }
-        },
-        builder: (context, state) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        const Icon(Icons.fingerprint,
-                            color: Color(0xFFFFB74D), size: 28),
-                        const SizedBox(width: 12),
-                        Flexible(
-                          child: Text(
-                            widget.serviceTitle ??
-                                "Driving License Verification",
-                            style: GoogleFonts.outfit(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF263238),
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  StatusChip(
-                    status: currentStatus.isNotEmpty
-                        ? '${currentStatus[0].toUpperCase()}${currentStatus.substring(1).toLowerCase()}'
-                        : "Pending",
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              if (remark != null && remark.isNotEmpty)
-                Builder(builder: (context) {
-                  final bool isRejectTheme = isRejected;
-                  final Color bgColor = isRejectTheme
-                      ? const Color(0xFFFFEBEE)
-                      : const Color(0xFFE8F5E9);
-                  final Color borderColor = isRejectTheme
-                      ? const Color(0xFFEF9A9A).withValues(alpha: 0.5)
-                      : const Color(0xFFA5D6A7).withValues(alpha: 0.5);
-                  final Color textColor = isRejectTheme
-                      ? const Color(0xFFD32F2F)
-                      : const Color(0xFF2E7D32);
-                  final IconData icon = isRejectTheme
-                      ? Icons.info_outline
-                      : Icons.check_circle_outline;
-
-                  return Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 20),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: bgColor,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: borderColor),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(icon, color: textColor, size: 18),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Verification Remark",
-                              style: GoogleFonts.outfit(
-                                color: textColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.2,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          remark,
-                          style: GoogleFonts.outfit(
-                            color: textColor.withValues(alpha: 0.9),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
+              if (statusCode == 200) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(message ??
+                          "Driving License details submitted successfully."),
+                      backgroundColor: Colors.green,
                     ),
                   );
-                }),
-              Stack(
-                alignment: Alignment.centerRight,
-                children: [
-                  form_widget(
-                    controller: widget.controller,
-                    titleText: "DL Number",
-                    hintText: "Enter Driving License Number",
-                    textInputType: TextInputType.text,
-                    isReadOnly: _isReadOnly,
-                    maskFormatter: [
-                      LengthLimitingTextInputFormatter(16),
-                    ],
+                }
+
+                final dataMap = resData["data"] is Map
+                    ? Map<String, dynamic>.from(resData["data"] as Map)
+                    : <String, dynamic>{};
+                final existingUid = _verifiedDetails?.uid ??
+                    widget.serviceData?['uid']?.toString() ??
+                    "";
+                final savedUid = (resData["uid"]?.toString() ?? "").isNotEmpty
+                    ? resData["uid"].toString()
+                    : (dataMap["uid"]?.toString() ?? "").isNotEmpty
+                        ? dataMap["uid"].toString()
+                        : existingUid;
+
+                if (savedUid.isEmpty) {
+                  if (mounted) {
+                    setState(() {
+                      _isReadOnly = true;
+                      _shouldShowDialog = false;
+                    });
+                  }
+                  return;
+                }
+
+                _checkAndFetchDetails(uidFromResponse: savedUid);
+
+                final pendingDocCubit = context.read<PendingDocCubit>();
+                final prefs = await SharedPreferences.getInstance();
+                final token = prefs.getString('token') ?? "";
+                final currentCustomerId = prefs.getString('id') ?? "";
+                if (token.isNotEmpty) {
+                  pendingDocCubit.getPendingDoc(
+                    token: token,
+                    customerId: int.tryParse(currentCustomerId) ?? 0,
+                    page: 1,
+                    limit: 100,
+                    isLoading: false,
+                  );
+                }
+              } else {
+                if (mounted) {
+                  setState(() {
+                    _shouldShowDialog = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(message ?? "Submission failed."),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
+            } else if (state is DrivingLicenceErrorState) {
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                  _shouldShowDialog = false;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
                   ),
-                  if (state is AadhaarOcrLoading)
-                    const Padding(
-                      padding: EdgeInsets.only(top: 20.0, right: 12.0),
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                );
+              }
+            }
+          },
+        ),
+        BlocListener<DrivingLicenceUpdateCubit, DrivingLicenceUpdateState>(
+          listener: (context, state) async {
+            if (state is DrivingLicenceUpdateSuccessState) {
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
+              final resData = state.data;
+              final statusRaw = resData["status"];
+              final statusCode = statusRaw is int
+                  ? statusRaw
+                  : int.tryParse(statusRaw?.toString() ?? "") ?? 0;
+              final message = resData["message"]?.toString();
+
+              if (statusCode == 200) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(message ??
+                          "Driving License details updated successfully."),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+
+                final dataMap = resData["data"] is Map
+                    ? Map<String, dynamic>.from(resData["data"] as Map)
+                    : <String, dynamic>{};
+                final existingUid = _verifiedDetails?.uid ??
+                    widget.serviceData?['uid']?.toString() ??
+                    "";
+                final savedUid = (resData["uid"]?.toString() ?? "").isNotEmpty
+                    ? resData["uid"].toString()
+                    : (dataMap["uid"]?.toString() ?? "").isNotEmpty
+                        ? dataMap["uid"].toString()
+                        : existingUid;
+
+                if (savedUid.isEmpty) {
+                  if (mounted) {
+                    setState(() {
+                      _isReadOnly = true;
+                      _shouldShowDialog = false;
+                    });
+                  }
+                  return;
+                }
+
+                _checkAndFetchDetails(uidFromResponse: savedUid);
+
+                final pendingDocCubit = context.read<PendingDocCubit>();
+                final prefs = await SharedPreferences.getInstance();
+                final token = prefs.getString('token') ?? "";
+                final currentCustomerId = prefs.getString('id') ?? "";
+                if (token.isNotEmpty) {
+                  pendingDocCubit.getPendingDoc(
+                    token: token,
+                    customerId: int.tryParse(currentCustomerId) ?? 0,
+                    page: 1,
+                    limit: 100,
+                    isLoading: false,
+                  );
+                }
+              } else {
+                if (mounted) {
+                  setState(() {
+                    _shouldShowDialog = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(message ?? "Update failed."),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
+            } else if (state is DrivingLicenceUpdateErrorState) {
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                  _shouldShowDialog = false;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            }
+          },
+        ),
+        BlocListener<DrivingLicenceShowDataCubit, DrivingLicenceShowDataState>(
+          listener: (context, state) {
+            if (state is DrivingLicenceShowDataLoadingState) {
+              if (mounted) {
+                setState(() {
+                  _isFetchingDetails = true;
+                });
+              }
+            } else if (state is DrivingLicenceShowDataSuccessState) {
+              final showResponse = state.drivingLicenceShowDataModel;
+              if (mounted) {
+                setState(() {
+                  _isFetchingDetails = false;
+                  _verifiedDetails = showResponse.data;
+                  _isReadOnly = true;
+                  if (_verifiedDetails!.driverLicenceNumber != null) {
+                    widget.controller.text =
+                        _verifiedDetails!.driverLicenceNumber.toString();
+                  }
+                  if (_verifiedDetails!.dob != null) {
+                    widget.dobController.text =
+                        _verifiedDetails!.dob.toString();
+                  }
+                });
+
+                if (_shouldShowDialog) {
+                  _showVerificationResultDialog(
+                    context,
+                    showResponse.toJson(),
+                  );
+                  setState(() {
+                    _shouldShowDialog = false;
+                  });
+                }
+              }
+            } else if (state is DrivingLicenceShowDataErrorState) {
+              if (mounted) {
+                setState(() {
+                  _isFetchingDetails = false;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            }
+          },
+        ),
+      ],
+      child: BlocProvider(
+        create: (context) => AadhaarOcrCubit(),
+        child: BlocConsumer<AadhaarOcrCubit, AadhaarOcrState>(
+          listener: (context, state) {
+            if (state is AadhaarOcrSuccess) {
+              bool extracted = false;
+              if (state.ocrData.details?.dlNumber != null) {
+                widget.controller.text = state.ocrData.details!.dlNumber!;
+                extracted = true;
+              }
+              if (state.ocrData.details?.dob != null) {
+                widget.dobController.text = state.ocrData.details!.dob!;
+                extracted = true;
+              }
+
+              if (extracted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text("Details Extracted Successfully!")),
+                );
+              }
+            } else if (state is AadhaarOcrFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text(state.error), backgroundColor: Colors.red),
+              );
+            }
+          },
+          builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          const Icon(Icons.fingerprint,
+                              color: Color(0xFFFFB74D), size: 28),
+                          const SizedBox(width: 12),
+                          Flexible(
+                            child: Text(
+                              widget.serviceTitle ??
+                                  "Driving License Verification",
+                              style: GoogleFonts.outfit(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF263238),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                ],
-              ),
-              FormDateWidget(
-                controller: widget.dobController,
-                titleText: "Date of Birth",
-                hintText: "DD-MM-YYYY",
-                isReadOnly: _isReadOnly,
-                onTap: _isReadOnly ? null : () => _selectDate(context),
-              ),
-              if (state is AadhaarOcrSuccess) ...[
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.amber.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.amber.shade200),
+                    const SizedBox(width: 8),
+                    StatusChip(
+                      status: currentStatus.isNotEmpty
+                          ? '${currentStatus[0].toUpperCase()}${currentStatus.substring(1).toLowerCase()}'
+                          : "Pending",
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                if (remark != null && remark.isNotEmpty)
+                  Builder(builder: (context) {
+                    final bool isRejectTheme = isRejected;
+                    final Color bgColor = isRejectTheme
+                        ? const Color(0xFFFFEBEE)
+                        : const Color(0xFFE8F5E9);
+                    final Color borderColor = isRejectTheme
+                        ? const Color(0xFFEF9A9A).withValues(alpha: 0.5)
+                        : const Color(0xFFA5D6A7).withValues(alpha: 0.5);
+                    final Color textColor = isRejectTheme
+                        ? const Color(0xFFD32F2F)
+                        : const Color(0xFF2E7D32);
+                    final IconData icon = isRejectTheme
+                        ? Icons.info_outline
+                        : Icons.check_circle_outline;
+
+                    return Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: bgColor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: borderColor),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(icon, color: textColor, size: 18),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Verification Remark",
+                                style: GoogleFonts.outfit(
+                                  color: textColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.2,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            remark,
+                            style: GoogleFonts.outfit(
+                              color: textColor.withValues(alpha: 0.9),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                Stack(
+                  alignment: Alignment.centerRight,
+                  children: [
+                    form_widget(
+                      controller: widget.controller,
+                      titleText: "DL Number",
+                      hintText: "Enter Driving License Number",
+                      textInputType: TextInputType.text,
+                      isReadOnly: _isReadOnly,
+                      maskFormatter: [
+                        LengthLimitingTextInputFormatter(16),
+                      ],
+                    ),
+                    if (state is AadhaarOcrLoading)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 20.0, right: 12.0),
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                  ],
+                ),
+                FormDateWidget(
+                  controller: widget.dobController,
+                  titleText: "Date of Birth",
+                  hintText: "DD-MM-YYYY",
+                  isReadOnly: _isReadOnly,
+                  onTap: _isReadOnly ? null : () => _selectDate(context),
+                ),
+                if (state is AadhaarOcrSuccess) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.amber.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info_outline,
+                            size: 18, color: Colors.amber.shade800),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            "Note: Auto-filled details may be inaccurate—please verify before submitting.",
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              color: Colors.amber.shade900,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.info_outline,
-                          size: 18, color: Colors.amber.shade800),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          "Note: Auto-filled details may be inaccurate—please verify before submitting.",
-                          style: GoogleFonts.outfit(
-                            fontSize: 11,
-                            color: Colors.amber.shade900,
-                            fontWeight: FontWeight.w500,
+                ],
+                if (!_isReadOnly) ...[
+                  const SizedBox(height: 20),
+                  Text(
+                    "Scan & Auto-fill (optional)",
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  BrowseFileButton(
+                    storageKey: 'dl_file_persist',
+                    onFilePicked: (file) {
+                      if (file != null) {
+                        context.read<AadhaarOcrCubit>().extractAadhaarDetails(
+                            File(file.path!),
+                            documentType: "driving_licence");
+                      } else {
+                        widget.controller.clear();
+                        widget.dobController.clear();
+                        context.read<AadhaarOcrCubit>().reset();
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Supports: Image / PDF (up to 2MB)",
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      color: Colors.grey.shade500,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 24),
+                if (!_isReadOnly)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: CustomButton(
+                      text: _isLoading ? "Submitting..." : "Submit",
+                      width: 140,
+                      height: 48,
+                      prefixIcon: _isLoading ? null : Icons.send,
+                      iconSize: 18,
+                      gradientColors: const [
+                        Color(0xFFF4511E),
+                        Color(0xFFFFB74D),
+                      ],
+                      onTap: _isLoading ? null : _submitForm,
+                    ),
+                  )
+                else if (isRejected)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: CustomButton(
+                      text: "Edit",
+                      width: 120,
+                      height: 48,
+                      prefixIcon: Icons.edit,
+                      iconSize: 18,
+                      gradientColors: const [
+                        Color(0xFFF4511E),
+                        Color(0xFFFFB74D),
+                      ],
+                      onTap: () {
+                        setState(() {
+                          _isReadOnly = false;
+                        });
+                      },
+                    ),
+                  )
+                else if (!isRejected)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 2.0),
+                      child: InkWell(
+                        onTap: () {
+                          final pdfUrl = _verifiedDetails?.dataDocument ?? "";
+                          if (pdfUrl.isNotEmpty) {
+                            context.pushNamed(
+                              'preview',
+                              extra: pdfUrl,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Report PDF URL not available"),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          height: 48,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE8F0FE),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFFD2E3FC)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.download,
+                                color: Color(0xFF1A73E8),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Download PDF",
+                                style: GoogleFonts.outfit(
+                                  color: const Color(0xFF1A73E8),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ],
-              if (!_isReadOnly) ...[
-                const SizedBox(height: 20),
-                Text(
-                  "Scan & Auto-fill (optional)",
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade700,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                BrowseFileButton(
-                  storageKey: 'dl_file_persist',
-                  onFilePicked: (file) {
-                    if (file != null) {
-                      context.read<AadhaarOcrCubit>().extractAadhaarDetails(
-                          File(file.path!),
-                          documentType: "driving_licence");
-                    } else {
-                      widget.controller.clear();
-                      widget.dobController.clear();
-                      context.read<AadhaarOcrCubit>().reset();
-                    }
-                  },
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Supports: Image / PDF (up to 2MB)",
-                  style: GoogleFonts.outfit(
-                    fontSize: 11,
-                    color: Colors.grey.shade500,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 24),
-              if (!_isReadOnly)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: CustomButton(
-                    text: _isLoading ? "Submitting..." : "Submit",
-                    width: 140,
-                    height: 48,
-                    prefixIcon: _isLoading ? null : Icons.send,
-                    iconSize: 18,
-                    gradientColors: const [
-                      Color(0xFFF4511E),
-                      Color(0xFFFFB74D),
-                    ],
-                    onTap: _isLoading ? null : _submitForm,
-                  ),
-                )
-              else if (isRejected)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: CustomButton(
-                    text: "Edit",
-                    width: 120,
-                    height: 48,
-                    prefixIcon: Icons.edit,
-                    iconSize: 18,
-                    gradientColors: const [
-                      Color(0xFFF4511E),
-                      Color(0xFFFFB74D),
-                    ],
-                    onTap: () {
-                      setState(() {
-                        _isReadOnly = false;
-                      });
-                    },
-                  ),
-                )
-              else if (!isRejected)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 2.0),
-                    child: InkWell(
-                      onTap: () {
-                        final pdfUrl = _verifiedDetails?.dataDocument ?? "";
-                        if (pdfUrl.isNotEmpty) {
-                          context.pushNamed(
-                            'preview',
-                            extra: pdfUrl,
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Report PDF URL not available"),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      },
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        height: 48,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8F0FE),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFFD2E3FC)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.download,
-                              color: Color(0xFF1A73E8),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Download PDF",
-                              style: GoogleFonts.outfit(
-                                color: const Color(0xFF1A73E8),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     ),
                   ),
-                ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
