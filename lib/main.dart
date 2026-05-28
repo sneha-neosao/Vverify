@@ -25,34 +25,14 @@ import 'package:v_verify/screen/ServicesAndPrice/Blocs/chechout_status_checking_
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/service_prices_bloc/service_prices_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/all_entities_bloc/all_entities_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarGetOtp/Bloc/aadhaar_verification_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/AadhaarVerification/AadhaarVerifyOtp/bloc/aadhaarVerifyOtp_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Blocs/address_document_list_bloc/address_doc_list_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Documents/Blocs/address_document_upload_bloc/address_document_upload_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/List/Blocs/address_list_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_save_form_bloc/address_save_form_cubit.dart';
 import 'package:v_verify/screen/AllFormList/FormList/widgets/AddressVerification/Bloc/ShowDataBloc/address_show_details_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/Blocs/driving_licence_document_update_bloc;/driving_document_update_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/DrvingLicence/Document/Blocs/driving_licence_document_upload_bloc/driver_document_upload_cubit.dart';
 import 'package:v_verify/screen/AllFormList/FormList/widgets/DrivingLicense/Bloc/driving_licence_save_form_bloc/driving_licence_save_form_bloc.dart';
 import 'package:v_verify/screen/AllFormList/FormList/widgets/DrivingLicense/Bloc/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/DrvingLicence/Form/Blocs/driving_licence_update_bloc/driving_licence_update_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_list_bloc/education_doc_list_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/List/Blocs/education_list_cubit.dart';
+
 import 'package:v_verify/screen/AllFormList/FormList/widgets/EducationVerification/Bloc/education_show_details_bloc/education_show_details_cubit.dart';
 import 'package:v_verify/screen/AllFormList/FormList/widgets/EducationVerification/Bloc/education_update_form_bloc/education_update_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/Collage/Bloc/collage_name_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/University/Bloc/university_name_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_list_bloc/employment_doc_list_cubit.dart';
 import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Update/employment_update_form_cubit.dart';
 import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/List/employment_list_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Document/Blocs/gst_document_update_bloc/gst_document_update_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Document/Blocs/gst_document_upload_bloc/gst_document_upload_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Form/Blocs/gst_verification_save_form_bloc/gst_verification_save_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Form/Blocs/gst_verification_update_form_bloc/gst_verification_update_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/GST_TIN_CIN/Form/Blocs/gst_verification_show_details_bloc/gst_verification_show_details_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/PanVerification/Document/Blocs/pan_document_update_bloc/pan_document_update_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/PanVerification/Document/Blocs/pan_document_upload_bloc/pan_document_upload_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Common/PoliceStationId/police_station_id_bloc/police_station_id_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Mumbai/Form/Blocs/mumbai_police_verification_update_bloc/mumbai_police_update_form_state.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Mumbai/Form/Blocs/mumbai_police_verification_show_details_bloc/mumbai_police_show_details_cubit.dart';
@@ -66,25 +46,12 @@ import 'package:v_verify/screen/VerificationForms/PoliceVerification/NonMumbai/F
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/NonMumbai/Document/Blocs/non_mumbai_document_update_bloc/non_mumbai_document_update_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/NonMumbai/Document/Blocs/non_mumbai_document_show_details_bloc/non_mumbai_show_details_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/NonMumbai/Document/Blocs/non_mumbai_document_upload_bloc/non_mumbai_document_upload_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/Documents/Blocs/reference_document_update_bloc/reference_doc_update_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/Documents/Blocs/reference_document_show_details_bloc/reference_doc_show_data_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/Documents/Blocs/reference_document_upload_bloc/reference_upload_doc_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/Form/Blocs/reference_save_form_bloc/reference_save_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/Form/Blocs/reference_show_details_bloc/reference_show_details_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/Form/Blocs/reference_update_form_bloc/Reference_update_form_cubit.dart';
 import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Bloc/verify_details_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_save_form_bloc/court_verification_save_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/Document/Blocs/court_verification_documents_update_bloc/court_verification_documents_update_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/Document/Blocs/court_verification_documents_upload_bloc/court_verification_documents_upload_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_update_form_bloc/court_verification_update_form_cubit.dart';
-import 'package:v_verify/screen/VerificationForms/courtVerification/Form/Blocs/court_verification_show_details_bloc/court_verification_show_details_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/dashboard_count_bloc.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/dashboard_entities_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/entity_services_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
-
-
 
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_cubit.dart';
@@ -92,10 +59,7 @@ import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/ver
 import 'package:v_verify/theme/theme_cubit.dart';
 import 'package:v_verify/theme/theme_data.dart';
 import 'firebase_options.dart';
-import 'screen/VerificationForms/AddressVerificationForm/Form/Blocs/address_update_form_bloc/name_address_verification_cubit.dart';
-import 'screen/VerificationForms/EducationVerification/Documents/Blocs/education_document_upload_bloc/education_document_upload_cubit.dart';
 import 'screen/AllFormList/FormList/widgets/EducationVerification/Bloc/education_save_form_bloc/education_save_form_cubit.dart';
-import 'screen/VerificationForms/EmploymentVerification/Documents/Blocs/employment_document_upload_bloc/employment_document_upload_cubit.dart';
 import 'screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Save/employment_save_form_cubit.dart';
 import 'screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Show/employ_show_details_cubit.dart';
 
@@ -198,24 +162,10 @@ class MyApp extends StatelessWidget {
             create: (_) => UploadDocumentMumbaiTenantSignature()),
         BlocProvider<UploadDocumentsMumbaiCubit>(
             create: (_) => UploadDocumentsMumbaiCubit(ApiService())),
-        BlocProvider<ReferenceFormCubit>(
-            create: (_) => ReferenceFormCubit(ApiService())),
-        BlocProvider<NameAddressVerificationFormCubit>(
-            create: (_) => NameAddressVerificationFormCubit(ApiService())),
-        BlocProvider<NameAddressAadhaarBackSideCubit>(
-            create: (_) => NameAddressAadhaarBackSideCubit()),
-        BlocProvider<NameAddressAadhaarFrontSideCubit>(
-            create: (_) => NameAddressAadhaarFrontSideCubit()),
-        BlocProvider<AadhaarGetOtpCubit>(
-            create: (_) => AadhaarGetOtpCubit(ApiService())),
-        BlocProvider<AadhaarVerifyOtpCubit>(
-            create: (_) => AadhaarVerifyOtpCubit(ApiService())),
         BlocProvider<EmploymentSaveFormCubit>(
             create: (_) => EmploymentSaveFormCubit(ApiService())),
         BlocProvider<VerifyRequestUpdateCubit>(
             create: (_) => VerifyRequestUpdateCubit(ApiService())),
-        BlocProvider<EmploymentUploadCubit>(
-            create: (_) => EmploymentUploadCubit(ApiService())),
         BlocProvider<EducationCertificateDocuments>(
             create: (_) => EducationCertificateDocuments()),
         BlocProvider<EducationSaveFormCubit>(
@@ -232,10 +182,6 @@ class MyApp extends StatelessWidget {
             create: (_) => PendingDocNavigationCubit()),
         BlocProvider<VerifyDetailsCubit>(
             create: (_) => VerifyDetailsCubit(ApiService())),
-        BlocProvider<ReferenceCheckDetailsCubit>(
-            create: (_) => ReferenceCheckDetailsCubit(ApiService())),
-        BlocProvider<ReferenceUpdateFormCubit>(
-            create: (_) => ReferenceUpdateFormCubit(ApiService())),
         BlocProvider<MumbaiShowDataCubit>(
             create: (_) => MumbaiShowDataCubit(ApiService())),
         BlocProvider<MumbaiPoliceUpdateFromCubit>(
@@ -252,8 +198,6 @@ class MyApp extends StatelessWidget {
             create: (_) => EmployShowDataCubit(ApiService())),
         BlocProvider<EmploymentUpdateFormCubit>(
             create: (_) => EmploymentUpdateFormCubit(ApiService())),
-        BlocProvider<EducationListCubit>(
-            create: (_) => EducationListCubit(ApiService())),
         BlocProvider<SelectItemCubit>(create: (_) => SelectItemCubit()),
         BlocProvider<NonMumbaiShowDataCubit>(
             create: (_) => NonMumbaiShowDataCubit(ApiService())),
@@ -267,104 +211,31 @@ class MyApp extends StatelessWidget {
             create: (_) => MumbaiDocUpdateCubit(ApiService())),
         BlocProvider<EmployDataListCubit>(
             create: (_) => EmployDataListCubit(ApiService())),
-        BlocProvider<UniversityNameBloc>(
-            create: (_) => UniversityNameBloc(ApiService())),
-        BlocProvider<CollageNameCubit>(
-            create: (_) => CollageNameCubit(ApiService())),
-        BlocProvider<NameAddressVerificationUpdateFormCubit>(
-            create: (_) =>
-                NameAddressVerificationUpdateFormCubit(ApiService())),
         BlocProvider<NameAddressShowDataCubit>(
             create: (_) => NameAddressShowDataCubit(ApiService())),
         BlocProvider<DrivingLicenceBloc>(
             create: (_) => DrivingLicenceBloc(ApiService())),
         BlocProvider<DrivingLicenceShowDataCubit>(
             create: (_) => DrivingLicenceShowDataCubit(ApiService())),
-        BlocProvider<DrivingLicenceUpdateCubit>(
-            create: (_) => DrivingLicenceUpdateCubit(ApiService())),
-        BlocProvider<GstPanCinSaveCubit>(
-            create: (_) => GstPanCinSaveCubit(ApiService())),
-        BlocProvider<GstPanCinShowDataCubit>(
-            create: (_) => GstPanCinShowDataCubit(ApiService())),
-        BlocProvider<GstPanCinUpdateCubit>(
-            create: (_) => GstPanCinUpdateCubit(ApiService())),
         BlocProvider<PoliceStationIdCubit>(
             create: (_) => PoliceStationIdCubit(ApiService())),
         BlocProvider<PushNotificationCubit>(
             create: (_) => PushNotificationCubit(ApiService())),
-        BlocProvider<CourtVerificationCubit>(
-            create: (_) => CourtVerificationCubit(ApiService())),
-        BlocProvider<ShowCourtDataCubit>(
-            create: (_) => ShowCourtDataCubit(ApiService())),
-        BlocProvider<CourtUpdateCubit>(
-            create: (_) => CourtUpdateCubit(ApiService())),
         BlocProvider<IsPressedCubit>(create: (_) => IsPressedCubit()),
-        BlocProvider<UpdateDateCubit>(create: (_) => UpdateDateCubit()),
-        BlocProvider<ReferenceUploadDocCubit>(
-            create: (_) => ReferenceUploadDocCubit(ApiService())),
-        BlocProvider<ReferenceCheckUploadDoc>(
-            create: (_) => ReferenceCheckUploadDoc()),
-        BlocProvider<ReferenceDocShowDataCubit>(
-            create: (_) => ReferenceDocShowDataCubit(ApiService())),
-        BlocProvider<ReferenceDocUpdateCubit>(
-            create: (_) => ReferenceDocUpdateCubit(ApiService())),
-        BlocProvider<GstPanCinDocUploadCubit>(
-            create: (_) => GstPanCinDocUploadCubit(ApiService())),
-        BlocProvider<GstDocUpload>(create: (_) => GstDocUpload()),
-        BlocProvider<PanDocUpload>(create: (_) => PanDocUpload()),
-        BlocProvider<CinDocUpload>(create: (_) => CinDocUpload()),
-        BlocProvider<GstPanCinDocUpdateCubit>(
-            create: (_) => GstPanCinDocUpdateCubit(ApiService())),
-        BlocProvider<CourtAadhaarUpload>(create: (_) => CourtAadhaarUpload()),
-        BlocProvider<CourtPanUpload>(create: (_) => CourtPanUpload()),
-        BlocProvider<DriverDocFileUpload>(create: (_) => DriverDocFileUpload()),
-        BlocProvider<CourtDocUploadCubit>(
-            create: (_) => CourtDocUploadCubit(ApiService())),
-        BlocProvider<CourtDocUpdateCubit>(
-            create: (_) => CourtDocUpdateCubit(ApiService())),
-        BlocProvider<DriverDocUploadCubit>(
-            create: (_) => DriverDocUploadCubit(ApiService())),
-        BlocProvider<DrivingDocUpdateCubit>(
-            create: (_) => DrivingDocUpdateCubit(ApiService())),
         BlocProvider<UploadDocumentNonMumbai>(
             create: (_) => UploadDocumentNonMumbai()),
         BlocProvider<UploadDocumentMumbai>(
             create: (_) => UploadDocumentMumbai()),
         BlocProvider<PoliceStationCityIdCubit>(
             create: (_) => PoliceStationCityIdCubit(ApiService())),
-        BlocProvider<EducationDocsUploadCubitNew>(
-            create: (_) => EducationDocsUploadCubitNew(ApiService())),
-        BlocProvider<EducationDocsFileCubit>(
-            create: (_) => EducationDocsFileCubit()),
-        BlocProvider<EducationDocumentListCubit>(
-            create: (_) => EducationDocumentListCubit(ApiService())),
         BlocProvider<VerifyRequestEditCubit>(
             create: (_) => VerifyRequestEditCubit(ApiService())),
-        BlocProvider<EmploymentDocumentListCubit>(
-            create: (_) => EmploymentDocumentListCubit(ApiService())),
-        BlocProvider<EmploymentDocsFileCubit>(
-            create: (_) => EmploymentDocsFileCubit()),
-        BlocProvider<AddressListCubit>(
-            create: (_) => AddressListCubit(ApiService())),
-        BlocProvider<AddressDocsUploadCubitNew>(
-            create: (_) => AddressDocsUploadCubitNew(ApiService())),
-        BlocProvider<AddressDocsFileCubit>(
-            create: (_) => AddressDocsFileCubit()),
-        BlocProvider<AddressDocumentListCubit>(
-            create: (_) => AddressDocumentListCubit(ApiService())),
         BlocProvider<ApplyCouponCubit>(
             create: (_) => ApplyCouponCubit(ApiService())),
         BlocProvider<CheckOutStatusCheckingCubit>(
             create: (_) => CheckOutStatusCheckingCubit(ApiService())),
         BlocProvider<VerifyRequestReportCubit>(
             create: (_) => VerifyRequestReportCubit(ApiService())),
-        BlocProvider<PanDocsUploadCubitNew>(
-            create: (_) => PanDocsUploadCubitNew(ApiService())),
-        BlocProvider<PanDocsFileCubit>(create: (_) => PanDocsFileCubit()),
-        BlocProvider<PanDocsUpdateCubitNew>(
-            create: (_) => PanDocsUpdateCubitNew(ApiService())),
-        BlocProvider<PanDocsUpdateFileCubit>(
-            create: (_) => PanDocsUpdateFileCubit()),
       ],
       child: Builder(builder: (context) {
         return Sizer(builder: (BuildContext, Orientation, ScreenType) {

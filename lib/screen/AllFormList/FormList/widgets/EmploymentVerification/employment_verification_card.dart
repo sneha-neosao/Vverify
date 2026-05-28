@@ -24,6 +24,7 @@ import 'Model/employment_show_details_model.dart';
 import '../../../../VerificationForms/VerifyDeatils/Bloc/verify_details_cubit.dart';
 import '../../../../VerificationForms/VerifyDeatils/Bloc/verify_details_state.dart';
 import '../../../../VerificationPending/bloc/pendingDoc_cubit.dart';
+import '../../../../VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
 import '../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 
 class EmploymentVerificationCard extends StatefulWidget {
@@ -69,6 +70,8 @@ class _EmploymentVerificationCardState
 
   String? artefactImgUrl;
   String? caseUuidFromApi;
+  String? _uidFromList;
+  String? _employmentUuidFromList;
 
   @override
   void initState() {
@@ -198,7 +201,9 @@ class _EmploymentVerificationCardState
 
       if (isEditing) {
         final updateModel = EmploymentUpdateFormModel(
-          uid: widget.serviceData?['uid']?.toString() ?? "",
+          uid: (_uidFromList != null && _uidFromList!.isNotEmpty)
+              ? _uidFromList!
+              : widget.serviceData?['uid']?.toString() ?? "",
           request_id: widget.applicantData?['request_id']?.toString() ?? "",
           service_request_id:
               widget.serviceData?['service_request_id']?.toString() ?? "",
@@ -215,8 +220,10 @@ class _EmploymentVerificationCardState
               widget.applicantData?['case_uuid']?.toString() ??
               "",
           till_date: isTillDate ? 1 : 0,
-          employment_uuid:
-              widget.serviceData?['employment_uuid']?.toString() ?? "",
+          employment_uuid: (_employmentUuidFromList != null &&
+                  _employmentUuidFromList!.isNotEmpty)
+              ? _employmentUuidFromList!
+              : widget.serviceData?['employment_uuid']?.toString() ?? "",
         );
         _updateCubit.employmentUpdateForm(
           token: token,
@@ -269,7 +276,20 @@ class _EmploymentVerificationCardState
               if (state is EmployDataListSuccessState) {
                 final records = state.employListDataModel.data;
                 if (records != null && records.isNotEmpty) {
-                  final uid = records.first.uid ?? "";
+                  final first = records.first;
+                  final uid = (first.uid != null && first.uid!.isNotEmpty)
+                      ? first.uid!
+                      : "";
+                  final empUuid = (first.employment_uuid != null &&
+                          first.employment_uuid!.isNotEmpty)
+                      ? first.employment_uuid!
+                      : "";
+                  setState(() {
+                    _uidFromList = uid;
+                    _employmentUuidFromList = empUuid;
+                  });
+                  debugPrint('@@@@@@@@@@@@@list uid: $uid');
+                  debugPrint('@@@@@@@@@@@@@list employment_uuid: $empUuid');
                   if (uid.isNotEmpty) {
                     _fetchShowData(uid: uid);
                   }
@@ -864,11 +884,13 @@ class _EmploymentVerificationCardState
   void _refreshPendingDocs(BuildContext context) {
     final token = context.read<TokenCubit>().state;
     final customerId = context.read<IdCubit>().state;
+    final navState = context.read<PendingDocNavigationCubit>().state;
     context.read<PendingDocCubit>().getPendingDoc(
           token: token,
           customerId: int.tryParse(customerId) ?? 0,
           page: 1,
           limit: 100,
+          entityId: navState.entityId,
           isLoading: false,
         );
   }

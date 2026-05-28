@@ -12,13 +12,15 @@ import '../common_widgets.dart';
 import '../AadhaarVerificationDigilocker/bloc/aadhaar_ocr_cubit.dart';
 import '../AadhaarVerificationDigilocker/bloc/aadhaar_ocr_state.dart';
 import 'Models/driving_licence_show_details_model.dart';
+import 'Models/driving_licence_save_model.dart';
 import '../../../../VerificationPending/bloc/pendingDoc_cubit.dart';
+import '../../../../VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
+import '../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import 'Bloc/driving_licence_save_form_bloc/driving_licence_save_form_bloc.dart';
 import 'Bloc/driving_licence_save_form_bloc/driving_licence_save_form_state.dart';
 import 'Bloc/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
 import 'Bloc/driving_licence_show_details_bloc/driving_licence_show_details_state.dart';
-import '../../../../VerificationForms/DrvingLicence/Form/Blocs/driving_licence_update_bloc/driving_licence_update_form_cubit.dart';
-import '../../../../VerificationForms/DrvingLicence/Form/Blocs/driving_licence_update_bloc/driving_licence_update_form_state.dart';
+
 
 class DrivingLicenseCard extends StatefulWidget {
   final TextEditingController controller;
@@ -44,20 +46,23 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
   bool _isLoading = false;
   bool _isFetchingDetails = false;
   bool _isReadOnly = false;
+  bool _isEditing = false;
   Data? _verifiedDetails;
   bool _shouldShowDialog = false;
+  File? _documentFile;
+
+  Data? get serviceData =>
+      widget.serviceData == null ? null : Data.fromJson(widget.serviceData!);
 
   @override
   void initState() {
     super.initState();
-    final status =
-        widget.serviceData?['status']?.toString().toLowerCase() ?? "";
-    final uid = widget.serviceData?['uid']?.toString() ?? "";
+    final status = serviceData?.status?.toLowerCase() ?? "";
+    final uid = serviceData?.uid ?? "";
     if (status == "done" || status == "verified" || uid.isNotEmpty) {
       _isReadOnly = true;
-      final dlNumber =
-          widget.serviceData?['driver_licence_number']?.toString() ?? "";
-      final dob = widget.serviceData?['dob']?.toString() ?? "";
+      final dlNumber = serviceData?.driverLicenceNumber?.toString() ?? "";
+      final dob = serviceData?.dob?.toString() ?? "";
       if (dlNumber.isNotEmpty) {
         widget.controller.text = dlNumber;
       }
@@ -65,17 +70,16 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
         widget.dobController.text = dob;
       }
     }
-    _checkAndFetchDetails();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndFetchDetails();
+    });
   }
 
   void _checkAndFetchDetails({String? uidFromResponse}) async {
-    final status =
-        widget.serviceData?['status']?.toString().toLowerCase() ?? "";
-    final uid = uidFromResponse ?? widget.serviceData?['uid']?.toString() ?? "";
+    final status = serviceData?.status?.toLowerCase() ?? "";
+    final uid = uidFromResponse ?? serviceData?.uid ?? "";
     debugPrint("Status: $status");
     debugPrint("Uid: $uid");
-    // When uidFromResponse is provided (post-save), always proceed regardless
-    // of serviceData status — the record was just created/updated.
     final shouldFetch = uidFromResponse != null && uidFromResponse.isNotEmpty ||
         status == "done" ||
         status == "verified" ||
@@ -136,44 +140,31 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
     }
 
     try {
-      final updateCubit = context.read<DrivingLicenceUpdateCubit>();
       final saveCubit = context.read<DrivingLicenceBloc>();
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? "";
       final customerId = prefs.getString('id') ?? "";
 
       final requestId = widget.applicantData?['request_id']?.toString() ?? "";
-      final serviceRequestId =
-          widget.serviceData?['service_request_id']?.toString() ?? "";
+      final serviceRequestId = serviceData?.serviceRequestId?.toString() ?? "";
 
       if (token.isEmpty) {
         throw Exception(
             "Authentication token is missing. Please log in again.");
       }
 
-      final existingUid =
-          _verifiedDetails?.uid ?? widget.serviceData?['uid']?.toString() ?? "";
-      final isUpdate = existingUid.isNotEmpty;
-
-      if (isUpdate) {
-        updateCubit.drivingLicenceUpdateData(
-          token: token,
-          customer_id: customerId,
-          request_id: requestId,
-          service_request_id: serviceRequestId,
-          driver_licence_number: dlNumber,
-          dob: dob,
-        );
-      } else {
-        saveCubit.drivingLicenceSaveData(
-          token: token,
-          customer_id: customerId,
-          request_id: requestId,
-          service_request_id: serviceRequestId,
-          driver_licence_number: dlNumber,
-          dob: dob,
-        );
-      }
+      final serviceId = serviceData?.serviceId?.toString() ?? "8";
+      saveCubit.drivingLicenceSaveData(
+        token: token,
+        customer_id: customerId,
+        request_id: requestId,
+        service_request_id: serviceRequestId,
+        service_id: serviceId,
+        document_type: "drive",
+        driver_licence_number: dlNumber,
+        dob: dob,
+        document_scan_pdf: _documentFile,
+      );
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -190,50 +181,71 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
     }
   }
 
-  void _showVerificationResultDialog(
-      BuildContext context, Map<String, dynamic> responseData) {
-    final rawData = responseData['data'];
-    final dataMap = rawData is Map
-        ? Map<String, dynamic>.from(rawData)
-        : <String, dynamic>{};
+  void _showVerificationResultDialog(BuildContext context, dynamic model) {
+    String name = "";
+    String dlNumber = "";
+    String validation = "N/A";
+    String dob = "";
+    String address =
+        "Plot No-38, Flat No-8, 2nd Floor, Krishana Priya Appt Tapodham Colony Talegaon Dabh Talegaon Dabhade (R) Pune Maharashtra 410507";
+    String pdfUrl = "";
 
-    final name = (dataMap['name']?.toString() ??
-            dataMap['name_as_per_document'] ??
-            dataMap['full_name'] ??
-            dataMap['driver_name'] ??
-            "${widget.applicantData?['first_name'] ?? ''} ${widget.applicantData?['middle_name'] ?? ''} ${widget.applicantData?['last_name'] ?? ''}"
-                .trim())
-        .toString()
-        .trim();
+    if (model is DrivingLicenceSaveModel) {
+      final data = model.data;
+      if (data != null) {
+        dlNumber = data.documentNumber ?? "";
+        validation = data.status ?? "N/A";
+        dob = data.dob ?? "";
+        pdfUrl = data.documentPdfFile ?? "";
+      }
+    } else if (model is DrivingLicenceShowDataModel) {
+      final data = model.data;
+      if (data != null) {
+        dlNumber = data.documentNumber?.toString() ??
+            data.driverLicenceNumber?.toString() ??
+            "";
+        validation = data.status ?? "N/A";
+        dob = data.dob?.toString() ?? "";
+        pdfUrl = data.documentPdfFile ?? data.dataDocument ?? "";
+      }
+    } else if (model is Map) {
+      final rawData = model['data'];
+      final dataMap = rawData is Map
+          ? Map<String, dynamic>.from(rawData)
+          : <String, dynamic>{};
+      name = (dataMap['name'] ??
+              dataMap['name_as_per_document'] ??
+              dataMap['full_name'] ??
+              dataMap['driver_name'] ??
+              "")
+          .toString();
+      dlNumber =
+          (dataMap['document_number'] ?? dataMap['driver_licence_number'] ?? "")
+              .toString();
+      validation =
+          (dataMap['validation'] ?? dataMap['status'] ?? "N/A").toString();
+      dob = (dataMap['dob'] ?? "").toString();
+      address = (dataMap['address'] ??
+              dataMap['permanent_address'] ??
+              dataMap['current_address'] ??
+              address)
+          .toString();
+      pdfUrl = (model['pdf_url'] ??
+              dataMap['data_document'] ??
+              dataMap['document_pdf_file'] ??
+              "")
+          .toString();
+    }
 
-    final finalName = name.isNotEmpty ? name : "PRIYANKA SHRENIK JADHAV";
-
-    final dlNumber = (dataMap['driver_licence_number'] ??
-            _verifiedDetails?.driverLicenceNumber ??
-            widget.controller.text)
-        .toString()
-        .trim();
-    final finalDlNumber = dlNumber.isNotEmpty ? dlNumber : "MH1420220012724";
-
-    final validation = (dataMap['validation'] ?? "N/A").toString().trim();
-
-    final dob =
-        (dataMap['dob'] ?? _verifiedDetails?.dob ?? widget.dobController.text)
-            .toString()
+    final finalName = name.trim().isNotEmpty
+        ? name.trim()
+        : "${widget.applicantData?['first_name'] ?? ''} ${widget.applicantData?['middle_name'] ?? ''} ${widget.applicantData?['last_name'] ?? ''}"
             .trim();
+
+    final finalNameOrPlaceholder =
+        finalName.isNotEmpty ? finalName : "PRIYANKA SHRENIK JADHAV";
+    final finalDlNumber = dlNumber.isNotEmpty ? dlNumber : "MH1420220012724";
     final finalDob = dob.isNotEmpty ? dob : "14-05-1991";
-
-    final address = (dataMap['address'] ??
-            dataMap['permanent_address'] ??
-            dataMap['current_address'] ??
-            "Plot No-38, Flat No-8, 2nd Floor, Krishana Priya Appt Tapodham Colony Talegaon Dabh Talegaon Dabhade (R) Pune Maharashtra 410507")
-        .toString()
-        .trim();
-
-    final pdfUrl = _verifiedDetails?.dataDocument ??
-        responseData['pdf_url'] ??
-        dataMap['data_document'] ??
-        "";
 
     showDialog(
       context: context,
@@ -323,7 +335,7 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
                   const SizedBox(height: 16),
                   _buildDialogInfoBox(
                     label: "NAME AS PER DOCUMENT",
-                    value: finalName.toUpperCase(),
+                    value: finalNameOrPlaceholder.toUpperCase(),
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -498,22 +510,47 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
     }
   }
 
+  Widget _buildDlField(dynamic state) {
+    return Stack(
+      alignment: Alignment.centerRight,
+      children: [
+        form_widget(
+          controller: widget.controller,
+          titleText: "Driving License Number",
+          hintText: "Enter Driving License Number (e.g. MH1220101234567)",
+          textInputType: TextInputType.text,
+          isReadOnly: _isReadOnly,
+          maskFormatter: [
+            LengthLimitingTextInputFormatter(16),
+          ],
+        ),
+        if (state is AadhaarOcrLoading)
+          const Padding(
+            padding: EdgeInsets.only(top: 20.0, right: 12.0),
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildDobField(BuildContext context) {
+    return FormDateWidget(
+      controller: widget.dobController,
+      titleText: "Date of Birth",
+      hintText: "DD-MM-YYYY",
+      isReadOnly: _isReadOnly,
+      onTap: _isReadOnly ? null : () => _selectDate(context),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_isFetchingDetails) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24.0),
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFF4511E)),
-          ),
-        ),
-      );
-    }
-
-    String currentStatus = _verifiedDetails?.status ??
-        widget.serviceData?['status']?.toString() ??
-        "PENDING";
+    String currentStatus =
+        _verifiedDetails?.status ?? serviceData?.status ?? "PENDING";
 
     if (currentStatus.trim().isEmpty || currentStatus == "-") {
       currentStatus = "Pending";
@@ -535,11 +572,8 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
                 });
               }
               final resData = state.data;
-              final statusRaw = resData["status"];
-              final statusCode = statusRaw is int
-                  ? statusRaw
-                  : int.tryParse(statusRaw?.toString() ?? "") ?? 0;
-              final message = resData["message"]?.toString();
+              final statusCode = resData.status ?? 0;
+              final message = resData.message;
 
               if (statusCode == 200) {
                 if (mounted) {
@@ -552,17 +586,9 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
                   );
                 }
 
-                final dataMap = resData["data"] is Map
-                    ? Map<String, dynamic>.from(resData["data"] as Map)
-                    : <String, dynamic>{};
-                final existingUid = _verifiedDetails?.uid ??
-                    widget.serviceData?['uid']?.toString() ??
-                    "";
-                final savedUid = (resData["uid"]?.toString() ?? "").isNotEmpty
-                    ? resData["uid"].toString()
-                    : (dataMap["uid"]?.toString() ?? "").isNotEmpty
-                        ? dataMap["uid"].toString()
-                        : existingUid;
+                final existingUid =
+                    _verifiedDetails?.uid ?? serviceData?.uid ?? "";
+                final savedUid = resData.data?.uid ?? existingUid;
 
                 if (savedUid.isEmpty) {
                   if (mounted) {
@@ -574,18 +600,33 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
                   return;
                 }
 
+                _showVerificationResultDialog(
+                  context,
+                  resData,
+                );
+
+                if (mounted) {
+                  setState(() {
+                    _shouldShowDialog = false;
+                    _isReadOnly = true;
+                    _isEditing = false;
+                  });
+                }
+
                 _checkAndFetchDetails(uidFromResponse: savedUid);
 
-                final pendingDocCubit = context.read<PendingDocCubit>();
-                final prefs = await SharedPreferences.getInstance();
-                final token = prefs.getString('token') ?? "";
-                final currentCustomerId = prefs.getString('id') ?? "";
-                if (token.isNotEmpty) {
+                if (mounted) {
+                  final pendingDocCubit = context.read<PendingDocCubit>();
+                  final token = context.read<TokenCubit>().state;
+                  final currentCustomerId = context.read<IdCubit>().state;
+                  final navState =
+                      context.read<PendingDocNavigationCubit>().state;
                   pendingDocCubit.getPendingDoc(
                     token: token,
                     customerId: int.tryParse(currentCustomerId) ?? 0,
                     page: 1,
                     limit: 100,
+                    entityId: navState.entityId,
                     isLoading: false,
                   );
                 }
@@ -618,98 +659,7 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
             }
           },
         ),
-        BlocListener<DrivingLicenceUpdateCubit, DrivingLicenceUpdateState>(
-          listener: (context, state) async {
-            if (state is DrivingLicenceUpdateSuccessState) {
-              if (mounted) {
-                setState(() {
-                  _isLoading = false;
-                });
-              }
-              final resData = state.data;
-              final statusRaw = resData["status"];
-              final statusCode = statusRaw is int
-                  ? statusRaw
-                  : int.tryParse(statusRaw?.toString() ?? "") ?? 0;
-              final message = resData["message"]?.toString();
 
-              if (statusCode == 200) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(message ??
-                          "Driving License details updated successfully."),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                }
-
-                final dataMap = resData["data"] is Map
-                    ? Map<String, dynamic>.from(resData["data"] as Map)
-                    : <String, dynamic>{};
-                final existingUid = _verifiedDetails?.uid ??
-                    widget.serviceData?['uid']?.toString() ??
-                    "";
-                final savedUid = (resData["uid"]?.toString() ?? "").isNotEmpty
-                    ? resData["uid"].toString()
-                    : (dataMap["uid"]?.toString() ?? "").isNotEmpty
-                        ? dataMap["uid"].toString()
-                        : existingUid;
-
-                if (savedUid.isEmpty) {
-                  if (mounted) {
-                    setState(() {
-                      _isReadOnly = true;
-                      _shouldShowDialog = false;
-                    });
-                  }
-                  return;
-                }
-
-                _checkAndFetchDetails(uidFromResponse: savedUid);
-
-                final pendingDocCubit = context.read<PendingDocCubit>();
-                final prefs = await SharedPreferences.getInstance();
-                final token = prefs.getString('token') ?? "";
-                final currentCustomerId = prefs.getString('id') ?? "";
-                if (token.isNotEmpty) {
-                  pendingDocCubit.getPendingDoc(
-                    token: token,
-                    customerId: int.tryParse(currentCustomerId) ?? 0,
-                    page: 1,
-                    limit: 100,
-                    isLoading: false,
-                  );
-                }
-              } else {
-                if (mounted) {
-                  setState(() {
-                    _shouldShowDialog = false;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(message ?? "Update failed."),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              }
-            } else if (state is DrivingLicenceUpdateErrorState) {
-              if (mounted) {
-                setState(() {
-                  _isLoading = false;
-                  _shouldShowDialog = false;
-                });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            }
-          },
-        ),
         BlocListener<DrivingLicenceShowDataCubit, DrivingLicenceShowDataState>(
           listener: (context, state) {
             if (state is DrivingLicenceShowDataLoadingState) {
@@ -738,7 +688,7 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
                 if (_shouldShowDialog) {
                   _showVerificationResultDialog(
                     context,
-                    showResponse.toJson(),
+                    showResponse,
                   );
                   setState(() {
                     _shouldShowDialog = false;
@@ -790,6 +740,17 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
             }
           },
           builder: (context, state) {
+            if (_isFetchingDetails) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(24.0),
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFFF4511E)),
+                  ),
+                ),
+              );
+            }
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -884,65 +845,30 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
                       ),
                     );
                   }),
-                Stack(
-                  alignment: Alignment.centerRight,
-                  children: [
-                    form_widget(
-                      controller: widget.controller,
-                      titleText: "DL Number",
-                      hintText: "Enter Driving License Number",
-                      textInputType: TextInputType.text,
-                      isReadOnly: _isReadOnly,
-                      maskFormatter: [
-                        LengthLimitingTextInputFormatter(16),
-                      ],
-                    ),
-                    if (state is AadhaarOcrLoading)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 20.0, right: 12.0),
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final bool isMobile = constraints.maxWidth < 600;
+                    if (isMobile) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildDlField(state),
+                          const SizedBox(height: 16),
+                          _buildDobField(context),
+                        ],
+                      );
+                    } else {
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: _buildDlField(state)),
+                          const SizedBox(width: 16),
+                          Expanded(child: _buildDobField(context)),
+                        ],
+                      );
+                    }
+                  },
                 ),
-                FormDateWidget(
-                  controller: widget.dobController,
-                  titleText: "Date of Birth",
-                  hintText: "DD-MM-YYYY",
-                  isReadOnly: _isReadOnly,
-                  onTap: _isReadOnly ? null : () => _selectDate(context),
-                ),
-                if (state is AadhaarOcrSuccess) ...[
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.amber.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.amber.shade200),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.info_outline,
-                            size: 18, color: Colors.amber.shade800),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "Note: Auto-filled details may be inaccurate—please verify before submitting.",
-                            style: GoogleFonts.outfit(
-                              fontSize: 11,
-                              color: Colors.amber.shade900,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
                 if (!_isReadOnly) ...[
                   const SizedBox(height: 20),
                   Text(
@@ -958,10 +884,16 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
                     storageKey: 'dl_file_persist',
                     onFilePicked: (file) {
                       if (file != null) {
+                        setState(() {
+                          _documentFile = File(file.path!);
+                        });
                         context.read<AadhaarOcrCubit>().extractAadhaarDetails(
                             File(file.path!),
                             documentType: "driving_licence");
                       } else {
+                        setState(() {
+                          _documentFile = null;
+                        });
                         widget.controller.clear();
                         widget.dobController.clear();
                         context.read<AadhaarOcrCubit>().reset();
@@ -978,7 +910,53 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
                   ),
                 ],
                 const SizedBox(height: 24),
-                if (!_isReadOnly)
+                if (!_isReadOnly && _isEditing)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      CustomButton(
+                        text: "Cancel",
+                        width: 120,
+                        height: 48,
+                        iconSize: 18,
+                        onTap: () {
+                          setState(() {
+                            _isReadOnly = true;
+                            _isEditing = false;
+                            final originalDl = _verifiedDetails
+                                    ?.driverLicenceNumber
+                                    ?.toString() ??
+                                serviceData?.driverLicenceNumber?.toString() ??
+                                "";
+                            final originalDob =
+                                _verifiedDetails?.dob?.toString() ??
+                                    serviceData?.dob?.toString() ??
+                                    "";
+                            widget.controller.text = originalDl;
+                            widget.dobController.text = originalDob;
+                          });
+                        },
+                        gradientColors: const [
+                          Colors.grey,
+                          Colors.blueGrey,
+                        ],
+                      ),
+                      const SizedBox(width: 16),
+                      CustomButton(
+                        text: _isLoading ? "Saving..." : "Save",
+                        width: 120,
+                        height: 48,
+                        prefixIcon: _isLoading ? null : Icons.save,
+                        iconSize: 18,
+                        gradientColors: const [
+                          Color(0xFFF4511E),
+                          Color(0xFFFFB74D),
+                        ],
+                        onTap: _isLoading ? null : _submitForm,
+                      ),
+                    ],
+                  )
+                else if (!_isReadOnly)
                   Align(
                     alignment: Alignment.centerRight,
                     child: CustomButton(
@@ -1010,6 +988,7 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
                       onTap: () {
                         setState(() {
                           _isReadOnly = false;
+                          _isEditing = true;
                         });
                       },
                     ),
@@ -1021,7 +1000,9 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
                       padding: const EdgeInsets.only(bottom: 2.0),
                       child: InkWell(
                         onTap: () {
-                          final pdfUrl = _verifiedDetails?.dataDocument ?? "";
+                          final pdfUrl = _verifiedDetails?.dataDocument ??
+                              serviceData?.dataDocument ??
+                              "";
                           if (pdfUrl.isNotEmpty) {
                             context.pushNamed(
                               'preview',

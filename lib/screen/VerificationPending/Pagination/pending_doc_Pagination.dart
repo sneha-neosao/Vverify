@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/all_entities_bloc/all_entities_state.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_state.dart';
@@ -16,11 +17,11 @@ import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/ver
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_state.dart';
 import '../../../commonComponent/custom_button.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/all_entities_bloc/all_entities_cubit.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Models/all_entities_model.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Screens/services_and_price_screen.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/entities_drawer.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/dashboard.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
-
-
 
 class PendingDocPagination extends StatefulWidget {
   final String? initialStatus;
@@ -53,7 +54,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
   @override
   void initState() {
     super.initState();
-    
+
     // Sync initial routing parameters to navigation Cubit on startup
     final navCubit = context.read<PendingDocNavigationCubit>();
     if (widget.initialEntityId != null) {
@@ -63,19 +64,25 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
         groupId: widget.initialGroupId,
       );
     } else {
-      navCubit.clear();
+      if (navCubit.state.entityId == null) {
+        navCubit.clear();
+      }
     }
 
-    if (widget.initialGroupId == 1) {
+    final int? activeGroupId = widget.initialGroupId ?? navCubit.state.groupId;
+    if (activeGroupId == 1) {
       _selectedGroup = "Company Check";
-    } else if (widget.initialGroupId == 2) {
+    } else if (activeGroupId == 2) {
       _selectedGroup = "Personal Check";
     }
 
     _searchController.addListener(_onSearchChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final token = context.read<TokenCubit>().state;
-      context.read<AllEntitiesCubit>().getAllEntities(token: token);
+      final customerId = context.read<IdCubit>().state;
+      context
+          .read<AllEntitiesCubit>()
+          .getAllEntities(token: token, customer_id: customerId);
 
       final filterState = context.read<PendingDocNavigationCubit>().state;
       if (filterState.entityId != null) {
@@ -172,623 +179,735 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
               currentEntityId: filterState.entityId?.toString() ?? "",
               navigateToPendingDoc: true,
             ),
-        body: BlocListener<VerifyRequestReportCubit, VerifyRequestReportState>(
-          listener: (context, state) {
-            if (state is VerifyRequestReportLoadingState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Downloading Report..."),
-                  duration: Duration(seconds: 1),
-                ),
-              );
-            } else if (state is VerifyRequestReportDownloadedState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Report downloaded to: ${state.filePath}"),
-                  backgroundColor: Colors.green,
-                  duration: const Duration(seconds: 3),
-                ),
-              );
-              // ── Show in app review ──
-              context.pushNamed(
-                'fileView',
-                extra: {
-                  'filePath': state.filePath,
-                  'fileName': state.filePath.split('/').last,
-                },
-              );
-            } else if (state is VerifyRequestReportErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Error: ${state.message}"),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 4.0, top: 16.0, right: 16.0, bottom: 16.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.menu,
-                        color: Theme.of(context).primaryColorLight,
-                      ),
-                      onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+            body: BlocListener<VerifyRequestReportCubit,
+                VerifyRequestReportState>(
+              listener: (context, state) {
+                if (state is VerifyRequestReportLoadingState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Downloading Report..."),
+                      duration: Duration(seconds: 1),
                     ),
-                    const SizedBox(width: 8),
-                    Text("Verification ",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(
-                                color: Theme.of(context).primaryColorLight)),
-                  ],
-                ),
-              ),
-              // ── Search and Filter Header ──
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: TextField(
-                        controller: _searchController,
-                        textAlign: TextAlign.center,
-                        onSubmitted: (value) => _fetchData(),
-                        decoration: InputDecoration(
-                          hintText: "Search Service...",
-                          hintStyle: GoogleFonts.outfit(
-                              fontSize: 14, color: Colors.grey.shade400),
-                          // prefixIcon: Icon(Icons.search,
-                          //     size: 20, color: Colors.grey.shade400),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                      ),
+                  );
+                } else if (state is VerifyRequestReportDownloadedState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Report downloaded to: ${state.filePath}"),
+                      backgroundColor: Colors.green,
+                      duration: const Duration(seconds: 3),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        height: 45,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                          border: Border.all(
-                              color: Theme.of(context)
-                                  .dividerColor
-                                  .withOpacity(0.1)),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: _selectedGroup,
-                            isExpanded: true,
-                            icon: Icon(Icons.keyboard_arrow_down,
-                                color: Theme.of(context).iconTheme.color),
-                            dropdownColor: Theme.of(context).cardColor,
-                            style: GoogleFonts.outfit(
-                                fontSize: 14,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.color),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _selectedGroup = newValue!;
-                              });
-                              _fetchData();
-                            },
-                            items: _groups
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
+                  );
+                  // ── Show in app review ──
+                  context.pushNamed(
+                    'fileView',
+                    extra: {
+                      'filePath': state.filePath,
+                      'fileName': state.filePath.split('/').last,
+                    },
+                  );
+                } else if (state is VerifyRequestReportErrorState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Error: ${state.message}"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 4.0, top: 16.0, right: 16.0, bottom: 16.0),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.menu,
+                            color: Theme.of(context).primaryColorLight,
                           ),
+                          onPressed: () =>
+                              _scaffoldKey.currentState?.openDrawer(),
                         ),
-                      ),
+                        const SizedBox(width: 8),
+                        Text("Verification ",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                    color:
+                                        Theme.of(context).primaryColorLight)),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                  // ── Search and Filter Header ──
+                  // Padding(
+                  //   padding: const EdgeInsets.all(16.0),
+                  //   child: Row(
+                  //     children: [
+                  //       Expanded(
+                  //         flex: 2,
+                  //         child: TextField(
+                  //           controller: _searchController,
+                  //           textAlign: TextAlign.center,
+                  //           onSubmitted: (value) => _fetchData(),
+                  //           decoration: InputDecoration(
+                  //             hintText: "Search Service...",
+                  //             hintStyle: GoogleFonts.outfit(
+                  //                 fontSize: 14, color: Colors.grey.shade400),
+                  //             // prefixIcon: Icon(Icons.search,
+                  //             //     size: 20, color: Colors.grey.shade400),
+                  //             border: OutlineInputBorder(
+                  //                 borderRadius: BorderRadius.circular(12)),
+                  //             contentPadding:
+                  //                 const EdgeInsets.symmetric(vertical: 12),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       const SizedBox(width: 12),
+                  //       Expanded(
+                  //         child: Container(
+                  //           height: 45,
+                  //           padding: const EdgeInsets.symmetric(horizontal: 12),
+                  //           decoration: BoxDecoration(
+                  //             color: Theme.of(context).cardColor,
+                  //             borderRadius: BorderRadius.circular(12),
+                  //             boxShadow: [
+                  //               BoxShadow(
+                  //                 color: Colors.black.withOpacity(0.04),
+                  //                 blurRadius: 10,
+                  //                 offset: const Offset(0, 4),
+                  //               ),
+                  //             ],
+                  //             border: Border.all(
+                  //                 color: Theme.of(context)
+                  //                     .dividerColor
+                  //                     .withOpacity(0.1)),
+                  //           ),
+                  //           child: DropdownButtonHideUnderline(
+                  //             child: DropdownButton<String>(
+                  //               value: _selectedGroup,
+                  //               isExpanded: true,
+                  //               icon: Icon(Icons.keyboard_arrow_down,
+                  //                   color: Theme.of(context).iconTheme.color),
+                  //               dropdownColor: Theme.of(context).cardColor,
+                  //               style: GoogleFonts.outfit(
+                  //                   fontSize: 14,
+                  //                   color: Theme.of(context)
+                  //                       .textTheme
+                  //                       .bodyMedium
+                  //                       ?.color),
+                  //               onChanged: (String? newValue) {
+                  //                 setState(() {
+                  //                   _selectedGroup = newValue!;
+                  //                 });
+                  //                 _fetchData();
+                  //               },
+                  //               items: _groups.map<DropdownMenuItem<String>>(
+                  //                   (String value) {
+                  //                 return DropdownMenuItem<String>(
+                  //                   value: value,
+                  //                   child: Text(value),
+                  //                 );
+                  //               }).toList(),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
 
-              // ── Main List ──
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () => _fetchData(),
-                  child: BlocBuilder<PendingDocCubit, PendingDocState>(
+                  // ── Buy Service Navigation Button ──
+                  BlocBuilder<AllEntitiesCubit, AllEntitiesState>(
                     builder: (context, state) {
-                      if (state is PendingDocLoadingState) {
-                        return Skeletonizer(
-                          enabled: true,
-                          child: ListView.builder(
-                            itemCount: 5,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            itemBuilder: (context, index) => Container(
-                              margin: const EdgeInsets.only(bottom: 16),
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const ListTile(
-                                leading: CircleAvatar(),
-                                title: Text("Loading Verification..."),
-                                subtitle: Text("Please wait a moment"),
-                              ),
-                            ),
-                          ),
+                      String entityName = "Service";
+                      if (state is AllEntitiesSuccessState) {
+                        final list = state.allEntitiesModel.data ?? [];
+                        final match = list.firstWhere(
+                          (e) => e.id == filterState.entityId,
+                          orElse: () => AllEntityData(entityName: "Service"),
                         );
-                      } else if (state is PendingDocErrorState) {
-                        return Center(child: Text(state.message));
-                      } else if (state is PendingDocSuccessState) {
-                        final data = state.pendingDocModel.data ?? [];
-
-                        if (data.isEmpty) {
-                          return const Center(child: Text("No data found"));
+                        if (match.entityName != null &&
+                            match.entityName!.isNotEmpty) {
+                          entityName = match.entityName!;
                         }
-                        return ListView.builder(
-                          itemCount: data.length,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemBuilder: (context, index) {
-                            final item = data[index];
-                            final isExpanded = _expandedIndex == index;
+                      }
 
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 16),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey.shade200),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.03),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  // Card Header
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _expandedIndex =
-                                            isExpanded ? -1 : index;
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.light
-                                            ? const Color(0xFFF0F2F5)
-                                            : Colors.grey.shade900,
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: const Radius.circular(12),
-                                          topRight: const Radius.circular(12),
-                                          bottomLeft: isExpanded
-                                              ? Radius.zero
-                                              : const Radius.circular(12),
-                                          bottomRight: isExpanded
-                                              ? Radius.zero
-                                              : const Radius.circular(12),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              (item.companyName != null &&
-                                                      item.companyName!
-                                                          .isNotEmpty)
-                                                  ? item.companyName!
-                                                  : ((item.first_name != null &&
-                                                              item.first_name!
-                                                                  .isNotEmpty) ||
-                                                          (item.last_name !=
-                                                                  null &&
-                                                              item.last_name!
-                                                                  .isNotEmpty))
-                                                      ? "${item.first_name ?? ""} ${item.last_name ?? ""}"
-                                                          .trim()
-                                                      : item.entity
-                                                              ?.entityName ??
-                                                          "N/A",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall!,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  final token = context
-                                                      .read<TokenCubit>()
-                                                      .state;
-                                                  context
-                                                      .read<
-                                                          VerifyRequestReportCubit>()
-                                                      .verifyRequestReport(
-                                                        token: token,
-                                                        case_uuid:
-                                                            item.uuid ?? "",
-                                                      );
-                                                },
-                                                child: _buildHeaderIcon(
-                                                    Icons.download,
-                                                    const Color(0xFF3F51B5)),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              if (item.detailsUpdated == 1) ...[
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    _showFormDialog(item, null);
-                                                  },
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 6),
-                                                    child: _buildHeaderIcon(
-                                                        Icons.edit,
-                                                        const Color(
-                                                            0xFF3F51B5)),
-                                                  ),
-                                                ),
-                                              ],
-                                              _buildStatusIcon(item),
-                                              const SizedBox(width: 8),
-                                              Icon(
-                                                isExpanded
-                                                    ? Icons.keyboard_arrow_up
-                                                    : Icons.keyboard_arrow_down,
-                                                color: Theme.of(context)
-                                                    .iconTheme
-                                                    .color,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Expandable Content
-                                  if (isExpanded)
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // Action Button
-                                          Align(
-                                              alignment: Alignment.centerRight,
-                                              child: CustomButton(
-                                                  onTap: () {
-                                                    if (item.detailsUpdated ==
-                                                        1) {
-                                                      context.pushNamed(
-                                                        'formList',
-                                                        extra: {
-                                                          'applicantData':
-                                                              item.toJson(),
-                                                          'serviceNavigate': item
-                                                                  .services
-                                                                  ?.first
-                                                                  .serviceNavigate ??
-                                                              "",
-                                                          'serviceTitle': item
-                                                                  .services
-                                                                  ?.first
-                                                                  .serviceTitle ??
-                                                              "Verification",
-                                                        },
-                                                      );
-                                                    } else {
-                                                      _showFormDialog(item,
-                                                          item.services?.first);
-                                                    }
-                                                  },
-                                                  text: item.detailsUpdated == 1
-                                                      ? "VIEW ${item.services?.first.serviceTitle?.toUpperCase() ?? "DOCUMENTS"}"
-                                                      : "+ ADD ${item.entity?.entityName?.toUpperCase()}",
-                                                  width: 200,
-                                                  height: 40,
-                                                  gradientColors: const [
-                                                    Color(0xFFFF7043),
-                                                    Color(0xFFFB8C00),
-                                                  ],
-                                                  textStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall!
-                                                      .copyWith(
-                                                          color: Colors.white,
-                                                          fontSize: 12))),
-                                          const SizedBox(height: 24),
-
-                                          // Services Grid
-                                          GridView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            itemCount:
-                                                (item.services ?? []).length,
-                                            gridDelegate:
-                                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 3,
-                                              crossAxisSpacing: 10,
-                                              mainAxisSpacing: 20,
-                                              childAspectRatio: 0.65,
-                                            ),
-                                            itemBuilder: (context, sIndex) {
-                                              final service =
-                                                  item.services![sIndex];
-                                              // Resolve the single source-of-truth status
-                                              final effectiveStatus =
-                                                  _effectiveStatus(
-                                                      service.status,
-                                                      item.caseStatus);
-                                              return InkWell(
-                                                onTap: () {
-                                                  if (item.detailsUpdated ==
-                                                      1) {
-                                                    context.pushNamed(
-                                                      'formList',
-                                                      extra: {
-                                                        'applicantData':
-                                                            item.toJson(),
-                                                        'serviceNavigate':
-                                                            service
-                                                                .serviceNavigate,
-                                                        'serviceTitle': service
-                                                            .serviceTitle,
-                                                      },
-                                                    );
-                                                  } else {
-                                                    _showFormDialog(
-                                                        item, service);
-                                                  }
-                                                },
-                                                child: Column(
-                                                  children: [
-                                                    Stack(
-                                                      clipBehavior: Clip.none,
-                                                      children: [
-                                                        Container(
-                                                          height: 70,
-                                                          width: 70,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(12),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .cardColor,
-                                                            border: Border.all(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .dividerColor),
-                                                            boxShadow: [
-                                                              BoxShadow(
-                                                                color: Colors
-                                                                    .black
-                                                                    .withOpacity(
-                                                                        0.05),
-                                                                blurRadius: 10,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          child: Image.network(
-                                                            service.serviceIcon ??
-                                                                "",
-                                                            errorBuilder: (c, e,
-                                                                    s) =>
-                                                                const Icon(
-                                                                    Icons
-                                                                        .description,
-                                                                    color: Colors
-                                                                        .grey),
-                                                          ),
-                                                        ),
-                                                        // ── Status Dot Badge (top-right) ──
-                                                        Positioned(
-                                                          right: 0,
-                                                          top: 0,
-                                                          child: Container(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(4),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: _statusDotColor(
-                                                                  effectiveStatus),
-                                                              shape: BoxShape
-                                                                  .circle,
-                                                            ),
-                                                            child: Icon(
-                                                              _statusDotIcon(
-                                                                  effectiveStatus),
-                                                              color:
-                                                                  Colors.white,
-                                                              size: 10,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        // ── Download Button (bottom-right) ──
-                                                        if (_showDownloadBtn(
-                                                            service.status,
-                                                            item.caseStatus))
-                                                          Positioned(
-                                                            right: -2,
-                                                            bottom: -2,
-                                                            child: InkWell(
-                                                              onTap: () {
-                                                                final token =
-                                                                    context
-                                                                        .read<
-                                                                            TokenCubit>()
-                                                                        .state;
-                                                                context
-                                                                    .read<
-                                                                        VerifyRequestReportCubit>()
-                                                                    .verifyServiceReport(
-                                                                      token:
-                                                                          token,
-                                                                      uuid: item
-                                                                              .uuid ??
-                                                                          "",
-                                                                      service_id:
-                                                                          service.serviceRequestId ??
-                                                                              0,
-                                                                      service_name:
-                                                                          service.serviceTitle ??
-                                                                              "Service",
-                                                                    );
-                                                              },
-                                                              child: Container(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(6),
-                                                                decoration:
-                                                                    const BoxDecoration(
-                                                                  color: Colors
-                                                                      .blue,
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                  boxShadow: [
-                                                                    BoxShadow(
-                                                                      color: Colors
-                                                                          .black12,
-                                                                      blurRadius:
-                                                                          4,
-                                                                      offset:
-                                                                          Offset(
-                                                                              0,
-                                                                              2),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                child:
-                                                                    const Icon(
-                                                                  Icons
-                                                                      .file_download,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  size: 14,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 8),
-                                                    // ── Service Title ──
-                                                    SizedBox(
-                                                      height: 32,
-                                                      child: Text(
-                                                        service.serviceTitle
-                                                                ?.toUpperCase() ??
-                                                            "",
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style:
-                                                            GoogleFonts.outfit(
-                                                          fontSize: 11,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodyMedium
-                                                                  ?.color,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    // ── Status Chip ──
-                                                    Builder(builder: (_) {
-                                                      final chips =
-                                                          _statusChipColors(
-                                                              effectiveStatus);
-                                                      return Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 4),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: chips[1],
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
-                                                          border: Border.all(
-                                                              color: chips[2]),
-                                                        ),
-                                                        child: Text(
-                                                          _statusLabel(
-                                                              effectiveStatus),
-                                                          style: GoogleFonts
-                                                              .outfit(
-                                                            fontSize: 10,
-                                                            color: chips[0],
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                ],
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                            left: 8.0, right: 8.0, bottom: 16.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ServicesAndPrice(
+                                  entity_id: filterState.entityId!.toString(),
+                                ),
                               ),
                             );
                           },
-                        );
-                      }
-                      return const SizedBox();
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 8),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFFF5200), Color(0xFFFF7E3E)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      const Color(0xFFFF5200).withOpacity(0.15),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    "Buy $entityName Services",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: GoogleFonts.outfit(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
                     },
                   ),
-                ),
-              )
-            ],
-          ),
-        ));
+
+                  // ── Main List ──
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: () => _fetchData(),
+                      child: BlocBuilder<PendingDocCubit, PendingDocState>(
+                        builder: (context, state) {
+                          if (state is PendingDocLoadingState) {
+                            return Skeletonizer(
+                              enabled: true,
+                              child: ListView.builder(
+                                itemCount: 5,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                itemBuilder: (context, index) => Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const ListTile(
+                                    leading: CircleAvatar(),
+                                    title: Text("Loading Verification..."),
+                                    subtitle: Text("Please wait a moment"),
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else if (state is PendingDocErrorState) {
+                            return Center(child: Text(state.message));
+                          } else if (state is PendingDocSuccessState) {
+                            final data = state.pendingDocModel.data ?? [];
+
+                            if (data.isEmpty) {
+                              return const Center(child: Text("No data found"));
+                            }
+                            return ListView.builder(
+                              itemCount: data.length,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              itemBuilder: (context, index) {
+                                final item = data[index];
+                                final isExpanded = _expandedIndex == index;
+
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border:
+                                        Border.all(color: Colors.grey.shade200),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.03),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      // Card Header
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _expandedIndex =
+                                                isExpanded ? -1 : index;
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 12),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? const Color(0xFFF0F2F5)
+                                                    : Colors.grey.shade900,
+                                            borderRadius: BorderRadius.only(
+                                              topLeft:
+                                                  const Radius.circular(12),
+                                              topRight:
+                                                  const Radius.circular(12),
+                                              bottomLeft: isExpanded
+                                                  ? Radius.zero
+                                                  : const Radius.circular(12),
+                                              bottomRight: isExpanded
+                                                  ? Radius.zero
+                                                  : const Radius.circular(12),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  (item.companyName != null &&
+                                                          item.companyName!
+                                                              .isNotEmpty)
+                                                      ? item.companyName!
+                                                      : ((item.first_name !=
+                                                                      null &&
+                                                                  item.first_name!
+                                                                      .isNotEmpty) ||
+                                                              (item.last_name !=
+                                                                      null &&
+                                                                  item.last_name!
+                                                                      .isNotEmpty))
+                                                          ? "${item.first_name ?? ""} ${item.last_name ?? ""}"
+                                                              .trim()
+                                                          : item.entity
+                                                                  ?.entityName ??
+                                                              "N/A",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      final token = context
+                                                          .read<TokenCubit>()
+                                                          .state;
+                                                      context
+                                                          .read<
+                                                              VerifyRequestReportCubit>()
+                                                          .verifyRequestReport(
+                                                            token: token,
+                                                            case_uuid:
+                                                                item.uuid ?? "",
+                                                          );
+                                                    },
+                                                    child: _buildHeaderIcon(
+                                                        Icons.download,
+                                                        const Color(
+                                                            0xFF3F51B5)),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  if (item.detailsUpdated ==
+                                                      1) ...[
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        _showFormDialog(
+                                                            item, null);
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(right: 6),
+                                                        child: _buildHeaderIcon(
+                                                            Icons.edit,
+                                                            const Color(
+                                                                0xFF3F51B5)),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                  _buildStatusIcon(item),
+                                                  const SizedBox(width: 8),
+                                                  Icon(
+                                                    isExpanded
+                                                        ? Icons
+                                                            .keyboard_arrow_up
+                                                        : Icons
+                                                            .keyboard_arrow_down,
+                                                    color: Theme.of(context)
+                                                        .iconTheme
+                                                        .color,
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Expandable Content
+                                      if (isExpanded)
+                                        Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              // Action Button
+                                              Align(
+                                                  alignment: Alignment
+                                                      .centerRight,
+                                                  child: CustomButton(
+                                                      onTap: () {
+                                                        if (item.detailsUpdated ==
+                                                            1) {
+                                                          context.pushNamed(
+                                                            'formList',
+                                                            extra: {
+                                                              'applicantData':
+                                                                  item.toJson(),
+                                                              'serviceNavigate': item
+                                                                      .services
+                                                                      ?.first
+                                                                      .serviceNavigate ??
+                                                                  "",
+                                                              'serviceTitle': item
+                                                                      .services
+                                                                      ?.first
+                                                                      .serviceTitle ??
+                                                                  "Verification",
+                                                            },
+                                                          );
+                                                        } else {
+                                                          _showFormDialog(
+                                                              item,
+                                                              item.services
+                                                                  ?.first);
+                                                        }
+                                                      },
+                                                      text: item.detailsUpdated ==
+                                                              1
+                                                          ? "VIEW ${item.services?.first.serviceTitle?.toUpperCase() ?? "DOCUMENTS"}"
+                                                          : "+ ADD ${item.entity?.entityName?.toUpperCase()}",
+                                                      width: 200,
+                                                      height: 40,
+                                                      gradientColors: const [
+                                                        Color(0xFFFF7043),
+                                                        Color(0xFFFB8C00),
+                                                      ],
+                                                      textStyle: Theme.of(
+                                                              context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 12))),
+                                              const SizedBox(height: 24),
+
+                                              // Services Grid
+                                              GridView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
+                                                itemCount: (item.services ?? [])
+                                                    .length,
+                                                gridDelegate:
+                                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 3,
+                                                  crossAxisSpacing: 10,
+                                                  mainAxisSpacing: 20,
+                                                  childAspectRatio: 0.65,
+                                                ),
+                                                itemBuilder: (context, sIndex) {
+                                                  final service =
+                                                      item.services![sIndex];
+                                                  // Resolve the single source-of-truth status
+                                                  final effectiveStatus =
+                                                      _effectiveStatus(
+                                                          service.status,
+                                                          item.caseStatus);
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      if (item.detailsUpdated ==
+                                                          1) {
+                                                        context.pushNamed(
+                                                          'formList',
+                                                          extra: {
+                                                            'applicantData':
+                                                                item.toJson(),
+                                                            'serviceNavigate':
+                                                                service
+                                                                    .serviceNavigate,
+                                                            'serviceTitle':
+                                                                service
+                                                                    .serviceTitle,
+                                                          },
+                                                        );
+                                                      } else {
+                                                        _showFormDialog(
+                                                            item, service);
+                                                      }
+                                                    },
+                                                    child: Column(
+                                                      children: [
+                                                        Stack(
+                                                          clipBehavior:
+                                                              Clip.none,
+                                                          children: [
+                                                            Container(
+                                                              height: 70,
+                                                              width: 70,
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(12),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .cardColor,
+                                                                border: Border.all(
+                                                                    color: Theme.of(
+                                                                            context)
+                                                                        .dividerColor),
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.05),
+                                                                    blurRadius:
+                                                                        10,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              child:
+                                                                  Image.network(
+                                                                service.serviceIcon ??
+                                                                    "",
+                                                                errorBuilder: (c,
+                                                                        e, s) =>
+                                                                    const Icon(
+                                                                        Icons
+                                                                            .description,
+                                                                        color: Colors
+                                                                            .grey),
+                                                              ),
+                                                            ),
+                                                            // ── Status Dot Badge (top-right) ──
+                                                            Positioned(
+                                                              right: 0,
+                                                              top: 0,
+                                                              child: Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(4),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: _statusDotColor(
+                                                                      effectiveStatus),
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                ),
+                                                                child: Icon(
+                                                                  _statusDotIcon(
+                                                                      effectiveStatus),
+                                                                  color: Colors
+                                                                      .white,
+                                                                  size: 10,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            // ── Download Button (bottom-right) ──
+                                                            if (_showDownloadBtn(
+                                                                service.status,
+                                                                item.caseStatus))
+                                                              Positioned(
+                                                                right: -2,
+                                                                bottom: -2,
+                                                                child: InkWell(
+                                                                  onTap: () {
+                                                                    final token = context
+                                                                        .read<
+                                                                            TokenCubit>()
+                                                                        .state;
+                                                                    context
+                                                                        .read<
+                                                                            VerifyRequestReportCubit>()
+                                                                        .verifyServiceReport(
+                                                                          token:
+                                                                              token,
+                                                                          uuid: item.uuid ??
+                                                                              "",
+                                                                          service_id:
+                                                                              service.serviceRequestId ?? 0,
+                                                                          service_name:
+                                                                              service.serviceTitle ?? "Service",
+                                                                        );
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            6),
+                                                                    decoration:
+                                                                        const BoxDecoration(
+                                                                      color: Colors
+                                                                          .blue,
+                                                                      shape: BoxShape
+                                                                          .circle,
+                                                                      boxShadow: [
+                                                                        BoxShadow(
+                                                                          color:
+                                                                              Colors.black12,
+                                                                          blurRadius:
+                                                                              4,
+                                                                          offset: Offset(
+                                                                              0,
+                                                                              2),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    child:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .file_download,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      size: 14,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        // ── Service Title ──
+                                                        SizedBox(
+                                                          height: 32,
+                                                          child: Text(
+                                                            service.serviceTitle
+                                                                    ?.toUpperCase() ??
+                                                                "",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            maxLines: 2,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: GoogleFonts
+                                                                .outfit(
+                                                              fontSize: 11,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium
+                                                                  ?.color,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 4),
+                                                        // ── Status Chip ──
+                                                        Builder(builder: (_) {
+                                                          final chips =
+                                                              _statusChipColors(
+                                                                  effectiveStatus);
+                                                          return Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        4),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: chips[1],
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12),
+                                                              border: Border.all(
+                                                                  color:
+                                                                      chips[2]),
+                                                            ),
+                                                            child: Text(
+                                                              _statusLabel(
+                                                                  effectiveStatus),
+                                                              style: GoogleFonts
+                                                                  .outfit(
+                                                                fontSize: 10,
+                                                                color: chips[0],
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ));
       },
     );
   }

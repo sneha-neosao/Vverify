@@ -161,7 +161,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   color: Colors.redAccent, size: 36),
                               const SizedBox(height: 8),
                               Text(
-                                "Failed to load metrics summary.",
+                                "Failed to load dashboard data.",
                                 style: GoogleFonts.outfit(
                                   color: const Color(0xFF64748B),
                                   fontSize: 14,
@@ -223,7 +223,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           const SizedBox(height: 12),
                           SizedBox(
-                            height: 52,
+                            height: 108,
                             child: _buildMobileHorizontalSidebar(),
                           ),
                           const SizedBox(height: 16),
@@ -301,11 +301,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
               scrollDirection: Axis.horizontal,
               itemCount: 4,
               itemBuilder: (context, index) => Container(
-                width: 130,
+                width: 140,
                 margin: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12.0, vertical: 12.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        color: Colors.grey,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: 80,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -319,39 +343,101 @@ class _DashboardScreenState extends State<DashboardScreen> {
             itemBuilder: (context, index) {
               final item = list[index];
               final isSelected = _selectedEntityId == item.id;
-              return Container(
-                margin: const EdgeInsets.only(right: 8),
-                child: ChoiceChip(
-                  label: Text(item.entityName ?? ""),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    if (selected) {
-                      setState(() {
-                        _selectedEntityId = item.id;
-                        _selectedEntityName = item.entityName;
-                      });
-                      _fetchEntityServices(item.id.toString());
-                    }
-                  },
-                  selectedColor: const Color(0xFFFFF8F2),
-                  backgroundColor: Colors.white,
-                  elevation: 0,
-                  pressElevation: 0,
-                  labelStyle: GoogleFonts.outfit(
-                    color: isSelected
-                        ? const Color(0xFFFF5200)
-                        : const Color(0xFF64748B),
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedEntityId = item.id;
+                    _selectedEntityName = item.entityName;
+                  });
+                  _fetchEntityServices(item.id.toString());
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 140,
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 12.0),
+                  decoration: BoxDecoration(
+                    color: isSelected ? const Color(0xFFFFF8F2) : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
                       color: isSelected
                           ? const Color(0xFFFFE0D3)
                           : const Color(0xFFE2E8F0),
-                      width: 1.0,
+                      width: 1.5,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: isSelected
+                            ? const Color(0xFFFF5200).withOpacity(0.06)
+                            : const Color(0xFF0F172A).withOpacity(0.02),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFFF1F5F9),
+                          shape: BoxShape.circle,
+                          border: isSelected
+                              ? Border.all(
+                                  color: const Color(0xFFFF7E3E), width: 1.5)
+                              : null,
+                        ),
+                        child: item.entityIcon != null &&
+                                item.entityIcon!.isNotEmpty
+                            ? ClipOval(
+                                child: Image.network(
+                                  item.entityIcon!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (c, e, s) => Icon(
+                                    Icons.business,
+                                    color: isSelected
+                                        ? const Color(0xFFFF7E3E)
+                                        : const Color(0xFF64748B),
+                                    size: 20,
+                                  ),
+                                ),
+                              )
+                            : Icon(
+                                Icons.business,
+                                color: isSelected
+                                    ? const Color(0xFFFF7E3E)
+                                    : const Color(0xFF64748B),
+                                size: 20,
+                              ),
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            item.entityName ?? "",
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.outfit(
+                              color: isSelected
+                                  ? const Color(0xFFFF5200)
+                                  : const Color(0xFF475569),
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -418,7 +504,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           color: Colors.redAccent, size: 36),
                       const SizedBox(height: 12),
                       Text(
-                        "Failed to load services metrics.",
+                        "Failed to load dashboard data",
                         style: GoogleFonts.outfit(
                           color: const Color(0xFF64748B),
                           fontSize: 14,
@@ -528,6 +614,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       isSelected ? const Color(0xFFFF5200) : Colors.transparent,
                   borderRadius: BorderRadius.circular(2),
                 ),
+              ),
+              const SizedBox(width: 12),
+              // Backend Icon in Sidebar
+              Container(
+                width: 32,
+                height: 32,
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.white : const Color(0xFFF1F5F9),
+                  shape: BoxShape.circle,
+                  border: isSelected
+                      ? Border.all(color: const Color(0xFFFF7E3E), width: 1.5)
+                      : null,
+                ),
+                child: item.entityIcon != null && item.entityIcon!.isNotEmpty
+                    ? ClipOval(
+                        child: Image.network(
+                          item.entityIcon!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (c, e, s) => Icon(
+                            Icons.business,
+                            color: isSelected
+                                ? const Color(0xFFFF7E3E)
+                                : const Color(0xFF64748B),
+                            size: 16,
+                          ),
+                        ),
+                      )
+                    : Icon(
+                        Icons.business,
+                        color: isSelected
+                            ? const Color(0xFFFF7E3E)
+                            : const Color(0xFF64748B),
+                        size: 16,
+                      ),
               ),
               const SizedBox(width: 12),
               Expanded(

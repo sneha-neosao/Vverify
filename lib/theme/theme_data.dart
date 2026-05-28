@@ -91,12 +91,12 @@ extension ThemeDataExtension on AppTheme {
               ),
               titleMedium: GoogleFonts.outfit(
                 color: Colors.black,
-                fontSize: 24,
+                fontSize: 22,
                 fontWeight: FontWeight.w700,
               ),
               titleSmall: GoogleFonts.outfit(
                 color: Colors.black,
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
               )),
         );
@@ -186,12 +186,12 @@ extension ThemeDataExtension on AppTheme {
               ),
               titleMedium: GoogleFonts.outfit(
                 color: Colors.black,
-                fontSize: 24,
+                fontSize: 22,
                 fontWeight: FontWeight.w700,
               ),
               titleSmall: GoogleFonts.outfit(
                 color: Colors.black,
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
               )),
         );

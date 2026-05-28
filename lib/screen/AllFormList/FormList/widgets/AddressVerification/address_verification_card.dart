@@ -7,21 +7,22 @@ import '../../../../../apiServices/api_services.dart';
 import '../../../../../commonComponent/custom_button.dart';
 import '../../../../VerificationForms/common/form_widget.dart';
 import '../common_widgets.dart';
-import '../../../../VerificationForms/AddressVerificationForm/Form/Models/address_save_model.dart';
-import '../../../../VerificationForms/AddressVerificationForm/Form/Models/address_show_details_model.dart';
+import 'Bloc/Models/address_save_model.dart';
+import 'Bloc/Models/address_show_details_model.dart';
 import 'Bloc/ShowDataBloc/address_show_details_bloc.dart';
 import 'Bloc/ShowDataBloc/address_show_details_state.dart';
 import '../../../../VerificationPending/bloc/pendingDoc_cubit.dart';
+import '../../../../VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
 import '../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
-import '../../../../VerificationForms/AddressVerificationForm/Form/Blocs/address_save_form_bloc/address_save_form_cubit.dart';
-import '../../../../VerificationForms/AddressVerificationForm/Form/Blocs/address_save_form_bloc/address_save_from_state.dart';
-import '../../../../VerificationForms/AddressVerificationForm/Form/Blocs/address_update_form_bloc/name_address_verification_cubit.dart';
-import '../../../../VerificationForms/AddressVerificationForm/Form/Blocs/address_update_form_bloc/name_address_verification_state.dart';
-import '../../../../VerificationForms/AddressVerificationForm/List/Blocs/address_list_cubit.dart';
-import '../../../../VerificationForms/AddressVerificationForm/List/Blocs/address_list_state.dart';
+import 'Bloc/address_save_form_bloc/address_save_form_cubit.dart';
+import 'Bloc/address_save_form_bloc/address_save_from_state.dart';
+import 'Bloc/address_update_form_bloc/name_address_verification_cubit.dart';
+import 'Bloc/address_update_form_bloc/name_address_verification_state.dart';
+import 'Bloc/address_list_cubit.dart';
+import 'Bloc/address_list_state.dart';
 import '../../../../VerificationForms/VerifyDeatils/Bloc/verify_details_cubit.dart';
 import '../../../../VerificationForms/VerifyDeatils/Bloc/verify_details_state.dart';
-import '../../../../VerificationForms/AddressVerificationForm/Form/Models/address_update_model.dart';
+import 'Bloc/Models/address_update_model.dart';
 
 class AddressVerificationCard extends StatefulWidget {
   final String? serviceTitle;
@@ -58,6 +59,7 @@ class _AddressVerificationCardState extends State<AddressVerificationCard> {
   bool _isReadOnly = false;
   bool _isEditing = false;
   String? _caseUuid;
+  String? _uid;
   String? _addressUuid;
   String? _artefactImgUrl;
   String? _rejectionReason;
@@ -144,9 +146,20 @@ class _AddressVerificationCardState extends State<AddressVerificationCard> {
         _cityController.text = model.data!.current_address_city ?? "";
         _stateController.text = model.data!.current_address_state ?? "";
         _pincodeController.text = model.data!.current_address_postal_code ?? "";
-        _addressUuid = model.data!.address_uuid ?? "";
         _artefactImgUrl = model.data!.artefact_img;
         _rejectionReason = model.data!.verification_remark;
+
+        final serviceUid = widget.serviceData?['uid']?.toString() ?? "";
+        if (_uid == null || _uid!.isEmpty) {
+          _uid = serviceUid.isNotEmpty ? serviceUid : (model.data!.uid ?? "");
+        }
+
+        final addrUuid = widget.serviceData?['address_uuid']?.toString() ?? "";
+        if (_addressUuid == null || _addressUuid!.isEmpty) {
+          _addressUuid = addrUuid.isNotEmpty
+              ? addrUuid
+              : (model.data!.address_uuid ?? "");
+        }
       });
     }
   }
@@ -154,11 +167,13 @@ class _AddressVerificationCardState extends State<AddressVerificationCard> {
   void _refreshPendingDocs(BuildContext context) {
     final token = context.read<TokenCubit>().state;
     final customerId = context.read<IdCubit>().state;
+    final navState = context.read<PendingDocNavigationCubit>().state;
     context.read<PendingDocCubit>().getPendingDoc(
           token: token,
           customerId: int.tryParse(customerId) ?? 0,
           page: 1,
           limit: 100,
+          entityId: navState.entityId,
           isLoading: false,
         );
   }
@@ -188,6 +203,16 @@ class _AddressVerificationCardState extends State<AddressVerificationCard> {
       }
 
       if (_isEditing) {
+        final finalUid = (_uid != null && _uid!.isNotEmpty)
+            ? _uid!
+            : (widget.serviceData?['uid']?.toString() ?? "");
+
+        final finalAddressUuid = (_addressUuid != null && _addressUuid!.isNotEmpty)
+            ? _addressUuid!
+            : (widget.serviceData?['address_uuid']?.toString() ?? "");
+
+        print("address _submitForm: _uid=$_uid, finalUid=$finalUid, _addressUuid=$_addressUuid, finalAddressUuid=$finalAddressUuid");
+
         final updateModel = NameAddressVerificationUpdateModel(
           request_id: requestId,
           service_request_id: serviceRequestId,
@@ -197,11 +222,9 @@ class _AddressVerificationCardState extends State<AddressVerificationCard> {
           current_state: _stateController.text.trim(),
           current_pinCode: _pincodeController.text.trim(),
           case_uuid: caseUuid,
-          address_uuid: _addressUuid ??
-              widget.serviceData?['address_uuid']?.toString() ??
-              "",
+          address_uuid: finalAddressUuid,
           data_preference: "form",
-          uid: widget.serviceData?['uid']?.toString() ?? "",
+          uid: finalUid,
         );
 
         _updateCubit.nameAddressUpdateForm(
@@ -249,6 +272,11 @@ class _AddressVerificationCardState extends State<AddressVerificationCard> {
                 final records = state.addressListDataModel.data;
                 if (records != null && records.isNotEmpty) {
                   final uid = records.first.uid ?? "";
+                  final addressUuid = records.first.addressUuid ?? "";
+                  setState(() {
+                    _uid = uid;
+                    _addressUuid = addressUuid;
+                  });
                   if (uid.isNotEmpty) {
                     _fetchShowData(uid: uid);
                   }

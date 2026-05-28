@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../../../VerificationForms/AddressVerificationForm/Form/Models/address_show_details_model.dart';
+import '../Models/address_show_details_model.dart';
 
 class NameAddressShowDataState extends Equatable {
   @override

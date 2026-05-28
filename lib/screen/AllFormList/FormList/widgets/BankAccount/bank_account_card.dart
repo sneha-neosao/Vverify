@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
 import '../../../../../apiServices/api_services.dart';
 import '../../../../../commonComponent/custom_button.dart';
 import '../../../../VerificationForms/common/form_widget.dart';
@@ -120,14 +121,16 @@ class _BankAccountCardState extends State<BankAccountCard> {
                 backgroundColor: Colors.green,
               ),
             );
-            // Refresh Verification List
+            // Refresh Verification List respecting current entity filter
             final token = context.read<TokenCubit>().state;
             final customerId = context.read<IdCubit>().state;
+            final navState = context.read<PendingDocNavigationCubit>().state;
             context.read<PendingDocCubit>().getPendingDoc(
                   token: token,
                   customerId: int.tryParse(customerId) ?? 0,
                   page: 1,
                   limit: 100,
+                  entityId: navState.entityId,
                   isLoading: false,
                 );
             setState(() {

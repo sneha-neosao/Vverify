@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../Models/driving_licence_save_model.dart';
 
 class DrivingLicenceState extends Equatable {
   @override
@@ -10,7 +11,7 @@ class DrivingLicenceInitialState extends DrivingLicenceState {}
 class DrivingLicenceLoadingState extends DrivingLicenceState {}
 
 class DrivingLicenceSuccessState extends DrivingLicenceState {
-  final Map<String,dynamic> data;
+  final DrivingLicenceSaveModel data;
 
   DrivingLicenceSuccessState(this.data);
 

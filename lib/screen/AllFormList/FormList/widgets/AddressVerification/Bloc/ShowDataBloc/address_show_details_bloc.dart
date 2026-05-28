@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../../apiServices/api_services.dart';
-import '../../../../../../VerificationForms/AddressVerificationForm/Form/Models/address_show_details_model.dart';
+import '../Models/address_show_details_model.dart';
 import 'address_show_details_state.dart';
 
 class NameAddressShowDataCubit extends Cubit<NameAddressShowDataState> {

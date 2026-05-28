@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/all_entities_bloc/all_entities_cubit.dart';
 import 'dart:convert';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/chechout_status_checking_bloc/checkout_status_checking_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/chechout_status_checking_bloc/checkout_status_checking_state.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_state.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/dashboard_count_bloc.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/dashboard_entities_cubit.dart';
 import 'package:v_verify/services/phonepe_payment_gateway_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonComponent/bloc/shared_preferences_cubit.dart';
@@ -931,6 +934,19 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                           SharedPreferences.getInstance().then((prefs) {
                             prefs.remove('checkout_cart');
                           });
+
+                          // Refresh all entities and dashboard metrics on payment success
+                          final token = context.read<TokenCubit>().state;
+                          final customerId = context.read<IdCubit>().state;
+                          context.read<AllEntitiesCubit>().getAllEntities(
+                              token: token, customer_id: customerId);
+                          context
+                              .read<DashboardEntitiesCubit>()
+                              .getDashboardEntities(
+                                  token: token, customerId: customerId);
+                          context.read<DashboardCountBloc>().getDashboardCount(
+                              token: token, customerId: customerId);
+
                           context.pushReplacementNamed("payment_success");
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -1010,9 +1026,9 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                                         },
                                         text:
                                             "Confirm  ($tenantsCount × ₹${totalPrice.toStringAsFixed(0)} = ₹${grandTotal.toStringAsFixed(0)})",
-                                        gradientColors: const [
-                                          Color(0xFFF59E0B),
-                                          Color(0xFFD97706),
+                                        gradientColors: [
+                                          Theme.of(context).primaryColor,
+                                          Theme.of(context).primaryColorDark,
                                         ],
                                       ),
                                     ),

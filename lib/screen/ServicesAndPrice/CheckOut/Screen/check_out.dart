@@ -4,13 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../apiServices/api_services.dart';
-import '../../../../commonComponent/bloc/shared_preferences_cubit.dart';
-import '../../../../commonComponent/custom_button.dart';
-import '../../Blocs/apply_coupon_bloc/apply_coupon_cubit.dart';
-import '../../Blocs/apply_coupon_bloc/apply_coupon_state.dart';
-import '../../Blocs/checkout_bloc/checkout_cubit.dart';
-import '../../Blocs/checkout_bloc/checkout_state.dart';
+
+import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
+import 'package:v_verify/commonComponent/custom_button.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_cubit.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_state.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_cubit.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_state.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/all_entities_bloc/all_entities_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/dashboard_entities_cubit.dart';
+import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/dashboard_count_bloc.dart';
 
 class CheckOutScreen extends StatefulWidget {
   const CheckOutScreen({super.key});
@@ -134,6 +137,14 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                 SharedPreferences.getInstance().then((prefs) {
                   prefs.remove('checkout_cart');
                 });
+                
+                // Refresh all entities and dashboard metrics on payment success
+                final token = context.read<TokenCubit>().state;
+                final customerId = context.read<IdCubit>().state;
+                context.read<AllEntitiesCubit>().getAllEntities(token: token, customer_id: customerId);
+                context.read<DashboardEntitiesCubit>().getDashboardEntities(token: token, customerId: customerId);
+                context.read<DashboardCountBloc>().getDashboardCount(token: token, customerId: customerId);
+
                 context.pushReplacementNamed("payment_success");
               } else if (checkoutState is CheckOutErrorState) {
                 ScaffoldMessenger.of(context).showSnackBar(

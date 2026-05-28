@@ -31,12 +31,12 @@ class EducationUpdateFormModel {
       "uid": uid,
       "request_id": request_id,
       "service_request_id": service_request_id,
-      "college_school_id": university_name,
-      "course_degree_name": instituition_name,
-      "course_degree_type": year_of_passing,
-      "institution_address": degree_qualification_name,
-      "institution_city": grades_type,
-      "institution_state": grades_obtained,
+      "university_name": university_name,
+      "institution_name": instituition_name,
+      "year_of_passing": year_of_passing,
+      "degree_qualification_name": degree_qualification_name,
+      "grades_type": grades_type,
+      "grades_obtained": grades_obtained,
       "case_uuid": case_uuid,
       "education_uuid": education_uuid
     };

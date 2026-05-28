@@ -12,6 +12,7 @@ import 'Bloc/court_details_cubit.dart';
 import 'Bloc/court_details_state.dart';
 import 'Model/court_verification_model.dart';
 import '../../../../VerificationPending/bloc/pendingDoc_cubit.dart';
+import '../../../../VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
 import '../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 
 class LegalCheckCard extends StatefulWidget {
@@ -176,14 +177,16 @@ class _LegalCheckCardState extends State<LegalCheckCard> {
                 }
                 _checkAndFetchDetails(force: true, uidFromResponse: uid);
 
-                // Refresh Verification List
+                // Refresh Verification List respecting current entity filter
                 final token = context.read<TokenCubit>().state;
                 final customerId = context.read<IdCubit>().state;
+                final navState = context.read<PendingDocNavigationCubit>().state;
                 context.read<PendingDocCubit>().getPendingDoc(
                       token: token,
                       customerId: int.tryParse(customerId) ?? 0,
                       page: 1,
                       limit: 100,
+                      entityId: navState.entityId,
                       isLoading: false,
                     );
               } else if (state is CourtVerificationErrorState) {

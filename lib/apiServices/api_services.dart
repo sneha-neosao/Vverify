@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../screen/Order History/load_more/models/post.dart';
-import '../screen/VerificationForms/AddressVerificationForm/Form/Models/address_save_model.dart';
-import '../screen/VerificationForms/AddressVerificationForm/Form/Models/address_update_model.dart';
+import '../screen/AllFormList/FormList/widgets/AddressVerification/Bloc/Models/address_save_model.dart';
+import '../screen/AllFormList/FormList/widgets/AddressVerification/Bloc/Models/address_update_model.dart';
 import '../screen/AllFormList/FormList/widgets/EducationVerification/Model/education_save_form_model.dart';
 import '../screen/AllFormList/FormList/widgets/EducationVerification/Model/education_update_form_model.dart';
 import '../screen/AllFormList/FormList/widgets/EmploymentVerification/Model/employment_save_form_model.dart';
@@ -19,8 +19,6 @@ import '../screen/VerificationForms/PoliceVerification/NonMumbai/Form/Models/non
 import '../screen/VerificationForms/PoliceVerification/NonMumbai/Form/Models/non_mumbai-police_update_form_model.dart';
 import '../screen/VerificationForms/PoliceVerification/NonMumbai/Document/Models/non_mumbai_documents_update_model.dart';
 import '../screen/VerificationForms/PoliceVerification/NonMumbai/Document/Models/non_mumbai_documents_upload_model.dart';
-import '../screen/VerificationForms/ReferenceForm/Form/Models/Reference_save_form_model.dart';
-import '../screen/VerificationForms/ReferenceForm/Form/Models/Reference_update_form_model.dart';
 
 class ApiService {
   final Dio _dio = Dio();
@@ -247,16 +245,16 @@ class ApiService {
     }
   }
 
-  Future<Response> getAllEntities({required String token}) async {
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('all-entities');
-      log('getAllEntities Response: ${response.data}');
-      return response;
-    } catch (e) {
-      throw Exception('Failed to fetch getAllEntities: $e');
-    }
-  }
+  // Future<Response> getAllEntities({required String token}) async {
+  //   try {
+  //     _dio.options.headers['Authorization'] = 'Bearer $token';
+  //     final response = await _dio.get('all-entities');
+  //     log('getAllEntities Response: ${response.data}');
+  //     return response;
+  //   } catch (e) {
+  //     throw Exception('Failed to fetch getAllEntities: $e');
+  //   }
+  // }
 
   Future<Response> verifyRequestList({
     required String token,
@@ -619,7 +617,7 @@ class ApiService {
         "case_uuid": educationUpdateFormModel.case_uuid,
         "education_uuid": educationUpdateFormModel.education_uuid
       });
-
+      print("education formData${formData.fields}");
       _dio.options.headers = {
         'Authorization': 'Bearer $token',
         'X-Action-From': 'mobile'
@@ -998,6 +996,8 @@ class ApiService {
       // "residing_to_date": nameAddressVerificationUpdateModel.residing_to_date,
       "uid": nameAddressVerificationUpdateModel.uid,
     });
+    print("address update formData fields: ${formData.fields}");
+
     try {
       _dio.options.headers = {
         'Authorization': 'Bearer $token',
@@ -1103,6 +1103,39 @@ class ApiService {
   }
 
   /// KYC (PAN) Legal Verification
+  Future<Response> panVerificationMultipart({
+    required String token,
+    required String requestId,
+    required String serviceRequestId,
+    required String serviceId,
+    required String customerId,
+    required String documentType,
+    required String documentNumber,
+  }) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "request_id": requestId,
+        "service_request_id": serviceRequestId,
+        "service_id": serviceId,
+        "customer_id": customerId,
+        "document_type": documentType,
+        "document_number": documentNumber,
+      });
+
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile',
+      };
+      final response = await _dio.post(
+        'verify/pan/form/store',
+        data: formData,
+      );
+      return response;
+    } catch (e) {
+      throw Exception('Failed to submit PAN verification: $e');
+    }
+  }
+
   Future<Response> panNumberSave(
       {required String token,
       required String serviceRequestId,
@@ -1569,61 +1602,61 @@ class ApiService {
     }
   }
 
-  Future<Response> ReferenceVerification(
-      {required String customer_id,
-      required String token,
-      required ReferenceModel referenceModel}) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": referenceModel.request_id,
-      "service_request_id": referenceModel.service_request_id,
-      "person_name_1": referenceModel.person_name_one,
-      "person_mobile_number_1": referenceModel.person_mobile_number_one,
-      "person_relation_1": referenceModel.person_relation_one,
-      "person_name_2": referenceModel.person_name_two,
-      "person_mobile_number_2": referenceModel.person_mobile_number_two,
-      "person_relation_2": referenceModel.person_relation_two,
-    });
+  // Future<Response> ReferenceVerification(
+  //     {required String customer_id,
+  //     required String token,
+  //     required ReferenceModel referenceModel}) async {
+  //   FormData formData = FormData.fromMap({
+  //     "customer_id": customer_id,
+  //     "request_id": referenceModel.request_id,
+  //     "service_request_id": referenceModel.service_request_id,
+  //     "person_name_1": referenceModel.person_name_one,
+  //     "person_mobile_number_1": referenceModel.person_mobile_number_one,
+  //     "person_relation_1": referenceModel.person_relation_one,
+  //     "person_name_2": referenceModel.person_name_two,
+  //     "person_mobile_number_2": referenceModel.person_mobile_number_two,
+  //     "person_relation_2": referenceModel.person_relation_two,
+  //   });
 
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/reference/form/store', data: formData);
-      // log('ReferenceVerification Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in ReferenceVerification: $e');
-      throw Exception('Failed to fetch ReferenceVerification: $e');
-    }
-  }
+  //   try {
+  //     _dio.options.headers['Authorization'] = 'Bearer $token';
+  //     final response =
+  //         await _dio.post('verify/reference/form/store', data: formData);
+  //     // log('ReferenceVerification Response: ${response.data}');
+  //     return response;
+  //   } catch (e) {
+  //     // log('Error in ReferenceVerification: $e');
+  //     throw Exception('Failed to fetch ReferenceVerification: $e');
+  //   }
+  // }
 
-  Future<Response> ReferenceVerificationUpdate(
-      {required String token,
-      required String customer_id,
-      required ReferenceUpdateModel referenceUpdateModel}) async {
-    FormData formData = FormData.fromMap({
-      "customer_id": customer_id,
-      "request_id": referenceUpdateModel.request_id,
-      "service_request_id": referenceUpdateModel.service_request_id,
-      "person_name_1": referenceUpdateModel.person_name_one,
-      "person_mobile_number_1": referenceUpdateModel.person_mobile_number_one,
-      "person_relation_1": referenceUpdateModel.person_relation_one,
-      "person_name_2": referenceUpdateModel.person_name_two,
-      "person_mobile_number_2": referenceUpdateModel.person_mobile_number_two,
-      "person_relation_2": referenceUpdateModel.person_relation_two,
-    });
+  // Future<Response> ReferenceVerificationUpdate(
+  //     {required String token,
+  //     required String customer_id,
+  //     required ReferenceUpdateModel referenceUpdateModel}) async {
+  //   FormData formData = FormData.fromMap({
+  //     "customer_id": customer_id,
+  //     "request_id": referenceUpdateModel.request_id,
+  //     "service_request_id": referenceUpdateModel.service_request_id,
+  //     "person_name_1": referenceUpdateModel.person_name_one,
+  //     "person_mobile_number_1": referenceUpdateModel.person_mobile_number_one,
+  //     "person_relation_1": referenceUpdateModel.person_relation_one,
+  //     "person_name_2": referenceUpdateModel.person_name_two,
+  //     "person_mobile_number_2": referenceUpdateModel.person_mobile_number_two,
+  //     "person_relation_2": referenceUpdateModel.person_relation_two,
+  //   });
 
-    try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response =
-          await _dio.post('verify/reference/form/update', data: formData);
-      // log('verifyRequestUpdate Response: ${response.data}');
-      return response;
-    } catch (e) {
-      // log('Error in verifyRequestUpdate:$e');
-      throw Exception('Failed to fetch verifyRequestUpdate: $e');
-    }
-  }
+  //   try {
+  //     _dio.options.headers['Authorization'] = 'Bearer $token';
+  //     final response =
+  //         await _dio.post('verify/reference/form/update', data: formData);
+  //     // log('verifyRequestUpdate Response: ${response.data}');
+  //     return response;
+  //   } catch (e) {
+  //     // log('Error in verifyRequestUpdate:$e');
+  //     throw Exception('Failed to fetch verifyRequestUpdate: $e');
+  //   }
+  // }
 
   Future<Response> ReferenceCheckDetailsView({
     required String token,
@@ -1717,19 +1750,34 @@ class ApiService {
     required String token,
     required String request_id,
     required String service_request_id,
-    required String driver_licence_number,
+    required String service_id,
+    required String document_type,
+    required String document_number,
     required String dob,
+    required File? document_scan_pdf,
   }) async {
     FormData formData = FormData.fromMap({
       "customer_id": customer_id,
       "request_id": request_id,
       "service_request_id": service_request_id,
-      "driver_licence_number": driver_licence_number,
+      "service_id": service_id,
+      "document_type": document_type,
+      "document_number": document_number,
       "dob": dob,
+      "document_scan_pdf":
+          document_scan_pdf != null && document_scan_pdf.path.isNotEmpty
+              ? await MultipartFile.fromFile(
+                  document_scan_pdf.path,
+                  filename: document_scan_pdf.path.split('/').last,
+                )
+              : null,
     });
     log('drivingLicenceSave Request: ${formData.files}');
     try {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile',
+      };
       final response = await _dio.post('verify/pan/form/store', data: formData);
       log('drivingLicenceSave Response: ${response.data}');
       return response;
@@ -1774,7 +1822,7 @@ class ApiService {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       // final response = await _dio.get('verify/driver-licence/show/$uid');
       final response = await _dio.get('verify/pan/show/$uid');
-      // log('drivingLicenceShowData Response: ${response.data}');
+      log('drivingLicenceShowData Response: ${response.data}');
       return response;
     } catch (e) {
       // log('Error in drivingLicenceShowData: $e');
@@ -3043,6 +3091,7 @@ class ApiService {
     required String token,
     required String customer_id,
   }) async {
+    log("dashboardAllEntities: $customer_id");
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.get(
@@ -3071,6 +3120,196 @@ class ApiService {
     } catch (e) {
       log('Error in entitiesData: $e');
       throw Exception('Failed to entitiesData: $e');
+    }
+  }
+
+  Future<Response> aadhaarDigilockerSave({
+    required String token,
+    required String customer_id,
+    required String request_id,
+    required String service_request_id,
+    required String document_number,
+    required String document_type,
+    required String service_id,
+    String? dob,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "customer_id": customer_id,
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "document_number": document_number,
+      "document_type": document_type,
+      "service_id": service_id,
+      if (dob != null) "dob": dob,
+    });
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.post('verify/pan/form/store', data: formData);
+      log('aadhaarDigilockerSave Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in aadhaarDigilockerSave: $e');
+      throw Exception('Failed to fetch aadhaarDigilockerSave: $e');
+    }
+  }
+
+  Future<Response> verifyAadharDigilocker({
+    required String token,
+    required int request_id,
+    required int service_request_id,
+    required int customer_id,
+    required String aadhaar_number,
+    required String status,
+    required String unifiedTransactionId,
+    required int service_id,
+  }) async {
+    FormData formData = FormData.fromMap({
+      "request_id": request_id,
+      "service_request_id": service_request_id,
+      "customer_id": customer_id,
+      "aadhaar_number": aadhaar_number,
+      "status": status,
+      "unifiedTransactionId": unifiedTransactionId,
+      "service_id": service_id,
+    });
+
+    log('verifyAadharDigilocker body: ${formData.fields}');
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.post('verification/aadhar', data: formData);
+      log('verifyAadharDigilocker Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in verifyAadharDigilocker: $e');
+      throw Exception('Failed to fetch verifyAadharDigilocker: $e');
+    }
+  }
+
+  // Credit Report Send OTP
+  Future<Response> sendCreditReportOtp({
+    required String token,
+    required String mobileNumber,
+    required String type,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final Map<String, dynamic> data = {
+        "mobile_number": mobileNumber,
+        "type": type,
+      };
+      final response = await _dio.post(
+        'verify/credit/report-otp',
+        data: data,
+      );
+      log('sendCreditReportOtp Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in sendCreditReportOtp: $e');
+      throw Exception('Failed to send credit report OTP: $e');
+    }
+  }
+
+  // Credit Report Store (Multipart Form Data)
+  Future<Response> storeCreditReport({
+    required String token,
+    required int requestId,
+    required int serviceRequestId,
+    required int customerId,
+    required String firstName,
+    required String lastName,
+    required String mobileNumber,
+    required String otp,
+  }) async {
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile',
+      };
+      FormData formData = FormData.fromMap({
+        "request_id": requestId,
+        "service_request_id": serviceRequestId,
+        "customer_id": customerId,
+        "first_name": firstName,
+        "last_name": lastName,
+        "mobile_number": mobileNumber,
+        "otp": otp,
+      });
+      final response = await _dio.post(
+        'verify/credit/form/store',
+        data: formData,
+      );
+      log('storeCreditReport Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in storeCreditReport: $e');
+      throw Exception('Failed to store credit report: $e');
+    }
+  }
+
+  // Credit Report Show
+  Future<Response> showCreditReport({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+        'verify/credit/show/$uid',
+      );
+      log('showCreditReport Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in showCreditReport: $e');
+      throw Exception('Failed to show credit report: $e');
+    }
+  }
+
+  // GST Verification Store (Multipart Form Data)
+  Future<Response> storeGstVerification({
+    required String token,
+    required int requestId,
+    required int serviceRequestId,
+    required int customerId,
+    required String gstNumber,
+  }) async {
+    try {
+      _dio.options.headers = {
+        'Authorization': 'Bearer $token',
+        'X-Action-From': 'mobile',
+      };
+      FormData formData = FormData.fromMap({
+        "request_id": requestId,
+        "service_request_id": serviceRequestId,
+        "customer_id": customerId,
+        "gst_number": gstNumber,
+      });
+      final response = await _dio.post(
+        'verify/gst-pan-cin/form/store',
+        data: formData,
+      );
+      log('storeGstVerification Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in storeGstVerification: $e');
+      throw Exception('Failed to store GST verification: $e');
+    }
+  }
+
+  // GST Verification Show
+  Future<Response> showGstVerification({
+    required String token,
+    required String uid,
+  }) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.get(
+        'verify/gst-pan-cin/show/$uid',
+      );
+      log('showGstVerification Response: ${response.data}');
+      return response;
+    } catch (e) {
+      log('Error in showGstVerification: $e');
+      throw Exception('Failed to show GST verification: $e');
     }
   }
 }

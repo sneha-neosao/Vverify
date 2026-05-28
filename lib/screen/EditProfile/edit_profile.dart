@@ -42,12 +42,14 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController emailAddressController = TextEditingController();
   final TextEditingController companyNameController = TextEditingController();
   final TextEditingController companyHrController = TextEditingController();
-  final TextEditingController companyHrNumberController = TextEditingController();
+  final TextEditingController companyHrNumberController =
+      TextEditingController();
   final TextEditingController companyEmailController = TextEditingController();
-  final TextEditingController companyAddressController = TextEditingController();
+  final TextEditingController companyAddressController =
+      TextEditingController();
 
   String? selectedPrefix;
-  List<String> prefixValues = <String>[ 'Mr.','Mrs.','Ms.'];
+  List<String> prefixValues = <String>['Mr.', 'Mrs.', 'Ms.'];
 
   int? user_type;
   final _formKey = GlobalKey<FormState>();
@@ -81,19 +83,19 @@ class _EditProfileState extends State<EditProfile> {
       print("------------------------");
 
       context.read<EditProfileCubit>().editProfile(
-        token: token,
-        email: email,
-        customerId: id!,
-        firstName: firstname,
-        lastName: lastName,
-        companyName: companyNameController.text,
-        contactPersonName: companyHrController.text,
-        contactPersonPhone: companyHrNumberController.text,
-        companyEmail: companyEmailController.text,
-        companyAddress: companyAddressController.text,
-        userType: user_type.toString(),
-        salutation: selectedPrefix ?? "", // ✅ send actual salutation
-      );
+            token: token,
+            email: email,
+            customerId: id!,
+            firstName: firstname,
+            lastName: lastName,
+            companyName: companyNameController.text,
+            contactPersonName: companyHrController.text,
+            contactPersonPhone: companyHrNumberController.text,
+            companyEmail: companyEmailController.text,
+            companyAddress: companyAddressController.text,
+            userType: user_type.toString(),
+            salutation: selectedPrefix ?? "", // ✅ send actual salutation
+          );
     }
   }
 
@@ -162,9 +164,11 @@ class _EditProfileState extends State<EditProfile> {
                     );
                   } else if (profile is ProfileSuccess) {
                     ProfileResult? data = profile.profileModel.profileResult;
-                      user_type = data!.userTypeId!;
-                      print("salutation: ${data.salutation}");
-                    if (selectedPrefix == null || selectedPrefix!.isEmpty) { selectedPrefix = data.salutation ?? ""; }
+                    user_type = data!.userTypeId!;
+                    print("salutation: ${data.salutation}");
+                    if (selectedPrefix == null || selectedPrefix!.isEmpty) {
+                      selectedPrefix = data.salutation ?? "";
+                    }
                     return Column(
                       children: [
                         // Stack(
@@ -291,43 +295,48 @@ class _EditProfileState extends State<EditProfile> {
                               key: _formKey,
                               child: Column(
                                 children: [
-                                  if(widget.user_type.toLowerCase() == "individual")
+                                  if (widget.user_type.toLowerCase() ==
+                                      "individual")
                                     Column(
-                                    children: [
-                                      CustomRequiredTextField(
-                                          validator: validateEmail,
-                                          controller: emailAddressController..text = data.email!,
-                                          titleText: "Email",
-                                          hintText: "Enter Email",
-                                          textInputType: TextInputType.text
-                                      ),
-                                      CustomRequiredTextField(
-                                          controller: firstNameController..text = data.firstName!,
-                                          titleText: "First Name",
-                                          hintText: "Enter First Name",
-                                          textInputType: TextInputType.text
-                                      ),
-                                      CustomRequiredTextField(
-                                          controller: lastNameController..text = data.lastName!,
-                                          titleText: "Last Name",
-                                          hintText: "Enter Last Name",
-                                          textInputType: TextInputType.text
-                                      ),
-                                    ],
-                                  ),
-                                  if(widget.user_type.toLowerCase() == "company")
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         CustomRequiredTextField(
-                                            controller: companyNameController..text = data.companyName!,
+                                            validator: validateEmail,
+                                            controller: emailAddressController
+                                              ..text = data.email!,
+                                            titleText: "Email",
+                                            hintText: "Enter Email",
+                                            textInputType: TextInputType.text),
+                                        CustomRequiredTextField(
+                                            controller: firstNameController
+                                              ..text = data.firstName!,
+                                            titleText: "First Name",
+                                            hintText: "Enter First Name",
+                                            textInputType: TextInputType.text),
+                                        CustomRequiredTextField(
+                                            controller: lastNameController
+                                              ..text = data.lastName!,
+                                            titleText: "Last Name",
+                                            hintText: "Enter Last Name",
+                                            textInputType: TextInputType.text),
+                                      ],
+                                    ),
+                                  if (widget.user_type.toLowerCase() ==
+                                      "company")
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CustomRequiredTextField(
+                                            controller: companyNameController
+                                              ..text = data.companyName!,
                                             titleText: "Company Name",
                                             hintText: "Enter Company Name",
-                                            textInputType: TextInputType.text
-                                        ),
+                                            textInputType: TextInputType.text),
                                         CustomSalutationTextField(
-                                            controller: companyHrController..text = data.companyHr!,
-                                            titleText: "Company Person / HR Name",
+                                            controller: companyHrController
+                                              ..text = data.companyHr!,
+                                            titleText:
+                                                "Company Person / HR Name",
                                             hintText: "Enter Person / HR Name",
                                             textInputType: TextInputType.text,
                                             salutations: prefixValues,
@@ -335,10 +344,10 @@ class _EditProfileState extends State<EditProfile> {
                                             onSalutationChanged: (value) {
                                               setState(() {
                                                 selectedPrefix = value;
-                                                print("salutation after selection: ${selectedPrefix}");
+                                                print(
+                                                    "salutation after selection: ${selectedPrefix}");
                                               });
-                                            }
-                                        ),
+                                            }),
                                         // CustomRequiredTextField(
                                         //     controller: companyHrController..text = data.companyHr!,
                                         //     titleText: "Company Person / HR Name",
@@ -347,24 +356,28 @@ class _EditProfileState extends State<EditProfile> {
                                         // ),
                                         CustomRequiredTextField(
                                             validator: validateMobile,
-                                            controller: companyHrNumberController..text = data.companyHrNumber!,
-                                            titleText: "Contact Person / HR Phone",
-                                            hintText: "Enter Contact Person / HR Phone",
-                                            textInputType: TextInputType.text
-                                        ),
+                                            controller:
+                                                companyHrNumberController
+                                                  ..text =
+                                                      data.companyHrNumber!,
+                                            titleText:
+                                                "Contact Person / HR Phone",
+                                            hintText:
+                                                "Enter Contact Person / HR Phone",
+                                            textInputType: TextInputType.text),
                                         CustomRequiredTextField(
                                             validator: validateEmail,
-                                            controller: companyEmailController..text = data.companyEmail!,
+                                            controller: companyEmailController
+                                              ..text = data.companyEmail!,
                                             titleText: "Company Email",
                                             hintText: "Enter Company Email",
-                                            textInputType: TextInputType.text
-                                        ),
+                                            textInputType: TextInputType.text),
                                         CustomNotRequiredTextField(
-                                            controller: companyAddressController..text = data.companyAddress!,
+                                            controller: companyAddressController
+                                              ..text = data.companyAddress!,
                                             titleText: "Company Address",
                                             hintText: "Enter Company Address",
-                                            textInputType: TextInputType.text
-                                        ),
+                                            textInputType: TextInputType.text),
                                       ],
                                     ),
                                   const SizedBox(
@@ -375,8 +388,8 @@ class _EditProfileState extends State<EditProfile> {
                                       listener: (context, state) {
                                     if (state is EditProfileSuccess) {
                                       getProfile();
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
                                               content: Text(
                                                   "Profile update successfully")));
                                       Navigator.pop(context, false);
@@ -390,12 +403,14 @@ class _EditProfileState extends State<EditProfile> {
                                           Theme.of(context).primaryColorLight
                                         ],
                                         onTap: () {
-                                          if (_formKey.currentState?.validate() ??
+                                          if (_formKey.currentState
+                                                  ?.validate() ??
                                               false) {
                                             _updateProfile(
                                                 firstname:
                                                     firstNameController.text,
-                                                lastName: lastNameController.text,
+                                                lastName:
+                                                    lastNameController.text,
                                                 email:
                                                     emailAddressController.text,
                                                 customer: data.id!.toString(),

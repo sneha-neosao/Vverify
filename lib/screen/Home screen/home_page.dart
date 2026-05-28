@@ -219,8 +219,10 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.only(left: 16, right: 16),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   BlocConsumer<ProfileCubit, ProfileState>(
                       listener: (context, profile) {
@@ -326,6 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }),
                   Text(
+                    textAlign: TextAlign.start,
                     "Select Whom you want to verify",
                     style: Theme.of(context)
                         .textTheme

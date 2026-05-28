@@ -8,16 +8,19 @@ class AllEntitiesCubit extends Cubit<AllEntitiesState> {
 
   AllEntitiesCubit(this._apiService) : super(AllEntitiesInitialState());
 
-  void getAllEntities({required String token}) async {
+  void getAllEntities(
+      {required String token, required String customer_id}) async {
     emit(AllEntitiesLoadingState());
     try {
-      final response = await _apiService.getAllEntities(token: token);
+      final response = await _apiService.dashboardAllEntities(
+          token: token, customer_id: customer_id);
       if (response.data != null && response.data.containsKey("status")) {
         final AllEntitiesModel model = AllEntitiesModel.fromJson(response.data);
         if (model.status == 200) {
           emit(AllEntitiesSuccessState(model));
         } else {
-          emit(AllEntitiesErrorState(model.message ?? 'Failed to fetch all-entities'));
+          emit(AllEntitiesErrorState(
+              model.message ?? 'Failed to fetch all-entities'));
         }
       } else {
         emit(AllEntitiesErrorState('Invalid response data'));

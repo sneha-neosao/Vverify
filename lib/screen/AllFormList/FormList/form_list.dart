@@ -41,10 +41,22 @@ class _FormListScreenState extends State<FormListScreen> {
     switch (navigate) {
       case "pan-card-verification":
         return PanVerificationCard(
-            controller: panController, serviceTitle: title);
+          controller: panController,
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "aadhaar":
         return AadhaarDigilockerCard(
-            controller: aadhaarController, serviceTitle: title);
+          controller: aadhaarController,
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "reference-check-verification":
         return ReferenceCheckCard(
           serviceTitle: title,
@@ -94,7 +106,13 @@ class _FormListScreenState extends State<FormListScreen> {
           applicantData: widget.applicantData,
         );
       case "credit-history":
-        return CreditHistoryCard(serviceTitle: title);
+        return CreditHistoryCard(
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "driving-licence-verification":
         return DrivingLicenseCard(
           controller: dlController,
@@ -114,7 +132,13 @@ class _FormListScreenState extends State<FormListScreen> {
           applicantData: widget.applicantData,
         );
       case "gst-cin-pan-verification":
-        return GstVerificationCard(serviceTitle: title);
+        return GstVerificationCard(
+          serviceTitle: title,
+          serviceData: widget.applicantData?['services']?.firstWhere(
+              (s) => s['service_navigate'] == navigate,
+              orElse: () => null),
+          applicantData: widget.applicantData,
+        );
       case "director":
         return CompanyFinancialCard(serviceTitle: title);
       default:

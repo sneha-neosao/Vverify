@@ -40,6 +40,7 @@ class Data {
   String? uid;
   int? requestId;
   int? serviceRequestId;
+  int? serviceId;
   String? documentType;
   dynamic documentNumber;
   dynamic dob;
@@ -56,6 +57,7 @@ class Data {
     this.uid,
     this.requestId,
     this.serviceRequestId,
+    this.serviceId,
     this.documentType,
     this.documentNumber,
     this.dob,
@@ -75,8 +77,9 @@ class Data {
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         id: json["id"],
         uid: json["uid"],
-        requestId: json["request_id"],
-        serviceRequestId: json["service_request_id"],
+        requestId: json["request_id"] is int ? json["request_id"] : int.tryParse(json["request_id"]?.toString() ?? ""),
+        serviceRequestId: json["service_request_id"] is int ? json["service_request_id"] : int.tryParse(json["service_request_id"]?.toString() ?? ""),
+        serviceId: json["service_id"] is int ? json["service_id"] : int.tryParse(json["service_id"]?.toString() ?? ""),
         documentType: json["document_type"],
         documentNumber: json["document_number"] ?? json["driver_licence_number"],
         dob: json["dob"],
@@ -94,6 +97,7 @@ class Data {
         "uid": uid,
         "request_id": requestId,
         "service_request_id": serviceRequestId,
+        "service_id": serviceId,
         "document_type": documentType,
         "document_number": documentNumber,
         "dob": dob,

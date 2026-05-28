@@ -1,12 +1,10 @@
-// To parse this JSON data, do
-//
-//     final employListDataModel = employListDataModelFromJson(jsonString);
-
 import 'dart:convert';
 
-EmployListDataModel employListDataModelFromJson(String str) => EmployListDataModel.fromJson(json.decode(str));
+EmployListDataModel employListDataModelFromJson(String str) =>
+    EmployListDataModel.fromJson(json.decode(str));
 
-String employListDataModelToJson(EmployListDataModel data) => json.encode(data.toJson());
+String employListDataModelToJson(EmployListDataModel data) =>
+    json.encode(data.toJson());
 
 class EmployListDataModel {
   int? status;
@@ -19,17 +17,22 @@ class EmployListDataModel {
     this.data,
   });
 
-  factory EmployListDataModel.fromJson(Map<String, dynamic> json) => EmployListDataModel(
-    status: json["status"],
-    message: json["message"],
-    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
-  );
+  factory EmployListDataModel.fromJson(Map<String, dynamic> json) =>
+      EmployListDataModel(
+        status: json["status"],
+        message: json["message"],
+        data: json["data"] == null
+            ? []
+            : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "message": message,
-    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
-  };
+        "status": status,
+        "message": message,
+        "data": data == null
+            ? []
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
+      };
 }
 
 class Datum {
@@ -38,18 +41,18 @@ class Datum {
   int? request_id;
   int? service_request_id;
   int? employment_id;
-  String? employer_name;          // employer_name
-  String? employed_from;          // employed_from
-  String? employed_to;             // employed_to
-  String? designation;             // designation
+  String? employer_name;
+  String? employed_from;
+  String? employed_to;
+  String? designation;
   String? department;
-  String? remunaration;               // remunaration
-  String? reporting_manager;        // reporting_manager
+  String? remunaration;
+  String? reporting_manager;
   String? reason_for_leaving;
   String? eligible_for_rehire;
   String? mentioned_issues;
   String? reason_for_leaving_status;
-  String? v_status;               // v_status
+  String? v_status;
   String? verification_remark;
   String? data_preference;
   String? artefact_img;
@@ -88,66 +91,74 @@ class Datum {
     this.created_at,
     this.updated_at,
     this.case_uuid,
-    this.employment_uuid
+    this.employment_uuid,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    uid: json["uid"],
-    case_id: json["case_id"],
-    request_id: json["request_id"],
-    service_request_id: json["service_request_id"],
-    employment_id: json["employment_id"],
-    employer_name: json["employer_name"],
-    employed_from: json["employed_from"],
-    employed_to: json["employed_to"],
-    designation: json["designation"],
-    department: json["department"],
-    remunaration: json["remunaration"],
-    reporting_manager: json["reporting_manager"],
-    reason_for_leaving: json["reason_for_leaving"],
-    eligible_for_rehire: json["eligible_for_rehire"],
-    mentioned_issues: json["mentioned_issues"],
-    reason_for_leaving_status: json["reason_for_leaving_status"],
-    v_status: json["v_status"],
-    verification_remark: json["verification_remark"],
-    data_preference: json["data_preference"],
-    artefact_img: json["artefact_img"],
-    artefact_link: json["artefact_link"],
-    employment_supporting_doc: json["employment_supporting_doc"],
-    show_on_report: json["show_on_report"],
-    created_at: json["created_at"],
-    updated_at: json["updated_at"],
-      case_uuid: json["case_uuid"],
-      employment_uuid: json["employment_uuid"]
-  );
+        uid: json["uid"],
+        case_id: json["case_id"]?.toString(),
+        request_id: json["request_id"] is int
+            ? json["request_id"]
+            : int.tryParse(json["request_id"]?.toString() ?? ""),
+        service_request_id: json["service_request_id"] is int
+            ? json["service_request_id"]
+            : int.tryParse(json["service_request_id"]?.toString() ?? ""),
+        employment_id: json["employment_id"] is int
+            ? json["employment_id"]
+            : int.tryParse(json["employment_id"]?.toString() ?? ""),
+        employer_name: json["employer_name"],
+        employed_from: json["employed_from"],
+        employed_to: json["employed_to"],
+        designation: json["designation"],
+        department: json["department"],
+        remunaration: json["remunaration"],
+        reporting_manager: json["reporting_manager"],
+        reason_for_leaving: json["reason_for_leaving"],
+        eligible_for_rehire: json["eligible_for_rehire"],
+        mentioned_issues: json["mentioned_issues"],
+        reason_for_leaving_status: json["reason_for_leaving_status"],
+        v_status: json["v_status"],
+        verification_remark: json["verification_remark"],
+        data_preference: json["data_preference"],
+        artefact_img: json["artefact_img"],
+        artefact_link: json["artefact_link"],
+        employment_supporting_doc: json["employment_supporting_doc"],
+        show_on_report: json["show_on_report"] is int
+            ? json["show_on_report"]
+            : int.tryParse(json["show_on_report"]?.toString() ?? ""),
+        created_at: json["created_at"]?.toString(),
+        updated_at: json["updated_at"]?.toString(),
+        case_uuid: json["case_uuid"],
+        employment_uuid: json["employment_uuid"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "uid": uid,
-    "case_id": case_id,
-    "request_id": request_id,
-    "service_request_id": service_request_id,
-    "employment_id": employment_id,
-    "employer_name": employer_name,
-    "employed_from": employed_from,
-    "employed_to": employed_to,
-    "designation": designation,
-    "department": department,
-    "remunaration": remunaration,
-    "reporting_manager": reporting_manager,
-    "reason_for_leaving": reason_for_leaving,
-    "eligible_for_rehire": eligible_for_rehire,
-    "mentioned_issues": mentioned_issues,
-    "reason_for_leaving_status": reason_for_leaving_status,
-    "v_status": v_status,
-    "verification_remark": verification_remark,
-    "data_preference": data_preference,
-    "artefact_img": artefact_img,
-    "artefact_link": artefact_link,
-    "employment_supporting_doc": employment_supporting_doc,
-    "show_on_report": show_on_report,
-    "created_at": created_at,
-    "updated_at": updated_at,
-    "case_uuid": case_uuid,
-    "employment_uuid": employment_uuid
-  };
+        "uid": uid,
+        "case_id": case_id,
+        "request_id": request_id,
+        "service_request_id": service_request_id,
+        "employment_id": employment_id,
+        "employer_name": employer_name,
+        "employed_from": employed_from,
+        "employed_to": employed_to,
+        "designation": designation,
+        "department": department,
+        "remunaration": remunaration,
+        "reporting_manager": reporting_manager,
+        "reason_for_leaving": reason_for_leaving,
+        "eligible_for_rehire": eligible_for_rehire,
+        "mentioned_issues": mentioned_issues,
+        "reason_for_leaving_status": reason_for_leaving_status,
+        "v_status": v_status,
+        "verification_remark": verification_remark,
+        "data_preference": data_preference,
+        "artefact_img": artefact_img,
+        "artefact_link": artefact_link,
+        "employment_supporting_doc": employment_supporting_doc,
+        "show_on_report": show_on_report,
+        "created_at": created_at,
+        "updated_at": updated_at,
+        "case_uuid": case_uuid,
+        "employment_uuid": employment_uuid,
+      };
 }

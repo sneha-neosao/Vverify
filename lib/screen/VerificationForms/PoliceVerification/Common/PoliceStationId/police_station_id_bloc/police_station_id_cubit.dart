@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:v_verify/screen/VerificationForms/EducationVerification/Names/University/Bloc/university_name_state.dart';
 import 'package:v_verify/screen/VerificationForms/PoliceVerification/Common/PoliceStationId/police_station_id_bloc/police_station_id_state.dart';
 import '../../../../../../apiServices/api_services.dart';
 import '../Models/police_station_city_id_model.dart';
@@ -17,12 +16,10 @@ class PoliceStationIdCubit extends Cubit<PoliceStationIdState> {
     emit(PoliceStationIdLoadingState());
     try {
       final response = await _apiService.policeStationIdGetData(
-        token: token,
-          city_id:city_id
-      );
+          token: token, city_id: city_id);
       if (response.data != null && response.data.containsKey("status")) {
         PoliceStationIdModel policeStationIdModel =
-        PoliceStationIdModel.fromJson(response.data);
+            PoliceStationIdModel.fromJson(response.data);
         if (response.data["status"] == 200) {
           emit(PoliceStationIdSuccessState(policeStationIdModel));
         } else if (response.data["status"] == 500) {
@@ -44,7 +41,8 @@ class PoliceStationIdCubit extends Cubit<PoliceStationIdState> {
 class PoliceStationCityIdCubit extends Cubit<PoliceStationCityIdState> {
   ApiService _apiService;
 
-  PoliceStationCityIdCubit(this._apiService) : super(PoliceStationCityIdInitialState());
+  PoliceStationCityIdCubit(this._apiService)
+      : super(PoliceStationCityIdInitialState());
 
   void policeStationCityList({
     required String token,
@@ -56,7 +54,7 @@ class PoliceStationCityIdCubit extends Cubit<PoliceStationCityIdState> {
       );
       if (response.data != null && response.data.containsKey("status")) {
         PoliceStationCityIdModel policeStationCityIdModel =
-        PoliceStationCityIdModel.fromJson(response.data);
+            PoliceStationCityIdModel.fromJson(response.data);
         if (response.data["status"] == 200) {
           emit(PoliceStationCityIdSuccessState(policeStationCityIdModel));
         } else if (response.data["status"] == 500) {

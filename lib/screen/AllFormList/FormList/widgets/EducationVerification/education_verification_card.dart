@@ -13,12 +13,15 @@ import 'Bloc/education_update_form_bloc/education_update_form_cubit.dart';
 import 'Bloc/education_update_form_bloc/education_update_form_state.dart';
 import 'Bloc/education_show_details_bloc/education_show_details_cubit.dart';
 import 'Bloc/education_show_details_bloc/education_show_details_state.dart';
+import 'Bloc/education_list_cubit.dart';
+import 'Bloc/education_list_state.dart';
 import 'Model/education_save_form_model.dart';
 import 'Model/education_update_form_model.dart';
 import 'Model/education_show_details_model.dart';
 import '../../../../VerificationForms/VerifyDeatils/Bloc/verify_details_cubit.dart';
 import '../../../../VerificationForms/VerifyDeatils/Bloc/verify_details_state.dart';
 import '../../../../VerificationPending/bloc/pendingDoc_cubit.dart';
+import '../../../../VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
 import '../../../../../commonComponent/bloc/shared_preferences_cubit.dart';
 
 class EducationVerificationCard extends StatefulWidget {
@@ -39,7 +42,7 @@ class EducationVerificationCard extends StatefulWidget {
 }
 
 class _EducationVerificationCardState extends State<EducationVerificationCard> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Controllers
   final universityNameController = TextEditingController();
@@ -55,44 +58,90 @@ class _EducationVerificationCardState extends State<EducationVerificationCard> {
   bool isEditing = false;
   String? artefactImgUrl;
   String? caseUuidFromApi;
+  String? _uid;
+  String? _educationUuid;
 
   String currentStatus = "Pending";
   String? rejectionReason;
   bool isRejected = false;
 
-  late EducationSaveFormCubit _saveCubit;
-  late EducationUpdateFormCubit _updateCubit;
-  late EducationShowDetailsCubit _detailsCubit;
+  late final EducationSaveFormCubit _saveCubit;
+  late final EducationUpdateFormCubit _updateCubit;
+  late final EducationShowDetailsCubit _detailsCubit;
+  late final EducationListCubit _listCubit;
+  late final VerifyDetailsCubit _verifyDetailsCubit;
 
   @override
   void initState() {
     super.initState();
-    _saveCubit = context.read<EducationSaveFormCubit>();
-    _updateCubit = context.read<EducationUpdateFormCubit>();
-    _detailsCubit = context.read<EducationShowDetailsCubit>();
+    _saveCubit = EducationSaveFormCubit(ApiService());
+    _updateCubit = EducationUpdateFormCubit(ApiService());
+    _detailsCubit = EducationShowDetailsCubit(ApiService());
+    _listCubit = EducationListCubit(ApiService());
+    _verifyDetailsCubit = VerifyDetailsCubit(ApiService());
 
-    currentStatus = widget.serviceData?['status'] ?? "Pending";
+    caseUuidFromApi = widget.applicantData?['case_uuid']?.toString() ?? "";
+    currentStatus = widget.serviceData?['status']?.toString() ?? "Pending";
 
-    _fetchDetails();
-    _fetchCaseUuid();
+    _fetchEducationList();
+    _fetchVerifyDetails();
   }
 
-  void _fetchDetails() async {
+  @override
+  void dispose() {
+    _saveCubit.close();
+    _updateCubit.close();
+    _detailsCubit.close();
+    _listCubit.close();
+    _verifyDetailsCubit.close();
+    universityNameController.dispose();
+    institutionNameController.dispose();
+    yearOfPassingController.dispose();
+    degreeNameController.dispose();
+    gradeObtainedController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchEducationList() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
+    final requestId =
+        int.tryParse(widget.applicantData?['request_id']?.toString() ?? "");
+    final serviceRequestId = int.tryParse(
+        widget.serviceData?['service_request_id']?.toString() ?? "");
 
-    _detailsCubit.educationUpdateForm(
-      token: token,
-      uid: widget.serviceData?['uid']?.toString() ?? "",
-    );
+    debugPrint('Education List token: $token');
+    debugPrint('Education List request_id: $requestId');
+    debugPrint('Education List service_request_id: $serviceRequestId');
+
+    if (token.isNotEmpty && requestId != null && serviceRequestId != null) {
+      _listCubit.educationList(
+        token: token,
+        requestId: requestId,
+        serviceRequestId: serviceRequestId,
+      );
+    }
   }
 
-  void _fetchCaseUuid() {
-    final token = context.read<TokenCubit>().state;
-    context.read<VerifyDetailsCubit>().verifyDetails(
-          token: token,
-          requestId: widget.applicantData?['request_id']?.toString() ?? "",
-        );
+  Future<void> _fetchVerifyDetails() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+    final requestId = widget.applicantData?['request_id']?.toString() ?? "";
+    if (token.isNotEmpty && requestId.isNotEmpty) {
+      _verifyDetailsCubit.verifyDetails(token: token, requestId: requestId);
+    }
+  }
+
+  Future<void> _fetchShowData({required String uid}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+    if (token.isNotEmpty && uid.isNotEmpty) {
+      _detailsCubit.educationUpdateForm(token: token, uid: uid);
+    }
+  }
+
+  Future<void> _checkAndFetchDetails({bool force = false}) async {
+    _fetchEducationList();
   }
 
   void _populateData(EducationDataDetailsModel response) {
@@ -109,6 +158,16 @@ class _EducationVerificationCardState extends State<EducationVerificationCard> {
         gradeObtainedController.text = data.gradesObtained ?? "";
         artefactImgUrl = data.artefactImg;
 
+        final serviceUid = widget.serviceData?['uid']?.toString() ?? "";
+        if (_uid == null || _uid!.isEmpty) {
+          _uid = serviceUid.isNotEmpty ? serviceUid : (data.uid ?? "");
+        }
+
+        final eduUuid = widget.serviceData?['education_uuid']?.toString() ?? "";
+        if (_educationUuid == null || _educationUuid!.isEmpty) {
+          _educationUuid = eduUuid.isNotEmpty ? eduUuid : (data.uid ?? "");
+        }
+
         currentStatus = data.vStatus ?? currentStatus;
         rejectionReason = data.verificationRemark;
         isRejected = (currentStatus.toLowerCase() == 'discrepancy' ||
@@ -121,12 +180,14 @@ class _EducationVerificationCardState extends State<EducationVerificationCard> {
     final token = context.read<TokenCubit>().state;
     final customerIdStr = context.read<IdCubit>().state;
     final customerId = int.tryParse(customerIdStr) ?? 0;
+    final navState = context.read<PendingDocNavigationCubit>().state;
 
     context.read<PendingDocCubit>().getPendingDoc(
           token: token,
           customerId: customerId,
           page: 1,
           limit: 100,
+          entityId: navState.entityId,
           isLoading: false,
         );
   }
@@ -137,23 +198,49 @@ class _EducationVerificationCardState extends State<EducationVerificationCard> {
       final token = prefs.getString('token') ?? "";
       final customerId = prefs.getString('id') ?? "";
 
+      final requestId = widget.applicantData?['request_id']?.toString() ?? "";
+      final serviceRequestId =
+          widget.serviceData?['service_request_id']?.toString() ?? "";
+
+      final caseUuid = caseUuidFromApi ??
+          widget.applicantData?['case_uuid']?.toString() ??
+          "";
+
+      debugPrint("case uuid: $caseUuid");
+
+      if (caseUuid.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Case UUID is required to submit education details."),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+
+
       if (isEditing) {
+        final finalUid = (_uid != null && _uid!.isNotEmpty)
+            ? _uid!
+            : (widget.serviceData?['uid']?.toString() ?? "");
+
+        final finalEduUuid = (_educationUuid != null && _educationUuid!.isNotEmpty)
+            ? _educationUuid!
+            : (widget.serviceData?['education_uuid']?.toString() ?? "");
+
         final updateModel = EducationUpdateFormModel(
-          uid: widget.serviceData?['uid']?.toString() ?? "",
-          request_id: widget.applicantData?['request_id']?.toString() ?? "",
-          service_request_id:
-              widget.serviceData?['service_request_id']?.toString() ?? "",
+          uid: finalUid,
+          request_id: requestId,
+          service_request_id: serviceRequestId,
           university_name: universityNameController.text.trim(),
           instituition_name: institutionNameController.text.trim(),
           year_of_passing: yearOfPassingController.text.trim(),
           degree_qualification_name: degreeNameController.text.trim(),
           grades_type: selectedGradeType ?? "",
           grades_obtained: gradeObtainedController.text.trim(),
-          case_uuid: caseUuidFromApi ??
-              widget.applicantData?['case_uuid']?.toString() ??
-              "",
-          education_uuid:
-              widget.serviceData?['education_uuid']?.toString() ?? "",
+          case_uuid: caseUuid,
+          education_uuid: finalEduUuid,
         );
         _updateCubit.educationUpdateForm(
           token: token,
@@ -162,18 +249,15 @@ class _EducationVerificationCardState extends State<EducationVerificationCard> {
         );
       } else {
         final saveModel = EducationSaveFormModel(
-          request_id: widget.applicantData?['request_id']?.toString() ?? "",
-          service_request_id:
-              widget.serviceData?['service_request_id']?.toString() ?? "",
+          request_id: requestId,
+          service_request_id: serviceRequestId,
           university_name: universityNameController.text.trim(),
           instituition_name: institutionNameController.text.trim(),
           year_of_passing: yearOfPassingController.text.trim(),
           degree_qualification_name: degreeNameController.text.trim(),
           grades_type: selectedGradeType ?? "",
           grades_obtained: gradeObtainedController.text.trim(),
-          case_uuid: caseUuidFromApi ??
-              widget.applicantData?['case_uuid']?.toString() ??
-              "",
+          case_uuid: caseUuid,
         );
         _saveCubit.educationSaveForm(
           token: token,
@@ -186,292 +270,453 @@ class _EducationVerificationCardState extends State<EducationVerificationCard> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<VerifyDetailsCubit, VerifyDetailsState>(
-          listener: (context, state) {
-            if (state is VerifyDetailsSuccessState) {
-              setState(() {
-                caseUuidFromApi = state.verifyDetailsModel.data?.caseUuid;
-              });
-            }
-          },
-        ),
-        BlocListener<EducationShowDetailsCubit, EducationShowDetailsState>(
-          listener: (context, state) {
-            if (state is EducationShowDetailsSuccessState) {
-              _populateData(state.educationDataDetailsModel);
-            }
-          },
-        ),
-        BlocListener<EducationSaveFormCubit, EducationSaveFormState>(
-          listener: (context, state) {
-            if (state is EducationSaveFormSuccessState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text("Education details saved successfully!"),
-                    backgroundColor: Colors.green),
-              );
-              setState(() {
-                isReadOnly = true;
-                isEditing = false;
-              });
-              _fetchDetails();
-              _refreshPendingDocs(context);
-            } else if (state is EducationSaveFormErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(state.message), backgroundColor: Colors.red),
-              );
-            }
-          },
-        ),
-        BlocListener<EducationUpdateFormCubit, EducationUpdateFormState>(
-          listener: (context, state) {
-            if (state is EducationUpdateFormSuccessState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text("Education details updated successfully!"),
-                    backgroundColor: Colors.green),
-              );
-              setState(() {
-                isReadOnly = true;
-                isEditing = false;
-              });
-              _fetchDetails();
-              _refreshPendingDocs(context);
-            } else if (state is EducationUpdateFormErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(state.message), backgroundColor: Colors.red),
-              );
-            }
-          },
-        ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _saveCubit),
+        BlocProvider.value(value: _updateCubit),
+        BlocProvider.value(value: _detailsCubit),
+        BlocProvider.value(value: _listCubit),
+        BlocProvider.value(value: _verifyDetailsCubit),
       ],
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          const Icon(Icons.school_outlined,
-                              color: Color(0xFFFFB74D), size: 28),
-                          const SizedBox(width: 12),
-                          Flexible(
-                            child: Text(
-                              widget.serviceTitle ?? "Education Verification",
-                              style: GoogleFonts.outfit(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF263238),
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    StatusChip(
-                      status: (currentStatus.isNotEmpty)
-                          ? '${currentStatus[0].toUpperCase()}${currentStatus.substring(1).toLowerCase()}'
-                          : "Pending",
-                    ),
-                  ],
-                ),
-                if (isRejected && rejectionReason != null)
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(top: 12),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFEBEE),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: const Color(0xFFEF9A9A).withOpacity(0.5)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.info_outline,
-                                color: Color(0xFFD32F2F), size: 18),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Verification Remark",
-                              style: GoogleFonts.outfit(
-                                color: const Color(0xFFD32F2F),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          rejectionReason ?? "No remark provided",
-                          style: GoogleFonts.outfit(
-                            color: const Color(0xFFB71C1C),
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<EducationListCubit, EducationDataListState>(
+            listener: (context, state) {
+              if (state is EducationDataListSuccessState) {
+                final records = state.educationListDataModel.data;
+                if (records != null && records.isNotEmpty) {
+                  final uid = records.first.uid ?? "";
+                  final educationUuid = records.first.educationUuid ?? "";
+                  setState(() {
+                    _uid = uid;
+                    _educationUuid = educationUuid;
+                  });
+                  if (uid.isNotEmpty) {
+                    _fetchShowData(uid: uid);
+                  }
+                }
+              }
+            },
+          ),
+          BlocListener<EducationSaveFormCubit, EducationSaveFormState>(
+            listener: (context, state) {
+              if (state is EducationSaveFormSuccessState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Education details saved successfully!"),
+                    backgroundColor: Colors.green,
                   ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            form_widget(
-              controller: universityNameController,
-              titleText: "University Name",
-              hintText: "University Name",
-              textInputType: TextInputType.text,
-              isReadOnly: isReadOnly,
-              validator: (value) => (value == null || value.trim().isEmpty)
-                  ? "University name is required"
-                  : null,
-            ),
-            form_widget(
-              controller: institutionNameController,
-              titleText: "Institute Name",
-              hintText: "College/School",
-              textInputType: TextInputType.text,
-              isReadOnly: isReadOnly,
-              isRequired: false,
-            ),
-            form_widget(
-              controller: degreeNameController,
-              titleText: "Degree Name",
-              hintText: "B.Tech, MBA, etc.",
-              textInputType: TextInputType.text,
-              isReadOnly: isReadOnly,
-              validator: (value) => (value == null || value.trim().isEmpty)
-                  ? "Degree name is required"
-                  : null,
-            ),
-            form_widget(
-              controller: yearOfPassingController,
-              titleText: "Year of Passing",
-              hintText: "YYYY",
-              textInputType: TextInputType.number,
-              isReadOnly: isReadOnly,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty)
-                  return "Year of passing is required";
-                if (value.length != 4) return "Enter a valid year (YYYY)";
-                return null;
-              },
-            ),
-            FormDropdownWidget(
-              titleText: "Grade Type",
-              hintText: "Select Grade Type",
-              items: gradeTypes,
-              value: selectedGradeType,
-              isRequired: false,
-              onChanged: isReadOnly
-                  ? null
-                  : (val) {
-                      setState(() => selectedGradeType = val);
-                    },
-            ),
-            form_widget(
-              controller: gradeObtainedController,
-              titleText: "Grade Obtained",
-              hintText: "Grade/Percentage/Cgpa",
-              textInputType: TextInputType.text,
-              isReadOnly: isReadOnly,
-              isRequired: false,
-            ),
-            if (artefactImgUrl != null && artefactImgUrl!.isNotEmpty)
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: InkWell(
-                    onTap: () {
-                      context.pushNamed(
-                        'preview',
-                        extra: artefactImgUrl,
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF0F4FF),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFFE0E7FF)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.link,
-                              color: Color(0xFF4F46E5), size: 18),
-                          const SizedBox(width: 8),
-                          Text(
-                            "View Artefact",
-                            style: GoogleFonts.outfit(
-                              color: const Color(0xFF4F46E5),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                );
+                setState(() {
+                  isReadOnly = true;
+                  isEditing = false;
+                });
+                _checkAndFetchDetails(force: true);
+                _refreshPendingDocs(context);
+              } else if (state is EducationSaveFormErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
                   ),
-                ),
-              ),
-            const SizedBox(height: 24),
-            if (!isReadOnly || isEditing)
-              Align(
-                alignment: Alignment.centerRight,
-                child: CustomButton(
-                  text: isEditing ? "Update" : "Submit",
-                  width: 140,
-                  height: 48,
-                  prefixIcon: isEditing ? Icons.edit : Icons.send,
-                  iconSize: 18,
-                  gradientColors: const [
-                    Color(0xFFF4511E),
-                    Color(0xFFFFB74D),
-                  ],
-                  onTap: () => _submitForm(context),
-                ),
-              )
-            else if (isReadOnly)
-              Align(
-                alignment: Alignment.centerRight,
-                child: CustomButton(
-                  text: "Edit",
-                  width: 120,
-                  height: 48,
-                  prefixIcon: Icons.edit_note,
-                  iconSize: 18,
-                  gradientColors: const [
-                    Color(0xFF455A64),
-                    Color(0xFF78909C),
-                  ],
-                  onTap: () {
-                    setState(() {
-                      isReadOnly = false;
-                      isEditing = true;
-                    });
+                );
+              }
+            },
+          ),
+          BlocListener<EducationUpdateFormCubit, EducationUpdateFormState>(
+            listener: (context, state) {
+              if (state is EducationUpdateFormSuccessState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Education details updated successfully!"),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+                setState(() {
+                  isReadOnly = true;
+                  isEditing = false;
+                });
+                _checkAndFetchDetails(force: true);
+                _refreshPendingDocs(context);
+              } else if (state is EducationUpdateFormErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+          ),
+          BlocListener<EducationShowDetailsCubit, EducationShowDetailsState>(
+            listener: (context, state) {
+              if (state is EducationShowDetailsSuccessState) {
+                _populateData(state.educationDataDetailsModel);
+              } else if (state is EducationShowDetailsErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+          ),
+          BlocListener<VerifyDetailsCubit, VerifyDetailsState>(
+            listener: (context, state) {
+              if (state is VerifyDetailsSuccessState) {
+                setState(() {
+                  caseUuidFromApi = state.verifyDetailsModel.data?.caseUuid ??
+                      state.verifyDetailsModel.data?.uuid;
+                });
+                debugPrint(
+                    "Fetched case uuid via VerifyDetailsCubit: $caseUuidFromApi");
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<EducationListCubit, EducationDataListState>(
+          builder: (context, listState) {
+            return BlocBuilder<EducationShowDetailsCubit, EducationShowDetailsState>(
+              builder: (context, showState) {
+                return BlocBuilder<EducationSaveFormCubit, EducationSaveFormState>(
+                  builder: (context, saveState) {
+                    return BlocBuilder<EducationUpdateFormCubit, EducationUpdateFormState>(
+                      builder: (context, updateState) {
+                        if (listState is EducationDataListLoadingState ||
+                            showState is EducationShowDetailsLoadingState ||
+                            saveState is EducationSaveFormLoadingState ||
+                            updateState is EducationUpdateFormLoadingState) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(20.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+
+                        String currentStatus =
+                            widget.serviceData?['status']?.toString() ??
+                                "PENDING";
+                        if (listState is EducationDataListEmptyState) {
+                          currentStatus = "Pending";
+                        } else if (showState is EducationShowDetailsSuccessState) {
+                          currentStatus = showState
+                                  .educationDataDetailsModel.data?.vStatus ??
+                              currentStatus;
+                        }
+
+                        if (currentStatus.trim().isEmpty ||
+                            currentStatus == "-") {
+                          currentStatus = "Pending";
+                        }
+
+                        final bool isRejected = currentStatus
+                                .toLowerCase()
+                                .contains("reject") ||
+                            currentStatus.toLowerCase().contains("discrepancy");
+
+                        String? rejectionReason = this.rejectionReason;
+                        if (showState is EducationShowDetailsSuccessState) {
+                          rejectionReason = showState.educationDataDetailsModel
+                                  .data?.verificationRemark ??
+                              rejectionReason;
+                        }
+
+                        return Form(
+                          key: _formKey,
+                          autovalidateMode: AutovalidateMode.disabled,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.school_outlined,
+                                            color: Color(0xFFFFB74D), size: 28),
+                                        const SizedBox(width: 12),
+                                        Flexible(
+                                          child: Text(
+                                            widget.serviceTitle ??
+                                                "Education Verification",
+                                            style: GoogleFonts.outfit(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: const Color(0xFF263238),
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  StatusChip(
+                                    status: (currentStatus.isNotEmpty)
+                                        ? '${currentStatus[0].toUpperCase()}${currentStatus.substring(1).toLowerCase()}'
+                                        : "Pending",
+                                  ),
+                                ],
+                              ),
+                              if (rejectionReason != null &&
+                                  rejectionReason.isNotEmpty)
+                                Builder(builder: (context) {
+                                  final bool isRejectTheme = isRejected;
+                                  final Color bgColor = isRejectTheme
+                                      ? const Color(0xFFFFEBEE)
+                                      : const Color(0xFFE8F5E9);
+                                  final Color borderColor = isRejectTheme
+                                      ? const Color(0xFFEF9A9A).withOpacity(0.5)
+                                      : const Color(0xFFA5D6A7)
+                                          .withOpacity(0.5);
+                                  final Color textColor = isRejectTheme
+                                      ? const Color(0xFFD32F2F)
+                                      : const Color(0xFF2E7D32);
+                                  final IconData icon = isRejectTheme
+                                      ? Icons.info_outline
+                                      : Icons.check_circle_outline;
+
+                                  return Container(
+                                    width: double.infinity,
+                                    margin: const EdgeInsets.only(top: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 12),
+                                    decoration: BoxDecoration(
+                                      color: bgColor,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: borderColor),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(icon,
+                                                color: textColor, size: 18),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              "Verification Remark",
+                                              style: GoogleFonts.outfit(
+                                                color: textColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.2,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          rejectionReason!,
+                                          style: GoogleFonts.outfit(
+                                            color: textColor.withOpacity(0.9),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                            height: 1.4,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              const SizedBox(height: 24),
+                              form_widget(
+                                controller: universityNameController,
+                                titleText: "University Name",
+                                hintText: "University Name",
+                                textInputType: TextInputType.text,
+                                isReadOnly: isReadOnly,
+                                validator: (value) =>
+                                    (value == null || value.trim().isEmpty)
+                                        ? "University name is required"
+                                        : null,
+                              ),
+                              form_widget(
+                                controller: institutionNameController,
+                                titleText: "Institute Name",
+                                hintText: "College/School",
+                                textInputType: TextInputType.text,
+                                isReadOnly: isReadOnly,
+                                isRequired: false,
+                              ),
+                              form_widget(
+                                controller: degreeNameController,
+                                titleText: "Degree Name",
+                                hintText: "B.Tech, MBA, etc.",
+                                textInputType: TextInputType.text,
+                                isReadOnly: isReadOnly,
+                                validator: (value) =>
+                                    (value == null || value.trim().isEmpty)
+                                        ? "Degree name is required"
+                                        : null,
+                              ),
+                              form_widget(
+                                controller: yearOfPassingController,
+                                titleText: "Year of Passing",
+                                hintText: "YYYY",
+                                textInputType: TextInputType.number,
+                                isReadOnly: isReadOnly,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Year of passing is required";
+                                  }
+                                  if (value.length != 4) {
+                                    return "Enter a valid year (YYYY)";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              FormDropdownWidget(
+                                titleText: "Grade Type",
+                                hintText: "Select Grade Type",
+                                items: gradeTypes,
+                                value: selectedGradeType,
+                                isRequired: false,
+                                onChanged: isReadOnly
+                                    ? null
+                                    : (val) {
+                                        setState(() => selectedGradeType = val);
+                                      },
+                              ),
+                              form_widget(
+                                controller: gradeObtainedController,
+                                titleText: "Grade Obtained",
+                                hintText: "Grade/Percentage/Cgpa",
+                                textInputType: TextInputType.text,
+                                isReadOnly: isReadOnly,
+                                isRequired: false,
+                              ),
+                              if (artefactImgUrl != null &&
+                                  artefactImgUrl!.isNotEmpty)
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 12.0),
+                                    child: InkWell(
+                                      onTap: () {
+                                        context.pushNamed(
+                                          'preview',
+                                          extra: artefactImgUrl,
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF0F4FF),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: const Color(0xFFE0E7FF)),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(Icons.link,
+                                                color: Color(0xFF4F46E5),
+                                                size: 18),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              "View Artefact",
+                                              style: GoogleFonts.outfit(
+                                                color: const Color(0xFF4F46E5),
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              const SizedBox(height: 24),
+                              if (!isReadOnly && isEditing)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    CustomButton(
+                                      text: "Cancel",
+                                      width: 120,
+                                      height: 48,
+                                      iconSize: 18,
+                                      gradientColors: const [
+                                        Color(0xFF9E9E9E),
+                                        Color(0xFFBDBDBD),
+                                      ],
+                                      onTap: () {
+                                        setState(() {
+                                          isReadOnly = true;
+                                          isEditing = false;
+                                          _formKey.currentState?.reset();
+                                        });
+                                        if (showState
+                                            is EducationShowDetailsSuccessState) {
+                                          _populateData(showState
+                                              .educationDataDetailsModel);
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(width: 16),
+                                    CustomButton(
+                                      text: "Save",
+                                      width: 120,
+                                      height: 48,
+                                      prefixIcon: Icons.save,
+                                      iconSize: 18,
+                                      gradientColors: const [
+                                        Color(0xFFF4511E),
+                                        Color(0xFFFFB74D),
+                                      ],
+                                      onTap: () => _submitForm(context),
+                                    ),
+                                  ],
+                                )
+                              else if (!isReadOnly ||
+                                  (isReadOnly && isRejected))
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: CustomButton(
+                                    text: (isReadOnly && isRejected)
+                                        ? "Update"
+                                        : "Submit",
+                                    width: 140,
+                                    height: 48,
+                                    prefixIcon: (isReadOnly && isRejected
+                                        ? Icons.edit
+                                        : Icons.send),
+                                    iconSize: 18,
+                                    gradientColors: const [
+                                      Color(0xFFF4511E),
+                                      Color(0xFFFFB74D),
+                                    ],
+                                    onTap: () {
+                                      if (isReadOnly && isRejected) {
+                                        setState(() {
+                                          isReadOnly = false;
+                                          isEditing = true;
+                                        });
+                                      } else {
+                                        _submitForm(context);
+                                      }
+                                    },
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
                   },
-                ),
-              ),
-          ],
+                );
+              },
+            );
+          },
         ),
       ),
     );

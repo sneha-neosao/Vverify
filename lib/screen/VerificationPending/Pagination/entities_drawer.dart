@@ -29,12 +29,16 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
     super.initState();
     _expandedEntityId = int.tryParse(widget.currentEntityId);
 
-    // Only fetch if data is not already loaded — prevents re-calling on every drawer open/close
+    // Only fetch if data is not already loaded.
+    // PaymentSuccessful re-fetches after a purchase, so no need to re-call here.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentState = context.read<AllEntitiesCubit>().state;
       if (currentState is! AllEntitiesSuccessState) {
         final token = context.read<TokenCubit>().state;
-        context.read<AllEntitiesCubit>().getAllEntities(token: token);
+        final customerId = context.read<IdCubit>().state;
+        context
+            .read<AllEntitiesCubit>()
+            .getAllEntities(token: token, customer_id: customerId);
       }
     });
   }
@@ -67,7 +71,7 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    "Vverify Navigation",
+                    "pehchaan360",
                     style: GoogleFonts.outfit(
                       color: const Color(0xFF0F172A), // Slate black
                       fontSize: 18,
@@ -105,9 +109,9 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                     );
                   } else if (state is AllEntitiesSuccessState) {
                     final dataList = state.allEntitiesModel.data ?? [];
-                    // Keep only active entities
-                    final activeEntities =
-                        dataList.where((e) => e.isActive == 1).toList();
+                    final activeEntities = dataList
+                        .where((e) => e.isActive == null || e.isActive == 1)
+                        .toList();
 
                     return ListView(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -271,6 +275,22 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              // subtitle: entity.entityDescription != null &&
+              //         entity.entityDescription!.isNotEmpty
+              //     ? Padding(
+              //         padding: const EdgeInsets.only(top: 4.0),
+              //         child: Text(
+              //           entity.entityDescription!,
+              //           maxLines: 2,
+              //           overflow: TextOverflow.ellipsis,
+              //           style: GoogleFonts.outfit(
+              //             color: const Color(0xFFFF7E3E).withOpacity(0.8),
+              //             fontSize: 12,
+              //             fontWeight: FontWeight.w400,
+              //           ),
+              //         ),
+              //       )
+              //     : null,
               trailing: Icon(
                 isExpanded
                     ? Icons.keyboard_arrow_up_rounded
@@ -368,6 +388,22 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                   fontWeight: isExpanded ? FontWeight.bold : FontWeight.w600,
                 ),
               ),
+              // subtitle: entity.entityDescription != null &&
+              //         entity.entityDescription!.isNotEmpty
+              //     ? Padding(
+              //         padding: const EdgeInsets.only(top: 4.0),
+              //         child: Text(
+              //           entity.entityDescription!,
+              //           maxLines: 2,
+              //           overflow: TextOverflow.ellipsis,
+              //           style: GoogleFonts.outfit(
+              //             color: const Color(0xFF64748B),
+              //             fontSize: 12,
+              //             fontWeight: FontWeight.w400,
+              //           ),
+              //         ),
+              //       )
+              //     : null,
               trailing: Icon(
                 isExpanded
                     ? Icons.keyboard_arrow_up_rounded

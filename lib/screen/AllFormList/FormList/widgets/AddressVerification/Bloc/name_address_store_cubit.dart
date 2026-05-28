@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../apiServices/api_services.dart';
-import '../../../../../VerificationForms/AddressVerificationForm/Form/Models/address_save_model.dart';
+import 'Models/address_save_model.dart';
 import 'name_address_store_state.dart';
 
 class NameAddressStoreCubit extends Cubit<NameAddressStoreState> {
@@ -26,11 +26,13 @@ class NameAddressStoreCubit extends Cubit<NameAddressStoreState> {
         if (responseData["status"] == 200) {
           emit(NameAddressStoreSuccess(responseData));
         } else {
-          final errorMessage = responseData["message"] ?? "An error occurred while saving address details.";
+          final errorMessage = responseData["message"] ??
+              "An error occurred while saving address details.";
           emit(NameAddressStoreFailure(errorMessage.toString()));
         }
       } else {
-        emit(const NameAddressStoreFailure("Invalid response format received from server."));
+        emit(const NameAddressStoreFailure(
+            "Invalid response format received from server."));
       }
     } catch (e) {
       emit(NameAddressStoreFailure(e.toString()));

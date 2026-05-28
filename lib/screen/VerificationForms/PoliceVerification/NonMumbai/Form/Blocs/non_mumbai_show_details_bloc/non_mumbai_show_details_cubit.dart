@@ -1,10 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-import 'package:v_verify/screen/VerificationForms/ReferenceForm/Form/Blocs/reference_show_details_bloc/reference_show_details_state.dart';
 
 import '../../Models/non_mumbai_show_details_model.dart';
 import 'non_mumbai_show_details_state.dart';
-
 
 class NonMumbaiShowDataCubit extends Cubit<NonMumbaiShowDataState> {
   ApiService _apiService;
@@ -21,7 +19,7 @@ class NonMumbaiShowDataCubit extends Cubit<NonMumbaiShowDataState> {
       );
       if (response.data != null && response.data.containsKey("status")) {
         NonMumbaiShowDataModel nonMumbaiShowDataModel =
-        NonMumbaiShowDataModel.fromJson(response.data);
+            NonMumbaiShowDataModel.fromJson(response.data);
         if (response.data["status"] == 200) {
           emit(NonMumbaiShowDataSuccessState(nonMumbaiShowDataModel));
         } else if (response.data["status"] == 500) {
