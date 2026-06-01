@@ -20,6 +20,7 @@ import '../../commonComponent/check_internet.dart';
 import '../../commonComponent/custom_button.dart';
 import '../PushNotification/Bloc/push_notification_cubit.dart';
 import '../PushNotification/firebase_token.dart';
+import 'package:v_verify/screen/Bottom/bottomNavbar.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -282,43 +283,69 @@ class _HomeScreenState extends State<HomeScreen> {
                               : "Hi ${(("${data.profileResult!.firstName} ${data.profileResult!.lastName}").toUpperCase())}",
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
-                        trailing: Stack(
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            IconButton(
-                              onPressed: () async {
-                                await context.pushNamed('checkOut');
-                                _updateCartCount();
-                              },
-                              icon: Icon(
-                                Icons.shopping_cart_outlined,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                            if (cartCount > 0)
-                              Positioned(
-                                right: 8,
-                                top: 8,
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  constraints: const BoxConstraints(
-                                    minWidth: 16,
-                                    minHeight: 16,
-                                  ),
-                                  child: Text(
-                                    '$cartCount',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
+                            Stack(
+                              children: [
+                                IconButton(
+                                  onPressed: () async {
+                                    await context.pushNamed('checkOut');
+                                    _updateCartCount();
+                                  },
+                                  icon: Icon(
+                                    Icons.shopping_cart_outlined,
+                                    color: Theme.of(context).primaryColor,
                                   ),
                                 ),
+                                if (cartCount > 0)
+                                  Positioned(
+                                    right: 8,
+                                    top: 8,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      constraints: const BoxConstraints(
+                                        minWidth: 16,
+                                        minHeight: 16,
+                                      ),
+                                      child: Text(
+                                        '$cartCount',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            if (context.read<TokenCubit>().state == "guest") ...[
+                              const SizedBox(width: 4),
+                              IconButton(
+                                onPressed: () async {
+                                  final SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  await prefs.remove('id');
+                                  await prefs.remove('userType');
+                                  await prefs.remove('token');
+                                  if (context.mounted) {
+                                    selectedIndex = 0;
+                                    context.go('/login');
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.login_rounded,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                tooltip: "Log In",
                               ),
+                            ],
                           ],
                         ),
                       );

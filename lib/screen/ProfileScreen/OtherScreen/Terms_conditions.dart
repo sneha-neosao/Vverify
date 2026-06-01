@@ -44,13 +44,29 @@ class _TermsConditionsState extends State<TermsConditions> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: isLoading
-            ? const Center(
-          child: CircularProgressIndicator(),
-        )
-            :WebViewWidget(
-      controller: controller,
-    )
+      appBar: AppBar(
+        title: const Text(
+          "Terms & Conditions",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        elevation: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : WebViewWidget(
+              controller: controller,
+            ),
     );
   }
 }

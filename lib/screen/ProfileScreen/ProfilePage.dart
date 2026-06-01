@@ -23,10 +23,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  void _showSignOutDialog(BuildContext context,
+  void _showSignOutDialog(BuildContext parentContext,
       {required String token, required String customerId}) {
     showGeneralDialog(
-      context: context,
+      context: parentContext,
       barrierDismissible: true,
       barrierLabel: "SignOutDialog",
       barrierColor: Colors.black.withOpacity(0.6),
@@ -132,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: CustomButton(
                             onTap: () {
                               Navigator.of(context).pop();
-                              context.read<SignOutCubit>().signOut(
+                              parentContext.read<SignOutCubit>().signOut(
                                   token: token, customerId: customerId);
                             },
                             text: "Yes, Sign Out",

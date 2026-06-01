@@ -156,9 +156,8 @@ class _AddressVerificationCardState extends State<AddressVerificationCard> {
 
         final addrUuid = widget.serviceData?['address_uuid']?.toString() ?? "";
         if (_addressUuid == null || _addressUuid!.isEmpty) {
-          _addressUuid = addrUuid.isNotEmpty
-              ? addrUuid
-              : (model.data!.address_uuid ?? "");
+          _addressUuid =
+              addrUuid.isNotEmpty ? addrUuid : (model.data!.address_uuid ?? "");
         }
       });
     }
@@ -207,11 +206,13 @@ class _AddressVerificationCardState extends State<AddressVerificationCard> {
             ? _uid!
             : (widget.serviceData?['uid']?.toString() ?? "");
 
-        final finalAddressUuid = (_addressUuid != null && _addressUuid!.isNotEmpty)
-            ? _addressUuid!
-            : (widget.serviceData?['address_uuid']?.toString() ?? "");
+        final finalAddressUuid =
+            (_addressUuid != null && _addressUuid!.isNotEmpty)
+                ? _addressUuid!
+                : (widget.serviceData?['address_uuid']?.toString() ?? "");
 
-        print("address _submitForm: _uid=$_uid, finalUid=$finalUid, _addressUuid=$_addressUuid, finalAddressUuid=$finalAddressUuid");
+        print(
+            "address _submitForm: _uid=$_uid, finalUid=$finalUid, _addressUuid=$_addressUuid, finalAddressUuid=$finalAddressUuid");
 
         final updateModel = NameAddressVerificationUpdateModel(
           request_id: requestId,

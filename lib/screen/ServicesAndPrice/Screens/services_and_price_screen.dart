@@ -13,6 +13,7 @@ import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/da
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/dashboard_entities_cubit.dart';
 import 'package:v_verify/services/phonepe_payment_gateway_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:v_verify/screen/Bottom/bottomNavbar.dart';
 import '../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../../commonComponent/custom_button.dart';
 import '../../Home screen/bloc/home_screnn_cubit.dart';
@@ -283,6 +284,121 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                       Theme.of(context).primaryColorLight,
                     ],
                   ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showLoginRequiredDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 20.0,
+                  offset: Offset(0.0, 10.0),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.lock_outline_rounded,
+                    color: Colors.orange.shade600,
+                    size: 48,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  "Login Required",
+                  style: GoogleFonts.outfit(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Please log in or register to purchase verification services and proceed with checkout.",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(
+                    fontSize: 15,
+                    color: Colors.grey.shade600,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 50),
+                          side: BorderSide(color: Colors.grey.shade300),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          "Cancel",
+                          style: GoogleFonts.outfit(
+                            color: Colors.black54,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomButton(
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          final SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          await prefs.remove('id');
+                          await prefs.remove('userType');
+                          await prefs.remove('token');
+                          if (context.mounted) {
+                            selectedIndex = 0;
+                            context.go('/login');
+                          }
+                        },
+                        text: "Log In",
+                        gradientColors: [
+                          Theme.of(context).primaryColor,
+                          Theme.of(context).primaryColorLight,
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -978,6 +1094,12 @@ class _WhatToVerifyState extends State<ServicesAndPrice> {
                                         isLoading:
                                             checkout is CheckOutLoadingState,
                                         onTap: () {
+                                          final String token =
+                                              context.read<TokenCubit>().state;
+                                          if (token == "guest") {
+                                            _showLoginRequiredDialog(context);
+                                            return;
+                                          }
                                           if (checkoutList.isEmpty) {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(

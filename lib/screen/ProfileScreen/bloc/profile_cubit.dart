@@ -10,6 +10,25 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   void getProfile({required String token, required String id}) async {
     emit(ProfileLoading());
+    if (token == "guest" || id == "guest") {
+      emit(ProfileSuccess(ProfileModel(
+        status: 200,
+        message: "Success",
+        profileResult: ProfileResult(
+          id: 0,
+          userType: "Guest",
+          userTypeId: 1,
+          firstName: "Guest",
+          lastName: "User",
+          mobileNumber: "",
+          email: "",
+          isAgree: 1,
+          profilePhoto: "",
+          companyName: "",
+        ),
+      )));
+      return;
+    }
     try {
       final response = await _apiService.getProfile(token: token, id: id);
 

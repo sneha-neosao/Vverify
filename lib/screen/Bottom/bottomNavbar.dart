@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/screen/Home%20screen/home_page.dart';
 import 'package:v_verify/screen/ProfileScreen/ProfilePage.dart';
 
@@ -28,6 +30,8 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isGuest = context.watch<TokenCubit>().state == "guest";
+
     return ColoredBox(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: SafeArea(
@@ -35,13 +39,15 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           body:
               //screens[selectedIndex],
               IndexedStack(
-            index: selectedIndex,
+            index: isGuest ? 0 : selectedIndex,
             children: screens,
           ),
-          bottomNavigationBar: BottomNavigation(
-            selectedIndex: selectedIndex,
-            onItemTapped: _onItemTapped,
-          ),
+          bottomNavigationBar: isGuest
+              ? null
+              : BottomNavigation(
+                  selectedIndex: selectedIndex,
+                  onItemTapped: _onItemTapped,
+                ),
         ),
       ),
     );

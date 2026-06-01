@@ -40,7 +40,7 @@ class CustomButton extends StatelessWidget {
       onTap: (isLoading || !enabled) ? null : onTap,
       child: Container(
         width: width ?? double.infinity,
-        height: height ?? 50,
+        height: height ?? 45,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           gradient: LinearGradient(

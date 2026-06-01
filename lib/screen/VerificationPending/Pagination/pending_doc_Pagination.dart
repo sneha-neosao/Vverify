@@ -18,7 +18,6 @@ import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/ver
 import '../../../commonComponent/custom_button.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/all_entities_bloc/all_entities_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Models/all_entities_model.dart';
-import 'package:v_verify/screen/ServicesAndPrice/Screens/services_and_price_screen.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/entities_drawer.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/dashboard.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
@@ -340,13 +339,11 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                             left: 8.0, right: 8.0, bottom: 16.0),
                         child: InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ServicesAndPrice(
-                                  entity_id: filterState.entityId!.toString(),
-                                ),
-                              ),
+                            context.pushNamed(
+                              "servicesAndPrice",
+                              pathParameters: {
+                                "id": filterState.entityId!.toString(),
+                              },
                             );
                           },
                           borderRadius: BorderRadius.circular(12),

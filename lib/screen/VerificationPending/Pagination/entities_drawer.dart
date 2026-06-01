@@ -87,54 +87,63 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
 
             // Scrollable Navigation List
             Expanded(
-              child: BlocBuilder<AllEntitiesCubit, AllEntitiesState>(
-                builder: (context, state) {
-                  if (state is AllEntitiesLoadingState) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Color(0xFFE28A17)),
-                      ),
-                    );
-                  } else if (state is AllEntitiesErrorState) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          "Failed to load: ${state.message}",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.outfit(color: Colors.redAccent),
-                        ),
-                      ),
-                    );
-                  } else if (state is AllEntitiesSuccessState) {
-                    final dataList = state.allEntitiesModel.data ?? [];
-                    final activeEntities = dataList
-                        .where((e) => e.isActive == null || e.isActive == 1)
-                        .toList();
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                children: [
+                  // Dashboard Tile
+                  _buildDashboardTile(
+                      widget.currentEntityId == 'dashboard'),
+                  const SizedBox(height: 8),
 
-                    return ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      children: [
-                        // Dashboard Tile
-                        _buildDashboardTile(
-                            widget.currentEntityId == 'dashboard'),
-                        const SizedBox(height: 8),
+                  BlocBuilder<AllEntitiesCubit, AllEntitiesState>(
+                    builder: (context, state) {
+                      if (state is AllEntitiesLoadingState) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24.0),
+                            child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Color(0xFFE28A17)),
+                            ),
+                          ),
+                        );
+                      } else if (state is AllEntitiesErrorState) {
+                        if (state.message.toLowerCase().contains("no data found")) {
+                          return const SizedBox();
+                        }
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 24.0, horizontal: 16.0),
+                            child: Text(
+                              "Failed to load: ${state.message}",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.outfit(color: Colors.redAccent),
+                            ),
+                          ),
+                        );
+                      } else if (state is AllEntitiesSuccessState) {
+                        final dataList = state.allEntitiesModel.data ?? [];
+                        final activeEntities = dataList
+                            .where((e) => e.isActive == null || e.isActive == 1)
+                            .toList();
 
-                        // Dynamic Entity items
-                        ...activeEntities.map((entity) {
-                          final isCurrent =
-                              widget.currentEntityId == entity.id.toString();
-                          final isExpanded = _expandedEntityId == entity.id;
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: activeEntities.map((entity) {
+                            final isCurrent =
+                                widget.currentEntityId == entity.id.toString();
+                            final isExpanded = _expandedEntityId == entity.id;
 
-                          return _buildEntityItem(
-                              entity, isCurrent, isExpanded);
-                        }),
-                      ],
-                    );
-                  }
-                  return const SizedBox();
-                },
+                            return _buildEntityItem(
+                                entity, isCurrent, isExpanded);
+                          }).toList(),
+                        );
+                      }
+                      return const SizedBox();
+                    },
+                  ),
+                ],
               ),
             ),
           ],
