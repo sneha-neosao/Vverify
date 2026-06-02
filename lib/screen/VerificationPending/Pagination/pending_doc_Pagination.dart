@@ -405,13 +405,20 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                       child: Row(
                         children: [
                           _buildTabChip(
+                            context,
                             label: "In-Progress",
                             isActive: filterState.status == 'Pending' ||
                                 filterState.status == null,
-                            activeBgColor:
-                                const Color(0xFFFEF9C3), // Light warm yellow
-                            activeTextColor: const Color(
-                                0xFF854D0E), // Dark brown/yellow text
+                            activeBgColor: Theme.of(context).brightness ==
+                                    Brightness.light
+                                ? const Color(0xFFFEF9C3)
+                                : const Color(
+                                    0xFF3A341E), // Light warm yellow / Dark warm amber
+                            activeTextColor: Theme.of(context).brightness ==
+                                    Brightness.light
+                                ? const Color(0xFF854D0E)
+                                : const Color(
+                                    0xFFFDE047), // Dark brown text / Light yellow text
                             onTap: () {
                               context
                                   .read<PendingDocNavigationCubit>()
@@ -424,12 +431,19 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                           ),
                           const SizedBox(width: 8),
                           _buildTabChip(
+                            context,
                             label: "Completed",
                             isActive: filterState.status == 'Verified',
-                            activeBgColor:
-                                const Color(0xFFDCFCE7), // Light fresh green
-                            activeTextColor:
-                                const Color(0xFF166534), // Dark green text
+                            activeBgColor: Theme.of(context).brightness ==
+                                    Brightness.light
+                                ? const Color(0xFFDCFCE7)
+                                : const Color(
+                                    0xFF143A24), // Light fresh green / Deep forest green
+                            activeTextColor: Theme.of(context).brightness ==
+                                    Brightness.light
+                                ? const Color(0xFF166534)
+                                : const Color(
+                                    0xFF4ADE80), // Dark green text / Fresh green text
                             onTap: () {
                               context
                                   .read<PendingDocNavigationCubit>()
@@ -462,7 +476,7 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                   margin: const EdgeInsets.only(bottom: 16),
                                   height: 100,
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: Theme.of(context).cardColor,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: const ListTile(
@@ -474,12 +488,30 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                               ),
                             );
                           } else if (state is PendingDocErrorState) {
-                            return Center(child: Text(state.message));
+                            return Center(
+                              child: Text(
+                                state.message,
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color),
+                              ),
+                            );
                           } else if (state is PendingDocSuccessState) {
                             final data = state.pendingDocModel.data ?? [];
 
                             if (data.isEmpty) {
-                              return const Center(child: Text("No data found"));
+                              return Center(
+                                child: Text(
+                                  "No data found",
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color),
+                                ),
+                              );
                             }
                             return ListView.builder(
                               itemCount: data.length,
@@ -492,10 +524,13 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                 return Container(
                                   margin: const EdgeInsets.only(bottom: 16),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: Theme.of(context).cardColor,
                                     borderRadius: BorderRadius.circular(12),
-                                    border:
-                                        Border.all(color: Colors.grey.shade200),
+                                    border: Border.all(
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? Colors.grey.shade200
+                                            : Colors.grey.shade800),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.03),
@@ -518,11 +553,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 16, vertical: 12),
                                           decoration: BoxDecoration(
-                                            color:
-                                                Theme.of(context).brightness ==
-                                                        Brightness.light
-                                                    ? const Color(0xFFF0F2F5)
-                                                    : Colors.grey.shade900,
+                                            color: Theme.of(context)
+                                                .scaffoldBackgroundColor,
                                             borderRadius: BorderRadius.only(
                                               topLeft:
                                                   const Radius.circular(12),
@@ -583,8 +615,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                     },
                                                     child: _buildHeaderIcon(
                                                         Icons.download,
-                                                        const Color(
-                                                            0xFF3F51B5)),
+                                                        Theme.of(context)
+                                                            .primaryColorLight),
                                                   ),
                                                   const SizedBox(width: 8),
                                                   if (item.detailsUpdated ==
@@ -600,8 +632,8 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                 .only(right: 6),
                                                         child: _buildHeaderIcon(
                                                             Icons.edit,
-                                                            const Color(
-                                                                0xFF3F51B5)),
+                                                            Theme.of(context)
+                                                                .primaryColorLight),
                                                       ),
                                                     ),
                                                   ],
@@ -1384,14 +1416,18 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFEF2F2), // Very light red
+                        color: Theme.of(context).primaryColor.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFFEE2E2)),
+                        border: Border.all(
+                            color: Theme.of(context)
+                                .primaryColor
+                                .withOpacity(0.2)),
                       ),
                       child: RichText(
                         text: TextSpan(
                           style: GoogleFonts.outfit(
-                              color: const Color(0xFF64748B),
+                              color:
+                                  Theme.of(context).textTheme.bodyMedium?.color,
                               fontSize: 13,
                               fontWeight: FontWeight.w500),
                           children: [
@@ -1460,17 +1496,22 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
   }
 }
 
-Widget _buildTabChip({
+Widget _buildTabChip(
+  BuildContext context, {
   required String label,
   required bool isActive,
   required Color activeBgColor,
   required Color activeTextColor,
   required VoidCallback onTap,
 }) {
-  final Color bgColor = isActive ? activeBgColor : const Color(0xFFF1F5F9);
-  final Color textColor = isActive ? activeTextColor : const Color(0xFF64748B);
-  final Color borderColor =
-      isActive ? activeTextColor.withOpacity(0.3) : const Color(0xFFE2E8F0);
+  final Color bgColor =
+      isActive ? activeBgColor : Theme.of(context).scaffoldBackgroundColor;
+  final Color textColor = isActive
+      ? activeTextColor
+      : (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey);
+  final Color borderColor = isActive
+      ? activeTextColor.withOpacity(0.3)
+      : Theme.of(context).dividerColor;
 
   return InkWell(
     onTap: onTap,

@@ -144,9 +144,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                     length: 6,
                     keyboardType: TextInputType.number,
                     onChanged: (value) {},
-                    onCompleted: (value) {
-                      print("OTP Completed: $value");
-                    },
+                    onCompleted: (value) {},
                     defaultPinTheme: PinTheme(
                       width: 52,
                       height: 56,

@@ -42,7 +42,7 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.white, // Pure premium white sidebar background
+      backgroundColor: Theme.of(context).cardColor, // Pure premium sidebar background
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,12 +56,12 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE28A17).withOpacity(0.15),
+                      color: Theme.of(context).primaryColorLight.withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.shield_rounded,
-                      color: Color(0xFFE28A17),
+                      color: Theme.of(context).primaryColorLight,
                       size: 24,
                     ),
                   ),
@@ -69,7 +69,7 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                   Text(
                     "pehchaan360",
                     style: GoogleFonts.outfit(
-                      color: const Color(0xFF0F172A), // Slate black
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -77,8 +77,8 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                 ],
               ),
             ),
-            const Divider(
-                color: Color(0xFFE2E8F0), height: 1), // Light border divider
+            Divider(
+                color: Theme.of(context).dividerColor, height: 1), // Dynamic divider
             const SizedBox(height: 16),
 
             // Scrollable Navigation List
@@ -93,12 +93,12 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                   BlocBuilder<AllEntitiesCubit, AllEntitiesState>(
                     builder: (context, state) {
                       if (state is AllEntitiesLoadingState) {
-                        return const Center(
+                        return Center(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 24.0),
+                            padding: const EdgeInsets.symmetric(vertical: 24.0),
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                  Color(0xFFE28A17)),
+                                  Theme.of(context).primaryColor),
                             ),
                           ),
                         );
@@ -153,10 +153,12 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
       return Container(
         margin: const EdgeInsets.only(bottom: 8.0),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF8F2), // Premium cream-orange card
+          color: Theme.of(context).brightness == Brightness.light
+              ? const Color(0xFFFFF8F2)
+              : const Color(0xFF2C241E), // Premium cream-orange card
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFFFFE0D3),
+            color: Theme.of(context).primaryColorLight.withOpacity(0.3),
             width: 1.0,
           ),
         ),
@@ -166,20 +168,20 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
           leading: Container(
             width: 40,
             height: 40,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.dashboard_rounded,
-              color: Color(0xFFFF5200),
+              color: Theme.of(context).primaryColor,
               size: 20,
             ),
           ),
           title: Text(
             "Dashboard",
             style: GoogleFonts.outfit(
-              color: const Color(0xFFFF5200),
+              color: Theme.of(context).primaryColor,
               fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
@@ -202,20 +204,20 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
           leading: Container(
             width: 40,
             height: 40,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF1F5F9), // Soft slate background
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor, // Soft adaptive background
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.dashboard_rounded,
-              color: Color(0xFF64748B),
+              color: Theme.of(context).textTheme.bodyMedium?.color ?? const Color(0xFF64748B),
               size: 20,
             ),
           ),
           title: Text(
             "Dashboard",
             style: GoogleFonts.outfit(
-              color: const Color(0xFF334155), // Slate dark text
+              color: Theme.of(context).textTheme.bodyMedium?.color,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -234,10 +236,12 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
       return Container(
         margin: const EdgeInsets.only(bottom: 8.0),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF8F2), // Premium cream-orange card
+          color: Theme.of(context).brightness == Brightness.light
+              ? const Color(0xFFFFF8F2)
+              : const Color(0xFF2C241E), // Premium cream-orange card
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFFFFE0D3),
+            color: Theme.of(context).primaryColorLight.withOpacity(0.3),
             width: 1.0,
           ),
         ),
@@ -249,9 +253,9 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
             height: 40,
             padding: const EdgeInsets.all(2),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFFF7E3E), width: 1.5),
+              border: Border.all(color: Theme.of(context).primaryColorLight, width: 1.5),
             ),
             child: entity.entityIcon != null && entity.entityIcon!.isNotEmpty
                 ? ClipOval(
@@ -259,17 +263,17 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                       entity.entityIcon!,
                       fit: BoxFit.cover,
                       errorBuilder: (c, e, s) =>
-                          const Icon(Icons.business, color: Color(0xFFFF7E3E)),
+                          Icon(Icons.business, color: Theme.of(context).primaryColor),
                     ),
                   )
-                : const Icon(Icons.business, color: Color(0xFFFF7E3E)),
+                : Icon(Icons.business, color: Theme.of(context).primaryColor),
           ),
           title: Text(
             entity.entityName ?? "",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.outfit(
-              color: const Color(0xFFFF5200),
+              color: Theme.of(context).primaryColor,
               fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
@@ -300,8 +304,8 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
             width: 40,
             height: 40,
             padding: const EdgeInsets.all(2),
-            decoration: const BoxDecoration(
-              color: Color(0xFFF1F5F9),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
               shape: BoxShape.circle,
             ),
             child: entity.entityIcon != null && entity.entityIcon!.isNotEmpty
@@ -310,17 +314,17 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                       entity.entityIcon!,
                       fit: BoxFit.cover,
                       errorBuilder: (c, e, s) =>
-                          const Icon(Icons.business, color: Color(0xFF64748B)),
+                          Icon(Icons.business, color: Theme.of(context).textTheme.bodyMedium?.color ?? const Color(0xFF64748B)),
                     ),
                   )
-                : const Icon(Icons.business, color: Color(0xFF64748B)),
+                : Icon(Icons.business, color: Theme.of(context).textTheme.bodyMedium?.color ?? const Color(0xFF64748B)),
           ),
           title: Text(
             entity.entityName ?? "",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.outfit(
-              color: const Color(0xFF475569),
+              color: Theme.of(context).textTheme.bodyMedium?.color,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),

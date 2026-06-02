@@ -19,10 +19,6 @@ class PhonePeService {
   Future<bool> initializeSDK() async {
     try {
       final flowId = generateFlowId();
-      print('Initializing PhonePe SDK...');
-      print('Environment: $environment');
-      print('Merchant ID: $merchantId');
-      print('Flow ID: $flowId');
 
       final isInitialized = await PhonePePaymentSdk.init(
         environment,
@@ -31,10 +27,8 @@ class PhonePeService {
         enableLogging,
       );
 
-      print('PhonePe SDK Initialization Result: $isInitialized');
       return isInitialized;
     } catch (e) {
-      print('PhonePe SDK Initialization Error: $e');
       return false;
     }
   }
@@ -55,15 +49,12 @@ class PhonePeService {
       };
 
       final request = jsonEncode(payload);
-      print('Payment Request Payload: $request');
 
       // Start the transaction
       final response = await PhonePePaymentSdk.startTransaction(
         request,
         appSchema, // For iOS, empty string for Android
       );
-
-      print('PhonePe Transaction Response: $response');
 
       if (response != null) {
         return {
@@ -78,7 +69,6 @@ class PhonePeService {
         };
       }
     } catch (e) {
-      print('PhonePe Transaction Error: $e');
       return {
         'status': 'FAILURE',
         'error': e.toString(),
@@ -95,17 +85,12 @@ class PhonePeService {
     final status = response['status'];
     final error = response['error'];
 
-    print('Payment Status: $status');
-    print('Payment Error: $error');
-
     switch (status) {
       case 'SUCCESS':
-        print('Payment Successful!');
         onPaymentComplete(true);
         break;
 
       case 'FAILURE':
-        print('Payment Failed: $error');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Payment Failed: $error'),
@@ -116,7 +101,6 @@ class PhonePeService {
         break;
 
       case 'INTERRUPTED':
-        print('Payment Interrupted: $error');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Payment was interrupted'),
@@ -127,7 +111,6 @@ class PhonePeService {
         break;
 
       default:
-        print('Unknown Payment Status: $status');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Unknown payment status'),

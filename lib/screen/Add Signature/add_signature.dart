@@ -59,7 +59,6 @@ class _SignatureScreenState extends State<SignatureScreen> {
         // Pop the screen after deletion
       }
     } catch (e) {
-      print("Error deleting image: $e");
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to delete image')));
     }
@@ -169,7 +168,6 @@ class _SignatureScreenState extends State<SignatureScreen> {
             //               // Pop the screen after deletion
             //             }
             //           } catch (e) {
-            //             print("Error deleting image: $e");
             //             ScaffoldMessenger.of(context).showSnackBar(
             //                 const SnackBar(
             //                     content: Text('Failed to delete image')));
@@ -191,7 +189,6 @@ class _SignatureScreenState extends State<SignatureScreen> {
             //               // Pop the screen after deletion
             //             }
             //           } catch (e) {
-            //             print("Error deleting image: $e");
             //             ScaffoldMessenger.of(context).showSnackBar(
             //                 const SnackBar(
             //                     content: Text('Failed to delete image')));

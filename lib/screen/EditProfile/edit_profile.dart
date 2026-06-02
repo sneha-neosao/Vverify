@@ -64,22 +64,6 @@ class _EditProfileState extends State<EditProfile> {
     final String? id = prefs.getString('id');
 
     if (token != null && token.isNotEmpty) {
-      // 🔎 Print all values before sending
-      print("---- Sending to API ----");
-      print("Token: $token");
-      print("CustomerId: $id");
-      print("First Name: $firstname");
-      print("Last Name: $lastName");
-      print("Email: $email");
-      print("Company Name: ${companyNameController.text}");
-      print("Contact Person Name: ${companyHrController.text}");
-      print("Contact Person Phone: ${companyHrNumberController.text}");
-      print("Company Email: ${companyEmailController.text}");
-      print("Company Address: ${companyAddressController.text}");
-      print("User Type: $user_type");
-      print("Salutation: $selectedPrefix");
-      print("------------------------");
-
       context.read<EditProfileCubit>().editProfile(
             token: token,
             email: email,
@@ -169,7 +153,6 @@ class _EditProfileState extends State<EditProfile> {
                       );
                     }
                     user_type = data.userTypeId;
-                    print("salutation: ${data.salutation}");
                     if (selectedPrefix == null || selectedPrefix!.isEmpty) {
                       selectedPrefix = data.salutation ?? "";
                     }

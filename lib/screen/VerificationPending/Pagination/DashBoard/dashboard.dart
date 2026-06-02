@@ -94,8 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ],
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor:
-            const Color(0xFFF8FAFC), // Ultra soft slate-light background
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         drawer: const EntitiesDrawer(
           currentEntityId: 'dashboard',
           navigateToPendingDoc: false,
@@ -105,7 +104,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.menu, color: Color(0xFF0F172A), size: 24),
+            icon: Icon(Icons.menu, color: Theme.of(context).primaryColorLight, size: 24),
             onPressed: () => _scaffoldKey.currentState?.openDrawer(),
           ),
         ),
@@ -121,7 +120,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Text(
                   "Dashboard Overview",
                   style: GoogleFonts.outfit(
-                    color: const Color(0xFF0F172A),
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
@@ -130,7 +129,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Text(
                   "Monitor your verification requests and system metrics.",
                   style: GoogleFonts.outfit(
-                    color: const Color(0xFF64748B),
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
@@ -160,10 +159,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               const Icon(Icons.error_outline_rounded,
                                   color: Colors.redAccent, size: 36),
                               const SizedBox(height: 8),
-                              Text(
+                               Text(
                                 "Failed to load dashboard data.",
                                 style: GoogleFonts.outfit(
-                                  color: const Color(0xFF64748B),
+                                  color: Theme.of(context).textTheme.bodyMedium?.color,
                                   fontSize: 14,
                                 ),
                               ),
@@ -216,7 +215,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Text(
                             "Verification Entities",
                             style: GoogleFonts.outfit(
-                              color: const Color(0xFF0F172A),
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -227,7 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: _buildMobileHorizontalSidebar(),
                           ),
                           const SizedBox(height: 16),
-                          const Divider(color: Color(0xFFE2E8F0), height: 1),
+                          Divider(color: Theme.of(context).dividerColor, height: 1),
                           const SizedBox(height: 24),
                           _buildMainContent(),
                         ],
@@ -257,7 +256,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   height: 48,
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -306,7 +305,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 12.0, vertical: 12.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -358,19 +357,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12.0, vertical: 12.0),
                   decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFFFFF8F2) : Colors.white,
+                    color: isSelected
+                        ? (Theme.of(context).brightness == Brightness.light
+                            ? const Color(0xFFFFF8F2)
+                            : const Color(0xFF2C241E))
+                        : Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFFFFE0D3)
-                          : const Color(0xFFE2E8F0),
+                          ? Theme.of(context).primaryColorLight.withOpacity(0.3)
+                          : Theme.of(context).dividerColor,
                       width: 1.5,
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: isSelected
-                            ? const Color(0xFFFF5200).withOpacity(0.06)
-                            : const Color(0xFF0F172A).withOpacity(0.02),
+                            ? Theme.of(context).primaryColor.withOpacity(0.06)
+                            : Theme.of(context).shadowColor.withOpacity(0.02),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -386,12 +389,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? Colors.white
-                              : const Color(0xFFF1F5F9),
+                              ? Theme.of(context).cardColor
+                              : Theme.of(context).scaffoldBackgroundColor,
                           shape: BoxShape.circle,
                           border: isSelected
                               ? Border.all(
-                                  color: const Color(0xFFFF7E3E), width: 1.5)
+                                  color: Theme.of(context).primaryColorLight, width: 1.5)
                               : null,
                         ),
                         child: item.entityIcon != null &&
@@ -427,8 +430,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.outfit(
                               color: isSelected
-                                  ? const Color(0xFFFF5200)
-                                  : const Color(0xFF475569),
+                                  ? Theme.of(context).primaryColor
+                                  : Theme.of(context).textTheme.bodyMedium?.color,
                               fontWeight: isSelected
                                   ? FontWeight.bold
                                   : FontWeight.w600,
@@ -460,7 +463,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Text(
           _selectedEntityName ?? "",
           style: GoogleFonts.outfit(
-            color: const Color(0xFF0F172A),
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
@@ -469,13 +472,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Text(
           "Available verification services for this entity.",
           style: GoogleFonts.outfit(
-            color: const Color(0xFF64748B),
+            color: Theme.of(context).textTheme.bodyMedium?.color,
             fontSize: 13,
             fontWeight: FontWeight.w400,
           ),
         ),
         const SizedBox(height: 16),
-        const Divider(color: Color(0xFFE2E8F0), height: 1),
+        Divider(color: Theme.of(context).dividerColor, height: 1),
         const SizedBox(height: 24),
         BlocBuilder<EntityServicesCubit, EntityServicesState>(
           builder: (context, state) {
@@ -506,7 +509,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Text(
                         "Failed to load dashboard data",
                         style: GoogleFonts.outfit(
-                          color: const Color(0xFF64748B),
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontSize: 14,
                         ),
                       ),
@@ -523,7 +526,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     child: Text(
                       "No verification services configured.",
                       style: GoogleFonts.outfit(
-                        color: const Color(0xFF64748B),
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                         fontSize: 14,
                       ),
                     ),
@@ -587,12 +590,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
         color: isSelected
-            ? const Color(0xFFFFF8F2)
+            ? (Theme.of(context).brightness == Brightness.light
+                ? const Color(0xFFFFF8F2)
+                : const Color(0xFF2C241E))
             : Colors.transparent, // Beautiful brand cream orange
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isSelected
-              ? const Color(0xFFFFE0D3)
+              ? Theme.of(context).primaryColorLight.withOpacity(0.3)
               : Colors.transparent, // Soft border active
           width: 1.0,
         ),
@@ -611,7 +616,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 height: 16,
                 decoration: BoxDecoration(
                   color:
-                      isSelected ? const Color(0xFFFF5200) : Colors.transparent,
+                      isSelected ? Theme.of(context).primaryColor : Colors.transparent,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -622,10 +627,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 height: 32,
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : const Color(0xFFF1F5F9),
+                  color: isSelected ? Theme.of(context).cardColor : Theme.of(context).scaffoldBackgroundColor,
                   shape: BoxShape.circle,
                   border: isSelected
-                      ? Border.all(color: const Color(0xFFFF7E3E), width: 1.5)
+                      ? Border.all(color: Theme.of(context).primaryColorLight, width: 1.5)
                       : null,
                 ),
                 child: item.entityIcon != null && item.entityIcon!.isNotEmpty
@@ -656,9 +661,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   item.entityName ?? "N/A",
                   style: GoogleFonts.outfit(
                     color: isSelected
-                        ? const Color(0xFFFF5200)
-                        : const Color(
-                            0xFF475569), // Orange active, Slate dark inactive
+                        ? Theme.of(context).primaryColor
+                        : Theme.of(context).textTheme.bodyMedium?.color, // Orange active, Slate dark inactive
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                     fontSize: 14,
                   ),
@@ -677,10 +681,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFFE2E8F0),
+          color: Theme.of(context).dividerColor,
           width: 1.0,
         ),
         boxShadow: [
@@ -700,7 +704,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.outfit(
-              color: const Color(0xFF0F172A),
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -714,10 +718,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFECFDF5),
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? const Color(0xFFECFDF5)
+                        : const Color(0xFF143A24),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: const Color(0xFF10B981).withOpacity(0.1),
+                      color: const Color(0xFF10B981).withOpacity(0.2),
                     ),
                   ),
                   child: Row(
@@ -733,7 +739,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: Text(
                           "Completed: ${item.completeCount ?? 0}",
                           style: GoogleFonts.outfit(
-                            color: const Color(0xFF065F46),
+                            color: Theme.of(context).brightness == Brightness.light
+                                ? const Color(0xFF065F46)
+                                : const Color(0xFF4ADE80),
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
@@ -751,10 +759,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFFBEB),
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? const Color(0xFFFFFBEB)
+                        : const Color(0xFF3A341E),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: const Color(0xFFF59E0B).withOpacity(0.1),
+                      color: const Color(0xFFF59E0B).withOpacity(0.2),
                     ),
                   ),
                   child: Row(
@@ -770,7 +780,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: Text(
                           "Pending: ${item.pendingCount ?? 0}",
                           style: GoogleFonts.outfit(
-                            color: const Color(0xFF92400E),
+                            color: Theme.of(context).brightness == Brightness.light
+                                ? const Color(0xFF92400E)
+                                : const Color(0xFFFDE047),
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
@@ -889,15 +901,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFE2E8F0),
+          color: Theme.of(context).dividerColor,
           width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0F172A).withOpacity(0.02),
+            color: Theme.of(context).shadowColor.withOpacity(0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -914,7 +926,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: iconBg,
+                  color: Theme.of(context).brightness == Brightness.light ? iconBg : iconColor.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -926,7 +938,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Text(
                 value,
                 style: GoogleFonts.outfit(
-                  color: const Color(0xFF0F172A),
+                  color: Theme.of(context).textTheme.titleLarge?.color,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -939,7 +951,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.outfit(
-              color: const Color(0xFF64748B),
+              color: Theme.of(context).textTheme.bodyMedium?.color,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),

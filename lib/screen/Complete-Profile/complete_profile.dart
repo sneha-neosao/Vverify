@@ -70,17 +70,6 @@ class _CompleteProfileState extends State<CompleteProfile> {
         userType == "2" ? widget.mobileNum : companyHrNumber;
 
     // ✅ Print all values before sending to API print("Sending to API:");
-    print("First Name: $firstName");
-    print("Last Name: $lastName");
-    print("Mobile Number: $mobileNumberToSend");
-    print("Email: $email");
-    print("User Type: $userType");
-    print("Company Name: $companyName");
-    print("Company HR: $companyHr");
-    print("Company HR Number: $hrNumberToSend");
-    print("Company Email: $companyEmail");
-    print("Company Address: $companyAddress");
-    print("Salutation: $salutation");
 
     context
         .read<RegisterCubit>()
@@ -119,7 +108,6 @@ class _CompleteProfileState extends State<CompleteProfile> {
       setState(() {
         _image = File(image.path);
       });
-      print("image path ${_image!.uri}");
     }
   }
 
@@ -130,7 +118,6 @@ class _CompleteProfileState extends State<CompleteProfile> {
       setState(() {
         _image = File(image.path);
       });
-      print("image path ${_image!.parent}");
     }
   }
 

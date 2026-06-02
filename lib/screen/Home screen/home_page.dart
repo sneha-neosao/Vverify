@@ -190,7 +190,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void info() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    print("print ${androidInfo.version.release}");
   }
 
   void userType({required String typeId}) async {
