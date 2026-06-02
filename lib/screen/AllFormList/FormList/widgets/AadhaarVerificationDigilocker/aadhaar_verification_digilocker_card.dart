@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../commonComponent/custom_button.dart';
 import '../../../../VerificationForms/common/form_widget.dart';
 import '../common_widgets.dart';

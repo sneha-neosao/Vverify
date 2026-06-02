@@ -4,7 +4,7 @@ import 'package:v_verify/screen/Home%20screen/bloc/home_screen_state.dart';
 import 'package:v_verify/screen/Home%20screen/model/home_Screen_model.dart';
 
 class HomeScreenCubit extends Cubit<HomeScreenState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   HomeScreenCubit(this._apiService) : super(HomeScreenInitialState());
 
@@ -66,7 +66,7 @@ class CountCubit extends Cubit<int> {
 }
 
 class UserTermsConditionCubit extends Cubit<UserTermsConditionState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   UserTermsConditionCubit(this._apiService)
       : super(UserTermsConditionInitialState());
@@ -104,14 +104,10 @@ class UserTermsConditionCubit extends Cubit<UserTermsConditionState> {
   }
 }
 
-
-class AgreeCheck extends Cubit<bool>{
-  AgreeCheck():super(false);
+class AgreeCheck extends Cubit<bool> {
+  AgreeCheck() : super(false);
 
   void toggleCheckbox(value) {
-
-      emit(value);
-
+    emit(value);
   }
-
 }

@@ -10,7 +10,7 @@ class EducationSaveFormInitialState extends EducationSaveFormState {}
 class EducationSaveFormLoadingState extends EducationSaveFormState {}
 
 class EducationSaveFormSuccessState extends EducationSaveFormState {
-  final Map<String,dynamic> data;
+  final Map<String, dynamic> data;
 
   EducationSaveFormSuccessState(this.data);
 

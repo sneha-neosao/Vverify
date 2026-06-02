@@ -4,7 +4,7 @@ import 'package:v_verify/screen/AllFormList/FormList/widgets/AddressVerification
 import '../../../../../../apiServices/api_services.dart';
 
 class AddressListCubit extends Cubit<AddressDataListState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   AddressListCubit(this._apiService) : super(AddressDataListInitialState());
 

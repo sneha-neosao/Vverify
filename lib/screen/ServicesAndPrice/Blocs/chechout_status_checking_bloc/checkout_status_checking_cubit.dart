@@ -3,16 +3,15 @@ import '../../../../../../apiServices/api_services.dart';
 import 'checkout_status_checking_state.dart';
 
 class CheckOutStatusCheckingCubit extends Cubit<CheckoutStatusCheckingState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   CheckOutStatusCheckingCubit(this._apiService)
       : super(CheckoutStatusCheckingInitialState());
 
-  void checkoutStatusChecking(
-      {
-        required String token,
-        required String payment_order_id,
-      }) async {
+  void checkoutStatusChecking({
+    required String token,
+    required String payment_order_id,
+  }) async {
     emit(CheckoutStatusCheckingLoadingState());
     try {
       final response = await _apiService.getCheckOutStatus(
@@ -23,8 +22,7 @@ class CheckOutStatusCheckingCubit extends Cubit<CheckoutStatusCheckingState> {
         if (response.data["status"] == 200) {
           emit(CheckoutStatusCheckingSuccessState(response.data));
         } else if (response.data["status"] == 500) {
-          final errorMessage =
-          response.data['message'];
+          final errorMessage = response.data['message'];
           emit(CheckoutStatusCheckingErrorState(errorMessage));
         } else {
           emit(CheckoutStatusCheckingErrorState('${response.data["message"]}'));

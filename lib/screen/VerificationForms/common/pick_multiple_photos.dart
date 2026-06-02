@@ -47,9 +47,9 @@ class PickMultiplePhoto extends StatelessWidget {
               TextSpan(
                 text: starRemove == null ? " * " : "",
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: Colors.red,
-                ),
+                      fontWeight: FontWeight.w700,
+                      color: Colors.red,
+                    ),
               ),
             ],
           ),
@@ -94,41 +94,41 @@ class PickMultiplePhoto extends StatelessWidget {
                       isSign != null
                           ? const SizedBox()
                           : SizedBox(
-                        height: 100,
-                        child: Column(
-                          children: [
-                            IconButton(
-                              onPressed: onPressedTakePhoto,
-                              icon: const Icon(Icons.camera_alt_outlined,
-                                  size: 40, color: Colors.white),
+                              height: 100,
+                              child: Column(
+                                children: [
+                                  IconButton(
+                                    onPressed: onPressedTakePhoto,
+                                    icon: const Icon(Icons.camera_alt_outlined,
+                                        size: 40, color: Colors.white),
+                                  ),
+                                  Text("Take Photo",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(color: Colors.white))
+                                ],
+                              ),
                             ),
-                            Text("Take Photo",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(color: Colors.white))
-                          ],
-                        ),
-                      ),
                       isSign == null
                           ? const SizedBox()
                           : SizedBox(
-                        height: 100,
-                        child: Column(
-                          children: [
-                            IconButton(
-                              onPressed: addSign,
-                              icon: const Icon(Icons.draw,
-                                  size: 40, color: Colors.white),
-                            ),
-                            Text("Signature",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(color: Colors.white))
-                          ],
-                        ),
-                      )
+                              height: 100,
+                              child: Column(
+                                children: [
+                                  IconButton(
+                                    onPressed: addSign,
+                                    icon: const Icon(Icons.draw,
+                                        size: 40, color: Colors.white),
+                                  ),
+                                  Text("Signature",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(color: Colors.white))
+                                ],
+                              ),
+                            )
                     ],
                   ),
                 ),
@@ -143,64 +143,63 @@ class PickMultiplePhoto extends StatelessWidget {
               height: 150,
               child: files.isEmpty
                   ? Center(
-                child: Icon(Icons.add,
-                    size: 36,
-                    color: Theme.of(context).primaryColorDark),
-              )
+                      child: Icon(Icons.add,
+                          size: 36, color: Theme.of(context).primaryColorDark),
+                    )
                   : ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(8),
-                itemCount: files.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, index) {
-                  final file = files[index];
-                  return Stack(
-                    children: [
-                      file.path.toLowerCase().endsWith(".pdf")
-                          ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset("assets/images/pdf_logo.png",
-                              width: 60, height: 60),
-                          Text(
-                            file.path.split('/').last,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      )
-                          : ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
-                          file,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: GestureDetector(
-                          onTap: () {
-                            if (onRemoveFile != null) {
-                              onRemoveFile!(index);
-                            }
-                          },
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.black54,
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.all(8),
+                      itemCount: files.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      itemBuilder: (context, index) {
+                        final file = files[index];
+                        return Stack(
+                          children: [
+                            file.path.toLowerCase().endsWith(".pdf")
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset("assets/images/pdf_logo.png",
+                                          width: 60, height: 60),
+                                      Text(
+                                        file.path.split('/').last,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.file(
+                                      file,
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (onRemoveFile != null) {
+                                    onRemoveFile!(index);
+                                  }
+                                },
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.black54,
+                                  ),
+                                  child: const Icon(Icons.close,
+                                      size: 18, color: Colors.white),
+                                ),
+                              ),
                             ),
-                            child: const Icon(Icons.close,
-                                size: 18, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
+                          ],
+                        );
+                      },
+                    ),
             ),
           ),
         ),

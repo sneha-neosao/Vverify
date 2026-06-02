@@ -27,6 +27,20 @@ class _LoginScreenState extends State<LoginScreen> {
   late TapGestureRecognizer _privacyRecognizer;
 
   void loginWithMobileNumber(mobileNum) async {
+    if (mobileNum.toString().trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Please enter your mobile number"),
+        backgroundColor: Colors.red,
+      ));
+      return;
+    }
+    if (mobileNum.toString().trim().length != 10) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Please enter a valid 10-digit mobile number"),
+        backgroundColor: Colors.red,
+      ));
+      return;
+    }
     final List<ConnectivityResult> connectivityResult =
         await (Connectivity().checkConnectivity());
     if (connectivityResult.contains(ConnectivityResult.none)) {
@@ -66,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: Container(
         height: double.infinity,
         width: double.infinity,
@@ -82,149 +96,181 @@ class _LoginScreenState extends State<LoginScreen> {
           filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
           child: Padding(
             padding: const EdgeInsets.only(top: 75, left: 16, right: 16),
-            child: CustomScrollView(
-              slivers: [
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: ScreenSize.screenHeight * 0.04),
-                        child: Image.asset(
-                          width: 250,
-                          height: 35,
-                          "assets/images/full_logo.png",
-                          fit: BoxFit.fill,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenSize.screenHeight * 0.03),
+                    child: Image.asset(
+                      width: 250,
+                      height: 35,
+                      "assets/images/full_logo.png",
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  Image.asset(
+                    "assets/images/login_page_logo.png",
+                    width: ScreenSize.screenWidth * 0.7,
+                    height: ScreenSize.screenHeight * 0.22,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    "Let's Verify!!",
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      Image.asset(
-                        "assets/images/login_page_logo.png",
-                        width: ScreenSize.screenWidth * 0.8,
-                        height: ScreenSize.screenHeight * 0.25,
-                      ),
-                      Text(
-                        "Let's Verify!!",
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      Text(
-                          textAlign: TextAlign.center,
-                          "To get started, please enter your mobile \n number.",
-                          style: Theme.of(context).textTheme.bodyMedium),
-                      const SizedBox(height: 32),
-                      CustomMobileTextField(
-                          formatter: [maskFormatter],
-                          hintText: "Enter Mobile Number",
-                          keyboardType: TextInputType.number,
-                          controller: mobileController),
-                      const SizedBox(height: 24),
-                      BlocConsumer<LoginCubit, LoginState>(
-                          listener: (context, login) {
-                        if (login is LoginSuccess) {
-                          LoginModel data = login.loginModel;
-                          if (data.status == 200) {
-                            context.pushNamed("otpVerifyScreen",
-                                pathParameters: {
-                                  'mobileNumber': mobileController.text
-                                });
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    textAlign: TextAlign.center,
+                    "To get started, please enter your mobile \n number.",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey.shade600,
+                          height: 1.4,
+                        ),
+                  ),
+                  const SizedBox(height: 28),
+                  // Sleek, floating card for inputs and actions
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 20,
+                          offset: const Offset(0, 6),
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CustomMobileTextField(
+                            formatter: [maskFormatter],
+                            hintText: "Enter Mobile Number",
+                            keyboardType: TextInputType.number,
+                            controller: mobileController),
+                        const SizedBox(height: 20),
+                        BlocConsumer<LoginCubit, LoginState>(
+                            listener: (context, login) {
+                          if (login is LoginSuccess) {
+                            LoginModel data = login.loginModel;
+                            if (data.status == 200) {
+                              context.pushNamed("otpVerifyScreen",
+                                  pathParameters: {
+                                    'mobileNumber': mobileController.text
+                                  });
+                            }
+                          } else if (login is LoginError) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Something went wrong")));
                           }
-                        } else if (login is LoginError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Something went wrong")));
-                        }
-                      }, builder: (context, login) {
-                        return Column(
-                          children: [
-                            CustomButton(
-                              isLoading: login is LoginLoading,
-                              onTap: () {
-                                loginWithMobileNumber(mobileController.text);
-                              },
-                              text: "Continue",
-                              gradientColors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context).primaryColorLight
-                              ],
+                        }, builder: (context, login) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              CustomButton(
+                                isLoading: login is LoginLoading,
+                                onTap: () {
+                                  loginWithMobileNumber(mobileController.text);
+                                },
+                                text: "Continue",
+                                gradientColors: [
+                                  Theme.of(context).primaryColor,
+                                  Theme.of(context).primaryColorLight
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              OutlinedButton(
+                                onPressed: () async {
+                                  final SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  await prefs.setString('id', 'guest');
+                                  await prefs.setString('userType', 'Guest');
+                                  await prefs
+                                      .setString('token', 'guest')
+                                      .then((value) {
+                                    context.read<TokenCubit>().getToken();
+                                    context.read<IdCubit>().getId();
+                                    context.read<UserTypeId>().getUserTypeId();
+                                    context.go('/bottomNav');
+                                  });
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 48),
+                                  side: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 1.5,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Continue as Guest",
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  Column(
+                    children: [
+                      Text(
+                        "By proceeding, I accept pehchaan360’s",
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey.shade600,
                             ),
-                            const SizedBox(height: 16),
-                            OutlinedButton(
-                              onPressed: () async {
-                                final SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.setString('id', 'guest');
-                                await prefs.setString('userType', 'Guest');
-                                await prefs
-                                    .setString('token', 'guest')
-                                    .then((value) {
-                                  context.read<TokenCubit>().getToken();
-                                  context.read<IdCubit>().getId();
-                                  context.read<UserTypeId>().getUserTypeId();
-                                  context.go('/bottomNav');
-                                });
-                              },
-                              style: OutlinedButton.styleFrom(
-                                minimumSize: const Size(double.infinity, 45),
-                                side: BorderSide(
-                                  color: Theme.of(context).primaryColor,
-                                  width: 1.5,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: Text(
-                                "Continue as Guest",
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                      ),
+                      const SizedBox(height: 4),
+                      RichText(
+                        text: TextSpan(
+                          text: 'Terms & Conditions ',
+                          recognizer: _termsRecognizer,
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColorDark,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                          children: <TextSpan>[
+                            TextSpan(
+                                text: 'and ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Colors.grey.shade600,
+                                    )),
+                            TextSpan(
+                              text: 'Privacy Policies.',
+                              recognizer: _privacyRecognizer,
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
-                        );
-                      }),
-                      const SizedBox(height: 34),
-                      Column(
-                        children: [
-                          Text(
-                            "By proceeding, I accept pehchaan360’s",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              text: 'Terms & Conditions ',
-                              recognizer: _termsRecognizer,
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColorLight,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400),
-                              children: <TextSpan>[
-                                TextSpan(
-                                    text: 'and ',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall),
-                                TextSpan(
-                                  text: 'Privacy Policies.',
-                                  recognizer: _privacyRecognizer,
-                                  style: TextStyle(
-                                      color:
-                                          Theme.of(context).primaryColorLight,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(height: 24),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           ),
         ),

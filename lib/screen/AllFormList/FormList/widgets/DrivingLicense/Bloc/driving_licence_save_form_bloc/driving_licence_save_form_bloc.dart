@@ -5,7 +5,7 @@ import '../../Models/driving_licence_save_model.dart';
 import 'driving_licence_save_form_state.dart';
 
 class DrivingLicenceBloc extends Cubit<DrivingLicenceState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   DrivingLicenceBloc(this._apiService) : super(DrivingLicenceInitialState());
 

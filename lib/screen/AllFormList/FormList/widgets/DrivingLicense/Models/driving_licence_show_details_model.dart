@@ -77,17 +77,26 @@ class Data {
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         id: json["id"],
         uid: json["uid"],
-        requestId: json["request_id"] is int ? json["request_id"] : int.tryParse(json["request_id"]?.toString() ?? ""),
-        serviceRequestId: json["service_request_id"] is int ? json["service_request_id"] : int.tryParse(json["service_request_id"]?.toString() ?? ""),
-        serviceId: json["service_id"] is int ? json["service_id"] : int.tryParse(json["service_id"]?.toString() ?? ""),
+        requestId: json["request_id"] is int
+            ? json["request_id"]
+            : int.tryParse(json["request_id"]?.toString() ?? ""),
+        serviceRequestId: json["service_request_id"] is int
+            ? json["service_request_id"]
+            : int.tryParse(json["service_request_id"]?.toString() ?? ""),
+        serviceId: json["service_id"] is int
+            ? json["service_id"]
+            : int.tryParse(json["service_id"]?.toString() ?? ""),
         documentType: json["document_type"],
-        documentNumber: json["document_number"] ?? json["driver_licence_number"],
+        documentNumber:
+            json["document_number"] ?? json["driver_licence_number"],
         dob: json["dob"],
         panNumber: json["pan_number"],
         status: json["status"],
         dataPreference: json["data_preference"],
         reason: json["reason"],
-        documents: json["documents"] == null ? [] : List<dynamic>.from(json["documents"]),
+        documents: json["documents"] == null
+            ? []
+            : List<dynamic>.from(json["documents"]),
         documentPdfFile: json["document_pdf_file"] ?? json["data_document"],
         documentScanFile: json["document_scan_file"],
       );

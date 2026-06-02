@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../commonComponent/custom_button.dart';
@@ -45,7 +43,7 @@ class _CreditHistoryCardState extends State<CreditHistoryCard> {
   late final CreditHistoryShowCubit _showDetailsCubit;
 
   bool _otpSent = false;
-  bool _isSubmitting = false;
+  final bool _isSubmitting = false;
   bool _isReadOnly = false;
   bool _isFormValid = false;
 
@@ -143,7 +141,6 @@ class _CreditHistoryCardState extends State<CreditHistoryCard> {
     final remainingSecs = seconds % 60;
     return "$minutes:${remainingSecs.toString().padLeft(2, '0')}";
   }
-
 
   Widget _buildTimerBanner() {
     return Container(
@@ -304,7 +301,8 @@ class _CreditHistoryCardState extends State<CreditHistoryCard> {
                     const SizedBox(width: 8),
                     if (isVerified)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: const Color(0xFFE8F5E9),
                           borderRadius: BorderRadius.circular(8),
@@ -385,16 +383,19 @@ class _CreditHistoryCardState extends State<CreditHistoryCard> {
                     builder: (context, constraints) {
                       final double width = constraints.maxWidth;
                       final bool isTablet = width > 600;
-                      final String mobileValue = showState is CreditHistoryShowSuccessState
-                          ? (showState.model.data?.documentNumber ?? _mobileController.text)
-                          : _mobileController.text;
+                      final String mobileValue =
+                          showState is CreditHistoryShowSuccessState
+                              ? (showState.model.data?.documentNumber ??
+                                  _mobileController.text)
+                              : _mobileController.text;
 
                       return Row(
                         children: [
                           SizedBox(
                             width: isTablet ? width * 0.33 : width,
                             child: form_widget(
-                              controller: TextEditingController(text: mobileValue),
+                              controller:
+                                  TextEditingController(text: mobileValue),
                               titleText: "Mobile Number",
                               hintText: "8421007927",
                               textInputType: TextInputType.phone,

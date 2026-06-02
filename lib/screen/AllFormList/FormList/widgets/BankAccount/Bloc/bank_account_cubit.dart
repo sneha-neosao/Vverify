@@ -13,11 +13,13 @@ class BankAccountCubit extends Cubit<BankAccountState> {
   }) async {
     emit(BankAccountLoadingState());
     try {
-      final response = await _apiService.bankVerificationForm(token: token, data: data);
+      final response =
+          await _apiService.bankVerificationForm(token: token, data: data);
       if (response.statusCode == 200) {
         emit(BankAccountSuccessState(response.data));
       } else {
-        emit(BankAccountErrorState(response.data['message'] ?? "Something went wrong"));
+        emit(BankAccountErrorState(
+            response.data['message'] ?? "Something went wrong"));
       }
     } catch (e) {
       emit(BankAccountErrorState(e.toString()));
@@ -30,11 +32,13 @@ class BankAccountCubit extends Cubit<BankAccountState> {
   }) async {
     emit(BankAccountLoadingState());
     try {
-      final response = await _apiService.bankVerificationUpdate(token: token, data: data);
+      final response =
+          await _apiService.bankVerificationUpdate(token: token, data: data);
       if (response.statusCode == 200) {
         emit(BankAccountSuccessState(response.data));
       } else {
-        emit(BankAccountErrorState(response.data['message'] ?? "Something went wrong"));
+        emit(BankAccountErrorState(
+            response.data['message'] ?? "Something went wrong"));
       }
     } catch (e) {
       emit(BankAccountErrorState(e.toString()));

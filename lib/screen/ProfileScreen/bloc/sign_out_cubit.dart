@@ -12,21 +12,21 @@ class SignOutCubit extends Cubit<SignOutState> {
     emit(SignOutLoading());
     try {
       await _apiService.logout(token: token, customerId: customerId);
-      
+
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.remove('id');
       await prefs.remove('userType');
       await prefs.remove('token');
-      
+
       emit(SignOutSuccess());
     } catch (e) {
-      // Resilient fallback: even if the API request fails (e.g. offline or expired token), 
+      // Resilient fallback: even if the API request fails (e.g. offline or expired token),
       // we still clear local storage so the user isn't stuck.
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.remove('id');
       await prefs.remove('userType');
       await prefs.remove('token');
-      
+
       emit(SignOutSuccess());
     }
   }

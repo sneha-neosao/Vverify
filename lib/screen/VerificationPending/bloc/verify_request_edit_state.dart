@@ -10,7 +10,7 @@ class VerifyRequestEditInitialState extends VerifyRequestEditState {}
 class VerifyRequestEditLoadingState extends VerifyRequestEditState {}
 
 class VerifyRequestEditSuccessState extends VerifyRequestEditState {
-  final Map<String,dynamic> data;
+  final Map<String, dynamic> data;
 
   VerifyRequestEditSuccessState(this.data);
 

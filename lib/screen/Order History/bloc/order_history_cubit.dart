@@ -1,4 +1,3 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../apiServices/api_services.dart';
@@ -6,7 +5,6 @@ import 'model/order_history_model.dart';
 import 'order_history_state.dart';
 
 class OrderHistoryCubit extends Cubit<OrderHistoryState> {
-
   final ApiService _apiService;
   OrderHistoryCubit(this._apiService) : super(OrderHistoryInitialState());
 
@@ -27,8 +25,7 @@ class OrderHistoryCubit extends Cubit<OrderHistoryState> {
         if (orderHistoryModel.status == 200) {
           emit(OrderHistorySuccess(orderHistoryModel));
         } else if (orderHistoryModel.status == 300) {
-          final errorMessage =
-              response.data['message'];
+          final errorMessage = response.data['message'];
           emit(OrderHistoryError(errorMessage));
         } else {
           emit(OrderHistoryError(

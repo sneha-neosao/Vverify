@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/screen/Complete-Profile/Bloc/register_state.dart';
 import 'package:v_verify/screen/Complete-Profile/model/register_model.dart';
@@ -7,24 +5,24 @@ import 'package:v_verify/screen/Complete-Profile/model/register_model.dart';
 import '../../../apiServices/api_services.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   RegisterCubit(this._apiService) : super(RegisterInitialState());
 
- Future<void> userRegister(
-      {required String firstName,
-      required String lastName,
-      required String mobileNumber,
-      required String email,
-      required String userType,
-      required String companyName,
-      required String companyHr,
-      required String companyHrNumber,
-      required String companyEmail,
-      required String companyAddress,
-      required String salutation,
-       // File? profilePhoto
-      }) async {
+  Future<void> userRegister({
+    required String firstName,
+    required String lastName,
+    required String mobileNumber,
+    required String email,
+    required String userType,
+    required String companyName,
+    required String companyHr,
+    required String companyHrNumber,
+    required String companyEmail,
+    required String companyAddress,
+    required String salutation,
+    // File? profilePhoto
+  }) async {
     emit(RegisterLoading());
     try {
       final response = await _apiService.userRegister(
@@ -40,7 +38,7 @@ class RegisterCubit extends Cubit<RegisterState> {
           companyAddress: companyAddress,
           salutation: salutation
           // profilePhoto: profilePhoto
-      );
+          );
 
       if (response.data != null && response.data.containsKey("status")) {
         final status = response.data["status"];
@@ -49,8 +47,7 @@ class RegisterCubit extends Cubit<RegisterState> {
         if (status == 200) {
           emit(RegisterSuccess(registerModel));
         } else if (status == 500) {
-          final errorMessage =
-              response.data['message'];
+          final errorMessage = response.data['message'];
           emit(RegisterError(errorMessage));
         } else {
           emit(RegisterError('Login failed with status: $status'));

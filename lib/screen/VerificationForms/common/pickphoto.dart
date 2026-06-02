@@ -398,4 +398,3 @@ class PickPhotoUpdate extends StatelessWidget {
     );
   }
 }
-

@@ -18,7 +18,6 @@ String? addressValidator(String? value) {
   return null;
 }
 
-
 // Mobile Validator Function
 String? validateMobile(String? value) {
   RegExp regExp = RegExp(r'^\d{10}$');
@@ -58,7 +57,6 @@ String? validateDate(String? value) {
 }
 
 String? validateBirthDate(String? value) {
-
   if (value == null || value.isEmpty) {
     return 'Date is required';
   }
@@ -75,7 +73,6 @@ String? validatePinCode(String? value) {
   }
   return null;
 }
-
 
 String? validateNO(String? value) {
   RegExp dateRegExp = RegExp(r'^\d{1}$');
@@ -111,7 +108,6 @@ String? validatePassport(String? value) {
   return null;
 }
 
-
 String? addressValidatorNotRequired(String? value) {
   if (value == null || value.isEmpty) {
     return null;
@@ -121,8 +117,6 @@ String? addressValidatorNotRequired(String? value) {
   }
   return null;
 }
-
-
 
 // Mobile Validator Function
 String? validateMobileNotRequired(String? value) {
@@ -223,8 +217,7 @@ String? validateCin(String? value) {
   // Check if the field is not empty and then validate
   if (value != null && value.isNotEmpty) {
     // Example validation: check if it's a valid email
-    if (!RegExp(
-        r"^[a-zA-Z]{1}[0-9]{5}[a-zA-Z]{2}[0-9]{4}[a-zA-Z]{3}[0-9]{6}$")
+    if (!RegExp(r"^[a-zA-Z]{1}[0-9]{5}[a-zA-Z]{2}[0-9]{4}[a-zA-Z]{3}[0-9]{6}$")
         .hasMatch(value)) {
       return 'Please enter a valid CIN number.';
     }
@@ -233,19 +226,18 @@ String? validateCin(String? value) {
   return null;
 }
 
-var validateNOMask = MaskTextInputFormatter(
-    mask: '#', filter: {"#": RegExp(r'[0-9]')});
+var validateNOMask =
+    MaskTextInputFormatter(mask: '#', filter: {"#": RegExp(r'[0-9]')});
 
 //mobile mask
 var mobileMaskFormatter =
     MaskTextInputFormatter(mask: '##########', filter: {"#": RegExp(r'[0-9]')});
 
+var pinMask =
+    MaskTextInputFormatter(mask: '######', filter: {"#": RegExp(r'[0-9]')});
 
-var pinMask = MaskTextInputFormatter(
-    mask: '######', filter: {"#": RegExp(r'[0-9]')});
+var onlyYearMask =
+    MaskTextInputFormatter(mask: '####', filter: {"#": RegExp(r'[0-9]')});
 
-var onlyYearMask = MaskTextInputFormatter(
-    mask: '####', filter: {"#": RegExp(r'[0-9]')});
-
-var onlyMonthMask = MaskTextInputFormatter(
-    mask: '##', filter: {"#": RegExp(r'[0-9]')});
+var onlyMonthMask =
+    MaskTextInputFormatter(mask: '##', filter: {"#": RegExp(r'[0-9]')});

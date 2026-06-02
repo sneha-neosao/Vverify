@@ -19,6 +19,8 @@ class ReferenceStoreCubit extends Cubit<ReferenceStoreState> {
         data: model.toJson(),
       );
 
+      if (isClosed) return;
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final status = response.data['status'];
         if (status == 200 || status == "200") {
@@ -34,6 +36,7 @@ class ReferenceStoreCubit extends Cubit<ReferenceStoreState> {
         emit(ReferenceStoreError('Server error: ${response.statusCode}'));
       }
     } catch (e) {
+      if (isClosed) return;
       emit(ReferenceStoreError('An error occurred: $e'));
     }
   }
@@ -48,6 +51,8 @@ class ReferenceStoreCubit extends Cubit<ReferenceStoreState> {
         token: token,
         data: model.toJson(),
       );
+
+      if (isClosed) return;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final status = response.data['status'];
@@ -64,6 +69,7 @@ class ReferenceStoreCubit extends Cubit<ReferenceStoreState> {
         emit(ReferenceStoreError('Server error: ${response.statusCode}'));
       }
     } catch (e) {
+      if (isClosed) return;
       emit(ReferenceStoreError('An error occurred: $e'));
     }
   }

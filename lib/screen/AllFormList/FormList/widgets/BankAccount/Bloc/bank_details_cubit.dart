@@ -8,10 +8,12 @@ class BankDetailsCubit extends Cubit<BankDetailsState> {
 
   BankDetailsCubit(this._apiService) : super(BankDetailsInitial());
 
-  Future<void> fetchBankDetails({required String token, required String uid}) async {
+  Future<void> fetchBankDetails(
+      {required String token, required String uid}) async {
     emit(BankDetailsLoading());
     try {
-      final response = await _apiService.bankVerificationShowData(token: token, uid: uid);
+      final response =
+          await _apiService.bankVerificationShowData(token: token, uid: uid);
       if (response.statusCode == 200) {
         final model = ShowBankDataModel.fromJson(response.data);
         if (model.data != null) {
@@ -20,7 +22,8 @@ class BankDetailsCubit extends Cubit<BankDetailsState> {
           emit(BankDetailsError("No data found"));
         }
       } else {
-        emit(BankDetailsError(response.data['message'] ?? "Failed to fetch data"));
+        emit(BankDetailsError(
+            response.data['message'] ?? "Failed to fetch data"));
       }
     } catch (e) {
       emit(BankDetailsError(e.toString()));

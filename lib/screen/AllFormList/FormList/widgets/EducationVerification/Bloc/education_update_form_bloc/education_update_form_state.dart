@@ -10,7 +10,7 @@ class EducationUpdateFormInitialState extends EducationUpdateFormState {}
 class EducationUpdateFormLoadingState extends EducationUpdateFormState {}
 
 class EducationUpdateFormSuccessState extends EducationUpdateFormState {
-  final Map<String,dynamic> data;
+  final Map<String, dynamic> data;
 
   EducationUpdateFormSuccessState(this.data);
 

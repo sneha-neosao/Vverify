@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:v_verify/screen/Home%20screen/model/home_Screen_model.dart';
 
 import '../model/pendingDoc_model.dart';
 

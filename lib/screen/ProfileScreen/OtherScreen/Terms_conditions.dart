@@ -12,7 +12,6 @@ class _TermsConditionsState extends State<TermsConditions> {
   late WebViewController controller;
   bool isLoading = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -22,7 +21,6 @@ class _TermsConditionsState extends State<TermsConditions> {
         NavigationDelegate(
           onProgress: (int progress) {
             // Update loading bar.
-
           },
           onPageStarted: (String url) {
             setState(() {

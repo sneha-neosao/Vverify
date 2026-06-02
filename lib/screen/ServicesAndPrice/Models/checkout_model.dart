@@ -3,8 +3,7 @@ import 'dart:convert';
 CheckoutModel checkoutModelFromJson(String str) =>
     CheckoutModel.fromJson(json.decode(str));
 
-String checkoutModelToJson(CheckoutModel data) =>
-    json.encode(data.toJson());
+String checkoutModelToJson(CheckoutModel data) => json.encode(data.toJson());
 
 class CheckoutModel {
   final int? status;
@@ -20,20 +19,20 @@ class CheckoutModel {
   });
 
   factory CheckoutModel.fromJson(Map<String, dynamic> json) => CheckoutModel(
-    status: int.tryParse(json["status"].toString()),
-    message: json["message"],
-    transaction: json["transaction"] == null
-        ? null
-        : Transaction.fromJson(json["transaction"]),
-    finalTotal: int.tryParse(json["final_total"].toString()),
-  );
+        status: int.tryParse(json["status"].toString()),
+        message: json["message"],
+        transaction: json["transaction"] == null
+            ? null
+            : Transaction.fromJson(json["transaction"]),
+        finalTotal: int.tryParse(json["final_total"].toString()),
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "message": message,
-    "transaction": transaction?.toJson(),
-    "final_total": finalTotal,
-  };
+        "status": status,
+        "message": message,
+        "transaction": transaction?.toJson(),
+        "final_total": finalTotal,
+      };
 }
 
 class Transaction {
@@ -80,56 +79,55 @@ class Transaction {
   });
 
   factory Transaction.fromJson(Map<String, dynamic> json) => Transaction(
-    txnId: json["txn_id"],
-    txnDate: json["txn_date"] == null
-        ? null
-        : DateTime.parse(json["txn_date"]),
-    customerId: int.tryParse(json["customer_id"].toString()),
-    entityId: int.tryParse(json["entity_id"].toString()),
-    quantity: int.tryParse(json["quantity"].toString()),
-    txnStatus: json["txn_status"],
-    paymentGateway: json["payment_gateway"],
-    paymentMode: json["payment_mode"],
-    subTotal: int.tryParse(json["sub_total"].toString()),
-    taxPercent: json["tax_percent"]?.toString(),
-    taxTotal: int.tryParse(json["tax_total"].toString()),
-    finalTotal: int.tryParse(json["final_total"].toString()),
-    couponId: json["coupon_id"],
-    couponDiscount: int.tryParse(json["coupon_discount"].toString()),
-    updatedAt: json["updated_at"] == null
-        ? null
-        : DateTime.parse(json["updated_at"]),
-    createdAt: json["created_at"] == null
-        ? null
-        : DateTime.parse(json["created_at"]),
-    id: int.tryParse(json["id"].toString()),
-    paymentOrderId: json["payment_order_id"],
-    paymentData: json["payment_data"] == null
-        ? null
-        : PaymentData.fromJson(json["payment_data"]),
-  );
+        txnId: json["txn_id"],
+        txnDate:
+            json["txn_date"] == null ? null : DateTime.parse(json["txn_date"]),
+        customerId: int.tryParse(json["customer_id"].toString()),
+        entityId: int.tryParse(json["entity_id"].toString()),
+        quantity: int.tryParse(json["quantity"].toString()),
+        txnStatus: json["txn_status"],
+        paymentGateway: json["payment_gateway"],
+        paymentMode: json["payment_mode"],
+        subTotal: int.tryParse(json["sub_total"].toString()),
+        taxPercent: json["tax_percent"]?.toString(),
+        taxTotal: int.tryParse(json["tax_total"].toString()),
+        finalTotal: int.tryParse(json["final_total"].toString()),
+        couponId: json["coupon_id"],
+        couponDiscount: int.tryParse(json["coupon_discount"].toString()),
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
+        createdAt: json["created_at"] == null
+            ? null
+            : DateTime.parse(json["created_at"]),
+        id: int.tryParse(json["id"].toString()),
+        paymentOrderId: json["payment_order_id"],
+        paymentData: json["payment_data"] == null
+            ? null
+            : PaymentData.fromJson(json["payment_data"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "txn_id": txnId,
-    "txn_date": txnDate?.toIso8601String(),
-    "customer_id": customerId,
-    "entity_id": entityId,
-    "quantity": quantity,
-    "txn_status": txnStatus,
-    "payment_gateway": paymentGateway,
-    "payment_mode": paymentMode,
-    "sub_total": subTotal,
-    "tax_percent": taxPercent,
-    "tax_total": taxTotal,
-    "final_total": finalTotal,
-    "coupon_id": couponId,
-    "coupon_discount": couponDiscount,
-    "updated_at": updatedAt?.toIso8601String(),
-    "created_at": createdAt?.toIso8601String(),
-    "id": id,
-    "payment_order_id": paymentOrderId,
-    "payment_data": paymentData?.toJson(),
-  };
+        "txn_id": txnId,
+        "txn_date": txnDate?.toIso8601String(),
+        "customer_id": customerId,
+        "entity_id": entityId,
+        "quantity": quantity,
+        "txn_status": txnStatus,
+        "payment_gateway": paymentGateway,
+        "payment_mode": paymentMode,
+        "sub_total": subTotal,
+        "tax_percent": taxPercent,
+        "tax_total": taxTotal,
+        "final_total": finalTotal,
+        "coupon_id": couponId,
+        "coupon_discount": couponDiscount,
+        "updated_at": updatedAt?.toIso8601String(),
+        "created_at": createdAt?.toIso8601String(),
+        "id": id,
+        "payment_order_id": paymentOrderId,
+        "payment_data": paymentData?.toJson(),
+      };
 }
 
 class PaymentData {
@@ -146,16 +144,16 @@ class PaymentData {
   });
 
   factory PaymentData.fromJson(Map<String, dynamic> json) => PaymentData(
-    success: json["success"],
-    orderId: json["orderId"],
-    token: json["token"],
-    expireAt: int.tryParse(json["expireAt"].toString()),
-  );
+        success: json["success"],
+        orderId: json["orderId"],
+        token: json["token"],
+        expireAt: int.tryParse(json["expireAt"].toString()),
+      );
 
   Map<String, dynamic> toJson() => {
-    "success": success,
-    "orderId": orderId,
-    "token": token,
-    "expireAt": expireAt,
-  };
+        "success": success,
+        "orderId": orderId,
+        "token": token,
+        "expireAt": expireAt,
+      };
 }

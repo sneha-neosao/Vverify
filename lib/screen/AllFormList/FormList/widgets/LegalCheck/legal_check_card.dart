@@ -180,7 +180,8 @@ class _LegalCheckCardState extends State<LegalCheckCard> {
                 // Refresh Verification List respecting current entity filter
                 final token = context.read<TokenCubit>().state;
                 final customerId = context.read<IdCubit>().state;
-                final navState = context.read<PendingDocNavigationCubit>().state;
+                final navState =
+                    context.read<PendingDocNavigationCubit>().state;
                 context.read<PendingDocCubit>().getPendingDoc(
                       token: token,
                       customerId: int.tryParse(customerId) ?? 0,
@@ -353,17 +354,22 @@ class _LegalCheckCardState extends State<LegalCheckCard> {
                         hintText: "Enter full address",
                         textInputType: TextInputType.streetAddress,
                         isReadOnly: isReadOnly,
-                        validator: (value) =>
-                            (value == null || value.trim().isEmpty)
-                                ? "Address is required"
-                                : null,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return "Address is required";
+                          }
+                          if (value.trim().length < 10) {
+                            return "Address must be at least 10 characters";
+                          }
+                          return null;
+                        },
                       ),
                       form_widget(
                         controller: dobController,
                         titleText: "Date of Birth",
                         hintText: "DD-MM-YYYY",
                         textInputType: TextInputType.datetime,
-                        isReadOnly: isReadOnly,
+                        isReadOnly: true, // Always read-only to disable soft keyboard and only allow calendar selection
                         isRequired: false,
                         onTap: isReadOnly
                             ? null

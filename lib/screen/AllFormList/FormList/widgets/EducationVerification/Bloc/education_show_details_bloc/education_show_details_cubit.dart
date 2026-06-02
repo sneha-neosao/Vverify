@@ -4,7 +4,7 @@ import '../../Model/education_show_details_model.dart';
 import 'education_show_details_state.dart';
 
 class EducationShowDetailsCubit extends Cubit<EducationShowDetailsState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   EducationShowDetailsCubit(this._apiService)
       : super(EducationShowDetailsInitialState());

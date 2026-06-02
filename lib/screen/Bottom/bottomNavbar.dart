@@ -9,6 +9,8 @@ import '../VerificationPending/Pagination/pending_doc_Pagination.dart';
 int selectedIndex = 0;
 
 class BottomNavigationScreen extends StatefulWidget {
+  const BottomNavigationScreen({super.key});
+
   @override
   _BottomNavigationScreenState createState() => _BottomNavigationScreenState();
 }
@@ -59,6 +61,7 @@ class BottomNavigation extends StatelessWidget {
   final Function(int) onItemTapped;
 
   const BottomNavigation({
+    super.key,
     required this.selectedIndex,
     required this.onItemTapped,
   });

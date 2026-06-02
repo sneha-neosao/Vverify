@@ -105,6 +105,8 @@ class _CompleteProfileState extends State<CompleteProfile> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('id', id);
     await prefs.setString('token', token).then((value) {
+      context.read<TokenCubit>().setToken(token);
+      context.read<IdCubit>().setId(id);
       pushNotification();
       context.go("/bottomNav");
     });

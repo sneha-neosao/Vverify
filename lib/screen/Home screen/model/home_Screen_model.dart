@@ -1,8 +1,10 @@
 import 'dart:convert';
 
-HomeScreenModel homeScreenModelFromJson(String str) => HomeScreenModel.fromJson(json.decode(str));
+HomeScreenModel homeScreenModelFromJson(String str) =>
+    HomeScreenModel.fromJson(json.decode(str));
 
-String homeScreenModelToJson(HomeScreenModel data) => json.encode(data.toJson());
+String homeScreenModelToJson(HomeScreenModel data) =>
+    json.encode(data.toJson());
 
 class HomeScreenModel {
   int? status;
@@ -15,17 +17,23 @@ class HomeScreenModel {
     this.data,
   });
 
-  factory HomeScreenModel.fromJson(Map<String, dynamic> json) => HomeScreenModel(
-    status: json["status"],
-    message: json["message"],
-    data: json["data"] == null ? [] : List<HomeScreenData>.from(json["data"]!.map((x) => HomeScreenData.fromJson(x))),
-  );
+  factory HomeScreenModel.fromJson(Map<String, dynamic> json) =>
+      HomeScreenModel(
+        status: json["status"],
+        message: json["message"],
+        data: json["data"] == null
+            ? []
+            : List<HomeScreenData>.from(
+                json["data"]!.map((x) => HomeScreenData.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "message": message,
-    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
-  };
+        "status": status,
+        "message": message,
+        "data": data == null
+            ? []
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
+      };
 }
 
 class HomeScreenData {
@@ -40,16 +48,21 @@ class HomeScreenData {
   });
 
   factory HomeScreenData.fromJson(Map<String, dynamic> json) => HomeScreenData(
-    id: json["id"],
-    title: json["title"],
-    entities: json["entities"] == null ? [] : List<Entity>.from(json["entities"]!.map((x) => Entity.fromJson(x))),
-  );
+        id: json["id"],
+        title: json["title"],
+        entities: json["entities"] == null
+            ? []
+            : List<Entity>.from(
+                json["entities"]!.map((x) => Entity.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "title": title,
-    "entities": entities == null ? [] : List<dynamic>.from(entities!.map((x) => x.toJson())),
-  };
+        "id": id,
+        "title": title,
+        "entities": entities == null
+            ? []
+            : List<dynamic>.from(entities!.map((x) => x.toJson())),
+      };
 }
 
 class Entity {
@@ -68,18 +81,18 @@ class Entity {
   });
 
   factory Entity.fromJson(Map<String, dynamic> json) => Entity(
-    id: json["id"],
-    groupId: json["group_id"],
-    entityName: json["entity_name"],
-    entityIcon: json["entity_icon"],
-    entityDescription: json["entity_description"],
-  );
+        id: json["id"],
+        groupId: json["group_id"],
+        entityName: json["entity_name"],
+        entityIcon: json["entity_icon"],
+        entityDescription: json["entity_description"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "group_id": groupId,
-    "entity_name": entityName,
-    "entity_icon": entityIcon,
-    "entity_description": entityDescription,
-  };
+        "id": id,
+        "group_id": groupId,
+        "entity_name": entityName,
+        "entity_icon": entityIcon,
+        "entity_description": entityDescription,
+      };
 }

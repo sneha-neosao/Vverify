@@ -10,6 +10,8 @@ import '../../../commonComponent/screen_size.dart';
 import 'models/post.dart';
 
 class OrderHistory extends StatefulWidget {
+  const OrderHistory({super.key});
+
   @override
   _OrderHistoryState createState() => _OrderHistoryState();
 }
@@ -127,9 +129,23 @@ class _OrderHistoryState extends State<OrderHistory> {
                   contentPadding: const EdgeInsets.all(0),
                   visualDensity:
                       const VisualDensity(horizontal: 0, vertical: -4),
-                  leading: Image.network(item.entity!.entityIcon!, width: 40),
-                  title: Text(
-                      item.entityName!,
+                  leading: item.entity?.entityIcon != null &&
+                          item.entity!.entityIcon!.isNotEmpty
+                      ? Image.network(
+                          item.entity!.entityIcon!,
+                          width: 40,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              "assets/images/key.png",
+                              width: 40,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          "assets/images/key.png",
+                          width: 40,
+                        ),
+                  title: Text(item.entityName ?? "",
                       style: Theme.of(context).textTheme.bodyLarge!),
                   subtitle: Text(
                     item.services!.length > 1

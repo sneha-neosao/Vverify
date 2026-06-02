@@ -27,7 +27,7 @@ class SplashScreenState extends State<SplashScreen> {
   void WhereToGo() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
-    print("token on splash : ${token}");
+    print("token on splash : $token");
     //  String? token = "";
     if (token != null) {
       context.pushReplacementNamed("bottomNav");

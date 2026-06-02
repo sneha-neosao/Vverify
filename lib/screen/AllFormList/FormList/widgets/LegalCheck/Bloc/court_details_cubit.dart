@@ -27,7 +27,8 @@ class CourtDetailsCubit extends Cubit<CourtDetailsState> {
           emit(CourtDetailsError("Data is empty"));
         }
       } else {
-        emit(CourtDetailsError(response.data['message'] ?? "Failed to fetch details"));
+        emit(CourtDetailsError(
+            response.data['message'] ?? "Failed to fetch details"));
       }
     } catch (e) {
       emit(CourtDetailsError(e.toString()));

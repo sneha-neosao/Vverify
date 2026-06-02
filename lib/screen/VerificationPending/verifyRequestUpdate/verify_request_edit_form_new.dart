@@ -20,10 +20,15 @@ class VerifyRequestEditFormNew extends StatefulWidget {
   String uuid;
   String service_title;
 
-  VerifyRequestEditFormNew({Key? key,required this.request_id, required this.uuid, required this.service_title}) : super(key: key);
+  VerifyRequestEditFormNew(
+      {super.key,
+      required this.request_id,
+      required this.uuid,
+      required this.service_title});
 
   @override
-  State<VerifyRequestEditFormNew> createState() => _VerifyRequestEditFormNewState();
+  State<VerifyRequestEditFormNew> createState() =>
+      _VerifyRequestEditFormNewState();
 }
 
 class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
@@ -43,10 +48,9 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
     super.initState();
     // trigger API call with request_id
     String token = context.read<TokenCubit>().state;
-    context.read<VerifyDetailsCubit>().verifyDetails(
-      token: token,
-      requestId: widget.request_id
-    );
+    context
+        .read<VerifyDetailsCubit>()
+        .verifyDetails(token: token, requestId: widget.request_id);
   }
 
   @override
@@ -88,8 +92,7 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
         email: emailController.text,
         employee_code: employeeCodeController.text,
         date_of_joining: joiningController.text,
-        gender: selectedGender ?? ""
-    );
+        gender: selectedGender ?? "");
   }
 
   final _formkey = GlobalKey<FormState>();
@@ -101,7 +104,8 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
       mask: '##########', filter: {"#": RegExp(r'[0-9]')});
 
   var emailFormatter = FilteringTextInputFormatter.allow(
-    RegExp(r'[a-zA-Z0-9@._-]'),);
+    RegExp(r'[a-zA-Z0-9@._-]'),
+  );
 
   DateTime _selectedDate = DateTime.now();
 
@@ -157,25 +161,25 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
           child: SingleChildScrollView(
             child: Form(
               key: _formkey,
-              child: BlocConsumer<VerifyDetailsCubit, VerifyDetailsState>
-                (listener: (context, verifyData) {
+              child: BlocConsumer<VerifyDetailsCubit, VerifyDetailsState>(
+                  listener: (context, verifyData) {
                 if (verifyData is VerifyDetailsSuccessState) {
-                  VerifyDetailsModel data =
-                      verifyData.verifyDetailsModel;
+                  VerifyDetailsModel data = verifyData.verifyDetailsModel;
                   firstnameController.text = data.data!.firstName ?? "";
                   middleNameController.text = data.data!.middleName ?? "";
                   lastnameController.text = data.data!.lastName ?? "";
                   phoneController.text = data.data!.phone.toString() ?? "";
                   emailController.text = data.data!.email ?? "";
                   employeeCodeController.text = data.data!.employeeCode ?? "";
-                  joiningController.text = data.data!.dateOfJoining.toString() ?? "";
+                  joiningController.text =
+                      data.data!.dateOfJoining.toString() ?? "";
                   dobController.text = data.data!.dob ?? "";
                   // Set the dropdown initially if API provides value
                   setState(() {
                     final apiGender = data.data!.gender?.toLowerCase();
-                    selectedGender = genderValues.contains(apiGender) ? apiGender : null;
+                    selectedGender =
+                        genderValues.contains(apiGender) ? apiGender : null;
                   });
-
                 }
               }, builder: (context, verifyData) {
                 if (verifyData is VerifyDetailsLoadingState) {
@@ -197,7 +201,8 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium!
-                            .copyWith(color: Theme.of(context).primaryColorDark),
+                            .copyWith(
+                                color: Theme.of(context).primaryColorDark),
                       ),
                       const SizedBox(
                         height: 4,
@@ -213,8 +218,7 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                           controller: firstnameController,
                           titleText: "First Name",
                           hintText: "Enter First Name",
-                          textInputType: TextInputType.text
-                      ),
+                          textInputType: TextInputType.text),
                       // CustomNotRequiredTextField(
                       //     controller: middleNameController,
                       //     titleText: "Middle Name",
@@ -225,22 +229,19 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                           controller: lastnameController,
                           titleText: "Last Name",
                           hintText: "Enter Last Name",
-                          textInputType: TextInputType.text
-                      ),
+                          textInputType: TextInputType.text),
                       CustomNotRequiredTextField(
                           validator: validateMobileNotRequired,
                           controller: phoneController,
                           titleText: "Mobile Number",
                           hintText: "Enter Mobile Number",
-                          textInputType: TextInputType.text
-                      ),
+                          textInputType: TextInputType.text),
                       CustomNotRequiredTextField(
                           validator: validateEmailNotRequired,
                           controller: emailController,
                           titleText: "Email",
                           hintText: "Enter Email",
-                          textInputType: TextInputType.text
-                      ),
+                          textInputType: TextInputType.text),
                       // CustomNotRequiredTextField(
                       //     controller: employeeCodeController,
                       //     titleText: "Employee Code",
@@ -287,12 +288,12 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                       ),
                       RichText(
                           text: TextSpan(
-                            text: "Date of Birth",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(fontWeight: FontWeight.w700),
-                          )),
+                        text: "Date of Birth",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontWeight: FontWeight.w700),
+                      )),
                       const SizedBox(
                         height: 8,
                       ),
@@ -385,27 +386,31 @@ class _VerifyRequestEditFormNewState extends State<VerifyRequestEditFormNew> {
                       const SizedBox(
                         height: 24,
                       ),
-                      BlocConsumer<VerifyRequestEditCubit, VerifyRequestEditState>(
+                      BlocConsumer<VerifyRequestEditCubit,
+                              VerifyRequestEditState>(
                           listener: (context, verifyUpdate) {
-                            if (verifyUpdate is VerifyRequestEditSuccessState) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(verifyUpdate.data["message"])));
-                              if (verifyUpdate.data["status"] == 200) {
-                                context.pushReplacementNamed("bottomNav");
-                              }
-                            } else if (verifyUpdate is VerifyRequestEditErrorState) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(verifyUpdate.message)));
-                            }
-                          }, builder: (context, verifyUpdate) {
+                        if (verifyUpdate is VerifyRequestEditSuccessState) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(verifyUpdate.data["message"])));
+                          if (verifyUpdate.data["status"] == 200) {
+                            context.pushReplacementNamed("bottomNav");
+                          }
+                        } else if (verifyUpdate
+                            is VerifyRequestEditErrorState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(verifyUpdate.message)));
+                        }
+                      }, builder: (context, verifyUpdate) {
                         return CustomButton(
-                          isLoading: verifyUpdate is VerifyRequestEditLoadingState,
+                          isLoading:
+                              verifyUpdate is VerifyRequestEditLoadingState,
                           onTap: () {
                             if (_formkey.currentState?.validate() ?? false) {
                               verifyUpdateData();
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                  content: Text("Please fill all fields")));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("Please fill all fields")));
                             }
                           },
                           text: "SAVE",

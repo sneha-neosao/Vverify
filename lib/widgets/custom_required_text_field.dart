@@ -4,16 +4,15 @@ import 'package:flutter/services.dart';
 class CustomRequiredTextField extends StatelessWidget {
   const CustomRequiredTextField(
       {super.key,
-        required this.controller,
-        required this.titleText,
-        required this.hintText,
-        required this.textInputType,
-        this.readOnly=false,
-        this.validator,
-        this.maskFormatter,
-        this.titleDetails,
-        this.onSaveValue
-      });
+      required this.controller,
+      required this.titleText,
+      required this.hintText,
+      required this.textInputType,
+      this.readOnly = false,
+      this.validator,
+      this.maskFormatter,
+      this.titleDetails,
+      this.onSaveValue});
 
   final TextEditingController controller;
   final String titleText;
@@ -41,21 +40,21 @@ class CustomRequiredTextField extends StatelessWidget {
                     .bodySmall!
                     .copyWith(fontWeight: FontWeight.w700),
                 children: [
-                  TextSpan(
-                    text: titleText.isEmpty ? "" : " * ",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
-                  ),
-                  TextSpan(
-                    text:titleDetails,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(fontWeight: FontWeight.w700, color: Colors.grey),
-                  )
-                ])),
+              TextSpan(
+                text: titleText.isEmpty ? "" : " * ",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(fontWeight: FontWeight.w700, color: Colors.red),
+              ),
+              TextSpan(
+                text: titleDetails,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(fontWeight: FontWeight.w700, color: Colors.grey),
+              )
+            ])),
         const SizedBox(
           height: 4,
         ),
@@ -96,9 +95,12 @@ class CustomRequiredTextField extends StatelessWidget {
                 vertical: 14.0,
               ),
               filled: true,
+              fillColor: readOnly ? Colors.grey[200] : null,
               hintText: hintText,
             ),
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: readOnly ? Colors.grey : null,
+                ),
             controller: controller,
             keyboardType: textInputType)
       ],

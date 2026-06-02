@@ -21,7 +21,6 @@ class _RefundPolicyState extends State<RefundPolicy> {
         NavigationDelegate(
           onProgress: (int progress) {
             // Update loading bar.
-
           },
           onPageStarted: (String url) {
             setState(() {

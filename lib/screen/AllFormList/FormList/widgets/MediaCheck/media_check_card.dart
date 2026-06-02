@@ -1,6 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:media_store_plus/media_store_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../apiServices/api_services.dart';
@@ -8,7 +12,6 @@ import '../../../../../commonComponent/custom_button.dart';
 import '../../../../VerificationForms/common/form_widget.dart';
 import '../common_widgets.dart';
 import 'Model/media_check_response_model.dart';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 class MediaCheckCard extends StatefulWidget {
   final String? serviceTitle;
@@ -769,7 +772,7 @@ class _MediaCheckCardState extends State<MediaCheckCard> {
                   child: InkWell(
                     onTap: _isDownloadingPdf
                         ? null
-                        : () {
+                        : () async {
                             final pdfUrl = _verifiedDetails?.pdfUrl ?? "";
                             if (pdfUrl.isNotEmpty) {
                               setState(() {
@@ -785,53 +788,79 @@ class _MediaCheckCardState extends State<MediaCheckCard> {
                                     pathParam.contains('/')) {
                                   final fileSegment = pathParam.split('/').last;
                                   if (fileSegment.contains('.')) {
-                                    fileName = fileSegment.split('.').first;
-                                  } else {
                                     fileName = fileSegment;
+                                  } else {
+                                    fileName = "$fileSegment.pdf";
                                   }
+                                } else {
+                                  fileName =
+                                      "${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf";
                                 }
-                              } catch (_) {}
+                              } catch (_) {
+                                fileName =
+                                    "${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf";
+                              }
 
-                              FileDownloader.downloadFile(
-                                notificationType: NotificationType.disabled,
-                                url: pdfUrl,
-                                name: fileName,
-                                onProgress: (fileName, progress) {
-                                  if (mounted) {
-                                    setState(() {
-                                      _downloadProgress = progress.round();
-                                    });
-                                  }
-                                },
-                                onDownloadCompleted: (path) {
-                                  if (mounted) {
-                                    setState(() {
-                                      _isDownloadingPdf = false;
-                                    });
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                            "File downloaded successfully!"),
-                                        backgroundColor: Colors.green,
-                                      ),
-                                    );
-                                  }
-                                },
-                                onDownloadError: (error) {
+                              try {
+                                final tempDir = await getTemporaryDirectory();
+                                final tempFilePath =
+                                    '${tempDir.path}/$fileName';
+
+                                // 1. Download file using Dio to temporary directory
+                                final dio = Dio();
+                                await dio.download(
+                                  pdfUrl,
+                                  tempFilePath,
+                                  onReceiveProgress: (received, total) {
+                                    if (total != -1 && mounted) {
+                                      setState(() {
+                                        _downloadProgress =
+                                            ((received / total) * 100).round();
+                                      });
+                                    }
+                                  },
+                                );
+
+                                // 2. Initialize MediaStore and save to Downloads/vverify
+                                await MediaStore.ensureInitialized();
+                                MediaStore.appFolder = "vverify";
+
+                                final result = await MediaStore().saveFile(
+                                  tempFilePath: tempFilePath,
+                                  dirType: DirType.download,
+                                  dirName: DirName.download,
+                                );
+
+                                if (result != null) {
                                   if (mounted) {
                                     setState(() {
                                       _isDownloadingPdf = false;
                                     });
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content:
-                                            Text("Download failed: $error"),
-                                        backgroundColor: Colors.red,
+                                        content: Text(
+                                            "File downloaded successfully to Downloads/vverify/$fileName!"),
+                                        backgroundColor: Colors.green,
                                       ),
                                     );
                                   }
-                                },
-                              );
+                                } else {
+                                  throw Exception(
+                                      "Failed to save to downloads folder.");
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  setState(() {
+                                    _isDownloadingPdf = false;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Download failed: $e"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              }
                             }
                           },
                     borderRadius: BorderRadius.circular(8),

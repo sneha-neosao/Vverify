@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:v_verify/screen/ProfileScreen/bloc/profile_cubit.dart';
 import 'package:v_verify/screen/ProfileScreen/bloc/profile_state.dart';
 import 'package:v_verify/screen/ProfileScreen/bloc/sign_out_cubit.dart';
 import 'package:v_verify/screen/ProfileScreen/bloc/sign_out_state.dart';
+import 'package:v_verify/screen/ServicesAndPrice/Blocs/all_entities_bloc/all_entities_cubit.dart';
 
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../commonComponent/custom_button.dart';
@@ -183,6 +183,17 @@ class _ProfilePageState extends State<ProfilePage> {
         } else if (state is SignOutSuccess) {
           Navigator.of(context).pop();
           selectedIndex = 0;
+          
+          // Clear global session state
+          context.read<TokenCubit>().clearToken();
+          context.read<IdCubit>().clearId();
+          context.read<UserTypeId>().clearUserTypeId();
+          
+          // Reset entities cache cubit if accessible
+          try {
+            context.read<AllEntitiesCubit>().clear();
+          } catch (_) {}
+
           context.go('/login');
         } else if (state is SignOutError) {
           Navigator.of(context).pop();

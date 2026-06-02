@@ -1,4 +1,3 @@
-import 'dart:io';
 class VerifyRequestEditModel {
   final String uid;
   final String request_id;
@@ -13,19 +12,17 @@ class VerifyRequestEditModel {
   final String education_uuid;
 
   VerifyRequestEditModel(
-      {
-        required this.uid,
-        required this.request_id,
-        required this.service_request_id,
-        required this.university_name,
-        required this.instituition_name,
-        required this.year_of_passing,
-        required this.degree_qualification_name,
-        required this.grades_type,
-        required this.grades_obtained,
-        required this.case_uuid,
-        required this.education_uuid
-      });
+      {required this.uid,
+      required this.request_id,
+      required this.service_request_id,
+      required this.university_name,
+      required this.instituition_name,
+      required this.year_of_passing,
+      required this.degree_qualification_name,
+      required this.grades_type,
+      required this.grades_obtained,
+      required this.case_uuid,
+      required this.education_uuid});
 
   Map<String, dynamic> toJson() {
     return {
@@ -43,6 +40,3 @@ class VerifyRequestEditModel {
     };
   }
 }
-
-
-

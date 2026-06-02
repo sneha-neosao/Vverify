@@ -4,7 +4,7 @@ import 'package:v_verify/screen/ServicesAndPrice/Models/checkout_model.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/checkout_bloc/checkout_state.dart';
 
 class CheckoutCubit extends Cubit<CheckOutState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   CheckoutCubit(this._apiService) : super(CheckOutInitialState());
 

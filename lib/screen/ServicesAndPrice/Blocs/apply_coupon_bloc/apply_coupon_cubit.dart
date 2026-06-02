@@ -4,10 +4,9 @@ import '../../../../../../apiServices/api_services.dart';
 import 'apply_coupon_state.dart';
 
 class ApplyCouponCubit extends Cubit<ApplyCouponState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
-  ApplyCouponCubit(this._apiService)
-      : super(ApplyCouponInitialState());
+  ApplyCouponCubit(this._apiService) : super(ApplyCouponInitialState());
 
   void applyCoupon({
     required String token,

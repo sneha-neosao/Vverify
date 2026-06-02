@@ -21,7 +21,6 @@ import 'Bloc/driving_licence_save_form_bloc/driving_licence_save_form_state.dart
 import 'Bloc/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
 import 'Bloc/driving_licence_show_details_bloc/driving_licence_show_details_state.dart';
 
-
 class DrivingLicenseCard extends StatefulWidget {
   final TextEditingController controller;
   final TextEditingController dobController;
@@ -659,7 +658,6 @@ class _DrivingLicenseCardState extends State<DrivingLicenseCard> {
             }
           },
         ),
-
         BlocListener<DrivingLicenceShowDataCubit, DrivingLicenceShowDataState>(
           listener: (context, state) {
             if (state is DrivingLicenceShowDataLoadingState) {

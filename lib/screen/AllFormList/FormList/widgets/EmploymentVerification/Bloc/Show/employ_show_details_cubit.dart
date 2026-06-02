@@ -4,7 +4,7 @@ import '../../Model/employment_show_details_model.dart';
 import 'employ_show_details_state.dart';
 
 class EmployShowDataCubit extends Cubit<EmployShowDataState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   EmployShowDataCubit(this._apiService) : super(EmployShowDataInitialState());
 

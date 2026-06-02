@@ -151,7 +151,8 @@ class AddressDatum {
         "current_address_v_status": currentAddressVStatus,
         "permanent_address_v_status": permanentAddressVStatus,
         "verification_remark": verificationRemark,
-        "permanent_address_verification_remark": permanentAddressVerificationRemark,
+        "permanent_address_verification_remark":
+            permanentAddressVerificationRemark,
         "data_preference": dataPreference,
         "artefact_img": artefactImg,
         "artefact_link": artefactLink,

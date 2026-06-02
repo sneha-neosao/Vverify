@@ -70,7 +70,6 @@ Future<void> _showForegroundNotification(RemoteMessage message) async {
   final imageUrl = message.data['image'];
   BigPictureStyleInformation? bigPictureStyleInformation;
   if (imageUrl != null) {
-
     try {
       final response = await http.get(Uri.parse(imageUrl));
       if (response.statusCode == 200) {
@@ -120,7 +119,6 @@ class FirebaseApi {
     final fcmToken = await _firebaseMessage.getToken();
     firebaseToken = fcmToken;
 
-
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
     FirebaseMessaging.onMessageOpenedApp;
 
@@ -144,9 +142,7 @@ class FirebaseApi {
 
   void localNotification() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-
-        _showForegroundNotification(
-            message);
+      _showForegroundNotification(message);
       // Show local notification when app is in the foreground
     });
   }

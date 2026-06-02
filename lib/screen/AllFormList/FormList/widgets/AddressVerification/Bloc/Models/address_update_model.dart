@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class NameAddressVerificationUpdateModel {
   final String request_id;
   final String service_request_id;
@@ -21,25 +19,25 @@ class NameAddressVerificationUpdateModel {
   final String uid;
   // final dynamic till_date;
 
-  NameAddressVerificationUpdateModel(
-      {required this.request_id,
-      required this.service_request_id,
-        required this.current_address_line_1,
-        required this.current_address_line_2,
-        required this.current_city_id,
-        required this.current_state,
-        required this.current_pinCode,
-        // required this.permanent_address_line_1,
-        // required this.permanent_address_line_2,
-        // required this.permanent_city_id,
-        // required this.permanent_state,
-        // required this.permanent_pinCode,
-        required this.case_uuid,
-        required this.address_uuid,
-        required this.data_preference,
-        // required this.residing_from_date,
-        // required this.residing_to_date,
-        required this.uid,
-        // required this.till_date
-      });
+  NameAddressVerificationUpdateModel({
+    required this.request_id,
+    required this.service_request_id,
+    required this.current_address_line_1,
+    required this.current_address_line_2,
+    required this.current_city_id,
+    required this.current_state,
+    required this.current_pinCode,
+    // required this.permanent_address_line_1,
+    // required this.permanent_address_line_2,
+    // required this.permanent_city_id,
+    // required this.permanent_state,
+    // required this.permanent_pinCode,
+    required this.case_uuid,
+    required this.address_uuid,
+    required this.data_preference,
+    // required this.residing_from_date,
+    // required this.residing_to_date,
+    required this.uid,
+    // required this.till_date
+  });
 }

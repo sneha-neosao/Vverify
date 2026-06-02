@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-EditProfileModel editProfileModelFromJson(String str) => EditProfileModel.fromJson(json.decode(str));
+EditProfileModel editProfileModelFromJson(String str) =>
+    EditProfileModel.fromJson(json.decode(str));
 
-String editProfileModelToJson(EditProfileModel data) => json.encode(data.toJson());
+String editProfileModelToJson(EditProfileModel data) =>
+    json.encode(data.toJson());
 
 class EditProfileModel {
   int? status;
@@ -17,13 +19,14 @@ class EditProfileModel {
     this.message,
   });
 
-  factory EditProfileModel.fromJson(Map<String, dynamic> json) => EditProfileModel(
-    status: json["status"],
-    message: json["message"],
-  );
+  factory EditProfileModel.fromJson(Map<String, dynamic> json) =>
+      EditProfileModel(
+        status: json["status"],
+        message: json["message"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "message": message,
-  };
+        "status": status,
+        "message": message,
+      };
 }

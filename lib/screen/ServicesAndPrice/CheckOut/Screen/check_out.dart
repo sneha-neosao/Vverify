@@ -257,13 +257,19 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                 SharedPreferences.getInstance().then((prefs) {
                   prefs.remove('checkout_cart');
                 });
-                
+
                 // Refresh all entities and dashboard metrics on payment success
                 final token = context.read<TokenCubit>().state;
                 final customerId = context.read<IdCubit>().state;
-                context.read<AllEntitiesCubit>().getAllEntities(token: token, customer_id: customerId);
-                context.read<DashboardEntitiesCubit>().getDashboardEntities(token: token, customerId: customerId);
-                context.read<DashboardCountBloc>().getDashboardCount(token: token, customerId: customerId);
+                context
+                    .read<AllEntitiesCubit>()
+                    .getAllEntities(token: token, customer_id: customerId);
+                context
+                    .read<DashboardEntitiesCubit>()
+                    .getDashboardEntities(token: token, customerId: customerId);
+                context
+                    .read<DashboardCountBloc>()
+                    .getDashboardCount(token: token, customerId: customerId);
 
                 context.pushReplacementNamed("payment_success");
               } else if (checkoutState is CheckOutErrorState) {
@@ -451,7 +457,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                               ],
                             ),
                           );
-                        }).toList(),
+                        }),
                         const SizedBox(height: 8),
                         Align(
                           alignment: Alignment.centerRight,

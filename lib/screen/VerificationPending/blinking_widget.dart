@@ -6,11 +6,11 @@ class BlinkingStatus extends StatefulWidget {
   final Color color;
 
   const BlinkingStatus({
-    Key? key,
+    super.key,
     required this.icon,
     required this.text,
     required this.color,
-  }) : super(key: key);
+  });
 
   @override
   _BlinkingStatusState createState() => _BlinkingStatusState();
@@ -49,10 +49,10 @@ class _BlinkingStatusState extends State<BlinkingStatus>
           Text(
             widget.text,
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: widget.color,
-            ),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: widget.color,
+                ),
           ),
         ],
       ),

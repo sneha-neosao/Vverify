@@ -11,8 +11,9 @@ class NameAddressVerificationUpdateInitialState
 class NameAddressVerificationUpdateLoadingState
     extends NameAddressVerificationUpdateState {}
 
-class NameAddressVerificationUpdateSuccessState extends NameAddressVerificationUpdateState {
-  final Map<String,dynamic> data;
+class NameAddressVerificationUpdateSuccessState
+    extends NameAddressVerificationUpdateState {
+  final Map<String, dynamic> data;
 
   NameAddressVerificationUpdateSuccessState(this.data);
 
@@ -20,7 +21,8 @@ class NameAddressVerificationUpdateSuccessState extends NameAddressVerificationU
   List<Object?> get props => [data];
 }
 
-class NameAddressVerificationUpdateErrorState extends NameAddressVerificationUpdateState {
+class NameAddressVerificationUpdateErrorState
+    extends NameAddressVerificationUpdateState {
   String message;
 
   NameAddressVerificationUpdateErrorState(this.message);

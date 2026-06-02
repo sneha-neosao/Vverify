@@ -1,16 +1,15 @@
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:media_store_plus/media_store_plus.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Model/verify_details_model.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_state.dart';
-import 'dart:io';
-import 'package:flutter_downloader/flutter_downloader.dart';
 
 class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
-  VerifyRequestReportCubit(this._apiService) : super(VerifyRequestReportInitialState());
-
+  VerifyRequestReportCubit(this._apiService)
+      : super(VerifyRequestReportInitialState());
 
   Future<void> verifyRequestReport({
     required String token,
@@ -26,25 +25,28 @@ class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
       if (response.data is List<int>) {
         final pdfBytes = response.data as List<int>;
 
-        final downloadsDir =
-            Directory('/storage/emulated/0/Download'); // public Downloads
-        final filePath = '${downloadsDir.path}/report_$case_uuid.pdf';
-        final file = File(filePath);
-        await file.writeAsBytes(pdfBytes);
+        // 1. Write to a temporary file
+        final tempDir = await getTemporaryDirectory();
+        final tempFilePath = '${tempDir.path}/report_$case_uuid.pdf';
+        final tempFile = File(tempFilePath);
+        await tempFile.writeAsBytes(pdfBytes);
 
-        // ✅ Trigger system download notification
-        // await FlutterDownloader.enqueue(
-        //   url: 'https://vverifyadmin.neosao.co.in/api/v1/verify-request/report/pdf/$case_uuid',
-        //   savedDir: '/storage/emulated/0/Download',
-        //   fileName: 'report_$case_uuid.pdf',
-        //   showNotification: true,
-        //   openFileFromNotification: true,
-        //   headers: {
-        //     'Authorization': 'Bearer $token',   // ✅ include your token
-        //   },
-        // );
+        // 2. Initialize MediaStore and save to Downloads
+        await MediaStore.ensureInitialized();
+        MediaStore.appFolder = "vverify";
 
-        emit(VerifyRequestReportDownloadedState(file.path));
+        final result = await MediaStore().saveFile(
+          tempFilePath: tempFile.path,
+          dirType: DirType.download,
+          dirName: DirName.download,
+        );
+
+        if (result != null) {
+          emit(VerifyRequestReportDownloadedState(tempFile.path));
+        } else {
+          emit(VerifyRequestReportErrorState(
+              'Failed to save PDF to downloads folder.'));
+        }
       } else {
         emit(VerifyRequestReportErrorState('Unexpected response format.'));
       }
@@ -70,13 +72,29 @@ class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
       if (response.data is List<int>) {
         final pdfBytes = response.data as List<int>;
 
-        final downloadsDir = Directory('/storage/emulated/0/Download');
-        final filePath =
-            '${downloadsDir.path}/${service_name.replaceAll(' ', '_')}_$uuid.pdf';
-        final file = File(filePath);
-        await file.writeAsBytes(pdfBytes);
+        // 1. Write to a temporary file
+        final tempDir = await getTemporaryDirectory();
+        final tempFileName = '${service_name.replaceAll(' ', '_')}_$uuid.pdf';
+        final tempFilePath = '${tempDir.path}/$tempFileName';
+        final tempFile = File(tempFilePath);
+        await tempFile.writeAsBytes(pdfBytes);
 
-        emit(VerifyRequestReportDownloadedState(file.path));
+        // 2. Initialize MediaStore and save to Downloads
+        await MediaStore.ensureInitialized();
+        MediaStore.appFolder = "vverify";
+
+        final result = await MediaStore().saveFile(
+          tempFilePath: tempFile.path,
+          dirType: DirType.download,
+          dirName: DirName.download,
+        );
+
+        if (result != null) {
+          emit(VerifyRequestReportDownloadedState(tempFile.path));
+        } else {
+          emit(VerifyRequestReportErrorState(
+              'Failed to save report to downloads folder.'));
+        }
       } else {
         emit(VerifyRequestReportErrorState('Unexpected response format.'));
       }
@@ -85,4 +103,3 @@ class VerifyRequestReportCubit extends Cubit<VerifyRequestReportState> {
     }
   }
 }
-

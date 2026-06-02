@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/all_entities_bloc/all_entities_state.dart';
 import 'package:v_verify/screen/VerificationForms/common/form_widget.dart';
@@ -396,6 +395,56 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                     },
                   ),
 
+                  // ── In-Progress and Completed Horizontal Scroll Tabs ──
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 12.0, right: 12.0, bottom: 16.0),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      child: Row(
+                        children: [
+                          _buildTabChip(
+                            label: "In-Progress",
+                            isActive: filterState.status == 'Pending' ||
+                                filterState.status == null,
+                            activeBgColor:
+                                const Color(0xFFFEF9C3), // Light warm yellow
+                            activeTextColor: const Color(
+                                0xFF854D0E), // Dark brown/yellow text
+                            onTap: () {
+                              context
+                                  .read<PendingDocNavigationCubit>()
+                                  .selectCategory(
+                                    status: 'Pending',
+                                    entityId: filterState.entityId,
+                                    groupId: filterState.groupId,
+                                  );
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          _buildTabChip(
+                            label: "Completed",
+                            isActive: filterState.status == 'Verified',
+                            activeBgColor:
+                                const Color(0xFFDCFCE7), // Light fresh green
+                            activeTextColor:
+                                const Color(0xFF166534), // Dark green text
+                            onTap: () {
+                              context
+                                  .read<PendingDocNavigationCubit>()
+                                  .selectCategory(
+                                    status: 'Verified',
+                                    entityId: filterState.entityId,
+                                    groupId: filterState.groupId,
+                                  );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
                   // ── Main List ──
                   Expanded(
                     child: RefreshIndicator(
@@ -607,7 +656,14 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                       .serviceTitle ??
                                                                   "Verification",
                                                             },
-                                                          );
+                                                          ).then((_) {
+                                                            if (context
+                                                                .mounted) {
+                                                              _fetchData(
+                                                                  isLoading:
+                                                                      false);
+                                                            }
+                                                          });
                                                         } else {
                                                           _showFormDialog(
                                                               item,
@@ -673,7 +729,13 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
                                                                 service
                                                                     .serviceTitle,
                                                           },
-                                                        );
+                                                        ).then((_) {
+                                                          if (context.mounted) {
+                                                            _fetchData(
+                                                                isLoading:
+                                                                    false);
+                                                          }
+                                                        });
                                                       } else {
                                                         _showFormDialog(
                                                             item, service);
@@ -1101,163 +1163,177 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
 
     final formKey = GlobalKey<FormState>();
 
+    final verifyRequestUpdateCubit = context.read<VerifyRequestUpdateCubit>();
+    final tokenCubit = context.read<TokenCubit>();
+
     showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (context) => groupId == 1
-          ? _buildFormDialog(
-              title: item.detailsUpdated == 1
-                  ? "Update $entityName Info"
-                  : "Fill $entityName Info",
-              icon: Icons.business_rounded,
-              formKey: formKey,
-              onSave: () {
-                final token = context.read<TokenCubit>().state;
-                context.read<VerifyRequestUpdateCubit>().verifyRequestUpdate(
-                      token: token,
-                      uuid: item.uuid ?? "",
-                      group_id: 1,
-                      company_name: companyNameController.text,
-                      firstName: firstNameController.text,
-                      middleName: "",
-                      lastName: lastNameController.text,
-                      phone: phoneController.text,
-                      dob: "",
-                      email: emailController.text,
-                      employee_code: "",
-                      date_of_joining: "",
-                      gender: "",
-                    );
-              },
-              onSuccess: () {
-                // Update local state only on success
-                item.companyName = companyNameController.text;
-                item.first_name = firstNameController.text;
-                item.last_name = lastNameController.text;
-                item.detailsUpdated = 1;
-                setState(() {});
-
-                // Navigate to Form List after success if a service was selected
-                if (service != null) {
-                  context.pushNamed(
-                    'formList',
-                    extra: {
-                      'applicantData': item.toJson(),
-                      'serviceNavigate': service.serviceNavigate,
-                      'serviceTitle': service.serviceTitle,
-                    },
+      builder: (dialogContext) => BlocProvider<VerifyRequestUpdateCubit>.value(
+        value: verifyRequestUpdateCubit,
+        child: groupId == 1
+            ? _buildFormDialog(
+                title: item.detailsUpdated == 1
+                    ? "Update $entityName Info"
+                    : "Fill $entityName Info",
+                icon: Icons.business_rounded,
+                formKey: formKey,
+                onSave: () {
+                  final token = tokenCubit.state;
+                  verifyRequestUpdateCubit.verifyRequestUpdate(
+                    token: token,
+                    uuid: item.uuid ?? "",
+                    group_id: 1,
+                    company_name: companyNameController.text,
+                    firstName: firstNameController.text,
+                    middleName: "",
+                    lastName: lastNameController.text,
+                    phone: phoneController.text,
+                    dob: "",
+                    email: emailController.text,
+                    employee_code: "",
+                    date_of_joining: "",
+                    gender: "",
                   );
-                }
-              },
-              fields: [
-                form_widget(
-                  controller: companyNameController,
-                  titleText: 'Company Name',
-                  hintText: "Enter Company Name",
-                  textInputType: TextInputType.text,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter company name';
-                    }
-                    return null;
-                  },
-                ),
-                FormFieldNotRequired(
-                  controller: phoneController,
-                  titleText: 'Mobile Number',
-                  hintText: "Enter Mobile Number",
-                  textInputType: TextInputType.number,
-                ),
-                FormFieldNotRequired(
-                  controller: emailController,
-                  titleText: 'Email Address',
-                  hintText: "Enter Email Address",
-                  textInputType: TextInputType.emailAddress,
-                ),
-              ],
-            )
-          : _buildFormDialog(
-              title: item.detailsUpdated == 1
-                  ? "Update $entityName Info"
-                  : "Fill $entityName Info",
-              icon: Icons.person_rounded,
-              formKey: formKey,
-              onSave: () {
-                final token = context.read<TokenCubit>().state;
-                context.read<VerifyRequestUpdateCubit>().verifyRequestUpdate(
-                      token: token,
-                      uuid: item.uuid ?? "",
-                      group_id: 2,
-                      company_name: "",
-                      firstName: firstNameController.text,
-                      middleName: "",
-                      lastName: lastNameController.text,
-                      phone: phoneController.text,
-                      dob: "",
-                      email: emailController.text,
-                      employee_code: "",
-                      date_of_joining: "",
-                      gender: "",
-                    );
-              },
-              onSuccess: () {
-                // Update local state only on success
-                item.first_name = firstNameController.text;
-                item.last_name = lastNameController.text;
-                item.detailsUpdated = 1; // Mark as updated
-                setState(() {});
+                },
+                onSuccess: () {
+                  // Update local state only on success
+                  item.companyName = companyNameController.text;
+                  item.first_name = firstNameController.text;
+                  item.last_name = lastNameController.text;
+                  item.detailsUpdated = 1;
+                  setState(() {});
 
-                // Navigate to Form List after success if a service was selected
-                if (service != null) {
-                  context.pushNamed(
-                    'formList',
-                    extra: {
-                      'applicantData': item.toJson(),
-                      'serviceNavigate': service.serviceNavigate,
-                      'serviceTitle': service.serviceTitle,
+                  // Navigate to Form List after success if a service was selected
+                  if (service != null) {
+                    context.pushNamed(
+                      'formList',
+                      extra: {
+                        'applicantData': item.toJson(),
+                        'serviceNavigate': service.serviceNavigate,
+                        'serviceTitle': service.serviceTitle,
+                      },
+                    ).then((_) {
+                      if (mounted) {
+                        _fetchData(isLoading: false);
+                      }
+                    });
+                  }
+                },
+                fields: [
+                  form_widget(
+                    controller: companyNameController,
+                    titleText: 'Company Name',
+                    hintText: "Enter Company Name",
+                    textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter company name';
+                      }
+                      return null;
                     },
+                  ),
+                  FormFieldNotRequired(
+                    controller: phoneController,
+                    titleText: 'Mobile Number',
+                    hintText: "Enter Mobile Number",
+                    textInputType: TextInputType.number,
+                  ),
+                  FormFieldNotRequired(
+                    controller: emailController,
+                    titleText: 'Email Address',
+                    hintText: "Enter Email Address",
+                    textInputType: TextInputType.emailAddress,
+                  ),
+                ],
+              )
+            : _buildFormDialog(
+                title: item.detailsUpdated == 1
+                    ? "Update $entityName Info"
+                    : "Fill $entityName Info",
+                icon: Icons.person_rounded,
+                formKey: formKey,
+                onSave: () {
+                  final token = tokenCubit.state;
+                  verifyRequestUpdateCubit.verifyRequestUpdate(
+                    token: token,
+                    uuid: item.uuid ?? "",
+                    group_id: 2,
+                    company_name: "",
+                    firstName: firstNameController.text,
+                    middleName: "",
+                    lastName: lastNameController.text,
+                    phone: phoneController.text,
+                    dob: "",
+                    email: emailController.text,
+                    employee_code: "",
+                    date_of_joining: "",
+                    gender: "",
                   );
-                }
-              },
-              fields: [
-                form_widget(
-                  controller: firstNameController,
-                  titleText: 'First Name',
-                  hintText: "Enter First Name",
-                  textInputType: TextInputType.text,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter first name';
-                    }
-                    return null;
-                  },
-                ),
-                form_widget(
-                  controller: lastNameController,
-                  titleText: 'Last Name',
-                  hintText: "Enter Last Name",
-                  textInputType: TextInputType.text,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter last name';
-                    }
-                    return null;
-                  },
-                ),
-                FormFieldNotRequired(
-                  controller: phoneController,
-                  titleText: 'Phone Number',
-                  hintText: "Enter Phone Number",
-                  textInputType: TextInputType.number,
-                ),
-                FormFieldNotRequired(
-                  controller: emailController,
-                  titleText: 'Email Address',
-                  hintText: "Enter Email Address",
-                  textInputType: TextInputType.emailAddress,
-                ),
-              ],
-            ),
+                },
+                onSuccess: () {
+                  // Update local state only on success
+                  item.first_name = firstNameController.text;
+                  item.last_name = lastNameController.text;
+                  item.detailsUpdated = 1; // Mark as updated
+                  setState(() {});
+
+                  // Navigate to Form List after success if a service was selected
+                  if (service != null) {
+                    context.pushNamed(
+                      'formList',
+                      extra: {
+                        'applicantData': item.toJson(),
+                        'serviceNavigate': service.serviceNavigate,
+                        'serviceTitle': service.serviceTitle,
+                      },
+                    ).then((_) {
+                      if (mounted) {
+                        _fetchData(isLoading: false);
+                      }
+                    });
+                  }
+                },
+                fields: [
+                  form_widget(
+                    controller: firstNameController,
+                    titleText: 'First Name',
+                    hintText: "Enter First Name",
+                    textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter first name';
+                      }
+                      return null;
+                    },
+                  ),
+                  form_widget(
+                    controller: lastNameController,
+                    titleText: 'Last Name',
+                    hintText: "Enter Last Name",
+                    textInputType: TextInputType.text,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter last name';
+                      }
+                      return null;
+                    },
+                  ),
+                  FormFieldNotRequired(
+                    controller: phoneController,
+                    titleText: 'Phone Number',
+                    hintText: "Enter Phone Number",
+                    textInputType: TextInputType.number,
+                  ),
+                  FormFieldNotRequired(
+                    controller: emailController,
+                    titleText: 'Email Address',
+                    hintText: "Enter Email Address",
+                    textInputType: TextInputType.emailAddress,
+                  ),
+                ],
+              ),
+      ),
     );
   }
 
@@ -1382,4 +1458,51 @@ class _PendingDocPaginationState extends State<PendingDocPagination> {
           ),
         ));
   }
+}
+
+Widget _buildTabChip({
+  required String label,
+  required bool isActive,
+  required Color activeBgColor,
+  required Color activeTextColor,
+  required VoidCallback onTap,
+}) {
+  final Color bgColor = isActive ? activeBgColor : const Color(0xFFF1F5F9);
+  final Color textColor = isActive ? activeTextColor : const Color(0xFF64748B);
+  final Color borderColor =
+      isActive ? activeTextColor.withOpacity(0.3) : const Color(0xFFE2E8F0);
+
+  return InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(20),
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: borderColor,
+          width: 1.5,
+        ),
+        boxShadow: isActive
+            ? [
+                BoxShadow(
+                  color: activeTextColor.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                )
+              ]
+            : null,
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.outfit(
+          color: textColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+      ),
+    ),
+  );
 }

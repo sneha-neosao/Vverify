@@ -36,7 +36,8 @@ class ServicePriceModel {
             : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
         suggestionCombos: json["suggestion_combos"] == null
             ? []
-            : List<Datum>.from(json["suggestion_combos"]!.map((x) => Datum.fromJson(x))),
+            : List<Datum>.from(
+                json["suggestion_combos"]!.map((x) => Datum.fromJson(x))),
         actualPrice: json["actual_price"]?.toString(),
         discountPrice: json["discount_price"]?.toString(),
       );

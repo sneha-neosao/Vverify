@@ -9,7 +9,7 @@ import '../../Model/education_save_form_model.dart';
 import 'education_save_form_state.dart';
 
 class EducationSaveFormCubit extends Cubit<EducationSaveFormState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   EducationSaveFormCubit(this._apiService)
       : super(EducationSaveFormInitialState());

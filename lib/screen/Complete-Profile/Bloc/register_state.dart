@@ -11,7 +11,7 @@ class RegisterInitialState extends RegisterState {}
 class RegisterLoading extends RegisterState {}
 
 class RegisterSuccess extends RegisterState {
-  final RegisterModel registerModel ;
+  final RegisterModel registerModel;
 
   RegisterSuccess(this.registerModel);
 

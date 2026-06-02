@@ -4,7 +4,7 @@ import '../../../../../../../../apiServices/api_services.dart';
 import '../../Model/education_update_form_model.dart';
 
 class EducationUpdateFormCubit extends Cubit<EducationUpdateFormState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   EducationUpdateFormCubit(this._apiService)
       : super(EducationUpdateFormInitialState());

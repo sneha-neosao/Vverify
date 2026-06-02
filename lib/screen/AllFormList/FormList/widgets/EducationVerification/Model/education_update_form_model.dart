@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class EducationUpdateFormModel {
   final String uid;
   final String request_id;

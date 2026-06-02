@@ -9,16 +9,13 @@ class CustomMobileTextField extends StatelessWidget {
   final TextEditingController controller;
   final List<TextInputFormatter>? formatter;
 
-  const CustomMobileTextField({
-    super.key,
-    required this.hintText,
-    this.labelText,
-    required this.keyboardType,
-    required this.controller,
-    this.formatter
-  });
-
-
+  const CustomMobileTextField(
+      {super.key,
+      required this.hintText,
+      this.labelText,
+      required this.keyboardType,
+      required this.controller,
+      this.formatter});
 
   @override
   Widget build(BuildContext context) {

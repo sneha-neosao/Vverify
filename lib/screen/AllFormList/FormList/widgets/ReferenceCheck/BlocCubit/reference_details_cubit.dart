@@ -19,6 +19,8 @@ class ReferenceDetailsCubit extends Cubit<ReferenceDetailsState> {
         uid: uid,
       );
 
+      if (isClosed) return;
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final ReferenceCheckDetailsModel model =
             ReferenceCheckDetailsModel.fromJson(response.data);
@@ -26,12 +28,14 @@ class ReferenceDetailsCubit extends Cubit<ReferenceDetailsState> {
         if (model.status == 200 && model.data != null) {
           emit(ReferenceDetailsSuccess(model.data!));
         } else {
-          emit(ReferenceDetailsError(model.message ?? "Failed to fetch details"));
+          emit(ReferenceDetailsError(
+              model.message ?? "Failed to fetch details"));
         }
       } else {
         emit(ReferenceDetailsError("Failed to fetch details"));
       }
     } catch (e) {
+      if (isClosed) return;
       emit(ReferenceDetailsError("Error fetching details: $e"));
     }
   }

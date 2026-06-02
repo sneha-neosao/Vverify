@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Model/verify_details_model.dart';
 
 class VerifyRequestReportState extends Equatable {
   @override

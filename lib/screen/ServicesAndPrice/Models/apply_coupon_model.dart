@@ -3,9 +3,12 @@
 //     final checkoutModel = checkoutModelFromJson(jsonString);
 
 import 'dart:convert';
-ApplyCouponModel applyCouponModelFromJson(String str) => ApplyCouponModel.fromJson(json.decode(str));
 
-String applyCouponModelToJson(ApplyCouponModel data) => json.encode(data.toJson());
+ApplyCouponModel applyCouponModelFromJson(String str) =>
+    ApplyCouponModel.fromJson(json.decode(str));
+
+String applyCouponModelToJson(ApplyCouponModel data) =>
+    json.encode(data.toJson());
 
 class ApplyCouponModel {
   int? status;
@@ -18,17 +21,20 @@ class ApplyCouponModel {
     this.result,
   });
 
-  factory ApplyCouponModel.fromJson(Map<String, dynamic> json) => ApplyCouponModel(
-    status: json["status"],
-    message: json["message"],
-    result: json["result"] == null ? null : ApplyCouponResult.fromJson(json["result"]),
-  );
+  factory ApplyCouponModel.fromJson(Map<String, dynamic> json) =>
+      ApplyCouponModel(
+        status: json["status"],
+        message: json["message"],
+        result: json["result"] == null
+            ? null
+            : ApplyCouponResult.fromJson(json["result"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "message": message,
-    "result": result?.toJson(),
-  };
+        "status": status,
+        "message": message,
+        "result": result?.toJson(),
+      };
 }
 
 class ApplyCouponResult {
@@ -61,13 +67,13 @@ class ApplyCouponResult {
       );
 
   Map<String, dynamic> toJson() => {
-    "subtotal": subtotal,
-    "tax_percent": taxPercent,
-    "tax_total": taxTotal,
-    "discountApplied": discountApplied,
-    "finalAmount": finalAmount,
-    "couponDetails": couponDetails?.toJson(),
-  };
+        "subtotal": subtotal,
+        "tax_percent": taxPercent,
+        "tax_total": taxTotal,
+        "discountApplied": discountApplied,
+        "finalAmount": finalAmount,
+        "couponDetails": couponDetails?.toJson(),
+      };
 }
 
 class CouponDetails {
@@ -86,19 +92,17 @@ class CouponDetails {
   });
 
   factory CouponDetails.fromJson(Map<String, dynamic> json) => CouponDetails(
-    id: json["id"],
-    couponCode: json["couponCode"],
-    couponType: json["couponType"],
-    couponAmount: json["couponAmount"],
-    nextLimit: json["nextLimit"]
-  );
+      id: json["id"],
+      couponCode: json["couponCode"],
+      couponType: json["couponType"],
+      couponAmount: json["couponAmount"],
+      nextLimit: json["nextLimit"]);
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "couponCode": couponCode,
-    "couponType": couponType,
-    "couponAmount": couponAmount,
-    "nextLimit": nextLimit
-  };
-
+        "id": id,
+        "couponCode": couponCode,
+        "couponType": couponType,
+        "couponAmount": couponAmount,
+        "nextLimit": nextLimit
+      };
 }

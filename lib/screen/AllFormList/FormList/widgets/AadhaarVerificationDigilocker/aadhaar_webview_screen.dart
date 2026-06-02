@@ -81,13 +81,17 @@ class _AadhaarWebviewScreenState extends State<AadhaarWebviewScreen> {
 
   void _triggerVerification() {
     if (_verifyCubit.state is AadhaarVerifyLoadingState ||
-        _verifyCubit.state is AadhaarVerifySuccessState) return;
+        _verifyCubit.state is AadhaarVerifySuccessState) {
+      return;
+    }
 
     // Introduce a 1.5-second delay to allow the server-to-server transaction status propagation to complete
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (!mounted) return;
       if (_verifyCubit.state is AadhaarVerifyLoadingState ||
-          _verifyCubit.state is AadhaarVerifySuccessState) return;
+          _verifyCubit.state is AadhaarVerifySuccessState) {
+        return;
+      }
 
       _verifyCubit.verifyAadhaar(
         token: widget.token,

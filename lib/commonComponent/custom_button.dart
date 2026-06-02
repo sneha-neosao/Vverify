@@ -17,7 +17,7 @@ class CustomButton extends StatelessWidget {
   final bool enabled;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onTap,
     this.gradientColors = const [Colors.blue, Colors.green], // Default gradient
@@ -32,7 +32,7 @@ class CustomButton extends StatelessWidget {
     this.borderWidth,
     this.textStyle,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class AadhaarOcrModel {
   final int? responseCode;
   final String? documentType;

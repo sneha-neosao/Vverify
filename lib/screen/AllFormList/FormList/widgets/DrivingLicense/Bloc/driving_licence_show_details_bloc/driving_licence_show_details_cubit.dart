@@ -5,7 +5,7 @@ import '../../Models/driving_licence_show_details_model.dart';
 import 'driving_licence_show_details_state.dart';
 
 class DrivingLicenceShowDataCubit extends Cubit<DrivingLicenceShowDataState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   DrivingLicenceShowDataCubit(this._apiService)
       : super(DrivingLicenceShowDataInitialState());

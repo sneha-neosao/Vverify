@@ -4,7 +4,7 @@ import '../../Model/employment_save_form_model.dart';
 import 'employment_save_form_state.dart';
 
 class EmploymentSaveFormCubit extends Cubit<EmploymentSaveFormState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   EmploymentSaveFormCubit(this._apiService)
       : super(EmploymentSaveFormInitialState());

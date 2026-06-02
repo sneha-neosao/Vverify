@@ -29,4 +29,8 @@ class AllEntitiesCubit extends Cubit<AllEntitiesState> {
       emit(AllEntitiesErrorState('An error occurred: $e'));
     }
   }
+
+  void clear() {
+    emit(AllEntitiesInitialState());
+  }
 }

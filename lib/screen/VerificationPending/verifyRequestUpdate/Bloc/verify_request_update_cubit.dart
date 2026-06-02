@@ -3,7 +3,7 @@ import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_state.dart';
 
 class VerifyRequestUpdateCubit extends Cubit<VerifyRequestUpdateState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   VerifyRequestUpdateCubit(this._apiService)
       : super(VerifyRequestUpdateInitialState());

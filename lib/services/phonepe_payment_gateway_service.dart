@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 
 class PhonePeService {
   // Configuration
-  static const String environment = 'SANDBOX'; // Change to 'PRODUCTION' for live
-  static const String merchantId = 'M23BZ7J8ECCFG_2511101048'; // Your merchant ID
+  static const String environment =
+      'SANDBOX'; // Change to 'PRODUCTION' for live
+  static const String merchantId =
+      'M23BZ7J8ECCFG_2511101048'; // Your merchant ID
   static const bool enableLogging = true;
 
   // For generating flowId (recommended: use user-specific info or UUID)
@@ -86,10 +88,10 @@ class PhonePeService {
 
   /// Handle payment response
   void handlePaymentResponse(
-      Map<String, dynamic> response,
-      BuildContext context,
-      Function(bool) onPaymentComplete,
-      ) {
+    Map<String, dynamic> response,
+    BuildContext context,
+    Function(bool) onPaymentComplete,
+  ) {
     final status = response['status'];
     final error = response['error'];
 

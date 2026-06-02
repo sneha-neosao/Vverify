@@ -4,16 +4,15 @@ import 'package:flutter/services.dart';
 class CouponTextField extends StatelessWidget {
   const CouponTextField(
       {super.key,
-        required this.controller,
-        required this.titleText,
-        required this.hintText,
-        required this.textInputType,
-        this.readOnly=false,
-        this.validator,
-        this.maskFormatter,
-        this.titleDetails,
-        this.onSaveValue
-      });
+      required this.controller,
+      required this.titleText,
+      required this.hintText,
+      required this.textInputType,
+      this.readOnly = false,
+      this.validator,
+      this.maskFormatter,
+      this.titleDetails,
+      this.onSaveValue});
 
   final TextEditingController controller;
   final String titleText;

@@ -18,7 +18,7 @@ class DashboardCountBloc extends Cubit<DashboardCountState> {
         token: token,
         customer_id: customerId,
       );
-      
+
       if (response.data != null) {
         final model = DashboardCountModel.fromJson(response.data);
         if (model.status == 200) {

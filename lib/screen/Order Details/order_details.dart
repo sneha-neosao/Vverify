@@ -9,7 +9,7 @@ import '../../commonComponent/bloc/shared_preferences_cubit.dart';
 
 class OrderDetails extends StatefulWidget {
   String txnId;
-   OrderDetails({super.key,required this.txnId});
+  OrderDetails({super.key, required this.txnId});
 
   @override
   State<OrderDetails> createState() => _OrderDetailsState();
@@ -34,7 +34,6 @@ class _OrderDetailsState extends State<OrderDetails> {
               ..getOrderDetails(token: token, txnId: widget.txnId),
             child: BlocBuilder<OrderDetailsCubit, OrderDetailsState>(
               builder: (context, orderDetails) {
-
                 if (orderDetails is OrderDetailsLoading) {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -45,8 +44,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                   );
                 } else if (orderDetails is OrderDetailsSuccess) {
                   OrderDetailsModel data = orderDetails.orderDetailsModel;
-                  DateTime dateTime = DateTime.parse(data.data!.txnDate.toString());
-                  String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+                  DateTime dateTime =
+                      DateTime.parse(data.data!.txnDate.toString());
+                  String formattedDate =
+                      DateFormat('yyyy-MM-dd').format(dateTime);
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

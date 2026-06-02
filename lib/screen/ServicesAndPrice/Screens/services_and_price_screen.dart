@@ -25,7 +25,7 @@ class ServicesAndPrice extends StatefulWidget {
   final String entity_id;
   final bool isEdit;
   final String? cartItemId;
-  ServicesAndPrice({
+  const ServicesAndPrice({
     super.key,
     required this.entity_id,
     this.isEdit = false,

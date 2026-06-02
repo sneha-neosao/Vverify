@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -213,9 +212,9 @@ class ApiService {
       // 🔎 Print everything before sending
       print("---- UpdateProfile Request ----");
       print("Headers: ${_dio.options.headers}");
-      formData.fields.forEach((field) {
+      for (var field in formData.fields) {
         print("${field.key}: ${field.value}");
-      });
+      }
       print("-------------------------------");
 
       final response = await _dio.post(
@@ -438,7 +437,7 @@ class ApiService {
       if (gender != null) "gender": gender,
     };
 
-    debugPrint('verifyRequestUpdate Request: ${data}');
+    debugPrint('verifyRequestUpdate Request: $data');
     try {
       _dio.options.headers = {
         'Authorization': 'Bearer $token',

@@ -12,7 +12,7 @@ class NameAddressVerificationLoadingState
     extends NameAddressVerificationState {}
 
 class NameAddressVerificationSuccessState extends NameAddressVerificationState {
-  final Map<String,dynamic> data;
+  final Map<String, dynamic> data;
 
   NameAddressVerificationSuccessState(this.data);
 

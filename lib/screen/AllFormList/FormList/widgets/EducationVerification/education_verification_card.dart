@@ -218,16 +218,15 @@ class _EducationVerificationCardState extends State<EducationVerificationCard> {
         return;
       }
 
-
-
       if (isEditing) {
         final finalUid = (_uid != null && _uid!.isNotEmpty)
             ? _uid!
             : (widget.serviceData?['uid']?.toString() ?? "");
 
-        final finalEduUuid = (_educationUuid != null && _educationUuid!.isNotEmpty)
-            ? _educationUuid!
-            : (widget.serviceData?['education_uuid']?.toString() ?? "");
+        final finalEduUuid =
+            (_educationUuid != null && _educationUuid!.isNotEmpty)
+                ? _educationUuid!
+                : (widget.serviceData?['education_uuid']?.toString() ?? "");
 
         final updateModel = EducationUpdateFormModel(
           uid: finalUid,
@@ -377,11 +376,14 @@ class _EducationVerificationCardState extends State<EducationVerificationCard> {
         ],
         child: BlocBuilder<EducationListCubit, EducationDataListState>(
           builder: (context, listState) {
-            return BlocBuilder<EducationShowDetailsCubit, EducationShowDetailsState>(
+            return BlocBuilder<EducationShowDetailsCubit,
+                EducationShowDetailsState>(
               builder: (context, showState) {
-                return BlocBuilder<EducationSaveFormCubit, EducationSaveFormState>(
+                return BlocBuilder<EducationSaveFormCubit,
+                    EducationSaveFormState>(
                   builder: (context, saveState) {
-                    return BlocBuilder<EducationUpdateFormCubit, EducationUpdateFormState>(
+                    return BlocBuilder<EducationUpdateFormCubit,
+                        EducationUpdateFormState>(
                       builder: (context, updateState) {
                         if (listState is EducationDataListLoadingState ||
                             showState is EducationShowDetailsLoadingState ||
@@ -400,7 +402,8 @@ class _EducationVerificationCardState extends State<EducationVerificationCard> {
                                 "PENDING";
                         if (listState is EducationDataListEmptyState) {
                           currentStatus = "Pending";
-                        } else if (showState is EducationShowDetailsSuccessState) {
+                        } else if (showState
+                            is EducationShowDetailsSuccessState) {
                           currentStatus = showState
                                   .educationDataDetailsModel.data?.vStatus ??
                               currentStatus;

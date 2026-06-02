@@ -22,15 +22,11 @@ class EntitiesDrawer extends StatefulWidget {
 }
 
 class _EntitiesDrawerState extends State<EntitiesDrawer> {
-  int? _expandedEntityId;
-
   @override
   void initState() {
     super.initState();
-    _expandedEntityId = int.tryParse(widget.currentEntityId);
 
     // Only fetch if data is not already loaded.
-    // PaymentSuccessful re-fetches after a purchase, so no need to re-call here.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentState = context.read<AllEntitiesCubit>().state;
       if (currentState is! AllEntitiesSuccessState) {
@@ -91,8 +87,7 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 children: [
                   // Dashboard Tile
-                  _buildDashboardTile(
-                      widget.currentEntityId == 'dashboard'),
+                  _buildDashboardTile(widget.currentEntityId == 'dashboard'),
                   const SizedBox(height: 8),
 
                   BlocBuilder<AllEntitiesCubit, AllEntitiesState>(
@@ -102,13 +97,15 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 24.0),
                             child: CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Color(0xFFE28A17)),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color(0xFFE28A17)),
                             ),
                           ),
                         );
                       } else if (state is AllEntitiesErrorState) {
-                        if (state.message.toLowerCase().contains("no data found")) {
+                        if (state.message
+                            .toLowerCase()
+                            .contains("no data found")) {
                           return const SizedBox();
                         }
                         return Center(
@@ -118,7 +115,8 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                             child: Text(
                               "Failed to load: ${state.message}",
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.outfit(color: Colors.redAccent),
+                              style:
+                                  GoogleFonts.outfit(color: Colors.redAccent),
                             ),
                           ),
                         );
@@ -133,10 +131,8 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
                           children: activeEntities.map((entity) {
                             final isCurrent =
                                 widget.currentEntityId == entity.id.toString();
-                            final isExpanded = _expandedEntityId == entity.id;
 
-                            return _buildEntityItem(
-                                entity, isCurrent, isExpanded);
+                            return _buildEntityItem(entity, isCurrent);
                           }).toList(),
                         );
                       }
@@ -233,10 +229,8 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
     }
   }
 
-  Widget _buildEntityItem(
-      AllEntityData entity, bool isCurrent, bool isExpanded) {
+  Widget _buildEntityItem(AllEntityData entity, bool isCurrent) {
     if (isCurrent) {
-      // Active Expanded Highlight Card style
       return Container(
         margin: const EdgeInsets.only(bottom: 8.0),
         decoration: BoxDecoration(
@@ -247,262 +241,102 @@ class _EntitiesDrawerState extends State<EntitiesDrawer> {
             width: 1.0,
           ),
         ),
-        child: Column(
-          children: [
-            ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              leading: Container(
-                width: 40,
-                height: 40,
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border:
-                      Border.all(color: const Color(0xFFFF7E3E), width: 1.5),
-                ),
-                child: entity.entityIcon != null &&
-                        entity.entityIcon!.isNotEmpty
-                    ? ClipOval(
-                        child: Image.network(
-                          entity.entityIcon!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (c, e, s) => const Icon(Icons.business,
-                              color: Color(0xFFFF7E3E)),
-                        ),
-                      )
-                    : const Icon(Icons.business, color: Color(0xFFFF7E3E)),
-              ),
-              title: Text(
-                entity.entityName ?? "",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.outfit(
-                  color: const Color(0xFFFF5200),
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              // subtitle: entity.entityDescription != null &&
-              //         entity.entityDescription!.isNotEmpty
-              //     ? Padding(
-              //         padding: const EdgeInsets.only(top: 4.0),
-              //         child: Text(
-              //           entity.entityDescription!,
-              //           maxLines: 2,
-              //           overflow: TextOverflow.ellipsis,
-              //           style: GoogleFonts.outfit(
-              //             color: const Color(0xFFFF7E3E).withOpacity(0.8),
-              //             fontSize: 12,
-              //             fontWeight: FontWeight.w400,
-              //           ),
-              //         ),
-              //       )
-              //     : null,
-              trailing: Icon(
-                isExpanded
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
-                color: const Color(0xFFFF5200),
-                size: 22,
-              ),
-              onTap: () {
-                setState(() {
-                  _expandedEntityId = isExpanded ? null : entity.id;
-                });
-              },
+        child: ListTile(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          leading: Container(
+            width: 40,
+            height: 40,
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFFFF7E3E), width: 1.5),
             ),
-            if (isExpanded) ...[
-              const SizedBox(height: 4),
-              _buildSubStatusTile(
-                label: "In-Progress",
-                dotColor: const Color(0xFF6366F1),
-                textColor: const Color(0xFF6366F1),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  context.read<PendingDocNavigationCubit>().selectCategory(
-                        status: 'Pending',
-                        entityId: entity.id,
-                        groupId: entity.groupId,
-                      );
-                },
-              ),
-              _buildSubStatusTile(
-                label: "Completed",
-                dotColor: const Color(0xFF10B981),
-                textColor: const Color(0xFF10B981),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  context.read<PendingDocNavigationCubit>().selectCategory(
-                        status: 'Verified',
-                        entityId: entity.id,
-                        groupId: entity.groupId,
-                      );
-                },
-              ),
-              const SizedBox(height: 12),
-            ]
-          ],
+            child: entity.entityIcon != null && entity.entityIcon!.isNotEmpty
+                ? ClipOval(
+                    child: Image.network(
+                      entity.entityIcon!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (c, e, s) =>
+                          const Icon(Icons.business, color: Color(0xFFFF7E3E)),
+                    ),
+                  )
+                : const Icon(Icons.business, color: Color(0xFFFF7E3E)),
+          ),
+          title: Text(
+            entity.entityName ?? "",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.outfit(
+              color: const Color(0xFFFF5200),
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onTap: () {
+            Navigator.of(context).pop(); // Close drawer
+            final currentFilter =
+                context.read<PendingDocNavigationCubit>().state;
+            context.read<PendingDocNavigationCubit>().selectCategory(
+                  status: currentFilter.status,
+                  entityId: entity.id,
+                  groupId: entity.groupId,
+                );
+          },
         ),
       );
     } else {
-      // Standard Unselected Item — expands on tap
       return Container(
         margin: const EdgeInsets.only(bottom: 8.0),
         decoration: BoxDecoration(
-          color: isExpanded ? const Color(0xFFF8FAFC) : Colors.transparent,
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isExpanded ? const Color(0xFFE2E8F0) : Colors.transparent,
-            width: 1.0,
-          ),
         ),
-        child: Column(
-          children: [
-            ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              leading: Container(
-                width: 40,
-                height: 40,
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: isExpanded
-                      ? const Color(0xFFE2E8F0)
-                      : const Color(0xFFF1F5F9),
-                  shape: BoxShape.circle,
-                ),
-                child: entity.entityIcon != null &&
-                        entity.entityIcon!.isNotEmpty
-                    ? ClipOval(
-                        child: Image.network(
-                          entity.entityIcon!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (c, e, s) => const Icon(Icons.business,
-                              color: Color(0xFF64748B)),
-                        ),
-                      )
-                    : const Icon(Icons.business, color: Color(0xFF64748B)),
-              ),
-              title: Text(
-                entity.entityName ?? "",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.outfit(
-                  color: isExpanded
-                      ? const Color(0xFF0F172A)
-                      : const Color(0xFF475569),
-                  fontSize: 15,
-                  fontWeight: isExpanded ? FontWeight.bold : FontWeight.w600,
-                ),
-              ),
-              // subtitle: entity.entityDescription != null &&
-              //         entity.entityDescription!.isNotEmpty
-              //     ? Padding(
-              //         padding: const EdgeInsets.only(top: 4.0),
-              //         child: Text(
-              //           entity.entityDescription!,
-              //           maxLines: 2,
-              //           overflow: TextOverflow.ellipsis,
-              //           style: GoogleFonts.outfit(
-              //             color: const Color(0xFF64748B),
-              //             fontSize: 12,
-              //             fontWeight: FontWeight.w400,
-              //           ),
-              //         ),
-              //       )
-              //     : null,
-              trailing: Icon(
-                isExpanded
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
-                color: isExpanded
-                    ? const Color(0xFF64748B)
-                    : const Color(0xFF94A3B8),
-                size: 22,
-              ),
-              onTap: () {
-                setState(() {
-                  _expandedEntityId = isExpanded ? null : entity.id;
-                });
-              },
+        child: ListTile(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          leading: Container(
+            width: 40,
+            height: 40,
+            padding: const EdgeInsets.all(2),
+            decoration: const BoxDecoration(
+              color: Color(0xFFF1F5F9),
+              shape: BoxShape.circle,
             ),
-
-            // Expanded Status Sub-Items: In-Progress & Completed
-            if (isExpanded) ...[
-              const SizedBox(height: 4),
-              _buildSubStatusTile(
-                label: "In-Progress",
-                dotColor: const Color(0xFF6366F1),
-                textColor: const Color(0xFF6366F1),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  context.read<PendingDocNavigationCubit>().selectCategory(
-                        status: 'Pending',
-                        entityId: entity.id,
-                        groupId: entity.groupId,
-                      );
-                },
-              ),
-              _buildSubStatusTile(
-                label: "Completed",
-                dotColor: const Color(0xFF10B981),
-                textColor: const Color(0xFF10B981),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  context.read<PendingDocNavigationCubit>().selectCategory(
-                        status: 'Verified',
-                        entityId: entity.id,
-                        groupId: entity.groupId,
-                      );
-                },
-              ),
-              const SizedBox(height: 12),
-            ],
-          ],
+            child: entity.entityIcon != null && entity.entityIcon!.isNotEmpty
+                ? ClipOval(
+                    child: Image.network(
+                      entity.entityIcon!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (c, e, s) =>
+                          const Icon(Icons.business, color: Color(0xFF64748B)),
+                    ),
+                  )
+                : const Icon(Icons.business, color: Color(0xFF64748B)),
+          ),
+          title: Text(
+            entity.entityName ?? "",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.outfit(
+              color: const Color(0xFF475569),
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          onTap: () {
+            Navigator.of(context).pop(); // Close drawer
+            final currentFilter =
+                context.read<PendingDocNavigationCubit>().state;
+            context.read<PendingDocNavigationCubit>().selectCategory(
+                  status: currentFilter.status,
+                  entityId: entity.id,
+                  groupId: entity.groupId,
+                );
+          },
         ),
       );
     }
-  }
-
-  Widget _buildSubStatusTile({
-    required String label,
-    required Color dotColor,
-    required Color textColor,
-    required VoidCallback onTap,
-  }) {
-    return Padding(
-      padding:
-          const EdgeInsets.only(left: 64.0, right: 16.0, top: 4.0, bottom: 4.0),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-          child: Row(
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: dotColor,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                label,
-                style: GoogleFonts.outfit(
-                  color: textColor,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

@@ -19,7 +19,8 @@ class CompanyFinancialCard extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  const Icon(Icons.business_center_outlined, color: Color(0xFFFFB74D), size: 28),
+                  const Icon(Icons.business_center_outlined,
+                      color: Color(0xFFFFB74D), size: 28),
                   const SizedBox(width: 12),
                   Flexible(
                     child: Text(

@@ -4,10 +4,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 class TokenCubit extends Cubit<String> {
   TokenCubit() : super("");
 
-  Future<void>  getToken() async {
+  Future<void> getToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
-    emit(token!);
+    emit(token ?? "");
+  }
+
+  void setToken(String token) {
+    emit(token);
+  }
+
+  void clearToken() {
+    emit("");
   }
 }
 
@@ -17,8 +25,15 @@ class IdCubit extends Cubit<String> {
   Future<void> getId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? id = prefs.getString('id');
+    emit(id ?? "");
+  }
 
-    emit(id!);
+  void setId(String id) {
+    emit(id);
+  }
+
+  void clearId() {
+    emit("");
   }
 }
 
@@ -28,9 +43,14 @@ class UserTypeId extends Cubit<String> {
   Future<void> getUserTypeId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? userTypeId = prefs.getString('userType');
+    emit(userTypeId ?? "");
+  }
 
-    emit(userTypeId!);
+  void setUserTypeId(String userTypeId) {
+    emit(userTypeId);
+  }
+
+  void clearUserTypeId() {
+    emit("");
   }
 }
-
-

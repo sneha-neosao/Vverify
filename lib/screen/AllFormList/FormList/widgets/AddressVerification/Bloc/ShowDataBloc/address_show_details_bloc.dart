@@ -5,7 +5,7 @@ import '../Models/address_show_details_model.dart';
 import 'address_show_details_state.dart';
 
 class NameAddressShowDataCubit extends Cubit<NameAddressShowDataState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   NameAddressShowDataCubit(this._apiService)
       : super(NameAddressShowDataSInitialState());

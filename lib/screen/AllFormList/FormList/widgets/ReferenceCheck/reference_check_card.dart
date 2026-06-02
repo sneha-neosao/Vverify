@@ -171,7 +171,8 @@ class _ReferenceCheckCardState extends State<ReferenceCheckCard> {
                 // Refresh Verification List respecting current entity filter
                 final token = context.read<TokenCubit>().state;
                 final customerId = context.read<IdCubit>().state;
-                final navState = context.read<PendingDocNavigationCubit>().state;
+                final navState =
+                    context.read<PendingDocNavigationCubit>().state;
                 context.read<PendingDocCubit>().getPendingDoc(
                       token: token,
                       customerId: int.tryParse(customerId) ?? 0,
@@ -324,8 +325,9 @@ class _ReferenceCheckCardState extends State<ReferenceCheckCard> {
                           if (value == null || value.trim().isEmpty) {
                             return "Mobile Number is required";
                           }
-                          if (value.trim().length != 10)
+                          if (value.trim().length != 10) {
                             return "Must be 10 digits";
+                          }
                           return null;
                         },
                         relationValidator: (value) =>
@@ -543,14 +545,33 @@ class _ReferenceCheckCardState extends State<ReferenceCheckCard> {
           textInputType: TextInputType.emailAddress,
           isRequired: false,
           isReadOnly: isReadOnly,
+          validator: (value) {
+            if (value != null && value.trim().isNotEmpty) {
+              final regex = RegExp(
+                r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+              );
+              if (!regex.hasMatch(value)) {
+                return 'Please enter a valid email address.';
+              }
+            }
+            return null;
+          },
         ),
         form_widget(
           controller: altMobileController,
-          titleText: "Alt. Mobile / Landline",
+          titleText: "Alt. Mobile",
           hintText: "Alternate contact",
           textInputType: TextInputType.phone,
           isRequired: false,
           isReadOnly: isReadOnly,
+          validator: (value) {
+            if (value != null && value.trim().isNotEmpty) {
+              if (value.trim().length != 10) {
+                return "Must be 10 digits";
+              }
+            }
+            return null;
+          },
         ),
       ],
     );

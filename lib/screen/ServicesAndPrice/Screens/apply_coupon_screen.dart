@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_cubit.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Blocs/apply_coupon_bloc/apply_coupon_state.dart';
 import 'package:v_verify/screen/ServicesAndPrice/coupon_text_field.dart';
-import 'package:v_verify/widgets/custom_required_text_field.dart';
 
 import '../../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../../commonComponent/custom_button.dart';
@@ -13,7 +12,7 @@ class ApplyCouponScreen extends StatefulWidget {
   final String subTotal;
   final String entity_id;
 
-  ApplyCouponScreen(
+  const ApplyCouponScreen(
       {super.key, required this.subTotal, required this.entity_id});
 
   @override
@@ -52,7 +51,7 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
       key: _formKey,
       child: Stack(
         children: [
-          Container(
+          SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: Image.asset(

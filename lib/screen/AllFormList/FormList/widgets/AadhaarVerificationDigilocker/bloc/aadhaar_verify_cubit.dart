@@ -34,7 +34,8 @@ class AadhaarVerifyCubit extends Cubit<AadhaarVerifyState> {
         if (response.data["status"] == 200) {
           emit(AadhaarVerifySuccessState(response.data));
         } else if (response.data["status"] == 500) {
-          final errorMessage = response.data['message'] ?? 'Unknown error occurred.';
+          final errorMessage =
+              response.data['message'] ?? 'Unknown error occurred.';
           emit(AadhaarVerifyErrorState(errorMessage));
         } else {
           emit(AadhaarVerifyErrorState(

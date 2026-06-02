@@ -4,7 +4,7 @@ import 'package:v_verify/screen/ProfileScreen/bloc/profile_state.dart';
 import 'package:v_verify/screen/ProfileScreen/model/profile_model.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   ProfileCubit(this._apiService) : super(ProfileInitialState());
 

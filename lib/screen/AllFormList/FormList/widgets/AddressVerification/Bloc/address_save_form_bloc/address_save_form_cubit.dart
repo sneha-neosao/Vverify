@@ -74,7 +74,7 @@ class NameAddressAadhaarBackSideCubit extends Cubit<File> {
 
 class NameAddressVerificationFormCubit
     extends Cubit<NameAddressVerificationState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   NameAddressVerificationFormCubit(this._apiService)
       : super(NameAddressVerificationInitialState());

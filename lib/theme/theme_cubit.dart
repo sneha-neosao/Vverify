@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
-import 'theme_data.dart'; 
+import 'theme_data.dart';
 
 class ThemeCubit extends Cubit<AppTheme> with WidgetsBindingObserver {
   ThemeCubit() : super(AppTheme.light) {

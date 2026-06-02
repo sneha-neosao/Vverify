@@ -7,7 +7,7 @@ import '../model/otpVerify_model.dart';
 import 'otpVerify_state.dart';
 
 class OtpVerifyCubit extends Cubit<OtpVerifyState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   OtpVerifyCubit(this._apiService) : super(OtpVerifyInitialState());
 
@@ -20,8 +20,8 @@ class OtpVerifyCubit extends Cubit<OtpVerifyState> {
       if (response.data != null && response.data.containsKey("status")) {
         final OtpVerifyModel otpVerifyModel =
             OtpVerifyModel.fromJson(response.data);
-       // final status = response.data["status"];
-          emit(OtpVerifySuccess(otpVerifyModel));
+        // final status = response.data["status"];
+        emit(OtpVerifySuccess(otpVerifyModel));
       } else {
         emit(OtpVerifyError('Invalid response data.'));
       }
@@ -37,9 +37,11 @@ class OtpVerifyCubit extends Cubit<OtpVerifyState> {
 
       if (response.data != null && response.data.containsKey("status")) {
         if (response.data["status"] == 200) {
-          emit(ResendOtpSuccess(response.data["message"] ?? 'OTP resend successfully.'));
+          emit(ResendOtpSuccess(
+              response.data["message"] ?? 'OTP resend successfully.'));
         } else {
-          emit(ResendOtpError(response.data["message"] ?? 'Failed to resend OTP.'));
+          emit(ResendOtpError(
+              response.data["message"] ?? 'Failed to resend OTP.'));
         }
       } else {
         emit(ResendOtpError('Invalid response data.'));
@@ -79,5 +81,11 @@ class TimerCubit extends Cubit<int> {
   void resetTimer() {
     _timer?.cancel();
     emit(60); // Reset to 60 seconds
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
   }
 }

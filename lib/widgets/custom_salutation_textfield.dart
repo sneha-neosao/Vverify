@@ -54,12 +54,12 @@ class CustomSalutationTextField extends StatelessWidget {
               height: 45,
               width: 100,
               child: DropdownButtonFormField<String>(
-                value: salutations.contains(selectedSalutation)
+                initialValue: salutations.contains(selectedSalutation)
                     ? selectedSalutation
                     : null,
                 hint: const Text(
                   "select",
-                  style: const TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.grey),
                 ),
                 onChanged: onSalutationChanged,
                 items: salutations.map((String value) {

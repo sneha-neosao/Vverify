@@ -10,7 +10,7 @@ class PushNotificationInitialState extends PushNotificationState {}
 class PushNotificationLoadingState extends PushNotificationState {}
 
 class PushNotificationSuccessState extends PushNotificationState {
-  final Map<String,dynamic> data;
+  final Map<String, dynamic> data;
 
   PushNotificationSuccessState(this.data);
 

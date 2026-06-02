@@ -10,7 +10,7 @@ class VerifyRequestUpdateInitialState extends VerifyRequestUpdateState {}
 class VerifyRequestUpdateLoadingState extends VerifyRequestUpdateState {}
 
 class VerifyRequestUpdateSuccessState extends VerifyRequestUpdateState {
-  final Map<String,dynamic> data;
+  final Map<String, dynamic> data;
 
   VerifyRequestUpdateSuccessState(this.data);
 

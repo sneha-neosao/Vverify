@@ -18,14 +18,13 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       required String email,
       required String customerId,
       // File? profilePhoto,
-        required String companyName,
-        required String contactPersonName,
-        required String contactPersonPhone,
-        required String companyEmail,
-        required String companyAddress,
-        required String userType,
-        required String salutation
-      }) async {
+      required String companyName,
+      required String contactPersonName,
+      required String contactPersonPhone,
+      required String companyEmail,
+      required String companyAddress,
+      required String userType,
+      required String salutation}) async {
     emit(EditProfileLoading());
     try {
       final response = await _apiService.getUpdateProfile(
@@ -41,8 +40,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
           companyEmail: companyEmail,
           companyAddress: companyAddress,
           userType: userType,
-          salutation: salutation
-      );
+          salutation: salutation);
 
       if (response.data != null) {
         final editProfileResponse = EditProfileModel.fromJson(response.data);
@@ -74,7 +72,7 @@ class PickImageCubit extends Cubit<File> {
     }
   }
 
-  void clear(){
+  void clear() {
     emit(File(""));
   }
 }

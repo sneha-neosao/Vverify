@@ -27,9 +27,11 @@ class GstVerificationCubit extends Cubit<GstVerificationState> {
       if (response.data != null && response.data.containsKey("status")) {
         if (response.data["status"] == 200) {
           final uid = response.data["uid"]?.toString() ?? "";
-          emit(GstVerificationSuccessState(responseData: response.data, uid: uid));
+          emit(GstVerificationSuccessState(
+              responseData: response.data, uid: uid));
         } else if (response.data["status"] == 500) {
-          final errorMessage = response.data['message'] ?? 'Unknown error occurred.';
+          final errorMessage =
+              response.data['message'] ?? 'Unknown error occurred.';
           emit(GstVerificationFailureState(errorMessage));
         } else {
           emit(GstVerificationFailureState(

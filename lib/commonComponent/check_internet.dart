@@ -37,7 +37,7 @@ Future<void> _showMyDialog(BuildContext context) async {
         ),
         actions: <Widget>[
           CustomButton(
-           text: "Retry",
+            text: "Retry",
             gradientColors: [
               Theme.of(context).primaryColor,
               Theme.of(context).primaryColorDark,
@@ -46,13 +46,16 @@ Future<void> _showMyDialog(BuildContext context) async {
               final List<ConnectivityResult> connectivityResult =
                   await (Connectivity().checkConnectivity());
               if (connectivityResult.contains(ConnectivityResult.none)) {
-                ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
-                  content: Text("No internet connection please check your internet!"),
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text(
+                      "No internet connection please check your internet!"),
                   backgroundColor: Colors.red,
                 ));
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("Internet is connected",),
+                  content: Text(
+                    "Internet is connected",
+                  ),
                   backgroundColor: Colors.green,
                 ));
                 Navigator.pushReplacement(

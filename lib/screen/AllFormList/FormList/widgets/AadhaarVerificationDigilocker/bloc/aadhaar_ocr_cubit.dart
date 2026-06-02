@@ -13,8 +13,8 @@ class AadhaarOcrCubit extends Cubit<AadhaarOcrState> {
       {String documentType = "adhaar"}) async {
     emit(AadhaarOcrLoading());
     try {
-      final response =
-          await _apiService.extractAadhaarOcr(file: file, documentType: documentType);
+      final response = await _apiService.extractAadhaarOcr(
+          file: file, documentType: documentType);
 
       if (response.statusCode == 200) {
         final model = AadhaarOcrModel.fromJson(response.data);

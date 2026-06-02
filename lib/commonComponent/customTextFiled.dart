@@ -30,7 +30,7 @@ class CustomTextField extends StatefulWidget {
 
   // Constructor to pass values for customization
   CustomTextField(
-      {Key? key,
+      {super.key,
       required this.controller,
       this.labelText,
       this.hintText = 'Type something...',
@@ -53,8 +53,7 @@ class CustomTextField extends StatefulWidget {
       this.maskFormatter,
       this.autovalidateMode,
       this.isRequired = true,
-      this.onTap})
-      : super(key: key);
+      this.onTap});
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();

@@ -6,7 +6,8 @@ import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/da
 class DashboardEntitiesCubit extends Cubit<DashboardEntitiesState> {
   final ApiService apiService;
 
-  DashboardEntitiesCubit(this.apiService) : super(DashboardEntitiesInitialState());
+  DashboardEntitiesCubit(this.apiService)
+      : super(DashboardEntitiesInitialState());
 
   Future<void> getDashboardEntities({
     required String token,

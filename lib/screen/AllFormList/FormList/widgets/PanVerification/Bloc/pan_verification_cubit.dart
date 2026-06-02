@@ -34,10 +34,12 @@ class PanVerificationCubit extends Cubit<PanVerificationState> {
         if (submitModel.status == 200) {
           emit(PanVerificationSuccess(submitModel));
         } else {
-          emit(PanVerificationFailure(submitModel.message ?? "Submission failed"));
+          emit(PanVerificationFailure(
+              submitModel.message ?? "Submission failed"));
         }
       } else {
-        emit(PanVerificationFailure(response.data['message'] ?? "Something went wrong"));
+        emit(PanVerificationFailure(
+            response.data['message'] ?? "Something went wrong"));
       }
     } catch (e) {
       emit(PanVerificationFailure(e.toString()));
@@ -63,7 +65,8 @@ class PanVerificationCubit extends Cubit<PanVerificationState> {
           emit(PanVerificationFailure(showModel.message ?? "No data found"));
         }
       } else {
-        emit(PanVerificationFailure(response.data['message'] ?? "Failed to fetch PAN details"));
+        emit(PanVerificationFailure(
+            response.data['message'] ?? "Failed to fetch PAN details"));
       }
     } catch (e) {
       emit(PanVerificationFailure(e.toString()));

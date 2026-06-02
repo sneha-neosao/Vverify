@@ -5,15 +5,18 @@ import 'package:v_verify/screen/ServicesAndPrice/Blocs/service_prices_bloc/servi
 import '../../Models/service_prices_model.dart';
 
 class ServicePriceCubit extends Cubit<ServicePriceState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   ServicePriceCubit(this._apiService) : super(ServicePriceInitialState());
 
-  void getServicePrice({required String token, required String type_id,required String entity_id}) async {
+  void getServicePrice(
+      {required String token,
+      required String type_id,
+      required String entity_id}) async {
     emit(ServicePriceLoading());
     try {
-      final response =
-          await _apiService.getServicesPricing(token: token, type_id: type_id, entity_id: entity_id);
+      final response = await _apiService.getServicesPricing(
+          token: token, type_id: type_id, entity_id: entity_id);
 
       if (response.data != null && response.data.containsKey("status")) {
         final ServicePriceModel servicePriceModel =

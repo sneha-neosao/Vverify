@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,7 +35,7 @@ class _GstVerificationCardState extends State<GstVerificationCard> {
   late final GstVerificationCubit _gstCubit;
   late final GstVerificationShowCubit _showDetailsCubit;
 
-  bool _isSubmitting = false;
+  final bool _isSubmitting = false;
   bool _isReadOnly = false;
 
   @override
@@ -118,7 +116,9 @@ class _GstVerificationCardState extends State<GstVerificationCard> {
             }
           } else if (state is GstVerificationFailureState) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage), backgroundColor: Colors.red),
+              SnackBar(
+                  content: Text(state.errorMessage),
+                  backgroundColor: Colors.red),
             );
           }
         },
@@ -144,7 +144,8 @@ class _GstVerificationCardState extends State<GstVerificationCard> {
                 widget.serviceData?['status']?.toString() ?? "PENDING";
             if (showState is GstVerificationShowSuccessState) {
               currentStatus =
-                  showState.responseData['data']?['status']?.toString() ?? currentStatus;
+                  showState.responseData['data']?['status']?.toString() ??
+                      currentStatus;
             }
 
             if (currentStatus.trim().isEmpty || currentStatus == "-") {
@@ -183,7 +184,8 @@ class _GstVerificationCardState extends State<GstVerificationCard> {
                     const SizedBox(width: 8),
                     if (isVerified)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: const Color(0xFFE8F5E9),
                           borderRadius: BorderRadius.circular(8),
@@ -215,7 +217,9 @@ class _GstVerificationCardState extends State<GstVerificationCard> {
                 ),
                 if (showState is GstVerificationShowSuccessState &&
                     showState.responseData['data']?['reason'] != null &&
-                    showState.responseData['data']!['reason']!.toString().isNotEmpty)
+                    showState.responseData['data']!['reason']!
+                        .toString()
+                        .isNotEmpty)
                   Container(
                     width: double.infinity,
                     margin: const EdgeInsets.only(top: 12),
@@ -290,7 +294,8 @@ class _GstVerificationCardState extends State<GstVerificationCard> {
                   const SizedBox(height: 24),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: BlocBuilder<GstVerificationCubit, GstVerificationState>(
+                    child:
+                        BlocBuilder<GstVerificationCubit, GstVerificationState>(
                       builder: (context, actionState) {
                         if (actionState is GstVerificationLoadingState) {
                           return const SizedBox(
@@ -329,11 +334,20 @@ class _GstVerificationCardState extends State<GstVerificationCard> {
                             final prefs = await SharedPreferences.getInstance();
                             final token = prefs.getString('token') ?? "";
 
-                            final requestIdStr = widget.applicantData?['request_id']?.toString() ?? "";
-                            final serviceRequestIdStr = widget.serviceData?['service_request_id']?.toString() ??
-                                widget.serviceData?['id']?.toString() ?? "";
-                            final customerIdStr = widget.applicantData?['customer_id']?.toString() ??
-                                prefs.getString('customer_id') ?? "";
+                            final requestIdStr = widget
+                                    .applicantData?['request_id']
+                                    ?.toString() ??
+                                "";
+                            final serviceRequestIdStr = widget
+                                    .serviceData?['service_request_id']
+                                    ?.toString() ??
+                                widget.serviceData?['id']?.toString() ??
+                                "";
+                            final customerIdStr = widget
+                                    .applicantData?['customer_id']
+                                    ?.toString() ??
+                                prefs.getString('customer_id') ??
+                                "";
 
                             if (token.isNotEmpty &&
                                 requestIdStr.isNotEmpty &&
@@ -342,14 +356,17 @@ class _GstVerificationCardState extends State<GstVerificationCard> {
                               context.read<GstVerificationCubit>().storeGst(
                                     token: token,
                                     requestId: int.tryParse(requestIdStr) ?? 0,
-                                    serviceRequestId: int.tryParse(serviceRequestIdStr) ?? 0,
-                                    customerId: int.tryParse(customerIdStr) ?? 0,
+                                    serviceRequestId:
+                                        int.tryParse(serviceRequestIdStr) ?? 0,
+                                    customerId:
+                                        int.tryParse(customerIdStr) ?? 0,
                                     gstNumber: gst,
                                   );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text("Missing configuration parameters. Please login again."),
+                                  content: Text(
+                                      "Missing configuration parameters. Please login again."),
                                   backgroundColor: Colors.red,
                                 ),
                               );

@@ -28,7 +28,6 @@ class HomeScreenErrorState extends HomeScreenState {
   List<Object?> get props => [message];
 }
 
-
 class UserTermsConditionState extends Equatable {
   @override
   List<Object?> get props => [];
@@ -39,7 +38,7 @@ class UserTermsConditionInitialState extends UserTermsConditionState {}
 class UserTermsConditionLoadingState extends UserTermsConditionState {}
 
 class UserTermsConditionSuccessState extends UserTermsConditionState {
-  final Map<String,dynamic> data;
+  final Map<String, dynamic> data;
 
   UserTermsConditionSuccessState(this.data);
 

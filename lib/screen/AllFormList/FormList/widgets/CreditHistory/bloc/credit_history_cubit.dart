@@ -23,10 +23,13 @@ class CreditHistoryCubit extends Cubit<CreditHistoryState> {
       if (response.data != null && response.data.containsKey("status")) {
         if (response.data["status"] == 200) {
           final otpRefId = response.data["otpRefId"]?.toString() ?? "";
-          final message = response.data["message"]?.toString() ?? "OTP sent successfully";
-          emit(CreditHistoryOtpSuccessState(otpRefId: otpRefId, message: message));
+          final message =
+              response.data["message"]?.toString() ?? "OTP sent successfully";
+          emit(CreditHistoryOtpSuccessState(
+              otpRefId: otpRefId, message: message));
         } else if (response.data["status"] == 500) {
-          final errorMessage = response.data['message'] ?? 'Unknown error occurred.';
+          final errorMessage =
+              response.data['message'] ?? 'Unknown error occurred.';
           emit(CreditHistoryOtpFailureState(errorMessage));
         } else {
           emit(CreditHistoryOtpFailureState(
@@ -66,9 +69,11 @@ class CreditHistoryCubit extends Cubit<CreditHistoryState> {
       if (response.data != null && response.data.containsKey("status")) {
         if (response.data["status"] == 200) {
           final uid = response.data["uid"]?.toString() ?? "";
-          emit(CreditHistoryStoreSuccessState(responseData: response.data, uid: uid));
+          emit(CreditHistoryStoreSuccessState(
+              responseData: response.data, uid: uid));
         } else if (response.data["status"] == 500) {
-          final errorMessage = response.data['message'] ?? 'Unknown error occurred.';
+          final errorMessage =
+              response.data['message'] ?? 'Unknown error occurred.';
           emit(CreditHistoryStoreFailureState(errorMessage));
         } else {
           emit(CreditHistoryStoreFailureState(

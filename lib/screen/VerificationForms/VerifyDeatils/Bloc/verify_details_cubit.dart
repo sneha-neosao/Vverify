@@ -4,7 +4,7 @@ import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Bloc/verify_deta
 import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Model/verify_details_model.dart';
 
 class VerifyDetailsCubit extends Cubit<VerifyDetailsState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   VerifyDetailsCubit(this._apiService) : super(VerifyDetailsInitialState());
 

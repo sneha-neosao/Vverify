@@ -14,7 +14,6 @@ List<BankList> bankList = [
   BankList(image: "assets/images/hdfc.png", name: "HDFC"),
 ];
 
-
 class UpiList {
   String image;
   String name;
@@ -41,8 +40,10 @@ class PaymentOptions extends StatelessWidget {
           children: [
             Text(
               "Payment Options",
-              style:
-                  Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 24),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge!
+                  .copyWith(fontSize: 24),
             ),
             RichText(
               text: TextSpan(
@@ -55,9 +56,17 @@ class PaymentOptions extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16,),
-            Text("Net banking",style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 16),),
-            const SizedBox(height: 4,),
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              "Net banking",
+              style:
+                  Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 16),
+            ),
+            const SizedBox(
+              height: 4,
+            ),
             Card(
               elevation: 5,
               color: Theme.of(context).cardColor,
@@ -84,7 +93,9 @@ class PaymentOptions extends StatelessWidget {
                                         width: 35,
                                         height: 35,
                                       ),
-                                      const SizedBox(height: 4,),
+                                      const SizedBox(
+                                        height: 4,
+                                      ),
                                       Text(bankList[index].name)
                                     ],
                                   ),
@@ -112,21 +123,48 @@ class PaymentOptions extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 16,),
-            Text("Card",style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 16),),
-            const SizedBox(height: 4,),
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              "Card",
+              style:
+                  Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 16),
+            ),
+            const SizedBox(
+              height: 4,
+            ),
             ListTile(
-              tileColor:Theme.of(context).cardColor,
+              tileColor: Theme.of(context).cardColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
-              leading: Image.asset('assets/images/payment_card.png',width: 30,),
-              title:   Text("Credit/Debit Card",style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 16),),
-              trailing: const Icon(Icons.arrow_forward_ios,size: 16,),
-
+              leading: Image.asset(
+                'assets/images/payment_card.png',
+                width: 30,
+              ),
+              title: Text(
+                "Credit/Debit Card",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(fontSize: 16),
+              ),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+              ),
             ),
-            const SizedBox(height: 16,),
-            Text("Pay by UPI",style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 16),),
-            const SizedBox(height: 4,),
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              "Pay by UPI",
+              style:
+                  Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 16),
+            ),
+            const SizedBox(
+              height: 4,
+            ),
             Card(
               elevation: 5,
               color: Theme.of(context).cardColor,
@@ -147,8 +185,12 @@ class PaymentOptions extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 8),
                                   child: InkWell(
-                                    onTap: (){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const PaymentSuccessful()));
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const PaymentSuccessful()));
                                     },
                                     child: Column(
                                       children: [
@@ -157,7 +199,9 @@ class PaymentOptions extends StatelessWidget {
                                           width: 35,
                                           height: 35,
                                         ),
-                                        const SizedBox(height: 4,),
+                                        const SizedBox(
+                                          height: 4,
+                                        ),
                                         Text(upiList[index].name)
                                       ],
                                     ),

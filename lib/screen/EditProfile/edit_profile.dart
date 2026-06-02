@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:v_verify/commonComponent/screen_size.dart';
@@ -10,21 +9,19 @@ import 'package:v_verify/screen/VerificationForms/common/validator.dart';
 import 'package:v_verify/widgets/custom_not_required_text_field.dart';
 import 'package:v_verify/widgets/custom_required_text_field.dart';
 
-import '../../../commonComponent/customTextFiled.dart';
 import '../../../commonComponent/custom_button.dart';
 import '../../commonComponent/bloc/shared_preferences_cubit.dart';
 import '../../widgets/custom_salutation_textfield.dart';
 import '../ProfileScreen/bloc/profile_cubit.dart';
 import '../ProfileScreen/bloc/profile_state.dart';
 import '../ProfileScreen/model/profile_model.dart';
-import '../VerificationForms/common/form_widget.dart';
 import 'bloc/editProfile_cubit.dart';
 import 'bloc/editProfile_sate.dart';
 
 class EditProfile extends StatefulWidget {
   final String user_type;
 
-  EditProfile({super.key, required this.user_type});
+  const EditProfile({super.key, required this.user_type});
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -40,6 +37,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailAddressController = TextEditingController();
+  TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController companyNameController = TextEditingController();
   final TextEditingController companyHrController = TextEditingController();
   final TextEditingController companyHrNumberController =
@@ -65,7 +63,7 @@ class _EditProfileState extends State<EditProfile> {
     final String? token = prefs.getString('token');
     final String? id = prefs.getString('id');
 
-    if (token!.isNotEmpty) {
+    if (token != null && token.isNotEmpty) {
       // 🔎 Print all values before sending
       print("---- Sending to API ----");
       print("Token: $token");
@@ -85,7 +83,7 @@ class _EditProfileState extends State<EditProfile> {
       context.read<EditProfileCubit>().editProfile(
             token: token,
             email: email,
-            customerId: id!,
+            customerId: id ?? "",
             firstName: firstname,
             lastName: lastName,
             companyName: companyNameController.text,
@@ -136,6 +134,7 @@ class _EditProfileState extends State<EditProfile> {
     emailAddressController.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
+    mobileNumberController.dispose();
   }
 
   @override
@@ -164,7 +163,12 @@ class _EditProfileState extends State<EditProfile> {
                     );
                   } else if (profile is ProfileSuccess) {
                     ProfileResult? data = profile.profileModel.profileResult;
-                    user_type = data!.userTypeId!;
+                    if (data == null) {
+                      return const Center(
+                        child: Text("Profile data not found"),
+                      );
+                    }
+                    user_type = data.userTypeId;
                     print("salutation: ${data.salutation}");
                     if (selectedPrefix == null || selectedPrefix!.isEmpty) {
                       selectedPrefix = data.salutation ?? "";
@@ -302,21 +306,28 @@ class _EditProfileState extends State<EditProfile> {
                                         CustomRequiredTextField(
                                             validator: validateEmail,
                                             controller: emailAddressController
-                                              ..text = data.email!,
+                                              ..text = data.email ?? "",
                                             titleText: "Email",
                                             hintText: "Enter Email",
                                             textInputType: TextInputType.text),
                                         CustomRequiredTextField(
                                             controller: firstNameController
-                                              ..text = data.firstName!,
+                                              ..text = data.firstName ?? "",
                                             titleText: "First Name",
                                             hintText: "Enter First Name",
                                             textInputType: TextInputType.text),
                                         CustomRequiredTextField(
                                             controller: lastNameController
-                                              ..text = data.lastName!,
+                                              ..text = data.lastName ?? "",
                                             titleText: "Last Name",
                                             hintText: "Enter Last Name",
+                                            textInputType: TextInputType.text),
+                                        CustomRequiredTextField(
+                                            controller: mobileNumberController
+                                              ..text = data.mobileNumber ?? "",
+                                            titleText: "Mobile Number",
+                                            hintText: "Mobile Number",
+                                            readOnly: true,
                                             textInputType: TextInputType.text),
                                       ],
                                     ),
@@ -328,13 +339,13 @@ class _EditProfileState extends State<EditProfile> {
                                       children: [
                                         CustomRequiredTextField(
                                             controller: companyNameController
-                                              ..text = data.companyName!,
+                                              ..text = data.companyName ?? "",
                                             titleText: "Company Name",
                                             hintText: "Enter Company Name",
                                             textInputType: TextInputType.text),
                                         CustomSalutationTextField(
                                             controller: companyHrController
-                                              ..text = data.companyHr!,
+                                              ..text = data.companyHr ?? "",
                                             titleText:
                                                 "Company Person / HR Name",
                                             hintText: "Enter Person / HR Name",
@@ -345,7 +356,7 @@ class _EditProfileState extends State<EditProfile> {
                                               setState(() {
                                                 selectedPrefix = value;
                                                 print(
-                                                    "salutation after selection: ${selectedPrefix}");
+                                                    "salutation after selection: $selectedPrefix");
                                               });
                                             }),
                                         // CustomRequiredTextField(
@@ -359,7 +370,8 @@ class _EditProfileState extends State<EditProfile> {
                                             controller:
                                                 companyHrNumberController
                                                   ..text =
-                                                      data.companyHrNumber!,
+                                                      data.companyHrNumber ??
+                                                          "",
                                             titleText:
                                                 "Contact Person / HR Phone",
                                             hintText:
@@ -368,15 +380,23 @@ class _EditProfileState extends State<EditProfile> {
                                         CustomRequiredTextField(
                                             validator: validateEmail,
                                             controller: companyEmailController
-                                              ..text = data.companyEmail!,
+                                              ..text = data.companyEmail ?? "",
                                             titleText: "Company Email",
                                             hintText: "Enter Company Email",
                                             textInputType: TextInputType.text),
                                         CustomNotRequiredTextField(
                                             controller: companyAddressController
-                                              ..text = data.companyAddress!,
+                                              ..text =
+                                                  data.companyAddress ?? "",
                                             titleText: "Company Address",
                                             hintText: "Enter Company Address",
+                                            textInputType: TextInputType.text),
+                                        CustomRequiredTextField(
+                                            controller: mobileNumberController
+                                              ..text = data.mobileNumber ?? "",
+                                            titleText: "Mobile Number",
+                                            hintText: "Mobile Number",
+                                            readOnly: true,
                                             textInputType: TextInputType.text),
                                       ],
                                     ),
@@ -413,7 +433,8 @@ class _EditProfileState extends State<EditProfile> {
                                                     lastNameController.text,
                                                 email:
                                                     emailAddressController.text,
-                                                customer: data.id!.toString(),
+                                                customer:
+                                                    data.id?.toString() ?? "",
                                                 profilePhoto: _image);
                                           } else {
                                             ScaffoldMessenger.of(context)

@@ -8,9 +8,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:v_verify/commonComponent/custom_button.dart';
 import 'package:v_verify/commonComponent/screen_size.dart';
 
- File? signImage;
+File? signImage;
 
 class SignatureScreen extends StatefulWidget {
+  const SignatureScreen({super.key});
+
   @override
   _SignatureScreenState createState() => _SignatureScreenState();
 }
@@ -38,17 +40,14 @@ class _SignatureScreenState extends State<SignatureScreen> {
       setState(() {
         signImage = file;
       });
-
-    } catch (e) {
-      print("Error saving image: $e");
-    }
+    } catch (e) {}
   }
 
   //Function to delete the image
   Future<void> _deleteImage(BuildContext context) async {
     try {
       // Deleting the image file from local storage
-      if (signImage !=null) {
+      if (signImage != null) {
         File(signImage!.path).delete().then((_) {
           setState(() {
             signImage = null;
@@ -134,23 +133,19 @@ class _SignatureScreenState extends State<SignatureScreen> {
             ),
             const SizedBox(height: 20),
 
-        CustomButton(
-          onTap: () {
-
-            _captureAndSaveImage().then((_){
-              //_deleteImage(context);
-             context.pop();
-            });
-
-
-
-          },
-          text: "SUBMIT",
-          gradientColors: [
-            Theme.of(context).primaryColor,
-            Theme.of(context).primaryColorLight
-          ],
-        )
+            CustomButton(
+              onTap: () {
+                _captureAndSaveImage().then((_) {
+                  //_deleteImage(context);
+                  context.pop();
+                });
+              },
+              text: "SUBMIT",
+              gradientColors: [
+                Theme.of(context).primaryColor,
+                Theme.of(context).primaryColorLight
+              ],
+            )
 
             // BlocBuilder<UploadDocumentMumbaiTenantSignature, File>(
             //     builder: (context, sign) {

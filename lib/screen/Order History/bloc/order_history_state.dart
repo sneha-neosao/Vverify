@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'model/order_history_model.dart';
 
-
-
 class OrderHistoryState extends Equatable {
   @override
   List<Object?> get props => [];
@@ -29,8 +27,6 @@ class OrderHistoryError extends OrderHistoryState {
   @override
   List<Object?> get props => [errorMessage];
 }
-
-
 
 // import 'package:flutter/material.dart';
 //

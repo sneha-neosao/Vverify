@@ -4,14 +4,14 @@ import 'package:flutter/services.dart';
 class CustomNotRequiredTextField extends StatelessWidget {
   const CustomNotRequiredTextField(
       {super.key,
-        required this.controller,
-        required this.titleText,
-        required this.hintText,
-        required this.textInputType,
-        this.enabled=true,
-        this.readOnly=false,
-        this.validator,
-        this.maskFormatter});
+      required this.controller,
+      required this.titleText,
+      required this.hintText,
+      required this.textInputType,
+      this.enabled = true,
+      this.readOnly = false,
+      this.validator,
+      this.maskFormatter});
 
   final TextEditingController controller;
   final String titleText;
@@ -49,7 +49,7 @@ class CustomNotRequiredTextField extends StatelessWidget {
               FocusScope.of(context).nextFocus();
             },
             inputFormatters: maskFormatter,
-            validator: validator ,
+            validator: validator,
             readOnly: readOnly,
             decoration: InputDecoration(
               focusedBorder: OutlineInputBorder(

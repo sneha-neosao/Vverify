@@ -5,7 +5,8 @@ import 'gst_verification_show_state.dart';
 class GstVerificationShowCubit extends Cubit<GstVerificationShowState> {
   final ApiService _apiService;
 
-  GstVerificationShowCubit(this._apiService) : super(GstVerificationShowInitialState());
+  GstVerificationShowCubit(this._apiService)
+      : super(GstVerificationShowInitialState());
 
   void fetchGstDetails({
     required String token,
@@ -22,7 +23,8 @@ class GstVerificationShowCubit extends Cubit<GstVerificationShowState> {
         if (response.data["status"] == 200) {
           emit(GstVerificationShowSuccessState(response.data));
         } else if (response.data["status"] == 500) {
-          final errorMessage = response.data['message'] ?? 'Unknown error occurred.';
+          final errorMessage =
+              response.data['message'] ?? 'Unknown error occurred.';
           emit(GstVerificationShowFailureState(errorMessage));
         } else {
           emit(GstVerificationShowFailureState(

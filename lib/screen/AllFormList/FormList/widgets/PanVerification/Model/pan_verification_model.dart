@@ -100,7 +100,8 @@ class ShowPanDataModel {
     this.data,
   });
 
-  factory ShowPanDataModel.fromJson(Map<String, dynamic> json) => ShowPanDataModel(
+  factory ShowPanDataModel.fromJson(Map<String, dynamic> json) =>
+      ShowPanDataModel(
         status: json["status"],
         message: json["message"],
         data: json["data"] == null ? null : ShowData.fromJson(json["data"]),

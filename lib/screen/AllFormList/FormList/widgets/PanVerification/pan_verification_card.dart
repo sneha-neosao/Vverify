@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:url_launcher/url_launcher.dart';
 import 'package:v_verify/screen/VerificationForms/common/Preview/preview.dart';
 import '../../../../../apiServices/api_services.dart';
 import '../../../../../commonComponent/custom_button.dart';

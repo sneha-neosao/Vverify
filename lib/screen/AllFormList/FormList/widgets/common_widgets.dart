@@ -306,7 +306,7 @@ class FormDropdownWidget extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           dropdownColor: Colors.white,
           icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF455A64)),
           style:

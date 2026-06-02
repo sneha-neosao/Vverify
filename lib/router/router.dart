@@ -1,8 +1,6 @@
 import 'package:go_router/go_router.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:v_verify/apiServices/api_services.dart';
-import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 
 // Blocs/Cubits Imports
 import 'package:v_verify/screen/Complete-Profile/Bloc/register_cubit.dart';
@@ -19,20 +17,11 @@ import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/entity_services_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/Pagination/DashBoard/bloc/pending_doc_navigation_cubit.dart';
 import 'package:v_verify/screen/ProfileScreen/bloc/sign_out_cubit.dart';
-import 'package:v_verify/screen/ProfileScreen/bloc/profile_cubit.dart';
 import 'package:v_verify/screen/EditProfile/bloc/editProfile_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/verifyRequestUpdate/Bloc/verify_request_update_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_request_edit_cubit.dart';
 import 'package:v_verify/screen/AllFormList/FormList/widgets/DrivingLicense/Bloc/driving_licence_save_form_bloc/driving_licence_save_form_bloc.dart';
 import 'package:v_verify/screen/AllFormList/FormList/widgets/DrivingLicense/Bloc/driving_licence_show_details_bloc/driving_licence_show_details_cubit.dart';
-import 'package:v_verify/screen/AllFormList/FormList/widgets/EducationVerification/Bloc/education_show_details_bloc/education_show_details_cubit.dart';
-import 'package:v_verify/screen/AllFormList/FormList/widgets/EducationVerification/Bloc/education_update_form_bloc/education_update_form_cubit.dart';
-import 'package:v_verify/screen/AllFormList/FormList/widgets/EducationVerification/Bloc/education_save_form_bloc/education_save_form_cubit.dart';
-import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Update/employment_update_form_cubit.dart';
-import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/List/employment_list_cubit.dart';
-import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Save/employment_save_form_cubit.dart';
-import 'package:v_verify/screen/AllFormList/FormList/widgets/EmploymentVerification/Bloc/Show/employ_show_details_cubit.dart';
-import 'package:v_verify/screen/AllFormList/FormList/widgets/AddressVerification/Bloc/ShowDataBloc/address_show_details_bloc.dart';
 import 'package:v_verify/screen/VerificationForms/VerifyDeatils/Bloc/verify_details_cubit.dart';
 import 'package:v_verify/screen/VerificationPending/bloc/verify_report_bloc/verify_request_report_cubit.dart';
 import 'package:v_verify/screen/Order%20History/bloc/order_history_cubit.dart';
@@ -45,7 +34,6 @@ import 'package:v_verify/screen/Home%20screen/home_page.dart';
 import 'package:v_verify/screen/Login-Screen/login_screen.dart';
 import 'package:v_verify/screen/Order%20Details/order_details.dart';
 import 'package:v_verify/screen/Payment%20Successful/payment_successful.dart';
-import 'package:v_verify/screen/ServicesAndPrice/Screens/apply_coupon_screen.dart';
 import 'package:v_verify/screen/ServicesAndPrice/Screens/services_and_price_screen.dart';
 import 'package:v_verify/screen/ServicesAndPrice/CheckOut/Screen/check_out.dart';
 import 'package:v_verify/screen/SplashScreen/SplashScreen.dart';
@@ -186,8 +174,15 @@ class AppRouter {
         path: '/paymentSuccess',
         name: "payment_success",
         builder: (context, state) {
-          return BlocProvider<AllEntitiesCubit>(
-            create: (_) => AllEntitiesCubit(ApiService()),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<AllEntitiesCubit>(
+                  create: (_) => AllEntitiesCubit(ApiService())),
+              BlocProvider<DashboardEntitiesCubit>(
+                  create: (_) => DashboardEntitiesCubit(ApiService())),
+              BlocProvider<DashboardCountBloc>(
+                  create: (_) => DashboardCountBloc(ApiService())),
+            ],
             child: const PaymentSuccessful(),
           );
         },
@@ -206,6 +201,10 @@ class AppRouter {
                   create: (_) => AllEntitiesCubit(ApiService())),
               BlocProvider<CheckOutStatusCheckingCubit>(
                   create: (_) => CheckOutStatusCheckingCubit(ApiService())),
+              BlocProvider<DashboardEntitiesCubit>(
+                  create: (_) => DashboardEntitiesCubit(ApiService())),
+              BlocProvider<DashboardCountBloc>(
+                  create: (_) => DashboardCountBloc(ApiService())),
             ],
             child: const CheckOutScreen(),
           );
@@ -334,12 +333,12 @@ class AppRouter {
         name: "verifyRequestUpdateNew",
         builder: (context, state) {
           final uuid = state.pathParameters['uuid']!;
-          final service_title = state.pathParameters['service_title']!;
+          final serviceTitle = state.pathParameters['service_title']!;
           return BlocProvider<VerifyRequestUpdateCubit>(
             create: (_) => VerifyRequestUpdateCubit(ApiService()),
             child: VerifyRequestUpdateNew(
               uuid: uuid,
-              service_title: service_title,
+              service_title: serviceTitle,
             ),
           );
         },
@@ -350,7 +349,7 @@ class AppRouter {
         builder: (context, state) {
           final requestId = state.pathParameters['request_id']!;
           final uuid = state.pathParameters['uuid']!;
-          final service_title = state.pathParameters['service_title']!;
+          final serviceTitle = state.pathParameters['service_title']!;
           return MultiBlocProvider(
             providers: [
               BlocProvider<VerifyRequestEditCubit>(
@@ -361,7 +360,7 @@ class AppRouter {
             child: VerifyRequestEditFormNew(
               request_id: requestId,
               uuid: uuid,
-              service_title: service_title,
+              service_title: serviceTitle,
             ),
           );
         },

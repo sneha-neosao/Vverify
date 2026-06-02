@@ -3,7 +3,7 @@ import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/screen/PushNotification/Bloc/push_notification_state.dart';
 
 class PushNotificationCubit extends Cubit<PushNotificationState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   PushNotificationCubit(this._apiService)
       : super(PushNotificationInitialState());

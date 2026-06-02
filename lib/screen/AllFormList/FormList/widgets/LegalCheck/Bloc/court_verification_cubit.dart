@@ -5,7 +5,8 @@ import 'court_verification_state.dart';
 class CourtVerificationCubit extends Cubit<CourtVerificationState> {
   final ApiService _apiService;
 
-  CourtVerificationCubit(this._apiService) : super(CourtVerificationInitialState());
+  CourtVerificationCubit(this._apiService)
+      : super(CourtVerificationInitialState());
 
   void courtVerificationForm({
     required String customer_id,
@@ -36,10 +37,12 @@ class CourtVerificationCubit extends Cubit<CourtVerificationState> {
         if (response.data["status"] == 200) {
           emit(CourtVerificationSuccessState(response.data));
         } else if (response.data["status"] == 500) {
-          final errorMessage = response.data['message'] ?? 'Unknown error occurred.';
+          final errorMessage =
+              response.data['message'] ?? 'Unknown error occurred.';
           emit(CourtVerificationErrorState(errorMessage));
         } else {
-          emit(CourtVerificationErrorState('${response.data["status"]} \n ${response.data["message"]}'));
+          emit(CourtVerificationErrorState(
+              '${response.data["status"]} \n ${response.data["message"]}'));
         }
       } else {
         emit(CourtVerificationErrorState('Invalid response data.'));
@@ -78,10 +81,12 @@ class CourtVerificationCubit extends Cubit<CourtVerificationState> {
         if (response.data["status"] == 200) {
           emit(CourtVerificationSuccessState(response.data));
         } else if (response.data["status"] == 500) {
-          final errorMessage = response.data['message'] ?? 'Unknown error occurred.';
+          final errorMessage =
+              response.data['message'] ?? 'Unknown error occurred.';
           emit(CourtVerificationErrorState(errorMessage));
         } else {
-          emit(CourtVerificationErrorState('${response.data["status"]} \n ${response.data["message"]}'));
+          emit(CourtVerificationErrorState(
+              '${response.data["status"]} \n ${response.data["message"]}'));
         }
       } else {
         emit(CourtVerificationErrorState('Invalid response data.'));

@@ -6,7 +6,8 @@ import 'credit_history_show_state.dart';
 class CreditHistoryShowCubit extends Cubit<CreditHistoryShowState> {
   final ApiService _apiService;
 
-  CreditHistoryShowCubit(this._apiService) : super(CreditHistoryShowInitialState());
+  CreditHistoryShowCubit(this._apiService)
+      : super(CreditHistoryShowInitialState());
 
   void fetchCreditDetails({
     required String token,
@@ -24,7 +25,8 @@ class CreditHistoryShowCubit extends Cubit<CreditHistoryShowState> {
           final model = CreditReportShowModel.fromJson(response.data);
           emit(CreditHistoryShowSuccessState(model));
         } else if (response.data["status"] == 500) {
-          final errorMessage = response.data['message'] ?? 'Unknown error occurred.';
+          final errorMessage =
+              response.data['message'] ?? 'Unknown error occurred.';
           emit(CreditHistoryShowFailureState(errorMessage));
         } else {
           emit(CreditHistoryShowFailureState(

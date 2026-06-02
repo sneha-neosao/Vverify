@@ -4,9 +4,8 @@ import 'package:v_verify/screen/VerificationPending/bloc/pendingDoc_state.dart';
 
 import 'package:v_verify/screen/VerificationPending/model/pendingDoc_model.dart';
 
-
 class PendingDocCubit extends Cubit<PendingDocState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   PendingDocCubit(this._apiService) : super(PendingDocInitialState());
 
@@ -56,7 +55,6 @@ class PendingDocCubit extends Cubit<PendingDocState> {
       emit(PendingDocErrorState('An error occurred:$e'));
     }
   }
-
 }
 
 class IsPressedCubit extends Cubit<int> {

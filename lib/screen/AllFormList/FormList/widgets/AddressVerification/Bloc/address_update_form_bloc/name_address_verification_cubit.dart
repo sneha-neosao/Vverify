@@ -5,7 +5,7 @@ import 'name_address_verification_state.dart';
 
 class NameAddressVerificationUpdateFormCubit
     extends Cubit<NameAddressVerificationUpdateState> {
-  ApiService _apiService;
+  final ApiService _apiService;
 
   NameAddressVerificationUpdateFormCubit(this._apiService)
       : super(NameAddressVerificationUpdateInitialState());

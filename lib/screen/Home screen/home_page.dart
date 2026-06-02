@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +10,6 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:v_verify/apiServices/api_services.dart';
 import 'package:v_verify/commonComponent/bloc/shared_preferences_cubit.dart';
 import 'package:v_verify/commonComponent/screen_size.dart';
-import 'package:v_verify/screen/AllFormList/FormList/widgets/PoliceVerfication/Mumbai/police_verification_mumbai.dart';
 import 'package:v_verify/screen/Home%20screen/bloc/home_screen_state.dart';
 import 'package:v_verify/screen/Home%20screen/bloc/home_screnn_cubit.dart';
 import 'package:v_verify/screen/Home%20screen/model/home_Screen_model.dart';
@@ -23,7 +23,7 @@ import '../PushNotification/firebase_token.dart';
 import 'package:v_verify/screen/Bottom/bottomNavbar.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -325,7 +325,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                               ],
                             ),
-                            if (context.read<TokenCubit>().state == "guest") ...[
+                            if (context.read<TokenCubit>().state ==
+                                "guest") ...[
                               const SizedBox(width: 4),
                               IconButton(
                                 onPressed: () async {
@@ -360,7 +361,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium!
-                        .copyWith(color: Theme.of(context).primaryColorLight),
+                        .copyWith(color: Theme.of(context).primaryColorDark),
                   ),
                   SizedBox(height: 4),
                   Text(
@@ -505,11 +506,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              Image.network(
-                                                item.entityIcon!,
+                                              CachedNetworkImage(
+                                                imageUrl: item.entityIcon ?? "",
                                                 width: 60,
                                                 height: 60,
                                                 fit: BoxFit.contain,
+                                                placeholder: (context, url) =>
+                                                    const Center(
+                                                  child: SizedBox(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                    ),
+                                                  ),
+                                                ),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Image.asset(
+                                                  "assets/images/key.png",
+                                                  width: 60,
+                                                  height: 60,
+                                                ),
                                               ),
                                               const SizedBox(height: 8),
                                               Text(
@@ -600,10 +619,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          Image.network(
-                                                            item.entityIcon!,
+                                                          CachedNetworkImage(
+                                                            imageUrl:
+                                                                item.entityIcon ??
+                                                                    "",
                                                             width: 40,
                                                             height: 40,
+                                                            placeholder: (context,
+                                                                    url) =>
+                                                                const SizedBox(),
+                                                            errorWidget:
+                                                                (context, url,
+                                                                        error) =>
+                                                                    Image.asset(
+                                                              "assets/images/key.png",
+                                                              width: 40,
+                                                              height: 40,
+                                                            ),
                                                           ),
                                                           const SizedBox(
                                                               width: 16),

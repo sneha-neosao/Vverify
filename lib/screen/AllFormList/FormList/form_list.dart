@@ -214,53 +214,31 @@ class _FormListScreenState extends State<FormListScreen> {
                 color: Color(0xFF6366F1), // Premium indigo color
               ),
             )
-          : CustomScrollView(
-              cacheExtent: 1500, // Pre-render forms before they appear
-              slivers: [
-                SliverPadding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        if (widget.applicantData != null) ...[
-                          ApplicantDetailsCard(data: widget.applicantData!),
-                          const CardDivider(),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final service = services[index];
-                        final navigate =
-                            service['service_navigate']?.toString();
-                        final title = service['service_title']?.toString();
+          : SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Column(
+                children: [
+                  if (widget.applicantData != null) ...[
+                    ApplicantDetailsCard(data: widget.applicantData!),
+                    const CardDivider(),
+                  ],
+                  ...List.generate(services.length, (index) {
+                    final service = services[index];
+                    final navigate = service['service_navigate']?.toString();
+                    final title = service['service_title']?.toString();
 
-                        return RepaintBoundary(
-                          child: Column(
-                            key: ValueKey(navigate ?? index.toString()),
-                            children: [
-                              _getServiceCard(navigate, title),
-                              if (index < services.length - 1)
-                                const CardDivider(),
-                              if (index == services.length - 1)
-                                const SizedBox(height: 40),
-                            ],
-                          ),
-                        );
-                      },
-                      childCount: services.length,
-                      addAutomaticKeepAlives: true,
-                      addRepaintBoundaries: true,
-                    ),
-                  ),
-                ),
-              ],
+                    return Column(
+                      key: ValueKey(navigate ?? index.toString()),
+                      children: [
+                        _getServiceCard(navigate, title),
+                        if (index < services.length - 1) const CardDivider(),
+                        if (index == services.length - 1)
+                          const SizedBox(height: 40),
+                      ],
+                    );
+                  }),
+                ],
+              ),
             ),
     );
   }

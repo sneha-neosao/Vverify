@@ -25,7 +25,8 @@ class CreditHistoryStoreSuccessState extends CreditHistoryState {
   final Map<String, dynamic> responseData;
   final String uid;
 
-  CreditHistoryStoreSuccessState({required this.responseData, required this.uid});
+  CreditHistoryStoreSuccessState(
+      {required this.responseData, required this.uid});
 }
 
 class CreditHistoryStoreFailureState extends CreditHistoryState {

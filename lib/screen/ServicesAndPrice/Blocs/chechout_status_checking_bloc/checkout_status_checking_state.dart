@@ -10,7 +10,7 @@ class CheckoutStatusCheckingInitialState extends CheckoutStatusCheckingState {}
 class CheckoutStatusCheckingLoadingState extends CheckoutStatusCheckingState {}
 
 class CheckoutStatusCheckingSuccessState extends CheckoutStatusCheckingState {
-  final Map<String,dynamic> data;
+  final Map<String, dynamic> data;
 
   CheckoutStatusCheckingSuccessState(this.data);
 

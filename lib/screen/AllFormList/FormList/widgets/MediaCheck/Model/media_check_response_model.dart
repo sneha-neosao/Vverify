@@ -49,9 +49,8 @@ class MediaCheckData {
 
   factory MediaCheckData.fromJson(Map<String, dynamic> json) {
     var list = json['data'] as List?;
-    List<MediaNewsItem>? newsList = list != null
-        ? list.map((i) => MediaNewsItem.fromJson(i)).toList()
-        : null;
+    List<MediaNewsItem>? newsList =
+        list?.map((i) => MediaNewsItem.fromJson(i)).toList();
 
     return MediaCheckData(
       data: newsList,

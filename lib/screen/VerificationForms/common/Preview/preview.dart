@@ -1,55 +1,76 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:media_store_plus/media_store_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class Preview extends StatefulWidget {
   final String url;
 
-  Preview({super.key, required this.url});
+  const Preview({super.key, required this.url});
 
   @override
   State<Preview> createState() => _PreviewState();
 }
 
 class _PreviewState extends State<Preview> {
-  void _downloadFile(String url) {
+  Future<void> _downloadFile(String url) async {
     String fileName = url.split('/').last;
     if (fileName.isEmpty || !fileName.contains('.')) {
       fileName =
           "file_${DateTime.now().millisecondsSinceEpoch}${widget.url.contains('pdf') ? '.pdf' : '.jpg'}";
     }
 
-    FileDownloader.downloadFile(
-      url: url,
-      name: fileName,
-      onProgress: (fileName, progress) {
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Downloading $fileName..."),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+
+      final tempDir = await getTemporaryDirectory();
+      final tempFilePath = '${tempDir.path}/$fileName';
+
+      // 1. Download file using Dio to temporary directory
+      final dio = Dio();
+      await dio.download(
+        url,
+        tempFilePath,
+      );
+
+      // 2. Initialize MediaStore and save to Downloads/VVerify
+      await MediaStore.ensureInitialized();
+      MediaStore.appFolder = "vverify";
+
+      final result = await MediaStore().saveFile(
+        tempFilePath: tempFilePath,
+        dirType: DirType.download,
+        dirName: DirName.download,
+      );
+
+      if (result != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Downloading $fileName: ${progress.toInt()}%"),
-            duration: const Duration(milliseconds: 500),
-          ),
-        );
-      },
-      onDownloadCompleted: (path) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Downloaded Successfully to: $path"),
+            content: Text("Downloaded Successfully to Downloads/vverify/$fileName"),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 3),
           ),
         );
-      },
-      onDownloadError: (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Download Error: $error"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      },
-    );
+      } else {
+        throw Exception("Failed to save to downloads folder.");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Download Error: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

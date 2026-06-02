@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class NameAddressVerificationModel {
   final String request_id;
   final String service_request_id;
